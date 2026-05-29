@@ -1,3 +1,7 @@
+import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
+import AppLoading from "expo-app-loading";
+import { useFonts } from "expo-font";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   Image,
@@ -8,47 +12,70 @@ import {
   View,
 } from "react-native";
 
-import { useRouter } from "expo-router";
-import illustration from "../../assets/images/background-onboarding.png"; // Substitua pelo caminho da sua imagem local
+import illustration from "../../assets/images/background-onboarding.png";
+
+const fredoka = (size: number, color?: string) => ({
+  fontFamily: "FredokaOne_400Regular" as const,
+  fontSize: size,
+  ...(color ? { color } : {}),
+});
 
 export default function AppScreen() {
   const router = useRouter();
 
+  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+  if (!fontsLoaded) return <AppLoading />;
+
   const handleButtonPress = () => {
-    router.push("/(tabs)"); // Navega para a tela de abas
+    router.push("/(tabs)");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Seção da Imagem/Ilustração */}
+      {/* Blobs decorativos */}
+      <View style={[styles.blob, styles.blob1]} />
+      <View style={[styles.blob, styles.blob2]} />
+
+      {/* Ilustração */}
       <View style={styles.imageContainer}>
         <Image
-          source={illustration} // Substitua pelo caminho da sua imagem local
+          source={illustration}
           style={styles.illustration}
           resizeMode="contain"
         />
       </View>
 
-      {/* Conteúdo de Texto */}
+      {/* Texto */}
       <View style={styles.textSection}>
-        <Text style={styles.title}>
-          Innovative learning{"\n"}modern learner
+        <Text style={fredoka(34, "#2D2D2D")}>
+          {"Innovative learning\nmodern learner"}
         </Text>
 
         <Text style={styles.description}>
-          It is a long established fact that a reader wil by the readable
-          content of a page when.
+          It is a long established fact that a reader will be distracted by the
+          readable content of a page when looking at its layout.
         </Text>
+
+        {/* Dots indicadores */}
+        <View style={styles.dots}>
+          <View style={[styles.dot, styles.dotActive]} />
+          <View style={styles.dot} />
+          <View style={styles.dot} />
+        </View>
       </View>
 
-      {/* Botão Customizado */}
-      <TouchableOpacity
-        onPress={handleButtonPress}
-        style={styles.buttonWrapper}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.buttonText}>Let's go 👍</Text>
-      </TouchableOpacity>
+      {/* Botão */}
+      <View style={styles.btnArea}>
+        {/* Sombra 3D */}
+        <View style={styles.btnShadow} />
+        <TouchableOpacity
+          onPress={handleButtonPress}
+          style={styles.btn}
+          activeOpacity={0.85}
+        >
+          <Text style={fredoka(20, "#fff")}>Let's go 👍</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -56,11 +83,28 @@ export default function AppScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F6E5", // Tom de bege claro do fundo
+    backgroundColor: "#FFF9F0",
     alignItems: "center",
     justifyContent: "space-between",
     paddingVertical: 40,
   },
+
+  blob: { position: "absolute", borderRadius: 999 },
+  blob1: {
+    width: 220,
+    height: 220,
+    backgroundColor: "#FFE8F0",
+    top: -60,
+    right: -60,
+  },
+  blob2: {
+    width: 160,
+    height: 160,
+    backgroundColor: "#E8F4FF",
+    bottom: 140,
+    left: -50,
+  },
+
   imageContainer: {
     flex: 2,
     justifyContent: "center",
@@ -69,62 +113,52 @@ const styles = StyleSheet.create({
   },
   illustration: {
     width: "90%",
-    height: "80%",
+    height: "85%",
   },
+
   textSection: {
     flex: 1,
     alignItems: "center",
-    paddingHorizontal: 30,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: "#2D2D2D",
-    textAlign: "center",
-    lineHeight: 40,
-    marginBottom: 20,
+    paddingHorizontal: 32,
+    gap: 14,
   },
   description: {
-    fontSize: 16,
-    color: "#8A8A8A",
+    fontSize: 15,
+    color: "#AAA",
     textAlign: "center",
     lineHeight: 24,
+    fontWeight: "600",
   },
-  buttonWrapper: {
+
+  dots: { flexDirection: "row", gap: 8, marginTop: 4 },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E0E0E0" },
+  dotActive: { width: 24, backgroundColor: "#FF5B8D" },
+
+  btnArea: {
     width: "85%",
-    height: 60,
-    justifyContent: "center",
     marginBottom: 20,
-    backgroundColor: "#E67E22", // Tom de laranja vibrante
-    borderRadius: 40,
-    shadowColor: "#E67E22",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 5,
-    alignItems: "center",
+    position: "relative",
   },
-  gradientButton: {
-    height: 65,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 2,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  buttonShadow: {
+  btnShadow: {
     position: "absolute",
-    bottom: 5,
+    bottom: -6,
+    left: 4,
+    right: -4,
+    height: 60,
+    backgroundColor: "#C0540A",
+    borderRadius: 40,
+  },
+  btn: {
     width: "100%",
-    height: 65,
-    backgroundColor: "#634226", // Cor marrom da base
-    borderRadius: 25,
-    zIndex: 1,
+    height: 60,
+    backgroundColor: "#FF7A2F",
+    borderRadius: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#FF7A2F",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 6,
   },
 });

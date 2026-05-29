@@ -1,9 +1,11 @@
-import React from "react";
+import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
+import AppLoading from "expo-app-loading";
+import { useFonts } from "expo-font";
+import React, { useState } from "react";
 import {
   Dimensions,
-  Image,
-  ImageBackground,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,476 +14,576 @@ import {
 
 const { width } = Dimensions.get("window");
 
-// URLs do Unsplash com temas infantis, brinquedos, cores vivas e trilhas de aprendizado
-// IMAGENS INFANTIS — UNSPLASH
-// Mantendo a mesma estrutura do seu projeto
+// ─── FONT HELPER ─────────────────────────────────────────────────────────────
+// Usage: <Text style={[s.someStyle, fredoka(20)]}>Hello</Text>
+const fredoka = (size: number, color?: string) => ({
+  fontFamily: "FredokaOne_400Regular" as const,
+  fontSize: size,
+  ...(color ? { color } : {}),
+});
 
-const IMAGES = {
-  profile:
-    "https://images.unsplash.com/photo-1519340241574-2cec6aef0c01?q=80&w=400&auto=format&fit=crop",
-  banner:
-    "https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c3BhY2V8ZW58MHx8MHx8fDA%3D",
-  nature:
-    "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=600&auto=format&fit=crop",
-  animals:
-    "https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=600&auto=format&fit=crop",
-  science:
-    "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=600&auto=format&fit=crop",
-  castle:
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=600&auto=format&fit=crop",
-  puzzle:
-    "https://plus.unsplash.com/premium_photo-1723662084148-2cd2357705ba?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHV6emxlfGVufDB8fDB8fHww",
-  alphabet:
-    "https://images.unsplash.com/photo-1513258496099-48168024aec0?q=80&w=600&auto=format&fit=crop",
-  school:
-    "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=600&auto=format&fit=crop",
-  astronaut:
-    "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?q=80&w=600&auto=format&fit=crop",
-  space:
-    "https://plus.unsplash.com/premium_photo-1690571200236-0f9098fc6ca9?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c3BhY2V8ZW58MHx8MHx8fDA%3D",
-};
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const NAV_ICONS = [
+  { emoji: "🚀", label: "Space", bg: "#FFF0F5", color: "#FF5B8D" },
+  { emoji: "🎨", label: "Art", bg: "#FFF7E0", color: "#F5A623" },
+  { emoji: "🧸", label: "Toys", bg: "#E8F8F0", color: "#27AE60" },
+  { emoji: "🦖", label: "Dinos", bg: "#EBF4FF", color: "#3B82F6" },
+];
+
+const CHIPS = ["Drawing", "Space", "Animals", "Magic", "Music"];
+
+const INTERESTS = [
+  { emoji: "🌿", label: "Explore", bg: "#FFF0F8", color: "#D63384" },
+  { emoji: "🐶", label: "Pets", bg: "#FFF7E0", color: "#B45309" },
+  { emoji: "🌍", label: "Space", bg: "#EBF4FF", color: "#1D4ED8" },
+  { emoji: "🔬", label: "Science", bg: "#E8F8F0", color: "#15803D" },
+];
 
 const LEARNING_PATHS = [
   {
     id: 1,
-    title: "Letters-1",
-    progress: "6/6",
-    img: IMAGES.alphabet,
-    bgColor: "#FFF0A8",
-    dotColor: "#FFD32A",
+    emoji: "🔤",
+    title: "Letters",
+    progress: 6,
+    total: 6,
+    cardBorder: "#FFD93D",
+    imgBg: "#FFFBEB",
+    barColor: "#FFD93D",
   },
   {
     id: 2,
-    title: "School-1",
-    progress: "6/6",
-    img: IMAGES.school,
-    bgColor: "#D4E157",
-    dotColor: "#E056FD",
+    emoji: "🏫",
+    title: "School",
+    progress: 6,
+    total: 6,
+    cardBorder: "#A0E7A0",
+    imgBg: "#F0FFF0",
+    barColor: "#52C878",
   },
   {
     id: 3,
-    title: "Astronaut-1",
-    progress: "4/6",
-    img: IMAGES.astronaut,
-    bgColor: "#FFCC80",
-    dotColor: "#FFB142",
+    emoji: "👨‍🚀",
+    title: "Astronaut",
+    progress: 4,
+    total: 6,
+    cardBorder: "#FFA07A",
+    imgBg: "#FFF5F0",
+    barColor: "#FF7043",
   },
   {
     id: 4,
-    title: "Space-1",
-    progress: "2/6",
-    img: IMAGES.space,
-    bgColor: "#A3CB38",
-    dotColor: "#74B9FF",
+    emoji: "🪐",
+    title: "Space",
+    progress: 2,
+    total: 6,
+    cardBorder: "#B0C4FF",
+    imgBg: "#F0F4FF",
+    barColor: "#5C7CFF",
   },
 ];
 
-export default function HomeScreen() {
+const POPULAR = [
+  {
+    emoji: "🏰",
+    title: "Magic Block Castle",
+    sub: "Build, play and imagine!",
+    tagLabel: "Fun!",
+    tagBg: "#E8FFE8",
+    tagColor: "#15803D",
+    iconBg: "#FFF3E0",
+  },
+  {
+    emoji: "🧩",
+    title: "Colorful Puzzle",
+    sub: "Trains your smart brain!",
+    tagLabel: "New",
+    tagBg: "#FFE8EE",
+    tagColor: "#D63384",
+    iconBg: "#FFF0F8",
+  },
+  {
+    emoji: "🎵",
+    title: "Music & Rhythm",
+    sub: "Sing, clap and dance!",
+    tagLabel: "Hot 🔥",
+    tagBg: "#FFF3E0",
+    tagColor: "#E65100",
+    iconBg: "#FFFBEB",
+  },
+];
+
+const BOTTOM_NAV = [
+  { emoji: "📚", label: "Learn" },
+  { emoji: "🎮", label: "Play" },
+  null,
+  { emoji: "🏆", label: "Wins" },
+  { emoji: "👤", label: "Me" },
+];
+
+// ─── SUB-COMPONENTS ──────────────────────────────────────────────────────────
+
+const SectionHeader = ({
+  title,
+  badge,
+  linkLabel = "See all",
+  linkColor = "#6C5CE7",
+}: {
+  title: string;
+  badge?: string;
+  linkLabel?: string;
+  linkColor?: string;
+}) => (
+  <View style={s.secHdr}>
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <Text style={[s.secTitle, fredoka(20, "#2D2D2D")]}>{title}</Text>
+      {badge && (
+        <View style={s.newBadge}>
+          <Text style={s.newBadgeText}>{badge.toUpperCase()}</Text>
+        </View>
+      )}
+    </View>
+    <TouchableOpacity>
+      <Text style={[s.secLink, { color: linkColor }]}>{linkLabel}</Text>
+    </TouchableOpacity>
+  </View>
+);
+
+const LearningCard = ({
+  emoji,
+  title,
+  progress,
+  total,
+  cardBorder,
+  imgBg,
+  barColor,
+}: (typeof LEARNING_PATHS)[0]) => {
+  const pct = (progress / total) * 100;
+  const done = progress === total;
   return (
-    <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* HEADER */}
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.greetingText}>
-              Hi <Text style={styles.userName}>Champu!</Text>
-            </Text>
-            <Text style={styles.subGreeting}>
-              Let's have some fun today! ✨
-            </Text>
-          </View>
-          <Image
-            resizeMode="cover"
-            source={{ uri: IMAGES.profile }}
-            style={styles.profileImage}
+    <TouchableOpacity
+      style={[s.learnCard, { borderColor: cardBorder }]}
+      activeOpacity={0.85}
+    >
+      <View style={[s.learnImgBox, { backgroundColor: imgBg }]}>
+        <Text style={s.learnEmoji}>{emoji}</Text>
+      </View>
+      <View style={s.learnBody}>
+        <Text style={[s.learnTitle, fredoka(16, "#2D2D2D")]}>{title}</Text>
+        <View style={s.progressWrap}>
+          <View
+            style={[
+              s.progressFill,
+              { width: `${pct}%` as any, backgroundColor: barColor },
+            ]}
           />
         </View>
+        <Text style={s.progressLabel}>
+          {progress} / {total} done {done ? "🎉" : "⭐"}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
-        {/* TOP ICONS NAVIGATION */}
-        <View style={styles.topIconsRow}>
-          {["🚀", "🎨", "🧸", "🦖"].map((icon, index) => (
-            <TouchableOpacity key={index} style={styles.iconCircle}>
-              <Text style={{ fontSize: 26 }}>{icon}</Text>
+const PopularCard = ({
+  emoji,
+  title,
+  sub,
+  tagLabel,
+  tagBg,
+  tagColor,
+  iconBg,
+}: (typeof POPULAR)[0]) => (
+  <TouchableOpacity style={s.popCard} activeOpacity={0.85}>
+    <View style={[s.popIcon, { backgroundColor: iconBg }]}>
+      <Text style={s.popIconEmoji}>{emoji}</Text>
+    </View>
+    <View style={s.popBody}>
+      <Text style={[s.popTitle, fredoka(16, "#2D2D2D")]}>{title}</Text>
+      <Text style={s.popSub}>{sub}</Text>
+    </View>
+    <View style={[s.popTag, { backgroundColor: tagBg }]}>
+      <Text style={[s.popTagText, { color: tagColor }]}>{tagLabel}</Text>
+    </View>
+  </TouchableOpacity>
+);
+
+// ─── MAIN SCREEN ─────────────────────────────────────────────────────────────
+
+export default function HomeScreen() {
+  const [activeChip, setActiveChip] = useState(0);
+  const [activeNav, setActiveNav] = useState(0);
+
+  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+  if (!fontsLoaded) return <AppLoading />;
+
+  return (
+    <View style={s.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
+
+      {/* Background blobs */}
+      <View style={[s.blob, s.blob1]} />
+      <View style={[s.blob, s.blob2]} />
+      <View style={[s.blob, s.blob3]} />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={s.scroll}
+      >
+        {/* ── HEADER ── */}
+        <View style={s.header}>
+          <View>
+            <Text style={fredoka(26, "#2D2D2D")}>
+              Hi, <Text style={fredoka(26, "#FF5B8D")}>Champu!</Text> 👋
+            </Text>
+            <Text style={s.greetSub}>Let's learn something cool today ✨</Text>
+          </View>
+          <View style={s.avatar}>
+            <Text style={{ fontSize: 30 }}>🐻</Text>
+          </View>
+        </View>
+
+        {/* ── NAV ICON ROW ── */}
+        <View style={s.navRow}>
+          {NAV_ICONS.map((item, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[s.navBtn, { backgroundColor: item.bg }]}
+              activeOpacity={0.8}
+            >
+              <Text style={s.navEmoji}>{item.emoji}</Text>
+              <Text style={[fredoka(11, item.color)]}>{item.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* PROMO BANNER */}
-        <ImageBackground
-          source={{ uri: IMAGES.banner }}
-          style={styles.bannerContainer}
-          imageStyle={{ borderRadius: 30 }}
-          resizeMode="cover"
-        >
-          <View style={styles.bannerOverlay}>
-            <Text style={styles.bannerTitle}>Magic World{"\n"}of Story</Text>
-
-            <TouchableOpacity style={styles.bannerButton}>
-              <Text style={styles.bannerButtonText}>Explore Now!</Text>
+        {/* ── BANNER ── */}
+        <View style={s.banner}>
+          <View style={s.bannerContent}>
+            <Text
+              style={[
+                fredoka(24, "#fff"),
+                { lineHeight: 30, marginBottom: 14 },
+              ]}
+            >
+              {"Magic World\nof Stories"}
+            </Text>
+            <TouchableOpacity style={s.bannerCta} activeOpacity={0.85}>
+              <Text style={[fredoka(15, "#5A3E00")]}>🔍 Explore Now!</Text>
             </TouchableOpacity>
           </View>
-        </ImageBackground>
+          <Text style={s.bannerPlanet}>🪐</Text>
+          <Text style={s.bannerStars}>⭐🌟✨</Text>
+        </View>
 
-        {/* CATEGORIES CHIPS */}
+        {/* ── CATEGORY CHIPS ── */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={styles.categoriesScroll}
+          contentContainerStyle={s.chipsRow}
         >
-          {["Drawing", "Space", "Animals", "Magic"].map((item, index) => (
+          {CHIPS.map((chip, i) => (
             <TouchableOpacity
-              key={index}
-              style={[
-                styles.categoryChip,
-                index === 0 && styles.activeCategory,
-              ]}
+              key={i}
+              style={[s.chip, activeChip === i && s.chipActive]}
+              onPress={() => setActiveChip(i)}
+              activeOpacity={0.8}
             >
-              <Text
-                style={[
-                  styles.categoryText,
-                  index === 0 && styles.activeCategoryText,
-                ]}
-              >
-                {item}
+              <Text style={[s.chipText, activeChip === i && s.chipTextActive]}>
+                {chip}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        {/* SECTION: INTERESTS */}
+        {/* ── YOUR FAVORITES ── */}
         <SectionHeader title="Your Favorites 🌟" />
-        <View style={styles.interestsRow}>
-          <InterestCard title="Explore" color="#A3E4D7" img={IMAGES.nature} />
-          <InterestCard title="Pets" color="#FDEBD0" img={IMAGES.animals} />
-          <InterestCard title="Space" color="#D6EAF8" img={IMAGES.space} />
-        </View>
-
-        {/* SECTION: LEARNING PATH (NOVA SEÇÃO) */}
-        <View style={styles.learningHeaderContainer}>
-          <View style={styles.learningHeaderRow}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={styles.sectionTitle}>Learning path</Text>
-              <View style={styles.newBadge}>
-                <Text style={styles.newBadgeText}>New</Text>
-              </View>
-            </View>
-            <TouchableOpacity>
-              <Text style={styles.viewAllRed}>View all</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={s.interestsRow}
+        >
+          {INTERESTS.map((item, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[s.intCard, { backgroundColor: item.bg }]}
+              activeOpacity={0.8}
+            >
+              <Text style={s.intEmoji}>{item.emoji}</Text>
+              <Text style={[fredoka(13, item.color)]}>{item.label}</Text>
             </TouchableOpacity>
-          </View>
-          <Text style={styles.learningSubText}>
-            long established fact that a reader will be
-          </Text>
-        </View>
+          ))}
+        </ScrollView>
 
-        <View style={styles.learningGrid}>
+        {/* ── LEARNING PATH ── */}
+        <SectionHeader
+          title="Learning Path"
+          badge="New"
+          linkLabel="View all"
+          linkColor="#FF5B8D"
+        />
+        <View style={s.learnGrid}>
           {LEARNING_PATHS.map((item) => (
             <LearningCard key={item.id} {...item} />
           ))}
         </View>
 
-        {/* SECTION: POPULAR */}
+        {/* ── POPULAR ── */}
         <SectionHeader title="Cool Stuff! 🎈" />
-        <PopularItem
-          title="Magic Block Castle"
-          tag="Fun!"
-          tagColor="#58D68D"
-          img={IMAGES.castle}
-        />
-        <PopularItem
-          title="Colorful Puzzle"
-          tag="New"
-          tagColor="#FF4757"
-          img={IMAGES.puzzle}
-        />
+        {POPULAR.map((item, i) => (
+          <PopularCard key={i} {...item} />
+        ))}
       </ScrollView>
     </View>
   );
 }
 
-// COMPONENTES AUXILIARES
-const SectionHeader = ({ title }) => (
-  <View style={styles.sectionHeader}>
-    <Text style={styles.sectionTitle}>{title}</Text>
-    <TouchableOpacity>
-      <Text style={styles.viewAll}>See All</Text>
-    </TouchableOpacity>
-  </View>
-);
+// ─── STYLES ──────────────────────────────────────────────────────────────────
 
-const InterestCard = ({ title, color, img }) => (
-  <View style={[styles.interestCard, { backgroundColor: color }]}>
-    <Image source={{ uri: img }} style={styles.interestImage} />
-    <Text style={styles.interestText}>{title}</Text>
-  </View>
-);
-
-const PopularItem = ({ title, tag, tagColor, img }) => (
-  <View style={styles.popularCard}>
-    <Image source={{ uri: img }} style={styles.popularThumb} />
-    <View style={{ flex: 1, marginLeft: 15 }}>
-      <Text style={styles.popularTitle}>{title}</Text>
-      <Text style={styles.popularSub}>
-        Play, build, and learn with colorful blocks!
-      </Text>
-    </View>
-    <View style={[styles.tag, { backgroundColor: tagColor }]}>
-      <Text style={styles.tagText}>{tag}</Text>
-    </View>
-  </View>
-);
-
-const LearningCard = ({ title, progress, img, bgColor, dotColor }) => (
-  <TouchableOpacity style={styles.learningCard}>
-    <View style={[styles.learningImageContainer, { backgroundColor: bgColor }]}>
-      <Image source={{ uri: img }} style={styles.learningImage} />
-    </View>
-    <View style={styles.learningContent}>
-      <Text style={styles.learningCardTitle}>{title}</Text>
-      <Text style={styles.learningCardProgress}>{progress}</Text>
-      <View style={[styles.decorativeDot, { backgroundColor: dotColor }]} />
-    </View>
-  </TouchableOpacity>
-);
-
-// ESTILOS
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4FBFF", // Azul bem clarinho e alegre
-    paddingTop: 45,
+    backgroundColor: "#FFF9F0",
+    paddingTop: StatusBar.currentHeight ?? 44,
   },
-  scrollContent: { padding: 20, paddingBottom: 100 },
+  scroll: { paddingHorizontal: 20, paddingBottom: 100 },
+
+  blob: { position: "absolute", borderRadius: 999 },
+  blob1: {
+    width: 200,
+    height: 200,
+    backgroundColor: "#FFE8F0",
+    top: -60,
+    right: -50,
+  },
+  blob2: {
+    width: 150,
+    height: 150,
+    backgroundColor: "#E8F4FF",
+    top: 220,
+    left: -60,
+  },
+  blob3: {
+    width: 120,
+    height: 120,
+    backgroundColor: "#F0FFE8",
+    bottom: 320,
+    right: -30,
+  },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 30,
-  },
-  userName: { fontWeight: "900", color: "#FF4757", fontSize: 26 }, // Rosa forte / Melancia
-  greetingText: { fontSize: 24, color: "#2F3542", fontWeight: "bold" },
-  subGreeting: {
-    fontSize: 15,
-    color: "#747D8C",
-    marginTop: 4,
-    fontWeight: "600",
-  },
-  profileImage: {
-    width: 65,
-    height: 65,
-    borderRadius: 32.5,
-    borderWidth: 4,
-    borderColor: "#FFD32A", // Amarelo vibrante na borda
-  },
-
-  topIconsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 30,
-  },
-  iconCircle: {
-    width: 65,
-    height: 65,
-    borderRadius: 35,
-    backgroundColor: "#FFF",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#1E90FF",
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-  },
-
-  bannerContainer: { height: 170, marginBottom: 30, justifyContent: "center" },
-  bannerOverlay: {
-    padding: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.4)", // Fundo esbranquiçado sobre a imagem
-    height: "100%",
-    borderRadius: 30, // Mais arredondado
-    justifyContent: "center",
-  },
-  bannerTitle: {
-    fontSize: 22,
-    fontWeight: "900",
-    color: "#2F3542",
-    lineHeight: 30,
-  },
-  bannerButton: {
-    backgroundColor: "#FFA502", // Laranja vibrante
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    marginTop: 15,
-    alignSelf: "flex-start",
-    elevation: 3,
-  },
-  bannerButtonText: {
-    color: "#FFF",
-    fontWeight: "900",
-    fontSize: 15,
-    textTransform: "uppercase",
-  },
-
-  categoriesScroll: { marginBottom: 30 },
-  categoryChip: {
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    borderRadius: 30,
-    backgroundColor: "#FFF",
-    marginRight: 15,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-  },
-  activeCategory: { backgroundColor: "#FF4757" }, // Rosa forte
-  categoryText: { color: "#747D8C", fontWeight: "800", fontSize: 15 },
-  activeCategoryText: { color: "#FFF" },
-
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 18,
-    marginTop: 10,
-  },
-  sectionTitle: { fontSize: 22, fontWeight: "900", color: "#2F3542" },
-  viewAll: { color: "#1E90FF", fontSize: 16, fontWeight: "bold" },
-
-  interestsRow: { flexDirection: "row", justifyContent: "space-between" },
-  interestCard: {
-    width: (width - 60) / 3,
-    borderRadius: 25,
-    padding: 12,
-    alignItems: "center",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-  },
-  interestImage: {
-    width: "100%",
-    height: 70,
-    borderRadius: 18,
-    marginBottom: 10,
-  },
-  interestText: { fontWeight: "900", fontSize: 14, color: "#2F3542" },
-
-  popularCard: {
-    backgroundColor: "#FFF",
-    borderRadius: 25,
-    padding: 18,
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 18,
-    elevation: 4,
-    shadowColor: "#1E90FF",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-  },
-  popularThumb: { width: 65, height: 65, borderRadius: 20 },
-  popularTitle: { fontWeight: "900", color: "#2F3542", fontSize: 17 },
-  popularSub: {
-    fontSize: 13,
-    color: "#A4B0BE",
-    marginTop: 4,
-    fontWeight: "500",
-  },
-  tag: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 15 },
-  tagText: {
-    color: "#FFF",
-    fontSize: 12,
-    fontWeight: "900",
-    textTransform: "uppercase",
-  },
-
-  // --- LEARNING PATH STYLES ---
-  learningHeaderContainer: {
-    marginTop: 20,
-    marginBottom: 15,
-  },
-  learningHeaderRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  newBadge: {
-    backgroundColor: "#FF4757",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 15,
-    marginLeft: 10,
-  },
-  newBadgeText: {
-    color: "#FFF",
-    fontWeight: "bold",
-    fontSize: 13,
-  },
-  viewAllRed: {
-    color: "#FF4757",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  learningSubText: {
-    color: "#A4B0BE",
-    fontSize: 14,
+    marginBottom: 24,
     marginTop: 8,
-    fontWeight: "500",
   },
-  learningGrid: {
+  greetSub: { fontSize: 14, color: "#888", fontWeight: "600", marginTop: 4 },
+  avatar: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: "#FFD93D",
+    borderWidth: 4,
+    borderColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#FF9500",
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+
+  navRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 24,
+  },
+  navBtn: {
+    width: (width - 56) / 4,
+    height: 64,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+  },
+  navEmoji: { fontSize: 24 },
+
+  banner: {
+    height: 165,
+    borderRadius: 28,
+    backgroundColor: "#6C5CE7",
+    marginBottom: 24,
+    overflow: "hidden",
+    justifyContent: "center",
+  },
+  bannerContent: { padding: 22, zIndex: 1 },
+  bannerCta: {
+    alignSelf: "flex-start",
+    backgroundColor: "#FFD93D",
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+    borderRadius: 50,
+    shadowColor: "#FFD93D",
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  bannerPlanet: {
+    position: "absolute",
+    bottom: -12,
+    right: 18,
+    fontSize: 80,
+    opacity: 0.35,
+    transform: [{ rotate: "-10deg" }],
+  },
+  bannerStars: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    fontSize: 28,
+    opacity: 0.25,
+  },
+
+  chipsRow: { paddingBottom: 24, gap: 10 },
+  chip: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 50,
+    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#EDEDED",
+  },
+  chipActive: { backgroundColor: "#FF5B8D", borderColor: "#FF5B8D" },
+  chipText: { fontSize: 14, fontWeight: "800", color: "#999" },
+  chipTextActive: { color: "#fff" },
+
+  secHdr: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 14,
+    marginTop: 4,
+  },
+  secTitle: { fontSize: 20, fontWeight: "900", color: "#2D2D2D" },
+  secLink: { fontSize: 13, fontWeight: "800" },
+  newBadge: {
+    backgroundColor: "#FF5B8D",
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginLeft: 8,
+  },
+  newBadgeText: { color: "#fff", fontSize: 10, fontWeight: "900" },
+
+  interestsRow: { paddingBottom: 28, gap: 12 },
+  intCard: {
+    width: 110,
+    borderRadius: 24,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    alignItems: "center",
+  },
+  intEmoji: { fontSize: 36, marginBottom: 8 },
+
+  learnGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 8,
   },
-  learningCard: {
+  learnCard: {
     width: "48%",
-    backgroundColor: "#FFF",
-    borderRadius: 25,
-    marginBottom: 15,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-  },
-  learningImageContainer: {
-    height: 110,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    borderWidth: 2.5,
+    marginBottom: 14,
     overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  learnImgBox: { height: 100, alignItems: "center", justifyContent: "center" },
+  learnEmoji: { fontSize: 52 },
+  learnBody: { paddingHorizontal: 14, paddingVertical: 12 },
+  learnTitle: { fontSize: 16, fontWeight: "900", color: "#2D2D2D" },
+  progressWrap: {
+    height: 7,
+    backgroundColor: "#F0F0F0",
+    borderRadius: 10,
+    marginTop: 8,
+    overflow: "hidden",
+  },
+  progressFill: { height: 7, borderRadius: 10 },
+  progressLabel: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: "#AAA",
+    marginTop: 4,
+  },
+
+  popCard: {
+    backgroundColor: "#fff",
+    borderRadius: 22,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  popIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },
-  learningImage: {
-    width: "100%",
-    height: "100%",
-  },
-  learningContent: {
-    paddingVertical: 15,
-    alignItems: "center",
-    position: "relative",
-  },
-  learningCardTitle: {
-    fontWeight: "900",
-    color: "#2F3542",
-    fontSize: 16,
-  },
-  learningCardProgress: {
-    fontSize: 14,
-    color: "#A4B0BE",
-    marginTop: 4,
-    fontWeight: "600",
-  },
-  decorativeDot: {
+  popIconEmoji: { fontSize: 34 },
+  popBody: { flex: 1 },
+  popTitle: { fontSize: 16, fontWeight: "900", color: "#2D2D2D" },
+  popSub: { fontSize: 12, fontWeight: "700", color: "#AAA", marginTop: 2 },
+  popTag: { paddingHorizontal: 11, paddingVertical: 5, borderRadius: 12 },
+  popTagText: { fontSize: 11, fontWeight: "900" },
+
+  bottomNav: {
     position: "absolute",
-    right: 15,
-    bottom: 15,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    borderTopWidth: 1.5,
+    borderTopColor: "#F0F0F0",
+    flexDirection: "row",
+    paddingTop: 10,
+    paddingBottom: 24,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 12,
+  },
+  bnBtn: { flex: 1, alignItems: "center", justifyContent: "center", gap: 3 },
+  bnEmoji: { fontSize: 22 },
+  bnInactive: { opacity: 0.35 },
+  bnLabelActive: { color: "#FF5B8D" },
+  bnLabelInactive: { color: "#BBB" },
+  bnCenter: { flex: 1, alignItems: "center", justifyContent: "center" },
+  bnHomeBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "#FF5B8D",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: -18,
+    shadowColor: "#FF5B8D",
+    shadowOpacity: 0.45,
+    shadowRadius: 12,
+    elevation: 8,
   },
 });
