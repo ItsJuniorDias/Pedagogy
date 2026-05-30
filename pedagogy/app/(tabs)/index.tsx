@@ -16,7 +16,6 @@ import {
 const { width } = Dimensions.get("window");
 
 // ─── FONT HELPER ─────────────────────────────────────────────────────────────
-// Usage: <Text style={[s.someStyle, fredoka(20)]}>Hello</Text>
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
   fontSize: size,
@@ -26,21 +25,72 @@ const fredoka = (size: number, color?: string) => ({
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
 const NAV_ICONS = [
-  { emoji: "🚀", label: "Space", bg: "#FFF0F5", color: "#FF5B8D" },
-  { emoji: "🎨", label: "Art", bg: "#FFF7E0", color: "#F5A623" },
-  { emoji: "🧸", label: "Toys", bg: "#E8F8F0", color: "#27AE60" },
-  { emoji: "🦖", label: "Dinos", bg: "#EBF4FF", color: "#3B82F6" },
+  {
+    emoji: "🚀",
+    label: "Space",
+    bg: "#FFF0F5",
+    color: "#FF5B8D",
+    category: "space",
+  },
+  {
+    emoji: "🎨",
+    label: "Art",
+    bg: "#FFF7E0",
+    color: "#F5A623",
+    category: "art",
+  },
+  {
+    emoji: "🧸",
+    label: "Toys",
+    bg: "#E8F8F0",
+    color: "#27AE60",
+    category: "toys",
+  },
+  {
+    emoji: "🦖",
+    label: "Dinos",
+    bg: "#EBF4FF",
+    color: "#3B82F6",
+    category: "dinos",
+  },
 ];
 
-const CHIPS = ["Drawing", "Space", "Animals", "Magic", "Music"];
+// CHIPS alinham com as categorias dos dados
+const CHIPS = ["All", "Drawing", "Space", "Animals", "Magic", "Music"];
 
+// Cada favorito tem uma categoria para filtrar
 const INTERESTS = [
-  { emoji: "🌿", label: "Explore", bg: "#FFF0F8", color: "#D63384" },
-  { emoji: "🐶", label: "Pets", bg: "#FFF7E0", color: "#B45309" },
-  { emoji: "🌍", label: "Space", bg: "#EBF4FF", color: "#1D4ED8" },
-  { emoji: "🔬", label: "Science", bg: "#E8F8F0", color: "#15803D" },
+  {
+    emoji: "🌿",
+    label: "Explore",
+    bg: "#FFF0F8",
+    color: "#D63384",
+    category: "all",
+  },
+  {
+    emoji: "🐶",
+    label: "Pets",
+    bg: "#FFF7E0",
+    color: "#B45309",
+    category: "animals",
+  },
+  {
+    emoji: "🌍",
+    label: "Space",
+    bg: "#EBF4FF",
+    color: "#1D4ED8",
+    category: "space",
+  },
+  {
+    emoji: "🔬",
+    label: "Science",
+    bg: "#E8F8F0",
+    color: "#15803D",
+    category: "science",
+  },
 ];
 
+// Cada card tem category para filtro via chips
 const LEARNING_PATHS = [
   {
     id: 1,
@@ -51,6 +101,7 @@ const LEARNING_PATHS = [
     cardBorder: "#FFD93D",
     imgBg: "#FFFBEB",
     barColor: "#FFD93D",
+    category: "drawing",
   },
   {
     id: 2,
@@ -61,6 +112,7 @@ const LEARNING_PATHS = [
     cardBorder: "#A0E7A0",
     imgBg: "#F0FFF0",
     barColor: "#52C878",
+    category: "all",
   },
   {
     id: 3,
@@ -71,6 +123,7 @@ const LEARNING_PATHS = [
     cardBorder: "#FFA07A",
     imgBg: "#FFF5F0",
     barColor: "#FF7043",
+    category: "space",
   },
   {
     id: 4,
@@ -81,9 +134,11 @@ const LEARNING_PATHS = [
     cardBorder: "#B0C4FF",
     imgBg: "#F0F4FF",
     barColor: "#5C7CFF",
+    category: "space",
   },
 ];
 
+// Props completas incluindo tagBg, tagColor e iconBg (correção do bug)
 const GAMES = [
   {
     id: "pixel-run",
@@ -91,13 +146,12 @@ const GAMES = [
     sub: "Endless runner in space!",
     tagLabel: "Hot 🔥",
     tagVariant: "amber",
+    tagBg: "#FEF3C7",
+    tagColor: "#92400E",
+    iconBg: "#FFF7E0",
     canvasBg: "#FFFBEB",
     emoji: "👾",
-    blockColors: [
-      { face: "#8B5CF6", top: "#A78BFA" },
-      { face: "#3B82F6", top: "#60A5FA" },
-      { face: "#2563EB", top: "#3B82F6" },
-    ],
+    category: "space",
   },
   {
     id: "gravity",
@@ -105,23 +159,30 @@ const GAMES = [
     sub: "Classic gravity game!",
     tagLabel: "New ✨",
     tagVariant: "emerald",
+    tagBg: "#D1FAE5",
+    tagColor: "#065F46",
+    iconBg: "#ECFDF5",
     canvasBg: "#ECFDF5",
     emoji: "🧲",
+    category: "science",
   },
 ];
 
 // ─── SUB-COMPONENTS ──────────────────────────────────────────────────────────
 
+// onLinkPress agora é prop real com callback
 const SectionHeader = ({
   title,
   badge,
   linkLabel = "See all",
   linkColor = "#6C5CE7",
+  onLinkPress,
 }: {
   title: string;
   badge?: string;
   linkLabel?: string;
   linkColor?: string;
+  onLinkPress?: () => void;
 }) => (
   <View style={s.secHdr}>
     <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -132,7 +193,7 @@ const SectionHeader = ({
         </View>
       )}
     </View>
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onLinkPress} activeOpacity={0.7}>
       <Text style={[s.secLink, { color: linkColor }]}>{linkLabel}</Text>
     </TouchableOpacity>
   </View>
@@ -149,7 +210,6 @@ const LearningCard = ({
 }: (typeof LEARNING_PATHS)[0]) => {
   const pct = (progress / total) * 100;
   const done = progress === total;
-
   const router = useRouter();
 
   return (
@@ -184,6 +244,7 @@ const LearningCard = ({
   );
 };
 
+// Todas as props agora usadas corretamente (tagBg, tagColor, iconBg)
 const PopularCard = ({
   emoji,
   title,
@@ -193,14 +254,14 @@ const PopularCard = ({
   tagColor,
   iconBg,
 }: (typeof GAMES)[0]) => {
-  const route = useRouter();
+  const router = useRouter();
 
   return (
     <TouchableOpacity
       style={s.popCard}
       activeOpacity={0.85}
       onPress={() =>
-        route.push({
+        router.push({
           pathname: title === "Pixel Run" ? "/(pixel-run)" : "/(gravity)",
         })
       }
@@ -224,9 +285,23 @@ const PopularCard = ({
 export default function HomeScreen() {
   const [activeChip, setActiveChip] = useState(0);
   const [activeNav, setActiveNav] = useState(0);
+  const router = useRouter();
 
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   if (!fontsLoaded) return <AppLoading />;
+
+  // Filtro pelo chip ativo — "All" (índice 0) mostra tudo
+  const selectedCategory = CHIPS[activeChip].toLowerCase();
+
+  const filteredPaths =
+    activeChip === 0
+      ? LEARNING_PATHS
+      : LEARNING_PATHS.filter((p) => p.category === selectedCategory);
+
+  const filteredGames =
+    activeChip === 0
+      ? GAMES
+      : GAMES.filter((g) => g.category === selectedCategory);
 
   return (
     <View style={s.container}>
@@ -249,18 +324,29 @@ export default function HomeScreen() {
             </Text>
             <Text style={s.greetSub}>Let's learn something cool today ✨</Text>
           </View>
-          <View style={s.avatar}>
+          {/* Avatar abre perfil */}
+          <TouchableOpacity
+            style={s.avatar}
+            activeOpacity={0.8}
+            onPress={() => router.push("/(profile)")}
+          >
             <Text style={{ fontSize: 30 }}>🐻</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
-        {/* ── NAV ICON ROW ── */}
+        {/* ── NAV ICON ROW ── navega para tela de categoria */}
         <View style={s.navRow}>
           {NAV_ICONS.map((item, i) => (
             <TouchableOpacity
               key={i}
               style={[s.navBtn, { backgroundColor: item.bg }]}
               activeOpacity={0.8}
+              onPress={() =>
+                router.push({
+                  pathname: "/(category)",
+                  params: { type: item.category, label: item.label },
+                })
+              }
             >
               <Text style={s.navEmoji}>{item.emoji}</Text>
               <Text style={[fredoka(11, item.color)]}>{item.label}</Text>
@@ -279,7 +365,12 @@ export default function HomeScreen() {
             >
               {"Magic World\nof Stories"}
             </Text>
-            <TouchableOpacity style={s.bannerCta} activeOpacity={0.85}>
+            {/* Botão abre tela de stories/exploração */}
+            <TouchableOpacity
+              style={s.bannerCta}
+              activeOpacity={0.85}
+              onPress={() => router.push("/(stories)")}
+            >
               <Text style={[fredoka(15, "#5A3E00")]}>🔍 Explore Now!</Text>
             </TouchableOpacity>
           </View>
@@ -287,7 +378,7 @@ export default function HomeScreen() {
           <Text style={s.bannerStars}>⭐🌟✨</Text>
         </View>
 
-        {/* ── CATEGORY CHIPS ── */}
+        {/* ── CATEGORY CHIPS — agora filtram o conteúdo abaixo ── */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -308,7 +399,15 @@ export default function HomeScreen() {
         </ScrollView>
 
         {/* ── YOUR FAVORITES ── */}
-        <SectionHeader title="Your Favorites 🌟" />
+        <SectionHeader
+          title="Your Favorites 🌟"
+          onLinkPress={() =>
+            router.push({
+              pathname: "/(category)",
+              params: { type: "all", label: "Favorites" },
+            })
+          }
+        />
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -319,6 +418,12 @@ export default function HomeScreen() {
               key={i}
               style={[s.intCard, { backgroundColor: item.bg }]}
               activeOpacity={0.8}
+              onPress={() =>
+                router.push({
+                  pathname: "/(category)",
+                  params: { type: item.category, label: item.label },
+                })
+              }
             >
               <Text style={s.intEmoji}>{item.emoji}</Text>
               <Text style={[fredoka(13, item.color)]}>{item.label}</Text>
@@ -332,18 +437,30 @@ export default function HomeScreen() {
           badge="New"
           linkLabel="View all"
           linkColor="#FF5B8D"
+          onLinkPress={() => router.push("/(learning-all)")}
         />
         <View style={s.learnGrid}>
-          {LEARNING_PATHS.map((item) => (
-            <LearningCard key={item.id} {...item} />
-          ))}
+          {filteredPaths.length === 0 ? (
+            <Text style={s.emptyMsg}>No paths for this category yet 🌱</Text>
+          ) : (
+            filteredPaths.map((item) => (
+              <LearningCard key={item.id} {...item} />
+            ))
+          )}
         </View>
 
         {/* ── GAMES ── */}
-        <SectionHeader title="Games 🎮" />
-        {GAMES.map((item, i) => (
-          <PopularCard key={i} {...item} />
-        ))}
+        <SectionHeader
+          title="Games 🎮"
+          onLinkPress={() => router.push("/(games-all)")}
+        />
+        {filteredGames.length === 0 ? (
+          <Text style={[s.emptyMsg, { marginBottom: 16 }]}>
+            No games for this category yet 🎯
+          </Text>
+        ) : (
+          filteredGames.map((item, i) => <PopularCard key={i} {...item} />)
+        )}
       </ScrollView>
     </View>
   );
@@ -357,7 +474,7 @@ const s = StyleSheet.create({
     backgroundColor: "#FFF9F0",
     paddingTop: StatusBar.currentHeight ?? 44,
   },
-  scroll: { paddingHorizontal: 20, paddingBottom: 100 },
+  scroll: { paddingHorizontal: 20, paddingBottom: 120 },
 
   blob: { position: "absolute", borderRadius: 999 },
   blob1: {
@@ -561,6 +678,16 @@ const s = StyleSheet.create({
   popTag: { paddingHorizontal: 11, paddingVertical: 5, borderRadius: 12 },
   popTagText: { fontSize: 11, fontWeight: "900" },
 
+  emptyMsg: {
+    width: "100%",
+    textAlign: "center",
+    fontSize: 14,
+    color: "#BBB",
+    fontWeight: "700",
+    marginVertical: 12,
+  },
+
+  // ─── BOTTOM NAV ───────────────────────────────────────────────────────────
   bottomNav: {
     position: "absolute",
     bottom: 0,
@@ -580,8 +707,6 @@ const s = StyleSheet.create({
   bnBtn: { flex: 1, alignItems: "center", justifyContent: "center", gap: 3 },
   bnEmoji: { fontSize: 22 },
   bnInactive: { opacity: 0.35 },
-  bnLabelActive: { color: "#FF5B8D" },
-  bnLabelInactive: { color: "#BBB" },
   bnCenter: { flex: 1, alignItems: "center", justifyContent: "center" },
   bnHomeBtn: {
     width: 52,

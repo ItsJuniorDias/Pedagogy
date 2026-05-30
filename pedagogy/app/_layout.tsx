@@ -49,6 +49,27 @@ export default function RootLayout() {
         <Stack.Screen name="(paywall)/index" options={{ headerShown: false }} />
 
         <Stack.Screen
+          name="(category)/index"
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen name="(stories)/index" options={{ headerShown: false }} />
+
+        <Stack.Screen name="(search)/index" options={{ headerShown: false }} />
+
+        <Stack.Screen name="(profile)/index" options={{ headerShown: false }} />
+
+        <Stack.Screen
+          name="(learning-all)/index"
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="(games-all)/index"
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
           name="(pixel-run)/index"
           options={{ headerShown: false }}
         />

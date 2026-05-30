@@ -347,7 +347,7 @@ export default function PaywallScreen() {
               { textAlign: "center", lineHeight: 36 },
             ]}
           >
-            {"Unlock\nstories! 🚀"}
+            Unlock a world of stories for your child
           </Text>
           <Text style={s.heroSub}>
             Over 50 adventures waiting for your little reader
@@ -361,13 +361,9 @@ export default function PaywallScreen() {
               <View style={s.featureCheck}>
                 <Text style={{ fontSize: 14 }}>✅</Text>
               </View>
+
               <Text
-                style={{
-                  fontSize: 15,
-                  color: "#3D3D3D",
-                  fontWeight: "600",
-                  flex: 1,
-                }}
+                style={[fredoka(15, "#3D3D3D"), { fontWeight: "600", flex: 1 }]}
               >
                 <Text style={{ fontSize: 16 }}>{f.emoji} </Text>
                 {f.text}
