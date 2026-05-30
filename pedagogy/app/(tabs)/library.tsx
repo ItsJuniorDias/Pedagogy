@@ -502,7 +502,7 @@ const POPULAR_BOOKS = [
     Illustration: BookIllustration3,
   },
   {
-    title: "Struk ball",
+    title: "Struck ball",
     author: "Sray Bhar",
     rating: "5.4",
     bg: "#C8FFD4",
@@ -606,12 +606,13 @@ const PopularCard = ({
   Illustration,
 }: (typeof POPULAR_BOOKS)[0]) => {
   const router = useRouter();
+
   return (
     <BouncyCard
       onPress={() =>
         router.push({
           pathname: "/(details)",
-          params: { title, author, rating },
+          params: { storyId: title.toLowerCase().replace(/\s/g, "") },
         })
       }
       style={[s.popCard, { backgroundColor: bg }]}

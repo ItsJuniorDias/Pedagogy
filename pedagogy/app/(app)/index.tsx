@@ -2,17 +2,63 @@ import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
+  Dimensions,
+  FlatList,
   Image,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ViewToken,
 } from "react-native";
 
-import illustration from "../../assets/images/background-onboarding.png";
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+// ─── Slide data ───────────────────────────────────────────────────────────────
+
+type Slide = {
+  id: string;
+  badge: string;
+  title: string;
+  description: string;
+  image: ReturnType<typeof require>;
+  buttonLabel: string;
+};
+
+const SLIDES: Slide[] = [
+  {
+    id: "1",
+    badge: "Welcome to Pedagogy",
+    title: "Stories that teach\nand delight",
+    description:
+      "Pedagogy is a children's story app with educational content, designed to develop kids aged 2–10 in a playful and engaging way.",
+    image: require("../../assets/images/background-onboarding.png"),
+    buttonLabel: "Next",
+  },
+  {
+    id: "2",
+    badge: "Infinite library",
+    title: "Hundreds of stories\nto explore",
+    description:
+      "Fables, adventures, science and more. New content every month, with audio narration and colourful illustrations.",
+    image: require("../../assets/images/background-onboarding.png"),
+    buttonLabel: "Next",
+  },
+  {
+    id: "3",
+    badge: "Real learning",
+    title: "Track your child's\nprogress",
+    description:
+      "Quizzes, achievements and reading reports for parents. Teaching has never been this fun and easy to follow.",
+    image: require("../../assets/images/background-onboarding.png"),
+    buttonLabel: "Let's go 👍",
+  },
+];
+
+// ─── Dot indicator ────────────────────────────────────────────────────────────
 
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
@@ -20,65 +66,123 @@ const fredoka = (size: number, color?: string) => ({
   ...(color ? { color } : {}),
 });
 
-export default function AppScreen() {
-  const router = useRouter();
-
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
-
-  const handleButtonPress = () => {
-    router.push("/(tabs)");
-  };
-
+function Dots({ total, activeIndex }: { total: number; activeIndex: number }) {
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Blobs decorativos */}
-      <View style={[styles.blob, styles.blob1]} />
-      <View style={[styles.blob, styles.blob2]} />
+    <View style={styles.dots}>
+      {Array.from({ length: total }).map((_, i) => (
+        <View
+          key={i}
+          style={[styles.dot, i === activeIndex && styles.dotActive]}
+        />
+      ))}
+    </View>
+  );
+}
 
-      {/* Ilustração */}
+// ─── Single slide ─────────────────────────────────────────────────────────────
+
+function SlideItem({ item }: { item: Slide }) {
+  return (
+    <View style={styles.slideItem}>
       <View style={styles.imageContainer}>
         <Image
-          source={illustration}
+          source={item.image}
           style={styles.illustration}
           resizeMode="contain"
         />
       </View>
 
-      {/* Texto */}
       <View style={styles.textSection}>
-        <Text style={fredoka(34, "#2D2D2D")}>
-          {"Innovative learning\nmodern learner"}
-        </Text>
-
-        <Text style={styles.description}>
-          It is a long established fact that a reader will be distracted by the
-          readable content of a page when looking at its layout.
-        </Text>
-
-        {/* Dots indicadores */}
-        <View style={styles.dots}>
-          <View style={[styles.dot, styles.dotActive]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{item.badge}</Text>
         </View>
-      </View>
 
-      {/* Botão */}
-      <View style={styles.btnArea}>
-        {/* Sombra 3D */}
-        <View style={styles.btnShadow} />
-        <TouchableOpacity
-          onPress={handleButtonPress}
-          style={styles.btn}
-          activeOpacity={0.85}
-        >
-          <Text style={fredoka(20, "#fff")}>Let's go 👍</Text>
-        </TouchableOpacity>
+        <Text style={fredoka(30, "#2D2D2D")}>{item.title}</Text>
+
+        <Text style={styles.description}>{item.description}</Text>
+      </View>
+    </View>
+  );
+}
+
+// ─── Screen ───────────────────────────────────────────────────────────────────
+
+export default function AppScreen() {
+  const router = useRouter();
+  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const flatListRef = useRef<FlatList<Slide>>(null);
+
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      if (viewableItems.length > 0 && viewableItems[0].index !== null) {
+        setActiveIndex(viewableItems[0].index);
+      }
+    },
+  ).current;
+
+  const viewabilityConfig = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  }).current;
+
+  if (!fontsLoaded) return <AppLoading />;
+
+  const isLastSlide = activeIndex === SLIDES.length - 1;
+
+  const handleButtonPress = () => {
+    if (isLastSlide) {
+      router.push("/(tabs)");
+    } else {
+      flatListRef.current?.scrollToIndex({
+        index: activeIndex + 1,
+        animated: true,
+      });
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Decorative blobs */}
+      <View style={[styles.blob, styles.blob1]} />
+      <View style={[styles.blob, styles.blob2]} />
+
+      {/* Carousel */}
+      <FlatList
+        ref={flatListRef}
+        data={SLIDES}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <SlideItem item={item} />}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        style={styles.flatList}
+      />
+
+      {/* Dots + Button pinned at bottom */}
+      <View style={styles.bottomArea}>
+        <Dots total={SLIDES.length} activeIndex={activeIndex} />
+
+        <View style={styles.btnArea}>
+          <View style={styles.btnShadow} />
+          <TouchableOpacity
+            onPress={handleButtonPress}
+            style={styles.btn}
+            activeOpacity={0.85}
+          >
+            <Text style={fredoka(20, "#fff")}>
+              {isLastSlide ? "Let's go 👍" : "Next"}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
 }
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   container: {
@@ -89,6 +193,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
 
+  // Blobs
   blob: { position: "absolute", borderRadius: 999 },
   blob1: {
     width: 220,
@@ -105,6 +210,20 @@ const styles = StyleSheet.create({
     left: -50,
   },
 
+  // Carousel
+  flatList: {
+    flex: 1,
+    width: SCREEN_WIDTH,
+  },
+  slideItem: {
+    width: SCREEN_WIDTH,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 8,
+  },
+
+  // Illustration
   imageContainer: {
     flex: 2,
     justifyContent: "center",
@@ -116,11 +235,23 @@ const styles = StyleSheet.create({
     height: "85%",
   },
 
+  // Text
   textSection: {
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 32,
-    gap: 14,
+    gap: 12,
+  },
+  badge: {
+    backgroundColor: "#FFE8F0",
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 5,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#FF5B8D",
   },
   description: {
     fontSize: 15,
@@ -130,13 +261,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  dots: { flexDirection: "row", gap: 8, marginTop: 4 },
+  // Bottom area
+  bottomArea: {
+    width: "100%",
+    alignItems: "center",
+    gap: 20,
+    paddingHorizontal: 24,
+  },
+  dots: { flexDirection: "row", gap: 8 },
   dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E0E0E0" },
   dotActive: { width: 24, backgroundColor: "#FF5B8D" },
 
+  // Button
   btnArea: {
     width: "85%",
-    marginBottom: 20,
     position: "relative",
   },
   btnShadow: {

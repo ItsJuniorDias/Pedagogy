@@ -37,26 +37,14 @@ const PLANS = [
   {
     id: "annual",
     label: "Annual",
-    price: "$ 7.90",
+    price: "$ 143.04",
     period: "/year",
     tag: "🏆 Most popular",
     tagBg: "#FF5B8D",
-    sub: "Billed $ 94.90/year (save 47%)",
+    sub: "Billed $ 143.04/year (save 20%)",
     bg: "#FFF0F5",
     border: "#FF5B8D",
     highlight: true,
-  },
-  {
-    id: "family",
-    label: "Family",
-    price: "$ 19.90",
-    period: "/month",
-    tag: "👨‍👩‍👧 Up to 5 profiles",
-    tagBg: "#6C5CE7",
-    sub: "Billed $ 238.80/year",
-    bg: "#F5F0FF",
-    border: "#6C5CE7",
-    highlight: false,
   },
 ];
 
