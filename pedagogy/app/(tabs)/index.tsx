@@ -99,6 +99,15 @@ const GAMES = [
       { face: "#2563EB", top: "#3B82F6" },
     ],
   },
+  {
+    id: "gravity",
+    title: "Gravity Game",
+    sub: "Classic gravity game!",
+    tagLabel: "New ✨",
+    tagVariant: "emerald",
+    canvasBg: "#ECFDF5",
+    emoji: "🧲",
+  },
 ];
 
 // ─── SUB-COMPONENTS ──────────────────────────────────────────────────────────
@@ -192,7 +201,7 @@ const PopularCard = ({
       activeOpacity={0.85}
       onPress={() =>
         route.push({
-          pathname: "/(pixel-run)",
+          pathname: title === "Pixel Run" ? "/(pixel-run)" : "/(gravity)",
         })
       }
     >

@@ -40,6 +40,8 @@ export default function RootLayout() {
           name="(pixel-run)/index"
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen name="(gravity)/index" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
