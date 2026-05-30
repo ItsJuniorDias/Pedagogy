@@ -3,6 +3,9 @@ import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import {
   Animated,
   Dimensions,
@@ -466,8 +469,10 @@ export default function ReadStoryScreen() {
   const isLastPage = currentPage === pages.length - 1;
   const nextChapter = chapters[activeChapter + 1];
 
-  const switchChapter = (idx: number) => {
-    if (chapters[idx].locked) {
+  const switchChapter = async (idx: number) => {
+    const status = await AsyncStorage.getItem("@subscription_status");
+
+    if (chapters[idx].locked && status !== "active") {
       router.push("/(paywall)");
       return;
     }

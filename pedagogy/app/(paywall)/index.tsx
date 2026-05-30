@@ -1,9 +1,10 @@
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   Animated,
   Dimensions,
   Pressable,
@@ -14,6 +15,14 @@ import {
   View,
 } from "react-native";
 
+import {
+  PurchasesPackage as Package,
+  PACKAGE_TYPE,
+} from "react-native-purchases";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { usePurchases } from "../../hooks/usePurchases";
+
 const { width } = Dimensions.get("window");
 
 const fredoka = (size: number, color?: string) => ({
@@ -22,31 +31,52 @@ const fredoka = (size: number, color?: string) => ({
   ...(color ? { color } : {}),
 });
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
-const PLANS = [
-  {
-    id: "monthly",
-    label: "Monthly",
-    price: "$ 14.90",
-    period: "/month",
-    tag: null,
-    bg: "#fff",
-    border: "#E0E0E0",
-    highlight: false,
-  },
-  {
-    id: "annual",
-    label: "Annual",
-    price: "$ 143.00",
-    period: "/year",
-    tag: "🏆 Most popular",
-    tagBg: "#FF5B8D",
-    sub: "Billed $ 143.00/year (save 20%)",
-    bg: "#FFF0F5",
-    border: "#FF5B8D",
-    highlight: true,
-  },
-];
+// ─── Helpers para mapear Package → dados visuais ───────────────────────────────
+
+/**
+ * Extrai o label amigável a partir do packageType ou identifier do RevenueCat.
+ */
+function getPackageLabel(pkg: Package): string {
+  switch (pkg.packageType) {
+    case PACKAGE_TYPE.ANNUAL:
+      return "Annual";
+    case PACKAGE_TYPE.SIX_MONTH:
+      return "6 Months";
+    case PACKAGE_TYPE.THREE_MONTH:
+      return "3 Months";
+    case PACKAGE_TYPE.TWO_MONTH:
+      return "2 Months";
+    case PACKAGE_TYPE.MONTHLY:
+      return "Monthly";
+    case PACKAGE_TYPE.WEEKLY:
+      return "Weekly";
+    default:
+      return pkg.identifier;
+  }
+}
+
+function getPackagePeriod(pkg: Package): string {
+  switch (pkg.packageType) {
+    case PACKAGE_TYPE.ANNUAL:
+      return "/year";
+    case PACKAGE_TYPE.SIX_MONTH:
+      return "/6 mo";
+    case PACKAGE_TYPE.THREE_MONTH:
+      return "/3 mo";
+    case PACKAGE_TYPE.MONTHLY:
+      return "/month";
+    case PACKAGE_TYPE.WEEKLY:
+      return "/week";
+    default:
+      return "";
+  }
+}
+
+function isHighlightedPackage(pkg: Package): boolean {
+  return pkg.packageType === PACKAGE_TYPE.ANNUAL;
+}
+
+// ─── Static data ──────────────────────────────────────────────────────────────
 
 const FEATURES = [
   { emoji: "📚", text: "Access to over 50 stories" },
@@ -71,20 +101,16 @@ const REVIEWS = [
   },
 ];
 
-// ─── BOUNCY BUTTON ────────────────────────────────────────────────────────────
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
 const BouncyButton = ({
   label,
   subLabel,
   bg,
   shadowBg,
   onPress,
-}: {
-  label: string;
-  subLabel?: string;
-  bg: string;
-  shadowBg: string;
-  onPress: () => void;
-}) => {
+  isLoading,
+}: any) => {
   const scale = useRef(new Animated.Value(1)).current;
   const animIn = () =>
     Animated.spring(scale, { toValue: 0.96, useNativeDriver: true }).start();
@@ -97,22 +123,38 @@ const BouncyButton = ({
     }).start();
 
   return (
-    <Pressable onPressIn={animIn} onPressOut={animOut} onPress={onPress}>
+    <Pressable
+      onPressIn={animIn}
+      onPressOut={animOut}
+      onPress={onPress}
+      disabled={isLoading}
+    >
       <Animated.View style={{ transform: [{ scale }] }}>
         <View style={[s.cta3dShadow, { backgroundColor: shadowBg }]} />
-        <View style={[s.ctaBtn, { backgroundColor: bg }]}>
-          <Text style={fredoka(20, "#fff")}>{label}</Text>
-          {subLabel && (
-            <Text
-              style={{
-                color: "rgba(255,255,255,0.8)",
-                fontSize: 13,
-                fontWeight: "700",
-                marginTop: 2,
-              }}
-            >
-              {subLabel}
-            </Text>
+        <View
+          style={[
+            s.ctaBtn,
+            { backgroundColor: bg, opacity: isLoading ? 0.7 : 1 },
+          ]}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Text style={fredoka(20, "#fff")}>{label}</Text>
+              {subLabel && (
+                <Text
+                  style={{
+                    color: "rgba(255,255,255,0.8)",
+                    fontSize: 13,
+                    fontWeight: "700",
+                    marginTop: 2,
+                  }}
+                >
+                  {subLabel}
+                </Text>
+              )}
+            </>
           )}
         </View>
       </Animated.View>
@@ -120,66 +162,96 @@ const BouncyButton = ({
   );
 };
 
-// ─── PLAN CARD ────────────────────────────────────────────────────────────────
-const PlanCard = ({
-  plan,
-  selected,
-  onSelect,
-}: {
-  plan: (typeof PLANS)[0];
+interface PlanCardProps {
+  pkg: Package;
   selected: boolean;
   onSelect: () => void;
-}) => (
-  <TouchableOpacity
-    onPress={onSelect}
-    activeOpacity={0.85}
-    style={[
-      s.planCard,
-      {
-        backgroundColor: plan.bg,
-        borderColor: selected ? plan.border : "#E8E8E8",
-      },
-      selected && s.planCardSelected,
-    ]}
-  >
-    {plan.tag && (
-      <View style={[s.planTag, { backgroundColor: (plan as any).tagBg }]}>
-        <Text style={fredoka(11, "#fff")}>{plan.tag}</Text>
-      </View>
-    )}
-    <View style={s.planRow}>
-      <View style={[s.planRadio, selected && { borderColor: plan.border }]}>
-        {selected && (
-          <View style={[s.planRadioFill, { backgroundColor: plan.border }]} />
-        )}
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={fredoka(16, "#2D2D2D")}>{plan.label}</Text>
-        {(plan as any).sub && (
-          <Text style={s.planSub}>{(plan as any).sub}</Text>
-        )}
-      </View>
-      <View style={s.planPriceBox}>
-        <Text style={fredoka(20, plan.highlight ? "#FF5B8D" : "#2D2D2D")}>
-          {plan.price}
-        </Text>
-        <Text style={s.planPeriod}>{plan.period}</Text>
-      </View>
-    </View>
-  </TouchableOpacity>
-);
+}
 
-// ─── MAIN SCREEN ─────────────────────────────────────────────────────────────
+const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
+  const highlight = isHighlightedPackage(pkg);
+  const label = getPackageLabel(pkg);
+  const period = getPackagePeriod(pkg);
+  // Preço formatado vem diretamente da store (já localizado)
+  const price = pkg.product.priceString;
+  // Descrição de introdução (ex: "Save 20%") vinda do RevenueCat Dashboard
+  const introText = pkg.product.introPrice?.priceString
+    ? `Try free for ${pkg.product.introPrice.periodNumberOfUnits} ${pkg.product.introPrice.periodUnit.toLowerCase()}(s)`
+    : null;
+
+  return (
+    <TouchableOpacity
+      onPress={onSelect}
+      activeOpacity={0.85}
+      style={[
+        s.planCard,
+        {
+          backgroundColor: highlight ? "#FFF0F5" : "#fff",
+          borderColor: selected ? "#FF5B8D" : "#E8E8E8",
+        },
+        selected && s.planCardSelected,
+      ]}
+    >
+      {highlight && (
+        <View style={[s.planTag, { backgroundColor: "#FF5B8D" }]}>
+          <Text style={fredoka(11, "#fff")}>🏆 Most popular</Text>
+        </View>
+      )}
+      <View style={s.planRow}>
+        <View style={[s.planRadio, selected && { borderColor: "#FF5B8D" }]}>
+          {selected && (
+            <View style={[s.planRadioFill, { backgroundColor: "#FF5B8D" }]} />
+          )}
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={fredoka(16, "#2D2D2D")}>{label}</Text>
+          {introText && <Text style={s.planSub}>{introText}</Text>}
+        </View>
+        <View style={s.planPriceBox}>
+          <Text style={fredoka(20, highlight ? "#FF5B8D" : "#2D2D2D")}>
+            {price}
+          </Text>
+          <Text style={s.planPeriod}>{period}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+// ─── Main Screen ──────────────────────────────────────────────────────────────
+
 export default function PaywallScreen() {
   const router = useRouter();
-  const [selectedPlan, setSelectedPlan] = useState("annual");
+  const { packages, state, error, isSubscribed, purchase, restore } =
+    usePurchases();
+
+  // Seleciona o plano anual por padrão; cai no primeiro disponível como fallback
+  const defaultPkg =
+    packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL) ??
+    packages[0] ??
+    null;
+  const [selectedPkg, setSelectedPkg] = useState<Package | null>(defaultPkg);
+
+  // Atualiza seleção quando os packages carregam
+  useEffect(() => {
+    if (!selectedPkg && packages.length > 0) {
+      setSelectedPkg(
+        packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL) ??
+          packages[0],
+      );
+    }
+  }, [packages, selectedPkg]);
+
+  // Redireciona se já for assinante
+  useEffect(() => {
+    if (isSubscribed) {
+      router.replace("/home");
+    }
+  }, [isSubscribed, router]);
+
+  // Pulso no botão CTA
   const pulseAnim = useRef(new Animated.Value(1)).current;
-
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
-
-  // Pulse animation on mount for urgency
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -196,7 +268,58 @@ export default function PaywallScreen() {
     ).start();
   }, []);
 
-  const currentPlan = PLANS.find((p) => p.id === selectedPlan)!;
+  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+  if (!fontsLoaded) return null;
+
+  const isProcessing = state === "purchasing" || state === "restoring";
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
+
+  const handleSubscribe = async () => {
+    if (!selectedPkg) return;
+
+    const success = await purchase(selectedPkg);
+
+    await AsyncStorage.setItem(
+      "@subscription_status",
+      success ? "active" : "inactive",
+    );
+
+    if (success) {
+      Alert.alert(
+        "🎉 Subscription Active!",
+        "Your stories are unlocked. Happy reading!",
+        [{ text: "Let's go!", onPress: () => router.back() }],
+      );
+    } else if (state === "error" && error) {
+      Alert.alert("Something went wrong", error);
+    }
+    // state === 'cancelled': nenhuma mensagem — usuário cancelou voluntariamente
+  };
+
+  const handleRestore = async () => {
+    const found = await restore();
+
+    if (found) {
+      Alert.alert(
+        "✅ Purchase Restored",
+        "Your subscription has been restored.",
+        [{ text: "Continue", onPress: () => router.back() }],
+      );
+    } else if (state === "error" && error) {
+      Alert.alert("Restore Failed", error);
+    } else {
+      Alert.alert(
+        "No Active Subscription",
+        "We couldn't find a previous purchase linked to this account.",
+        [{ text: "OK", onPress: () => router.back() }],
+      );
+    }
+  };
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+
+  const currentPkg = selectedPkg;
 
   return (
     <View style={s.root}>
@@ -208,7 +331,7 @@ export default function PaywallScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           style={s.closeBtn}
-          activeOpacity={0.8}
+          disabled={isProcessing}
         >
           <Text style={{ fontSize: 18, color: "#AAA" }}>✕</Text>
         </TouchableOpacity>
@@ -258,16 +381,29 @@ export default function PaywallScreen() {
           <Text style={fredoka(20, "#2D2D2D")}>Choose your plan</Text>
         </View>
 
-        <View style={s.plansCol}>
-          {PLANS.map((plan) => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              selected={selectedPlan === plan.id}
-              onSelect={() => setSelectedPlan(plan.id)}
-            />
-          ))}
-        </View>
+        {state === "loading" ? (
+          <View style={s.loadingPlans}>
+            <ActivityIndicator color="#FF5B8D" size="large" />
+            <Text style={[s.heroSub, { marginTop: 12 }]}>Loading plans...</Text>
+          </View>
+        ) : state === "error" && packages.length === 0 ? (
+          <View style={s.loadingPlans}>
+            <Text style={{ color: "#FF5B8D", textAlign: "center" }}>
+              {error ?? "Failed to load plans. Please try again."}
+            </Text>
+          </View>
+        ) : (
+          <View style={s.plansCol}>
+            {packages.map((pkg) => (
+              <PlanCard
+                key={pkg.identifier}
+                pkg={pkg}
+                selected={selectedPkg?.identifier === pkg.identifier}
+                onSelect={() => !isProcessing && setSelectedPkg(pkg)}
+              />
+            ))}
+          </View>
+        )}
 
         {/* ── URGENCY BANNER ── */}
         <View style={s.urgency}>
@@ -281,13 +417,31 @@ export default function PaywallScreen() {
         <View style={s.ctaWrap}>
           <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
             <BouncyButton
-              label="🎉 Start Free!"
-              subLabel={`Then ${currentPlan.price}${currentPlan.period} · Cancel anytime`}
+              label="🎉 Start Now!"
+              subLabel={
+                currentPkg
+                  ? `Then ${currentPkg.product.priceString}${getPackagePeriod(currentPkg)} · Cancel anytime`
+                  : undefined
+              }
               bg="#FF5B8D"
               shadowBg="#C0305A"
-              onPress={() => console.log("Subscribe:", selectedPlan)}
+              isLoading={state === "purchasing"}
+              onPress={handleSubscribe}
             />
           </Animated.View>
+
+          {/* Restore Purchases */}
+          <TouchableOpacity
+            onPress={handleRestore}
+            disabled={isProcessing}
+            style={s.restoreBtn}
+          >
+            {state === "restoring" ? (
+              <ActivityIndicator color="#AAA" size="small" />
+            ) : (
+              <Text style={s.restoreText}>Restore Purchases</Text>
+            )}
+          </TouchableOpacity>
         </View>
 
         {/* ── REVIEWS ── */}
@@ -313,7 +467,6 @@ export default function PaywallScreen() {
           ))}
         </ScrollView>
 
-        {/* ── FINE PRINT ── */}
         <Text style={s.finePrint}>
           Billing is done automatically. You can cancel at any time in your
           account settings. By subscribing, you agree to our Terms of Use and
@@ -324,11 +477,11 @@ export default function PaywallScreen() {
   );
 }
 
-// ─── STYLES ──────────────────────────────────────────────────────────────────
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#FFF9F0" },
   scroll: { paddingBottom: 60 },
-
   closeBtn: {
     alignSelf: "flex-end",
     margin: 16,
@@ -339,8 +492,6 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
-  // hero
   hero: {
     alignItems: "center",
     paddingHorizontal: 24,
@@ -373,23 +524,6 @@ const s = StyleSheet.create({
     marginTop: 8,
     lineHeight: 22,
   },
-  socialProof: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: 16,
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-  },
-  socialText: { fontSize: 14, color: "#3D3D3D", fontWeight: "600" },
-
-  // features
   featuresCard: {
     backgroundColor: "#fff",
     marginHorizontal: 20,
@@ -411,10 +545,13 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
-  // plans
   sectionHdr: { paddingHorizontal: 20, marginBottom: 14 },
   plansCol: { paddingHorizontal: 20, gap: 10, marginBottom: 16 },
+  loadingPlans: {
+    paddingVertical: 40,
+    alignItems: "center",
+    marginBottom: 16,
+  },
   planCard: {
     borderRadius: 20,
     borderWidth: 2,
@@ -453,8 +590,6 @@ const s = StyleSheet.create({
   planSub: { fontSize: 11, color: "#AAA", fontWeight: "600", marginTop: 2 },
   planPriceBox: { alignItems: "flex-end" },
   planPeriod: { fontSize: 11, color: "#AAA", fontWeight: "700" },
-
-  // urgency
   urgency: {
     flexDirection: "row",
     alignItems: "center",
@@ -467,8 +602,6 @@ const s = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "#FFB8D0",
   },
-
-  // cta
   ctaWrap: { paddingHorizontal: 20, marginBottom: 28 },
   cta3dShadow: {
     position: "absolute",
@@ -484,8 +617,16 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
-  // reviews
+  restoreBtn: {
+    alignItems: "center",
+    paddingVertical: 14,
+  },
+  restoreText: {
+    fontSize: 13,
+    color: "#AAA",
+    fontWeight: "700",
+    textDecorationLine: "underline",
+  },
   reviewsRow: { gap: 14, paddingHorizontal: 20, paddingBottom: 8 },
   reviewCard: {
     width: width * 0.68,
@@ -513,7 +654,6 @@ const s = StyleSheet.create({
     fontWeight: "600",
     lineHeight: 18,
   },
-
   finePrint: {
     fontSize: 11,
     color: "#CCC",

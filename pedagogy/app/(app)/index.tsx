@@ -114,6 +114,14 @@ export default function AppScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList<Slide>>(null);
 
+  // useEffect(() => {
+  //   const removeSubscriptionStatus = async () => {
+  //     await AsyncStorage.removeItem("@subscription_status");
+  //   };
+
+  //   removeSubscriptionStatus();
+  // }, []);
+
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       if (viewableItems.length > 0 && viewableItems[0].index !== null) {

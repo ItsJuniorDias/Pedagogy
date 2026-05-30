@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import {
   DarkTheme,
   DefaultTheme,
@@ -6,6 +8,8 @@ import {
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
+
+import { initializePurchases } from "../service/purchasesService";
 
 import {
   FredokaOne_400Regular,
@@ -22,7 +26,15 @@ export const unstable_settings = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
+  useEffect(() => {
+    // ── Inicializa RevenueCat ──────────────────────────────────────────────
+    //
+    // Para usuário anônimo (sem autenticação):
+    initializePurchases();
+  }, []);
+
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+
   if (!fontsLoaded) return <AppLoading />;
 
   return (

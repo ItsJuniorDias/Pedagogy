@@ -715,7 +715,7 @@ export default function LibraryScreen() {
         {/* ── HEADER ── */}
         <View style={s.header}>
           <Text style={fredoka(26, "#2D2D2D")}>
-            Hi <Text style={fredoka(26, "#FF5B8D")}>Champu</Text> 👋
+            Hi, <Text style={fredoka(26, "#FF5B8D")}>Everyone</Text> 👋
           </Text>
           <Text style={s.headerSub}>Let's learn something new today!</Text>
         </View>

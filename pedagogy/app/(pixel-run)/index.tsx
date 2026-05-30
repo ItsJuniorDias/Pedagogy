@@ -1,3 +1,7 @@
+import {
+  FredokaOne_400Regular,
+  useFonts,
+} from "@expo-google-fonts/fredoka-one";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -36,6 +40,12 @@ const PALETTE = {
   hitFlash: "rgba(255, 60, 60, 0.55)",
 };
 
+const fredoka = (size: number, color?: string) => ({
+  fontFamily: "FredokaOne_400Regular" as const,
+  fontSize: size,
+  ...(color ? { color } : {}),
+});
+
 type ObstacleData = {
   id: number;
   animX: Animated.Value;
@@ -53,6 +63,8 @@ function generateStars(n: number) {
 const STARS = generateStars(60);
 
 export default function GameScreen() {
+  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+
   const [phase, setPhase] = useState<"idle" | "playing" | "dead">("idle");
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
@@ -102,7 +114,6 @@ export default function GameScreen() {
     dead.current = true;
     stopLoops();
 
-    // Flash vermelho na tela
     setShowHit(true);
     setTimeout(() => setShowHit(false), 600);
 
@@ -167,7 +178,6 @@ export default function GameScreen() {
 
     const duration = ((SW + 120) / gameSpeed.current) * 1000;
 
-    // Atualiza posX em cada frame via listener
     animX.addListener(({ value }) => {
       posX.current = value;
     });
@@ -186,7 +196,6 @@ export default function GameScreen() {
   const startGame = useCallback(() => {
     stopLoops();
 
-    // Reset state
     velY.current = 0;
     posY.current = GROUND_Y - PLAYER_SIZE;
     onGround.current = true;
@@ -204,7 +213,6 @@ export default function GameScreen() {
     playerSquish.setValue(1);
     groundX.setValue(0);
 
-    // Ground loop
     const anim = Animated.loop(
       Animated.timing(groundX, {
         toValue: -SW,
@@ -215,7 +223,6 @@ export default function GameScreen() {
     groundAnim.current = anim;
     anim.start();
 
-    // Physics + collision loop
     gameLoop.current = setInterval(() => {
       if (dead.current) return;
       frameCount.current++;
@@ -225,7 +232,6 @@ export default function GameScreen() {
         gameSpeed.current = Math.min(gameSpeed.current + SPEED_INCREMENT, 620);
       }
 
-      // Physics
       velY.current += GRAVITY * dt;
       posY.current += velY.current * dt;
 
@@ -254,7 +260,6 @@ export default function GameScreen() {
       playerY.setValue(posY.current);
       playerRotate.setValue(onGround.current ? 0 : (-velY.current / 1200) * 18);
 
-      // Collision — usa posX.current rastreado pelo listener
       const px1 = PLAYER_LEFT + HIT_MARGIN;
       const px2 = PLAYER_LEFT + PLAYER_SIZE - HIT_MARGIN;
       const py1 = posY.current + HIT_MARGIN;
@@ -273,7 +278,6 @@ export default function GameScreen() {
       }
     }, TICK);
 
-    // Obstacle spawner
     const scheduleNext = () => {
       if (dead.current) return;
       const delay = 1200 + Math.random() * 800;
@@ -284,7 +288,6 @@ export default function GameScreen() {
     };
     scheduleNext();
 
-    // Score counter
     scoreLoop.current = setInterval(() => {
       if (!dead.current) setScore((s) => s + 1);
     }, 100);
@@ -309,6 +312,8 @@ export default function GameScreen() {
     inputRange: [-18, 18],
     outputRange: ["-18deg", "18deg"],
   });
+
+  if (!fontsLoaded) return null;
 
   return (
     <TouchableWithoutFeedback onPress={handleTap}>
@@ -336,10 +341,24 @@ export default function GameScreen() {
 
         {/* Score */}
         <View style={styles.scoreRow}>
-          <Text style={styles.scoreLabel}>SCORE</Text>
-          <Text style={styles.scoreVal}>{String(score).padStart(5, "0")}</Text>
-          <Text style={[styles.scoreLabel, { marginLeft: 24 }]}>BEST</Text>
-          <Text style={styles.scoreVal}>{String(best).padStart(5, "0")}</Text>
+          <Text style={[styles.scoreLabel, fredoka(11, PALETTE.score)]}>
+            SCORE
+          </Text>
+          <Text style={[styles.scoreVal, fredoka(22, PALETTE.score)]}>
+            {String(score).padStart(5, "0")}
+          </Text>
+          <Text
+            style={[
+              styles.scoreLabel,
+              fredoka(11, PALETTE.score),
+              { marginLeft: 24 },
+            ]}
+          >
+            BEST
+          </Text>
+          <Text style={[styles.scoreVal, fredoka(22, PALETTE.score)]}>
+            {String(best).padStart(5, "0")}
+          </Text>
         </View>
 
         {/* Obstacles */}
@@ -412,18 +431,38 @@ export default function GameScreen() {
             <View style={styles.overlayCard}>
               {phase === "idle" ? (
                 <>
-                  <Text style={styles.overlayTitle}>PIXEL RUN</Text>
-                  <Text style={styles.overlayHint}>press to start</Text>
+                  <Text
+                    style={[styles.overlayTitle, fredoka(32, PALETTE.player)]}
+                  >
+                    PIXEL RUN
+                  </Text>
+                  <Text
+                    style={[
+                      styles.overlayHint,
+                      fredoka(13, "rgba(255,255,255,0.4)"),
+                    ]}
+                  >
+                    press to start
+                  </Text>
                 </>
               ) : (
                 <>
                   <Text
-                    style={[styles.overlayTitle, { color: PALETTE.obstacle }]}
+                    style={[styles.overlayTitle, fredoka(32, PALETTE.obstacle)]}
                   >
                     GAME OVER
                   </Text>
-                  <Text style={styles.overlayScore}>{score} pts</Text>
-                  <Text style={styles.overlayHint}>press to play again</Text>
+                  <Text style={[styles.overlayScore, fredoka(20, "#FFF")]}>
+                    {score} pts
+                  </Text>
+                  <Text
+                    style={[
+                      styles.overlayHint,
+                      fredoka(13, "rgba(255,255,255,0.4)"),
+                    ]}
+                  >
+                    press to play again
+                  </Text>
                 </>
               )}
             </View>
@@ -445,17 +484,11 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   scoreLabel: {
-    fontFamily: "monospace",
-    fontSize: 11,
-    color: PALETTE.score,
     opacity: 0.6,
     letterSpacing: 2,
   },
   scoreVal: {
-    fontFamily: "monospace",
-    fontSize: 22,
     fontWeight: "700",
-    color: PALETTE.score,
     letterSpacing: 3,
   },
   player: {
@@ -587,22 +620,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   overlayTitle: {
-    fontFamily: "monospace",
-    fontSize: 32,
-    fontWeight: "700",
-    color: PALETTE.player,
     letterSpacing: 6,
   },
   overlayScore: {
-    fontFamily: "monospace",
-    fontSize: 20,
-    color: "#FFF",
     letterSpacing: 2,
   },
   overlayHint: {
-    fontFamily: "monospace",
-    fontSize: 13,
-    color: "rgba(255,255,255,0.4)",
     letterSpacing: 2,
     marginTop: 4,
   },
