@@ -17,6 +17,8 @@ import {
 } from "react-native";
 import {
   KATUION,
+  KEKKIHY,
+  SPACEADVENTURE,
   STHM_STHAP,
   STRUCKBALL,
   TAIRBRTY,
@@ -31,22 +33,28 @@ const fredoka = (size: number, color?: string) => ({
 });
 
 // ─── STORY REGISTRY ───────────────────────────────────────────────────────────
-type StoryId = "TAIRBRTY" | "STHMSTHAP" | "KATUION" | "STRUCKBALL";
+type StoryId =
+  | "TAIRBRTY"
+  | "STHMSTHAP"
+  | "KATUION"
+  | "STRUCKBALL"
+  | "KEKKIHY"
+  | "SPACEADVENTURE";
 
 const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
   TAIRBRTY: {
     chapters: TAIRBRTY,
     theme: {
       bg: "#FFF9F0",
-      accent: "#FF5B8D",
+      accent: "#FF8C42",
       accentSoft: "#FFF0F5",
       blob1: "#FFE8F0",
       blob2: "#E8F4FF",
-      tabActive: "#FF5B8D",
-      tabShadow: "#FF5B8D",
+      tabActive: "#FF8C42",
+      tabShadow: "#FF8C42",
       cardBg: "#fff",
-      navPrimary: "#FF5B8D",
-      navPrimaryShadow: "#FF5B8D",
+      navPrimary: "#FF8C42",
+      navPrimaryShadow: "#FF8C42",
     },
   },
   STHMSTHAP: {
@@ -92,6 +100,36 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       cardBg: "#fff",
       navPrimary: "#00B894",
       navPrimaryShadow: "#00B894",
+    },
+  },
+  KEKKIHY: {
+    chapters: KEKKIHY,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#FF5B8D",
+      accentSoft: "#FFF0F5",
+      blob1: "#FFE8F0",
+      blob2: "#E8F4FF",
+      tabActive: "#FF5B8D",
+      tabShadow: "#FF5B8D",
+      cardBg: "#fff",
+      navPrimary: "#FF5B8D",
+      navPrimaryShadow: "#FF5B8D",
+    },
+  },
+  SPACEADVENTURE: {
+    chapters: SPACEADVENTURE,
+    theme: {
+      bg: "#E8F4FF",
+      accent: "#1E90FF",
+      accentSoft: "#D0ECFF",
+      blob1: "#D0ECFF",
+      blob2: "#FFF9C4",
+      tabActive: "#1E90FF",
+      tabShadow: "#1E90FF",
+      cardBg: "#fff",
+      navPrimary: "#1E90FF",
+      navPrimaryShadow: "#1E90FF",
     },
   },
 };

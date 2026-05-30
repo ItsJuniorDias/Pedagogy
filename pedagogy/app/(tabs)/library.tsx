@@ -650,8 +650,19 @@ const ReadingCard = ({
 }: (typeof READING_LIST)[0]) => {
   const done = progress === "100%";
   const pct = parseInt(progress, 10);
+
+  const router = useRouter();
+
   return (
-    <BouncyCard style={s.readCard}>
+    <BouncyCard
+      onPress={() =>
+        router.push({
+          pathname: "/(details)",
+          params: { storyId: title.toLowerCase().replace(/\s/g, "") },
+        })
+      }
+      style={s.readCard}
+    >
       <View style={s.readImgWrap}>
         <Illustration size={70} />
         <View style={s.readStar}>
@@ -754,6 +765,7 @@ export default function LibraryScreen() {
 
         {/* ── CONTINUE READING ── */}
         <SectionHeader title="Continue reading" emoji="📚" />
+
         <View style={s.readList}>
           {READING_LIST.map((item, i) => (
             <ReadingCard key={i} {...item} />
@@ -767,7 +779,7 @@ export default function LibraryScreen() {
 // ─── STYLES ──────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF9F0", paddingTop: 45 },
-  scroll: { padding: 20, paddingBottom: 60 },
+  scroll: { padding: 20, paddingBottom: 90 },
 
   blob: { position: "absolute", borderRadius: 999 },
   blob1: {
