@@ -35,6 +35,11 @@ export default function RootLayout() {
         <Stack.Screen name="(details)/index" options={{ headerShown: false }} />
 
         <Stack.Screen name="(paywall)/index" options={{ headerShown: false }} />
+
+        <Stack.Screen
+          name="(pixel-run)/index"
+          options={{ headerShown: false }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

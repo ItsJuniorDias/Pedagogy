@@ -84,33 +84,20 @@ const LEARNING_PATHS = [
   },
 ];
 
-const POPULAR = [
+const GAMES = [
   {
-    emoji: "🏰",
-    title: "Magic Block Castle",
-    sub: "Build, play and imagine!",
-    tagLabel: "Fun!",
-    tagBg: "#E8FFE8",
-    tagColor: "#15803D",
-    iconBg: "#FFF3E0",
-  },
-  {
-    emoji: "🧩",
-    title: "Colorful Puzzle",
-    sub: "Trains your smart brain!",
-    tagLabel: "New",
-    tagBg: "#FFE8EE",
-    tagColor: "#D63384",
-    iconBg: "#FFF0F8",
-  },
-  {
-    emoji: "🎵",
-    title: "Music & Rhythm",
-    sub: "Sing, clap and dance!",
+    id: "pixel-run",
+    title: "Pixel Run",
+    sub: "Endless runner in space!",
     tagLabel: "Hot 🔥",
-    tagBg: "#FFF3E0",
-    tagColor: "#E65100",
-    iconBg: "#FFFBEB",
+    tagVariant: "amber",
+    canvasBg: "#FFFBEB",
+    emoji: "👾",
+    blockColors: [
+      { face: "#8B5CF6", top: "#A78BFA" },
+      { face: "#3B82F6", top: "#60A5FA" },
+      { face: "#2563EB", top: "#3B82F6" },
+    ],
   },
 ];
 
@@ -196,20 +183,32 @@ const PopularCard = ({
   tagBg,
   tagColor,
   iconBg,
-}: (typeof POPULAR)[0]) => (
-  <TouchableOpacity style={s.popCard} activeOpacity={0.85}>
-    <View style={[s.popIcon, { backgroundColor: iconBg }]}>
-      <Text style={s.popIconEmoji}>{emoji}</Text>
-    </View>
-    <View style={s.popBody}>
-      <Text style={[s.popTitle, fredoka(16, "#2D2D2D")]}>{title}</Text>
-      <Text style={s.popSub}>{sub}</Text>
-    </View>
-    <View style={[s.popTag, { backgroundColor: tagBg }]}>
-      <Text style={[s.popTagText, { color: tagColor }]}>{tagLabel}</Text>
-    </View>
-  </TouchableOpacity>
-);
+}: (typeof GAMES)[0]) => {
+  const route = useRouter();
+
+  return (
+    <TouchableOpacity
+      style={s.popCard}
+      activeOpacity={0.85}
+      onPress={() =>
+        route.push({
+          pathname: "/(pixel-run)",
+        })
+      }
+    >
+      <View style={[s.popIcon, { backgroundColor: iconBg }]}>
+        <Text style={s.popIconEmoji}>{emoji}</Text>
+      </View>
+      <View style={s.popBody}>
+        <Text style={[s.popTitle, fredoka(16, "#2D2D2D")]}>{title}</Text>
+        <Text style={s.popSub}>{sub}</Text>
+      </View>
+      <View style={[s.popTag, { backgroundColor: tagBg }]}>
+        <Text style={[s.popTagText, { color: tagColor }]}>{tagLabel}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 // ─── MAIN SCREEN ─────────────────────────────────────────────────────────────
 
@@ -331,9 +330,9 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* ── POPULAR ── */}
-        <SectionHeader title="Cool Stuff! 🎈" />
-        {POPULAR.map((item, i) => (
+        {/* ── GAMES ── */}
+        <SectionHeader title="Games 🎮" />
+        {GAMES.map((item, i) => (
           <PopularCard key={i} {...item} />
         ))}
       </ScrollView>

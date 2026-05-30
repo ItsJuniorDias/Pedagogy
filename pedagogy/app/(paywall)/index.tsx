@@ -37,11 +37,11 @@ const PLANS = [
   {
     id: "annual",
     label: "Annual",
-    price: "$ 143.04",
+    price: "$ 143.00",
     period: "/year",
     tag: "🏆 Most popular",
     tagBg: "#FF5B8D",
-    sub: "Billed $ 143.04/year (save 20%)",
+    sub: "Billed $ 143.00/year (save 20%)",
     bg: "#FFF0F5",
     border: "#FF5B8D",
     highlight: true,
@@ -49,12 +49,8 @@ const PLANS = [
 ];
 
 const FEATURES = [
-  { emoji: "📚", text: "Access to over 200 stories" },
-  { emoji: "🎧", text: "Audiobooks narrated by actors" },
+  { emoji: "📚", text: "Access to over 50 stories" },
   { emoji: "🧩", text: "Educational activities and mini-games" },
-  { emoji: "🌍", text: "Content in Portuguese, English, and Spanish" },
-  { emoji: "👨‍👩‍👧", text: "Individual profiles for each child" },
-  { emoji: "📵", text: "No ads, forever" },
 ];
 
 const REVIEWS = [
