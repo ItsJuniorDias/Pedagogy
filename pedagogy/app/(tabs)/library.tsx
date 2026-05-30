@@ -451,24 +451,28 @@ const ReadingIllustration2 = ({ size = 70 }: { size?: number }) => (
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const CATEGORIES = [
   {
+    type: "nature",
     title: "Nature",
     bg: "#E8F8F5",
     emoji: "🌿",
     Illustration: NatureIllustration,
   },
   {
+    type: "fantasy",
     title: "Fantasy",
     bg: "#FDEDEC",
     emoji: "🧚",
     Illustration: FantasyIllustration,
   },
   {
+    type: "science",
     title: "Science",
     bg: "#EBF5FB",
     emoji: "🔬",
     Illustration: ScienceIllustration,
   },
   {
+    type: "fruit",
     title: "Fruit",
     bg: "#FEF9E7",
     emoji: "🍎",
@@ -584,17 +588,30 @@ const CategoryItem = ({
   bg,
   emoji,
   Illustration,
-}: (typeof CATEGORIES)[0]) => (
-  <BouncyCard style={s.catWrap}>
-    <View style={[s.catCircle, { backgroundColor: bg }]}>
-      <Illustration size={60} />
-      <View style={s.catEmojiBadge}>
-        <Text style={{ fontSize: 14 }}>{emoji}</Text>
+  type,
+}: (typeof CATEGORIES)[0]) => {
+  const router = useRouter();
+
+  return (
+    <BouncyCard
+      style={s.catWrap}
+      onPress={() =>
+        router.push({
+          pathname: "/(category)",
+          params: { type: type.toLowerCase(), label: title },
+        })
+      }
+    >
+      <View style={[s.catCircle, { backgroundColor: bg }]}>
+        <Illustration size={60} />
+        <View style={s.catEmojiBadge}>
+          <Text style={{ fontSize: 14 }}>{emoji}</Text>
+        </View>
       </View>
-    </View>
-    <Text style={[fredoka(13, "#2D2D2D"), { marginTop: 6 }]}>{title}</Text>
-  </BouncyCard>
-);
+      <Text style={[fredoka(13, "#2D2D2D"), { marginTop: 6 }]}>{title}</Text>
+    </BouncyCard>
+  );
+};
 
 // ─── POPULAR CARD ─────────────────────────────────────────────────────────────
 const PopularCard = ({
@@ -700,6 +717,8 @@ const ReadingCard = ({
 
 // ─── MAIN SCREEN ─────────────────────────────────────────────────────────────
 export default function LibraryScreen() {
+  const router = useRouter();
+
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   if (!fontsLoaded) return <AppLoading />;
 
@@ -730,7 +749,11 @@ export default function LibraryScreen() {
           <View style={s.bannerBody}>
             <Text style={fredoka(22, "#fff")}>Noyse Roise</Text>
             <Text style={s.bannerSub}>Burt Cross</Text>
-            <TouchableOpacity style={s.bannerBtn} activeOpacity={0.8}>
+            <TouchableOpacity
+              style={s.bannerBtn}
+              activeOpacity={0.8}
+              onPress={() => router.push("/(stories)")}
+            >
               <Text style={fredoka(14, "#fff")}>Explore now</Text>
             </TouchableOpacity>
           </View>

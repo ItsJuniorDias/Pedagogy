@@ -43,54 +43,6 @@ const ALL_GAMES = [
     route: "/(gravity)",
     category: "science",
   },
-  {
-    id: "dino-dash",
-    emoji: "🦖",
-    title: "Dino Dash",
-    sub: "Run from T-Rex!",
-    tagLabel: "Hot 🔥",
-    tagBg: "#FEF3C7",
-    tagColor: "#92400E",
-    iconBg: "#FFF7E0",
-    route: "/(dino-dash)",
-    category: "dinos",
-  },
-  {
-    id: "color-match",
-    emoji: "🎨",
-    title: "Color Match",
-    sub: "Match colors fast",
-    tagLabel: "New ✨",
-    tagBg: "#D1FAE5",
-    tagColor: "#065F46",
-    iconBg: "#F0FFF0",
-    route: "/(color-match)",
-    category: "art",
-  },
-  {
-    id: "word-blast",
-    emoji: "🔤",
-    title: "Word Blast",
-    sub: "Spell words quickly!",
-    tagLabel: "Top ⭐",
-    tagBg: "#EDE9FE",
-    tagColor: "#4C1D95",
-    iconBg: "#F3F0FF",
-    route: "/(word-blast)",
-    category: "drawing",
-  },
-  {
-    id: "ocean-dive",
-    emoji: "🐠",
-    title: "Ocean Dive",
-    sub: "Explore the deep sea",
-    tagLabel: "New ✨",
-    tagBg: "#D1FAE5",
-    tagColor: "#065F46",
-    iconBg: "#EBF4FF",
-    route: "/(ocean-dive)",
-    category: "animals",
-  },
 ];
 
 const GAME_FILTERS = ["All", "Hot 🔥", "New ✨", "Top ⭐"];
@@ -123,26 +75,6 @@ export default function GamesAllScreen() {
         <Text style={fredoka(20, "#2D2D2D")}>Games 🎮</Text>
         <View style={{ width: 40 }} />
       </View>
-
-      {/* Filter chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={s.filtersRow}
-      >
-        {GAME_FILTERS.map((f, i) => (
-          <TouchableOpacity
-            key={i}
-            style={[s.chip, activeFilter === i && s.chipActive]}
-            onPress={() => setActiveFilter(i)}
-            activeOpacity={0.8}
-          >
-            <Text style={[s.chipText, activeFilter === i && s.chipTextActive]}>
-              {f}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -184,7 +116,10 @@ const s = StyleSheet.create({
     backgroundColor: "#FFF9F0",
     paddingTop: StatusBar.currentHeight ?? 44,
   },
-  scroll: { paddingHorizontal: 20, paddingBottom: 100 },
+  scroll: {
+    paddingHorizontal: 20,
+    paddingBottom: 100,
+  },
   blob: { position: "absolute", borderRadius: 999 },
   blob1: {
     width: 180,

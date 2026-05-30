@@ -1,3 +1,4 @@
+import Filters from "@/components/Filters";
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
@@ -140,27 +141,7 @@ export default function LearningAllScreen() {
       </View>
 
       {/* Filter chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={s.filtersRow}
-      >
-        {FILTERS.map((f, i) => (
-          <TouchableOpacity
-            key={i}
-            style={[s.chip, activeFilter === i && s.chipActive]}
-            onPress={() => setActiveFilter(i)}
-            activeOpacity={0.8}
-          >
-            <Text
-              style={[s.chipText, activeFilter === i && s.chipTextActive]}
-              numberOfLines={1}
-            >
-              {f}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <Filters filters={FILTERS} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
