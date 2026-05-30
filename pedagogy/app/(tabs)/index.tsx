@@ -1,6 +1,7 @@
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Dimensions,
@@ -113,14 +114,6 @@ const POPULAR = [
   },
 ];
 
-const BOTTOM_NAV = [
-  { emoji: "📚", label: "Learn" },
-  { emoji: "🎮", label: "Play" },
-  null,
-  { emoji: "🏆", label: "Wins" },
-  { emoji: "👤", label: "Me" },
-];
-
 // ─── SUB-COMPONENTS ──────────────────────────────────────────────────────────
 
 const SectionHeader = ({
@@ -160,10 +153,19 @@ const LearningCard = ({
 }: (typeof LEARNING_PATHS)[0]) => {
   const pct = (progress / total) * 100;
   const done = progress === total;
+
+  const router = useRouter();
+
   return (
     <TouchableOpacity
       style={[s.learnCard, { borderColor: cardBorder }]}
       activeOpacity={0.85}
+      onPress={() =>
+        router.push({
+          pathname: "/(details)",
+          params: { storyId: title.toLowerCase().replace(/\s/g, "") },
+        })
+      }
     >
       <View style={[s.learnImgBox, { backgroundColor: imgBg }]}>
         <Text style={s.learnEmoji}>{emoji}</Text>

@@ -27,7 +27,7 @@ export default function Layout() {
           }}
         />
 
-        <Label>Biblioteca</Label>
+        <Label>Library</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

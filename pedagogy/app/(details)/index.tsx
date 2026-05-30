@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import {
   KATUION,
   KEKKIHY,
@@ -23,6 +24,8 @@ import {
   STRUCKBALL,
   TAIRBRTY,
 } from "../../mocks/chapterMocks";
+
+import { ASTRONAUT, LETTERS, SCHOLL, SPACE } from "../../mocks/learningMocks";
 
 const { width } = Dimensions.get("window");
 
@@ -39,7 +42,11 @@ type StoryId =
   | "KATUION"
   | "STRUCKBALL"
   | "KEKKIHY"
-  | "SPACEADVENTURE";
+  | "SPACEADVENTURE"
+  | "LETTERS"
+  | "SCHOOL"
+  | "ASTRONAUT"
+  | "SPACE";
 
 const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
   TAIRBRTY: {
@@ -130,6 +137,66 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       cardBg: "#fff",
       navPrimary: "#1E90FF",
       navPrimaryShadow: "#1E90FF",
+    },
+  },
+  LETTERS: {
+    chapters: LETTERS,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#FFD93D",
+      accentSoft: "#FFF0F5",
+      blob1: "#FFE8F0",
+      blob2: "#E8F4FF",
+      tabActive: "#FFD93D",
+      tabShadow: "#FFD93D",
+      cardBg: "#fff",
+      navPrimary: "#FFD93D",
+      navPrimaryShadow: "#FFD93D",
+    },
+  },
+  SCHOOL: {
+    chapters: SCHOLL,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#52C878",
+      accentSoft: "#FFF0F5",
+      blob1: "#FFE8F0",
+      blob2: "#E8F4FF",
+      tabActive: "#52C878",
+      tabShadow: "#52C878",
+      cardBg: "#fff",
+      navPrimary: "#52C878",
+      navPrimaryShadow: "#52C878",
+    },
+  },
+  ASTRONAUT: {
+    chapters: ASTRONAUT,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#FF7043",
+      accentSoft: "#FFF0F5",
+      blob1: "#FFE8F0",
+      blob2: "#E8F4FF",
+      tabActive: "#FF7043",
+      tabShadow: "#FF7043",
+      cardBg: "#fff",
+      navPrimary: "#FF7043",
+      navPrimaryShadow: "#FF7043",
+    },
+  },
+  SPACE: {
+    chapters: SPACE,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#5C7CFF",
+      accentSoft: "#FFF0F5",
+      blob1: "#FFE8F0",
+      blob2: "#E8F4FF",
+      tabActive: "#5C7CFF",
+      tabShadow: "#5C7CFF",
+      cardBg: "#fff",
+      navPrimary: "#5C7CFF",
+      navPrimaryShadow: "#5C7CFF",
     },
   },
 };
