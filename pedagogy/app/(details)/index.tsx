@@ -28,7 +28,18 @@ import {
   TAIRBRTY,
 } from "../../mocks/chapterMocks";
 
-import { ASTRONAUT, LETTERS, SCHOLL, SPACE } from "../../mocks/learningMocks";
+import {
+  ASTRONAUT,
+  COLORS_ART,
+  DINOSAURS,
+  LETTERS,
+  OCEAN_LIFE,
+  SCHOLL,
+  SCIENCE_LAB,
+  SPACE,
+} from "../../mocks/learningMocks";
+
+import { MAGIC_FOREST, ROCKET_ADVENTURE } from "../../mocks/storyMocks";
 
 const { width } = Dimensions.get("window");
 
@@ -49,7 +60,13 @@ type StoryId =
   | "LETTERS"
   | "SCHOOL"
   | "ASTRONAUT"
-  | "SPACE";
+  | "SPACE"
+  | "DINOSAURS"
+  | "COLORS&ART"
+  | "OCEANLIFE"
+  | "SCIENCELAB"
+  | "ROCKET_ADVENTURE"
+  | "MAGIC_FOREST";
 
 const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
   TAIRBRTY: {
@@ -200,6 +217,96 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       cardBg: "#fff",
       navPrimary: "#5C7CFF",
       navPrimaryShadow: "#5C7CFF",
+    },
+  },
+  DINOSAURS: {
+    chapters: DINOSAURS,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#27AE60",
+      accentSoft: "#E0F8E0",
+      blob1: "#C8FFD4",
+      blob2: "#E8F4FF",
+      tabActive: "#27AE60",
+      tabShadow: "#27AE60",
+      cardBg: "#fff",
+      navPrimary: "#27AE60",
+      navPrimaryShadow: "#27AE60",
+    },
+  },
+  OCEANLIFE: {
+    chapters: OCEAN_LIFE,
+    theme: {
+      bg: "#E0F7FA",
+      accent: "#00ACC1",
+      accentSoft: "#B2EBF2",
+      blob1: "#B2EBF2",
+      blob2: "#FFF9C4",
+      tabActive: "#00ACC1",
+      tabShadow: "#00ACC1",
+      cardBg: "#fff",
+      navPrimary: "#00ACC1",
+      navPrimaryShadow: "#00ACC1",
+    },
+  },
+  "COLORS&ART": {
+    chapters: COLORS_ART,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#FFD93D",
+      accentSoft: "#FFF0F5",
+      blob1: "#FFE8F0",
+      blob2: "#E8F4FF",
+      tabActive: "#FFD93D",
+      tabShadow: "#FFD93D",
+      cardBg: "#fff",
+      navPrimary: "#FFD93D",
+      navPrimaryShadow: "#FFD93D",
+    },
+  },
+  SCIENCELAB: {
+    chapters: SCIENCE_LAB,
+    theme: {
+      bg: "#E8F4FF",
+      accent: "#1E90FF",
+      accentSoft: "#D0ECFF",
+      blob1: "#D0ECFF",
+      blob2: "#FFF9C4",
+      tabActive: "#1E90FF",
+      tabShadow: "#1E90FF",
+      cardBg: "#fff",
+      navPrimary: "#1E90FF",
+      navPrimaryShadow: "#1E90FF",
+    },
+  },
+  ROCKET_ADVENTURE: {
+    chapters: ROCKET_ADVENTURE,
+    theme: {
+      bg: "#E8F4FF",
+      accent: "#1E90FF",
+      accentSoft: "#D0ECFF",
+      blob1: "#D0ECFF",
+      blob2: "#FFF9C4",
+      tabActive: "#1E90FF",
+      tabShadow: "#1E90FF",
+      cardBg: "#fff",
+      navPrimary: "#1E90FF",
+      navPrimaryShadow: "#1E90FF",
+    },
+  },
+  MAGIC_FOREST: {
+    chapters: MAGIC_FOREST,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#27AE60",
+      accentSoft: "#E0F8E0",
+      blob1: "#C8FFD4",
+      blob2: "#E8F4FF",
+      tabActive: "#27AE60",
+      tabShadow: "#27AE60",
+      cardBg: "#fff",
+      navPrimary: "#27AE60",
+      navPrimaryShadow: "#27AE60",
     },
   },
 };

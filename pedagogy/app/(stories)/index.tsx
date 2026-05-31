@@ -25,7 +25,7 @@ const STORY_TAGS = ["All", "Adventure", "Science", "Fantasy", "Animals"];
 
 const STORIES = [
   {
-    id: "rocket-adventure",
+    id: "rocket_adventure",
     emoji: "🚀",
     title: "Rocket Adventure",
     tag: "Adventure",
@@ -35,7 +35,7 @@ const STORIES = [
     badge: "New",
   },
   {
-    id: "magic-forest",
+    id: "magic_forest",
     emoji: "🌲",
     title: "Magic Forest",
     tag: "Fantasy",
@@ -45,7 +45,7 @@ const STORIES = [
     badge: null,
   },
   {
-    id: "ocean-friends",
+    id: "ocean_friends",
     emoji: "🐠",
     title: "Ocean Friends",
     tag: "Animals",
@@ -55,7 +55,7 @@ const STORIES = [
     badge: "Hot",
   },
   {
-    id: "tiny-scientist",
+    id: "tiny_scientist",
     emoji: "🔬",
     title: "Tiny Scientist",
     tag: "Science",
@@ -65,7 +65,7 @@ const STORIES = [
     badge: null,
   },
   {
-    id: "dragon-diary",
+    id: "dragon_diary",
     emoji: "🐉",
     title: "Dragon Diary",
     tag: "Fantasy",
@@ -75,7 +75,7 @@ const STORIES = [
     badge: "New",
   },
   {
-    id: "dino-world",
+    id: "dino_world",
     emoji: "🦖",
     title: "Dino World",
     tag: "Adventure",

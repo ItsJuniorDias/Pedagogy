@@ -151,6 +151,7 @@ export default function LearningAllScreen() {
           {filtered.map((item) => {
             const pct = (item.progress / item.total) * 100;
             const done = item.progress === item.total;
+
             return (
               <TouchableOpacity
                 key={item.id}
