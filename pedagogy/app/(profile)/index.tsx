@@ -125,7 +125,7 @@ export default function ProfileScreen() {
               key={i}
               style={s.menuItem}
               activeOpacity={0.75}
-              onPress={() => router.push(item.route as any)}
+              // onPress={() => router.push(item.route as any)}
             >
               <Text style={{ fontSize: 22 }}>{item.emoji}</Text>
               <Text style={s.menuLabel}>{item.label}</Text>

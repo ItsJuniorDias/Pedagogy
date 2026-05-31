@@ -1,5 +1,6 @@
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
+import { Audio } from "expo-av";
 import { useFonts } from "expo-font";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -126,12 +127,243 @@ function genStars(): Star[] {
   }));
 }
 
+// ─── Sound URLs (pequenos WAVs sintetizados hospedados publicamente) ──────────
+// Usamos sons procedurais gerados via AudioContext (funciona no Expo Web
+// e em apps Expo com suporte a WebView). Para Expo nativo puro, troque
+// pelas URLs de assets locais: require('./assets/sounds/flip.wav') etc.
+//
+// Sons gerados com a Web Audio API: cada função cria um buffer PCM 16-bit
+// e retorna um URI data: que o expo-av consegue tocar.
+
+function makeToneWav(
+  frequency: number,
+  duration: number,
+  type: "sine" | "square" | "sawtooth" = "sine",
+  fadeOut = true,
+): string {
+  // Gera um WAV PCM 16-bit mono em base64
+  const sampleRate = 22050;
+  const numSamples = Math.floor(sampleRate * duration);
+  const buffer = new ArrayBuffer(44 + numSamples * 2);
+  const view = new DataView(buffer);
+
+  // RIFF header
+  const writeStr = (offset: number, str: string) => {
+    for (let i = 0; i < str.length; i++)
+      view.setUint8(offset + i, str.charCodeAt(i));
+  };
+  writeStr(0, "RIFF");
+  view.setUint32(4, 36 + numSamples * 2, true);
+  writeStr(8, "WAVE");
+  writeStr(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); // PCM
+  view.setUint16(22, 1, true); // mono
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeStr(36, "data");
+  view.setUint32(40, numSamples * 2, true);
+
+  for (let i = 0; i < numSamples; i++) {
+    const t = i / sampleRate;
+    const envelope = fadeOut ? Math.max(0, 1 - t / duration) : 1;
+    let sample = 0;
+    if (type === "sine") {
+      sample = Math.sin(2 * Math.PI * frequency * t);
+    } else if (type === "square") {
+      sample = Math.sin(2 * Math.PI * frequency * t) >= 0 ? 1 : -1;
+    } else {
+      sample = 2 * ((frequency * t) % 1) - 1; // sawtooth
+    }
+    const val = Math.max(-1, Math.min(1, sample * envelope * 0.6));
+    view.setInt16(44 + i * 2, val * 32767, true);
+  }
+
+  // Converte buffer para base64
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  const base64 = btoa(binary);
+  return `data:audio/wav;base64,${base64}`;
+}
+
+// Sons específicos do jogo
+function makeSoundFlip(): string {
+  return makeToneWav(660, 0.08, "square", true);
+}
+
+function makeSoundFlipAlt(): string {
+  return makeToneWav(440, 0.08, "square", true);
+}
+
+function makeSoundScore(): string {
+  return makeToneWav(880, 0.06, "sine", true);
+}
+
+function makeSoundDeath(): string {
+  return makeToneWav(200, 0.25, "sawtooth", true);
+}
+
+// Música de fundo: sequência de notas em loop
+// Retorna uma lista de { freq, duration } para tocar em loop
+const BG_MELODY: { freq: number; dur: number }[] = [
+  { freq: 261.63, dur: 0.15 }, // C4
+  { freq: 329.63, dur: 0.15 }, // E4
+  { freq: 392.0, dur: 0.15 }, // G4
+  { freq: 523.25, dur: 0.15 }, // C5
+  { freq: 659.25, dur: 0.15 }, // E5
+  { freq: 523.25, dur: 0.15 }, // C5
+  { freq: 392.0, dur: 0.15 }, // G4
+  { freq: 329.63, dur: 0.15 }, // E4
+  { freq: 293.66, dur: 0.15 }, // D4
+  { freq: 369.99, dur: 0.15 }, // F#4
+  { freq: 440.0, dur: 0.15 }, // A4
+  { freq: 587.33, dur: 0.15 }, // D5
+  { freq: 659.25, dur: 0.15 }, // E5
+  { freq: 587.33, dur: 0.15 }, // D5
+  { freq: 440.0, dur: 0.15 }, // A4
+  { freq: 369.99, dur: 0.15 }, // F#4
+];
+
+// ─── Hook de som ─────────────────────────────────────────────────────────────
+function useSounds() {
+  const soundFlip = useRef<Audio.Sound | null>(null);
+  const soundFlipAlt = useRef<Audio.Sound | null>(null);
+  const soundScore = useRef<Audio.Sound | null>(null);
+  const soundDeath = useRef<Audio.Sound | null>(null);
+  const bgMelodyIndex = useRef(0);
+  const bgTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bgRunning = useRef(false);
+  const bgSoundRef = useRef<Audio.Sound | null>(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+
+    const init = async () => {
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: false,
+      });
+
+      // Pré-carrega sons de efeito
+      try {
+        const { sound: sf } = await Audio.Sound.createAsync({
+          uri: makeSoundFlip(),
+        });
+        soundFlip.current = sf;
+        const { sound: sfa } = await Audio.Sound.createAsync({
+          uri: makeSoundFlipAlt(),
+        });
+        soundFlipAlt.current = sfa;
+        const { sound: ss } = await Audio.Sound.createAsync({
+          uri: makeSoundScore(),
+        });
+        soundScore.current = ss;
+        const { sound: sd } = await Audio.Sound.createAsync({
+          uri: makeSoundDeath(),
+        });
+        soundDeath.current = sd;
+      } catch (e) {
+        // Sons não são críticos; ignorar erros silenciosamente
+      }
+    };
+
+    init();
+
+    return () => {
+      isMounted.current = false;
+      stopBgMusic();
+      soundFlip.current?.unloadAsync();
+      soundFlipAlt.current?.unloadAsync();
+      soundScore.current?.unloadAsync();
+      soundDeath.current?.unloadAsync();
+    };
+  }, []);
+
+  const playEffect = useCallback(
+    async (soundRef: React.MutableRefObject<Audio.Sound | null>) => {
+      try {
+        if (!soundRef.current) return;
+        await soundRef.current.setPositionAsync(0);
+        await soundRef.current.playAsync();
+      } catch (_) {}
+    },
+    [],
+  );
+
+  const playFlip = useCallback(
+    (isFlipped: boolean) => playEffect(isFlipped ? soundFlipAlt : soundFlip),
+    [playEffect],
+  );
+  const playScore = useCallback(() => playEffect(soundScore), [playEffect]);
+  const playDeath = useCallback(() => playEffect(soundDeath), [playEffect]);
+
+  // ─── Música de fundo em loop ───────────────────────────────────────────────
+  const scheduleBgNote = useCallback(async () => {
+    if (!bgRunning.current || !isMounted.current) return;
+
+    const note = BG_MELODY[bgMelodyIndex.current % BG_MELODY.length];
+    bgMelodyIndex.current = (bgMelodyIndex.current + 1) % BG_MELODY.length;
+
+    try {
+      // Descarrega nota anterior se ainda existir
+      if (bgSoundRef.current) {
+        await bgSoundRef.current.stopAsync();
+        await bgSoundRef.current.unloadAsync();
+        bgSoundRef.current = null;
+      }
+      const uri = makeToneWav(note.freq, note.dur + 0.03, "sine", true);
+      const { sound } = await Audio.Sound.createAsync(
+        { uri },
+        { shouldPlay: true },
+      );
+      bgSoundRef.current = sound;
+    } catch (_) {}
+
+    if (bgRunning.current && isMounted.current) {
+      bgTimeoutRef.current = setTimeout(scheduleBgNote, note.dur * 1000);
+    }
+  }, []);
+
+  const startBgMusic = useCallback(() => {
+    if (bgRunning.current) return;
+    bgRunning.current = true;
+    bgMelodyIndex.current = 0;
+    scheduleBgNote();
+  }, [scheduleBgNote]);
+
+  const stopBgMusic = useCallback(() => {
+    bgRunning.current = false;
+    if (bgTimeoutRef.current) {
+      clearTimeout(bgTimeoutRef.current);
+      bgTimeoutRef.current = null;
+    }
+    if (bgSoundRef.current) {
+      bgSoundRef.current.stopAsync().catch(() => {});
+      bgSoundRef.current.unloadAsync().catch(() => {});
+      bgSoundRef.current = null;
+    }
+  }, []);
+
+  return { playFlip, playScore, playDeath, startBgMusic, stopBgMusic };
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function GravityFlip() {
   const [phase, setPhase] = useState<Phase>("MENU");
   const [, forceUpdate] = useState(0);
+  const [musicEnabled, setMusicEnabled] = useState(true);
 
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+
+  const { playFlip, playScore, playDeath, startBgMusic, stopBgMusic } =
+    useSounds();
+
   if (!fontsLoaded) return <AppLoading />;
 
   const playerY = useRef(SH / 2);
@@ -149,10 +381,16 @@ export default function GravityFlip() {
   const particleId = useRef(0);
   const dead = useRef(false);
   const phaseRef = useRef<Phase>("MENU");
+  const musicEnabledRef = useRef(true);
 
   const flipAnim = useRef(new Animated.Value(0)).current;
   const flipScale = useRef(new Animated.Value(1)).current;
   const screenFlash = useRef(new Animated.Value(0)).current;
+
+  // Sincroniza ref com state
+  useEffect(() => {
+    musicEnabledRef.current = musicEnabled;
+  }, [musicEnabled]);
 
   // ─── Spawn particles ──────────────────────────────────────────────────────
   const spawnParticles = useCallback(
@@ -184,6 +422,9 @@ export default function GravityFlip() {
     playerVY.current = flipped.current ? 9 : -9;
 
     Vibration.vibrate(20);
+
+    // Toca som de flip
+    playFlip(flipped.current);
 
     Animated.sequence([
       Animated.timing(flipScale, {
@@ -226,7 +467,7 @@ export default function GravityFlip() {
       12,
       flipped.current ? C.accentFlip : C.accent,
     );
-  }, [spawnParticles]);
+  }, [spawnParticles, playFlip]);
 
   // ─── Game loop ────────────────────────────────────────────────────────────
   const gameLoop = useCallback(
@@ -310,12 +551,15 @@ export default function GravityFlip() {
             o.passed = true;
             score.current += 1;
             combo.current += 1;
+            // Som de ponto
+            playScore();
             spawnParticles(o.x + OBS_WIDTH / 2, SH / 2, 6, C.score);
           }
         } else if (o.x + OBS_WIDTH < px1 && !o.passed) {
           o.passed = true;
           score.current += 1;
           combo.current += 1;
+          playScore();
         }
       }
 
@@ -350,7 +594,7 @@ export default function GravityFlip() {
       forceUpdate((n) => n + 1);
       frameId.current = requestAnimationFrame(gameLoop);
     },
-    [spawnParticles],
+    [spawnParticles, playScore],
   );
 
   // ─── Kill player ──────────────────────────────────────────────────────────
@@ -358,6 +602,9 @@ export default function GravityFlip() {
     if (dead.current) return;
     dead.current = true;
     Vibration.vibrate([0, 60, 40, 80, 40, 120]);
+    // Para música e toca som de morte
+    stopBgMusic();
+    playDeath();
     spawnParticles(
       PLAYER_X + PLAYER_SIZE / 2,
       playerY.current + PLAYER_SIZE / 2,
@@ -369,7 +616,7 @@ export default function GravityFlip() {
       setPhase("DEAD");
       phaseRef.current = "DEAD";
     }, 600);
-  }, [spawnParticles]);
+  }, [spawnParticles, playDeath, stopBgMusic]);
 
   // ─── Start game ───────────────────────────────────────────────────────────
   const startGame = useCallback(() => {
@@ -392,14 +639,35 @@ export default function GravityFlip() {
 
     phaseRef.current = "PLAYING";
     setPhase("PLAYING");
+
+    // Inicia música de fundo
+    if (musicEnabledRef.current) {
+      startBgMusic();
+    }
+
     frameId.current = requestAnimationFrame(gameLoop);
-  }, [gameLoop]);
+  }, [gameLoop, startBgMusic]);
 
   useEffect(() => {
     return () => {
       if (frameId.current) cancelAnimationFrame(frameId.current);
+      stopBgMusic();
     };
-  }, []);
+  }, [stopBgMusic]);
+
+  // Toggle música
+  const toggleMusic = useCallback(() => {
+    setMusicEnabled((prev) => {
+      const next = !prev;
+      musicEnabledRef.current = next;
+      if (!next) {
+        stopBgMusic();
+      } else if (phaseRef.current === "PLAYING") {
+        startBgMusic();
+      }
+      return next;
+    });
+  }, [stopBgMusic, startBgMusic]);
 
   // ─── Derived anim values ──────────────────────────────────────────────────
   const playerColor = flipped.current ? C.playerFlip : C.playerNorm;
@@ -452,6 +720,20 @@ export default function GravityFlip() {
           <TouchableWithoutFeedback onPress={startGame}>
             <View style={s.btnPlay}>
               <Text style={[s.btnPlayText, fredoka(16, "#000")]}>PLAY</Text>
+            </View>
+          </TouchableWithoutFeedback>
+
+          {/* Botão de toggle de música */}
+          <TouchableWithoutFeedback onPress={toggleMusic}>
+            <View style={s.btnMusic}>
+              <Text
+                style={[
+                  s.btnMusicText,
+                  fredoka(13, musicEnabled ? C.accent : C.textDim),
+                ]}
+              >
+                {musicEnabled ? "🔊 MÚSICA ON" : "🔇 MÚSICA OFF"}
+              </Text>
             </View>
           </TouchableWithoutFeedback>
 
@@ -712,6 +994,15 @@ export default function GravityFlip() {
             <Text style={[s.hudSpeed, fredoka(15, C.score)]}>
               {((scrollSpeed.current / SCROLL_SPEED_INIT) * 100).toFixed(0)}%
             </Text>
+            {/* Ícone de música no HUD */}
+            <Text
+              style={[
+                fredoka(14, musicEnabled ? C.accent : C.textDim),
+                { marginTop: 4 },
+              ]}
+            >
+              {musicEnabled ? "🔊" : "🔇"}
+            </Text>
           </View>
         </View>
 
@@ -952,6 +1243,17 @@ const s = StyleSheet.create({
   menuBest: {
     marginTop: 14,
     letterSpacing: 1,
+  },
+  btnMusic: {
+    borderWidth: 1,
+    borderColor: C.accent + "44",
+    paddingHorizontal: 32,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginBottom: 12,
+  },
+  btnMusicText: {
+    letterSpacing: 2,
   },
 
   scoreBox: {
