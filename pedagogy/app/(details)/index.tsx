@@ -39,7 +39,14 @@ import {
   SPACE,
 } from "../../mocks/learningMocks";
 
-import { MAGIC_FOREST, ROCKET_ADVENTURE } from "../../mocks/storyMocks";
+import {
+  DINO_WORLD,
+  DRAGON_DIARY,
+  MAGIC_FOREST,
+  OCEANFRIENDS,
+  ROCKET_ADVENTURE,
+  TINY_SCIENTIST,
+} from "../../mocks/storyMocks";
 
 const { width } = Dimensions.get("window");
 
@@ -64,9 +71,13 @@ type StoryId =
   | "DINOSAURS"
   | "COLORS&ART"
   | "OCEANLIFE"
-  | "SCIENCELAB"
+  | "SCIENCE_LAB"
   | "ROCKET_ADVENTURE"
-  | "MAGIC_FOREST";
+  | "MAGIC_FOREST"
+  | "OCEAN_FRIENDS"
+  | "DRAGON_DIARY"
+  | "TINY_SCIENTIST"
+  | "DINO_WORLD";
 
 const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
   TAIRBRTY: {
@@ -264,7 +275,7 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       navPrimaryShadow: "#FFD93D",
     },
   },
-  SCIENCELAB: {
+  SCIENCE_LAB: {
     chapters: SCIENCE_LAB,
     theme: {
       bg: "#E8F4FF",
@@ -296,6 +307,66 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
   },
   MAGIC_FOREST: {
     chapters: MAGIC_FOREST,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#27AE60",
+      accentSoft: "#E0F8E0",
+      blob1: "#C8FFD4",
+      blob2: "#E8F4FF",
+      tabActive: "#27AE60",
+      tabShadow: "#27AE60",
+      cardBg: "#fff",
+      navPrimary: "#27AE60",
+      navPrimaryShadow: "#27AE60",
+    },
+  },
+  OCEAN_FRIENDS: {
+    chapters: OCEANFRIENDS,
+    theme: {
+      bg: "#E0F7FA",
+      accent: "#00ACC1",
+      accentSoft: "#B2EBF2",
+      blob1: "#B2EBF2",
+      blob2: "#E8F4FF",
+      tabActive: "#00ACC1",
+      tabShadow: "#00ACC1",
+      cardBg: "#fff",
+      navPrimary: "#00ACC1",
+      navPrimaryShadow: "#00ACC1",
+    },
+  },
+  TINY_SCIENTIST: {
+    chapters: TINY_SCIENTIST,
+    theme: {
+      bg: "#E8F4FF",
+      accent: "#1E90FF",
+      accentSoft: "#D0ECFF",
+      blob1: "#D0ECFF",
+      blob2: "#FFF9C4",
+      tabActive: "#1E90FF",
+      tabShadow: "#1E90FF",
+      cardBg: "#fff",
+      navPrimary: "#1E90FF",
+      navPrimaryShadow: "#1E90FF",
+    },
+  },
+  DRAGON_DIARY: {
+    chapters: DRAGON_DIARY,
+    theme: {
+      bg: "#FFF9F0",
+      accent: "#2E7D32",
+      accentSoft: "#E0F8E0",
+      blob1: "#C8FFD4",
+      blob2: "#E8F4FF",
+      tabActive: "#2E7D32",
+      tabShadow: "#2E7D32",
+      cardBg: "#fff",
+      navPrimary: "#2E7D32",
+      navPrimaryShadow: "#2E7D32",
+    },
+  },
+  DINO_WORLD: {
+    chapters: DINO_WORLD,
     theme: {
       bg: "#FFF9F0",
       accent: "#27AE60",

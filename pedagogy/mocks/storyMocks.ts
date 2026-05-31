@@ -102,7 +102,7 @@ export const MAGIC_FOREST = [
   },
 ];
 
-export const OCEAN_FRIENDS = [
+export const OCEANFRIENDS = [
   {
     id: "ol-1",
     emoji: "🐠",
@@ -147,7 +147,7 @@ export const OCEAN_FRIENDS = [
   },
 ];
 
-export const SCIENCE_LAB = [
+export const TINY_SCIENTIST = [
   {
     id: "sl-1",
     emoji: "🔬",
@@ -192,7 +192,7 @@ export const SCIENCE_LAB = [
   },
 ];
 
-export const DRAGONDIARY = [
+export const DRAGON_DIARY = [
   {
     id: "dd-1",
     emoji: "🐉",
@@ -237,7 +237,7 @@ export const DRAGONDIARY = [
   },
 ];
 
-export const DINOWORLD = [
+export const DINO_WORLD = [
   {
     id: "dw-1",
     emoji: "🦖",

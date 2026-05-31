@@ -18,58 +18,167 @@ const fredoka = (size: number, color?: string) => ({
   ...(color ? { color } : {}),
 });
 
-// Conteúdos por categoria — expanda conforme necessário
-const CATEGORY_CONTENT: Record<
-  string,
-  { emoji: string; title: string; sub: string }[]
-> = {
+// ─── TYPES ────────────────────────────────────────────────────────────────────
+type CategoryItem = {
+  emoji: string;
+  title: string;
+  sub: string;
+  storyId: string; // ID exato que bate com o STORY_MAP da ReadStoryScreen
+};
+
+// ─── CONTEÚDO POR CATEGORIA ───────────────────────────────────────────────────
+const CATEGORY_CONTENT: Record<string, CategoryItem[]> = {
   space: [
-    { emoji: "🪐", title: "Solar System", sub: "Explore the planets" },
-    { emoji: "🌙", title: "Moon Phases", sub: "Track the moon" },
-    { emoji: "☄️", title: "Comets & Meteors", sub: "Shooting stars!" },
-    { emoji: "🔭", title: "Telescopes", sub: "How we see far" },
+    {
+      emoji: "🚀",
+      title: "Space Adventure",
+      sub: "Blast off!",
+      storyId: "SPACEADVENTURE",
+    },
+    {
+      emoji: "👨‍🚀",
+      title: "Astronaut",
+      sub: "Life in orbit",
+      storyId: "ASTRONAUT",
+    },
+    { emoji: "🌌", title: "Space", sub: "Stars & galaxies", storyId: "SPACE" },
+    {
+      emoji: "🚀",
+      title: "Rocket Adventure",
+      sub: "To infinity!",
+      storyId: "ROCKET_ADVENTURE",
+    },
   ],
   art: [
-    { emoji: "🎨", title: "Color Theory", sub: "Mix & match colors" },
-    { emoji: "✏️", title: "Sketching", sub: "Basic shapes first" },
-    { emoji: "🖼️", title: "Famous Paintings", sub: "Art history fun" },
-    { emoji: "🖌️", title: "Watercolor", sub: "Wet on wet" },
-  ],
-  toys: [
-    { emoji: "🧸", title: "Stuffed Animals", sub: "Soft & cuddly" },
-    { emoji: "🪀", title: "Yo-yo tricks", sub: "String mastery" },
-    { emoji: "🎲", title: "Board Games", sub: "Play with friends" },
-    { emoji: "🏗️", title: "Building Blocks", sub: "Create anything" },
+    {
+      emoji: "🎨",
+      title: "Colors & Art",
+      sub: "Mix & match colors",
+      storyId: "COLORS&ART",
+    },
   ],
   dinos: [
-    { emoji: "🦖", title: "T-Rex", sub: "King of the dinos" },
-    { emoji: "🦕", title: "Brachiosaurus", sub: "Long neck giant" },
-    { emoji: "🪨", title: "Fossils", sub: "Bones underground" },
-    { emoji: "🌋", title: "Extinction", sub: "What happened?" },
+    {
+      emoji: "🦖",
+      title: "Dinosaurs",
+      sub: "Prehistoric world",
+      storyId: "DINOSAURS",
+    },
+    {
+      emoji: "🌿",
+      title: "Dino World",
+      sub: "Explore the era",
+      storyId: "DINO_WORLD",
+    },
   ],
   animals: [
-    { emoji: "🐶", title: "Dogs", sub: "Best friends" },
-    { emoji: "🐱", title: "Cats", sub: "Curious creatures" },
-    { emoji: "🐘", title: "Elephants", sub: "Gentle giants" },
-    { emoji: "🦜", title: "Parrots", sub: "Talking birds" },
+    {
+      emoji: "🐉",
+      title: "Dragon Diary",
+      sub: "A dragon's tale",
+      storyId: "DRAGON_DIARY",
+    },
+    {
+      emoji: "🌊",
+      title: "Ocean Friends",
+      sub: "Deep sea pals",
+      storyId: "OCEAN_FRIENDS",
+    },
+    {
+      emoji: "🐠",
+      title: "Ocean Life",
+      sub: "Dive deep!",
+      storyId: "OCEANLIFE",
+    },
   ],
   science: [
-    { emoji: "🔬", title: "Microscopy", sub: "Tiny worlds" },
-    { emoji: "⚗️", title: "Chemistry", sub: "Safe experiments" },
-    { emoji: "🧲", title: "Magnetism", sub: "Push & pull" },
-    { emoji: "💡", title: "Electricity", sub: "Power up" },
+    {
+      emoji: "🔬",
+      title: "Tiny Scientist",
+      sub: "Experiments!",
+      storyId: "TINY_SCIENTIST",
+    },
+    {
+      emoji: "🧪",
+      title: "Science Lab",
+      sub: "Safe experiments",
+      storyId: "SCIENCE_LAB",
+    },
   ],
   drawing: [
-    { emoji: "✏️", title: "Letters A-Z", sub: "Draw every letter" },
-    { emoji: "📐", title: "Shapes", sub: "Circles & squares" },
-    { emoji: "🌈", title: "Rainbow", sub: "7 colors to draw" },
-    { emoji: "🌺", title: "Flowers", sub: "Nature drawing" },
+    { emoji: "✏️", title: "Letters", sub: "A to Z fun", storyId: "LETTERS" },
+    { emoji: "🏫", title: "School", sub: "Learn together", storyId: "SCHOOL" },
+  ],
+  stories: [
+    {
+      emoji: "🧚",
+      title: "Magic Forest",
+      sub: "Enchanted tales",
+      storyId: "MAGIC_FOREST",
+    },
+    {
+      emoji: "⚽",
+      title: "Struckball",
+      sub: "Match day!",
+      storyId: "STRUCKBALL",
+    },
+    {
+      emoji: "🌙",
+      title: "Sthm Sthap",
+      sub: "Night mysteries",
+      storyId: "STHMSTHAP",
+    },
+    { emoji: "🔮", title: "Katuion", sub: "Word wizardry", storyId: "KATUION" },
+    {
+      emoji: "🐰",
+      title: "Tairbrty",
+      sub: "A bunny's journey",
+      storyId: "TAIRBRTY",
+    },
+    {
+      emoji: "🐾",
+      title: "Kekkihy",
+      sub: "Cute adventure",
+      storyId: "KEKKIHY",
+    },
   ],
   all: [
-    { emoji: "⭐", title: "Top Picks", sub: "Most popular" },
-    { emoji: "🆕", title: "New Stuff", sub: "Just added" },
-    { emoji: "🔥", title: "Trending", sub: "Everyone's doing it" },
-    { emoji: "🎁", title: "Surprises", sub: "Open to reveal" },
+    {
+      emoji: "🚀",
+      title: "Space Adventure",
+      sub: "Blast off!",
+      storyId: "SPACEADVENTURE",
+    },
+    {
+      emoji: "🦖",
+      title: "Dinosaurs",
+      sub: "Prehistoric world",
+      storyId: "DINOSAURS",
+    },
+    {
+      emoji: "🧚",
+      title: "Magic Forest",
+      sub: "Enchanted tales",
+      storyId: "MAGIC_FOREST",
+    },
+    {
+      emoji: "🔬",
+      title: "Tiny Scientist",
+      sub: "Experiments!",
+      storyId: "TINY_SCIENTIST",
+    },
+    {
+      emoji: "🌊",
+      title: "Ocean Friends",
+      sub: "Deep sea pals",
+      storyId: "OCEAN_FRIENDS",
+    },
+    {
+      emoji: "🎨",
+      title: "Colors & Art",
+      sub: "Mix & match",
+      storyId: "COLORS&ART",
+    },
   ],
 };
 
@@ -81,6 +190,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; accent: string }> = {
   animals: { bg: "#FFF7E0", accent: "#B45309" },
   science: { bg: "#E8F8F0", accent: "#15803D" },
   drawing: { bg: "#FFF0F5", accent: "#FF5B8D" },
+  stories: { bg: "#F3F0FF", accent: "#7C5CBF" },
   all: { bg: "#F3F0FF", accent: "#6C5CE7" },
 };
 
@@ -96,6 +206,13 @@ export default function CategoryScreen() {
 
   const items = CATEGORY_CONTENT[type] ?? CATEGORY_CONTENT["all"];
   const colors = CATEGORY_COLORS[type] ?? CATEGORY_COLORS["all"];
+
+  const handleCardPress = (item: CategoryItem) => {
+    router.push({
+      pathname: "/(details)",
+      params: { storyId: item.storyId },
+    });
+  };
 
   return (
     <View style={[s.container, { backgroundColor: "#FFF9F0" }]}>
@@ -127,14 +244,7 @@ export default function CategoryScreen() {
               key={i}
               style={[s.card, { borderColor: colors.accent + "40" }]}
               activeOpacity={0.85}
-              onPress={() =>
-                router.push({
-                  pathname: "/(details)",
-                  params: {
-                    storyId: item.title.toLowerCase().replace(/\s/g, ""),
-                  },
-                })
-              }
+              onPress={() => handleCardPress(item)}
             >
               <View style={[s.cardImg, { backgroundColor: colors.bg }]}>
                 <Text style={{ fontSize: 44 }}>{item.emoji}</Text>
