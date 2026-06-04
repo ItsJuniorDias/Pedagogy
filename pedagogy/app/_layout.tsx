@@ -9,15 +9,16 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { initializePurchases } from "../service/purchasesService";
-
 import {
   FredokaOne_400Regular,
   useFonts,
 } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
+import * as SplashScreen from "expo-splash-screen";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+
+// Impede que a splash screen suma antes das fontes carregarem
+SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -25,17 +26,17 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
-  useEffect(() => {
-    // ── Inicializa RevenueCat ──────────────────────────────────────────────
-    //
-    // Para usuário anônimo (sem autenticação):
-    initializePurchases();
-  }, []);
-
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
-  if (!fontsLoaded) return <AppLoading />;
+  // Esconde a splash screen somente depois que as fontes carregaram
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  // Enquanto as fontes não carregam, não renderiza nada (splash ainda visível)
+  if (!fontsLoaded) return null;
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -54,8 +55,6 @@ export default function RootLayout() {
         />
 
         <Stack.Screen name="(stories)/index" options={{ headerShown: false }} />
-
-        <Stack.Screen name="(search)/index" options={{ headerShown: false }} />
 
         <Stack.Screen name="(profile)/index" options={{ headerShown: false }} />
 

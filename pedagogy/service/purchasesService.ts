@@ -15,7 +15,6 @@ import { Platform } from "react-native";
 
 import Purchases, {
   CustomerInfo,
-  LOG_LEVEL,
   MakePurchaseResult,
   PurchasesPackage as Package,
   PurchasesOffering,
@@ -29,7 +28,6 @@ import Purchases, {
  */
 const API_KEYS = {
   ios: "test_cTfWjUNpAxWReblKZMMwTnxEZWb",
-  android: "goog_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 };
 
 /**
@@ -47,17 +45,13 @@ export const ENTITLEMENT_ID = "premium";
  * @param userId  ID do usuário autenticado (opcional).
  *                Passe `undefined` para usuário anônimo.
  */
-export async function initializePurchases(userId?: string): Promise<void> {
-  if (__DEV__) {
-    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-  }
-
-  const apiKey = Platform.OS === "ios" ? API_KEYS.ios : API_KEYS.android;
+export function initializePurchases(userId?: string): void {
+  const apiKey = Platform.OS === "ios" ? API_KEYS.ios : "";
 
   if (userId) {
-    await Purchases.configure({ apiKey, appUserID: userId });
+    Purchases.configure({ apiKey, appUserID: userId });
   } else {
-    await Purchases.configure({ apiKey });
+    Purchases.configure({ apiKey });
   }
 }
 
@@ -127,24 +121,4 @@ export function isEntitlementActive(customerInfo: CustomerInfo): boolean {
  */
 export async function getCustomerInfo(): Promise<CustomerInfo> {
   return Purchases.getCustomerInfo();
-}
-
-// ─── Identidade do usuário ────────────────────────────────────────────────────
-
-/**
- * Identifica o usuário após login.
- * Deve ser chamado sempre que o usuário fizer login na sua aplicação.
- */
-export async function identifyUser(userId: string): Promise<CustomerInfo> {
-  const { customerInfo } = await Purchases.logIn(userId);
-  return customerInfo;
-}
-
-/**
- * Reseta para usuário anônimo após logout.
- */
-export async function resetUser(): Promise<CustomerInfo> {
-  const { customerInfo } = await Purchases.logOut();
-
-  return customerInfo;
 }

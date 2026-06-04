@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.alexandrejunior.pedagogy"
+      "bundleIdentifier": "com.alexandre-junior.pedagogy"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +27,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "splash": null,
     "plugins": [
       "expo-router",
       [
