@@ -17,6 +17,7 @@ import Purchases, {
 import {
   getAvailablePackages,
   getCustomerInfo,
+  initializePurchases,
   isEntitlementActive,
   purchasePackage,
   restorePurchases,
@@ -60,6 +61,10 @@ export function usePurchases(): UsePurchasesReturn {
   const [error, setError] = useState<string | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
+
+  useEffect(() => {
+    initializePurchases();
+  }, []);
 
   // Listener de atualizações em tempo real (webhook / background renewal)
   const listenerRef = useRef<((info: CustomerInfo) => void) | null>(null);

@@ -1,9 +1,8 @@
-import { initializePurchases } from "@/service/purchasesService";
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -114,19 +113,6 @@ export default function AppScreen() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList<Slide>>(null);
-
-  // useEffect(() => {
-  //   const removeSubscriptionStatus = async () => {
-  //     await AsyncStorage.removeItem("@subscription_status");
-  //   };
-
-  //   removeSubscriptionStatus();
-  // }, []);
-
-  // Inicializa RevenueCat uma única vez (sem buscar offerings aqui)
-  useEffect(() => {
-    initializePurchases();
-  }, []);
 
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {

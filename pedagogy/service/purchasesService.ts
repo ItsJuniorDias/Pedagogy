@@ -27,7 +27,7 @@ import Purchases, {
  * https://app.revenuecat.com → Project → API Keys
  */
 const API_KEYS = {
-  ios: "test_cTfWjUNpAxWReblKZMMwTnxEZWb",
+  ios: "appl_mtQxhkHThWIqgHmfZtKwaGnhVqM",
 };
 
 /**

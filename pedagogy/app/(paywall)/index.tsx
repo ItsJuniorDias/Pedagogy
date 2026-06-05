@@ -7,6 +7,7 @@ import {
   Alert,
   Animated,
   Dimensions,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -24,6 +25,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePurchases } from "../../hooks/usePurchases";
 
 const { width } = Dimensions.get("window");
+
+const TERMS_URL =
+  "https://app.notion.com/p/Pol-tica-de-Privacidade-Pedagogy-3750df0a2e798004a8fcd6029d729866?source=copy_link";
+const PRIVACY_URL =
+  "https://app.notion.com/p/Pol-tica-de-Privacidade-Pedagogy-3750df0a2e798004a8fcd6029d729866?source=copy_link";
 
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
@@ -465,8 +471,15 @@ export default function PaywallScreen() {
 
         <Text style={s.finePrint}>
           Billing is done automatically. You can cancel at any time in your
-          account settings. By subscribing, you agree to our Terms of Use and
-          Privacy Policy.
+          account settings. By subscribing, you agree to our{" "}
+          <Text style={s.link} onPress={() => Linking.openURL(TERMS_URL)}>
+            Terms of Use
+          </Text>{" "}
+          and{" "}
+          <Text style={s.link} onPress={() => Linking.openURL(PRIVACY_URL)}>
+            Privacy Policy
+          </Text>
+          .
         </Text>
       </ScrollView>
     </View>
@@ -502,6 +515,10 @@ const s = StyleSheet.create({
     backgroundColor: "#FFE8F0",
     top: -40,
     right: -60,
+  },
+  link: {
+    color: "#FF5B8D", // ou a cor primária do seu app
+    textDecorationLine: "underline",
   },
   heroBlob2: {
     position: "absolute",
@@ -651,7 +668,7 @@ const s = StyleSheet.create({
     lineHeight: 18,
   },
   finePrint: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#CCC",
     textAlign: "center",
     paddingHorizontal: 28,
