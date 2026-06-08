@@ -13,6 +13,8 @@ import {
   View,
 } from "react-native";
 
+import { STORIES_GRID } from "../../mocks/historyMock";
+
 const { width } = Dimensions.get("window");
 
 const fredoka = (size: number, color?: string) => ({
@@ -21,69 +23,10 @@ const fredoka = (size: number, color?: string) => ({
   ...(color ? { color } : {}),
 });
 
-const STORY_TAGS = ["All", "Adventure", "Science", "Fantasy", "Animals"];
-
-const STORIES = [
-  {
-    id: "rocket_adventure",
-    emoji: "🚀",
-    title: "Rocket Adventure",
-    tag: "Adventure",
-    pages: 8,
-    bg: "#EBF4FF",
-    accent: "#3B82F6",
-    badge: "New",
-  },
-  {
-    id: "magic_forest",
-    emoji: "🌲",
-    title: "Magic Forest",
-    tag: "Fantasy",
-    pages: 12,
-    bg: "#E8F8F0",
-    accent: "#27AE60",
-    badge: null,
-  },
-  {
-    id: "ocean_friends",
-    emoji: "🐠",
-    title: "Ocean Friends",
-    tag: "Animals",
-    pages: 6,
-    bg: "#FFF0F5",
-    accent: "#FF5B8D",
-    badge: "Hot",
-  },
-  {
-    id: "tiny_scientist",
-    emoji: "🔬",
-    title: "Tiny Scientist",
-    tag: "Science",
-    pages: 10,
-    bg: "#FFF7E0",
-    accent: "#F5A623",
-    badge: null,
-  },
-  {
-    id: "dragon_diary",
-    emoji: "🐉",
-    title: "Dragon Diary",
-    tag: "Fantasy",
-    pages: 14,
-    bg: "#F3F0FF",
-    accent: "#6C5CE7",
-    badge: "New",
-  },
-  {
-    id: "dino_world",
-    emoji: "🦖",
-    title: "Dino World",
-    tag: "Adventure",
-    pages: 9,
-    bg: "#FFF7E0",
-    accent: "#F5A623",
-    badge: null,
-  },
+// Coleta todas as tags únicas do grid e adiciona "All" no início
+const ALL_TAGS = [
+  "All",
+  ...Array.from(new Set(STORIES_GRID.map((s) => s.tag))),
 ];
 
 export default function StoriesScreen() {
@@ -95,8 +38,8 @@ export default function StoriesScreen() {
 
   const filtered =
     activeTag === 0
-      ? STORIES
-      : STORIES.filter((s) => s.tag === STORY_TAGS[activeTag]);
+      ? STORIES_GRID
+      : STORIES_GRID.filter((s) => s.tag === ALL_TAGS[activeTag]);
 
   return (
     <View style={s.container}>
@@ -120,8 +63,11 @@ export default function StoriesScreen() {
       >
         {/* Hero banner */}
         <View style={s.hero}>
-          <Text style={fredoka(26, "#fff")}>{"A world of\nadventures 🌍"}</Text>
+          <Text style={fredoka(26, "#fff")}>{`A world of\nadventures 🌍`}</Text>
           <Text style={s.heroSub}>Pick a story and start reading!</Text>
+          <Text style={s.heroCount}>
+            {STORIES_GRID.length} stories available
+          </Text>
         </View>
 
         {/* Tags */}
@@ -130,7 +76,7 @@ export default function StoriesScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={s.tagsRow}
         >
-          {STORY_TAGS.map((tag, i) => (
+          {ALL_TAGS.map((tag, i) => (
             <TouchableOpacity
               key={i}
               style={[s.tag, activeTag === i && s.tagActive]}
@@ -168,8 +114,13 @@ export default function StoriesScreen() {
                 {story.title}
               </Text>
               <Text style={[s.storyMeta, { color: story.accent }]}>
-                📖 {story.pages} pages
+                📖 {"chapters" in story ? `${story.chapters} chapters` : ""}
               </Text>
+              {"ageRange" in story && (
+                <Text style={[s.storyAge, { color: story.accent + "99" }]}>
+                  Ages {story.ageRange}
+                </Text>
+              )}
             </TouchableOpacity>
           ))}
         </View>
@@ -235,6 +186,12 @@ const s = StyleSheet.create({
     fontWeight: "600",
     marginTop: 6,
   },
+  heroCount: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.55)",
+    fontWeight: "600",
+    marginTop: 4,
+  },
 
   tagsRow: { paddingBottom: 20, gap: 10 },
   tag: {
@@ -277,4 +234,5 @@ const s = StyleSheet.create({
   storyEmoji: { fontSize: 52, marginBottom: 10 },
   storyTitle: { textAlign: "center", marginBottom: 6 },
   storyMeta: { fontSize: 12, fontWeight: "700" },
+  storyAge: { fontSize: 10, fontWeight: "600", marginTop: 3 },
 });

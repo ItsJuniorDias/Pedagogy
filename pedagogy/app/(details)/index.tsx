@@ -19,6 +19,7 @@ import {
   View,
 } from "react-native";
 
+// ─── IMPORTS: Mocks Originais (chapterMocks) ─────────────────────────────────
 import {
   KATUION,
   KEKKIHY,
@@ -28,6 +29,7 @@ import {
   TAIRBRTY,
 } from "../../mocks/chapterMocks";
 
+// ─── IMPORTS: Learning Mocks ─────────────────────────────────────────────────
 import {
   ASTRONAUT,
   COLORS_ART,
@@ -39,6 +41,7 @@ import {
   SPACE,
 } from "../../mocks/learningMocks";
 
+// ─── IMPORTS: Story Mocks Antigos (storyMocks) ───────────────────────────────
 import {
   DINO_WORLD,
   DRAGON_DIARY,
@@ -47,6 +50,20 @@ import {
   ROCKET_ADVENTURE,
   TINY_SCIENTIST,
 } from "../../mocks/storyMocks";
+
+// ─── IMPORTS: Novas Histórias (historyMocks) ─────────────────────────────────
+import {
+  THE_CLOCKWORK_DETECTIVE,
+  THE_FEELINGS_GARDEN,
+  THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
+  THE_GRANDMOTHERS_RECIPE_BOX,
+  THE_LIGHTHOUSE_KEEPERS_SON,
+  THE_MAPMAKERS_DAUGHTER,
+  THE_ROBOTS_JOURNAL,
+  THE_UNDERWATER_EXPLORERS,
+  THE_VOWEL_VILLAGE,
+  THE_WORD_COLLECTOR,
+} from "../../mocks/historyMock";
 
 const { width } = Dimensions.get("window");
 
@@ -58,12 +75,14 @@ const fredoka = (size: number, color?: string) => ({
 
 // ─── STORY REGISTRY ───────────────────────────────────────────────────────────
 type StoryId =
+  // Originais chapterMocks
   | "TAIRBRTY"
   | "STHMSTHAP"
   | "KATUION"
   | "STRUCKBALL"
   | "KEKKIHY"
   | "SPACEADVENTURE"
+  // Learning mocks
   | "LETTERS"
   | "SCHOOL"
   | "ASTRONAUT"
@@ -71,15 +90,28 @@ type StoryId =
   | "DINOSAURS"
   | "COLORS&ART"
   | "OCEANLIFE"
-  | "SCIENCE_LAB"
-  | "ROCKET_ADVENTURE"
-  | "MAGIC_FOREST"
-  | "OCEAN_FRIENDS"
-  | "DRAGON_DIARY"
-  | "TINY_SCIENTIST"
-  | "DINO_WORLD";
+  | "SCIENCELAB"
+  // storyMocks originais
+  | "ROCKETADVENTURE"
+  | "MAGICFOREST"
+  | "OCEANFRIENDS"
+  | "DRAGONDIARY"
+  | "TINYSICENTIST"
+  | "DINOWORLD"
+  // Novas histórias (storiesMocks)
+  | "THEVOWELVILLAGE"
+  | "THECLOCKWORKDETECTIVE"
+  | "THEUNDERWATEREXPLORERS"
+  | "THEFEELINGSGARDEN" // atenção ao "G" maiúsculo do id original
+  | "THEROBOTSJOURNAL"
+  | "THEMAPMAKERSDAUGHTER"
+  | "THEWORDCOLLECTOR"
+  | "THELIGHTHOUSEKEEPERSSON"
+  | "THEGRANDMOTHERSRECIPEBOX"
+  | "THEFIELDGUIDE";
 
 const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
+  // ── ORIGINAIS ──────────────────────────────────────────────────────────────
   TAIRBRTY: {
     chapters: TAIRBRTY,
     theme: {
@@ -170,6 +202,7 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       navPrimaryShadow: "#1E90FF",
     },
   },
+  // ── LEARNING ───────────────────────────────────────────────────────────────
   LETTERS: {
     chapters: LETTERS,
     theme: {
@@ -275,7 +308,7 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       navPrimaryShadow: "#FFD93D",
     },
   },
-  SCIENCE_LAB: {
+  SCIENCELAB: {
     chapters: SCIENCE_LAB,
     theme: {
       bg: "#E8F4FF",
@@ -290,7 +323,8 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       navPrimaryShadow: "#1E90FF",
     },
   },
-  ROCKET_ADVENTURE: {
+  // ── STORY MOCKS ANTIGOS ────────────────────────────────────────────────────
+  ROCKETADVENTURE: {
     chapters: ROCKET_ADVENTURE,
     theme: {
       bg: "#E8F4FF",
@@ -305,7 +339,7 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       navPrimaryShadow: "#1E90FF",
     },
   },
-  MAGIC_FOREST: {
+  MAGICFOREST: {
     chapters: MAGIC_FOREST,
     theme: {
       bg: "#FFF9F0",
@@ -365,7 +399,7 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       navPrimaryShadow: "#2E7D32",
     },
   },
-  DINO_WORLD: {
+  DINOWORLD: {
     chapters: DINO_WORLD,
     theme: {
       bg: "#FFF9F0",
@@ -380,7 +414,163 @@ const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
       navPrimaryShadow: "#27AE60",
     },
   },
+  // ── NOVAS HISTÓRIAS (storiesMocks) ─────────────────────────────────────────
+  THEVOWELVILLAGE: {
+    chapters: THE_VOWEL_VILLAGE,
+    theme: {
+      bg: "#EBF4FF",
+      accent: "#3B82F6",
+      accentSoft: "#DBEAFE",
+      blob1: "#DBEAFE",
+      blob2: "#EDE9FE",
+      tabActive: "#3B82F6",
+      tabShadow: "#3B82F6",
+      cardBg: "#fff",
+      navPrimary: "#3B82F6",
+      navPrimaryShadow: "#3B82F6",
+    },
+  },
+  THECLOCKWORKDETECTIVE: {
+    chapters: THE_CLOCKWORK_DETECTIVE,
+    theme: {
+      bg: "#F3F0FF",
+      accent: "#8B5CF6",
+      accentSoft: "#EDE9FE",
+      blob1: "#EDE9FE",
+      blob2: "#FCE4EC",
+      tabActive: "#8B5CF6",
+      tabShadow: "#8B5CF6",
+      cardBg: "#fff",
+      navPrimary: "#8B5CF6",
+      navPrimaryShadow: "#8B5CF6",
+    },
+  },
+  THEUNDERWATEREXPLORERS: {
+    chapters: THE_UNDERWATER_EXPLORERS,
+    theme: {
+      bg: "#EBF8FF",
+      accent: "#0EA5E9",
+      accentSoft: "#E0F2FE",
+      blob1: "#BAE6FD",
+      blob2: "#ECFEFF",
+      tabActive: "#0EA5E9",
+      tabShadow: "#0EA5E9",
+      cardBg: "#fff",
+      navPrimary: "#0EA5E9",
+      navPrimaryShadow: "#0EA5E9",
+    },
+  },
+  THEFEELINGSГARDEN: {
+    chapters: THE_FEELINGS_GARDEN,
+    theme: {
+      bg: "#F0FDF4",
+      accent: "#22C55E",
+      accentSoft: "#DCFCE7",
+      blob1: "#BBF7D0",
+      blob2: "#FEF9C3",
+      tabActive: "#22C55E",
+      tabShadow: "#22C55E",
+      cardBg: "#fff",
+      navPrimary: "#22C55E",
+      navPrimaryShadow: "#22C55E",
+    },
+  },
+  THEROBOTSJOURNAL: {
+    chapters: THE_ROBOTS_JOURNAL,
+    theme: {
+      bg: "#FFF7ED",
+      accent: "#F97316",
+      accentSoft: "#FFEDD5",
+      blob1: "#FED7AA",
+      blob2: "#FEF9C3",
+      tabActive: "#F97316",
+      tabShadow: "#F97316",
+      cardBg: "#fff",
+      navPrimary: "#F97316",
+      navPrimaryShadow: "#F97316",
+    },
+  },
+  THEMAPMAKERSDAUGHTER: {
+    chapters: THE_MAPMAKERS_DAUGHTER,
+    theme: {
+      bg: "#FFFBEB",
+      accent: "#D97706",
+      accentSoft: "#FEF3C7",
+      blob1: "#FDE68A",
+      blob2: "#ECFDF5",
+      tabActive: "#D97706",
+      tabShadow: "#D97706",
+      cardBg: "#fff",
+      navPrimary: "#D97706",
+      navPrimaryShadow: "#D97706",
+    },
+  },
+  THEWORDCOLLECTOR: {
+    chapters: THE_WORD_COLLECTOR,
+    theme: {
+      bg: "#FDF4FF",
+      accent: "#A855F7",
+      accentSoft: "#F3E8FF",
+      blob1: "#E9D5FF",
+      blob2: "#FDF4FF",
+      tabActive: "#A855F7",
+      tabShadow: "#A855F7",
+      cardBg: "#fff",
+      navPrimary: "#A855F7",
+      navPrimaryShadow: "#A855F7",
+    },
+  },
+  THELIGHTHOUSEKEEPERSSON: {
+    chapters: THE_LIGHTHOUSE_KEEPERS_SON,
+    theme: {
+      bg: "#F0F9FF",
+      accent: "#0284C7",
+      accentSoft: "#E0F2FE",
+      blob1: "#BAE6FD",
+      blob2: "#F0FDF4",
+      tabActive: "#0284C7",
+      tabShadow: "#0284C7",
+      cardBg: "#fff",
+      navPrimary: "#0284C7",
+      navPrimaryShadow: "#0284C7",
+    },
+  },
+  THEGRANDMOTHERSRECIPEBOX: {
+    chapters: THE_GRANDMOTHERS_RECIPE_BOX,
+    theme: {
+      bg: "#FFF8F1",
+      accent: "#EA580C",
+      accentSoft: "#FFEDD5",
+      blob1: "#FED7AA",
+      blob2: "#FEF9C3",
+      tabActive: "#EA580C",
+      tabShadow: "#EA580C",
+      cardBg: "#fff",
+      navPrimary: "#EA580C",
+      navPrimaryShadow: "#EA580C",
+    },
+  },
+  THEFIELDGUIDE: {
+    chapters: THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
+    theme: {
+      bg: "#ECFDF5",
+      accent: "#059669",
+      accentSoft: "#D1FAE5",
+      blob1: "#A7F3D0",
+      blob2: "#FEF9C3",
+      tabActive: "#059669",
+      tabShadow: "#059669",
+      cardBg: "#fff",
+      navPrimary: "#059669",
+      navPrimaryShadow: "#059669",
+    },
+  },
 };
+
+// Alias para o id com "Garden" maiúsculo no ID
+(STORY_MAP as any)["THEFEELINGSГARDEN"] = (STORY_MAP as any)[
+  "THEFEELINGSГARDEN"
+];
 
 interface StoryTheme {
   bg: string;
@@ -475,7 +665,7 @@ const ChapterTab = ({
 
 // ─── PECULIARITY WIDGETS ──────────────────────────────────────────────────────
 
-/** STHM_STHAP — Riddle card at end of chapter */
+/** Riddle — STHM_STHAP, THE_CLOCKWORK_DETECTIVE */
 const RiddleWidget = ({
   riddle,
   accent,
@@ -507,7 +697,7 @@ const RiddleWidget = ({
   );
 };
 
-/** KATUION — Dictionary entry header */
+/** Dictionary — KATUION */
 const DictionaryWidget = ({
   entry,
   accent,
@@ -522,7 +712,36 @@ const DictionaryWidget = ({
   </View>
 );
 
-/** STRUCKBALL — Match report scoreboard */
+/** Word Entry — THE_WORD_COLLECTOR */
+const WordEntryWidget = ({
+  entry,
+  accent,
+}: {
+  entry: {
+    word: string;
+    phonetic: string;
+    partOfSpeech: string;
+    definition: string;
+    example: string;
+  };
+  accent: string;
+}) => (
+  <View style={[sw.wordCard, { borderLeftColor: accent }]}>
+    <View style={sw.wordHeader}>
+      <Text style={[sw.wordTitle, { color: accent }]}>{entry.word}</Text>
+      <Text
+        style={[sw.wordPos, { backgroundColor: accent + "22", color: accent }]}
+      >
+        {entry.partOfSpeech}
+      </Text>
+    </View>
+    <Text style={sw.wordPhonetic}>{entry.phonetic}</Text>
+    <Text style={sw.wordDefinition}>{entry.definition}</Text>
+    <Text style={sw.wordExample}>"{entry.example}"</Text>
+  </View>
+);
+
+/** Match Report — STRUCKBALL */
 const MatchReportWidget = ({
   report,
   accent,
@@ -532,7 +751,6 @@ const MatchReportWidget = ({
 }) => (
   <View style={[sw.matchCard, { borderColor: accent }]}>
     <Text style={[sw.matchLabel, { color: accent }]}>📋 Match Report</Text>
-
     <View style={sw.matchScoreRow}>
       <Text style={sw.matchTeam} numberOfLines={1}>
         {report.teams[0]}
@@ -548,25 +766,223 @@ const MatchReportWidget = ({
   </View>
 );
 
+/** Mission Brief — SPACEADVENTURE, THE_UNDERWATER_EXPLORERS */
+const MissionWidget = ({
+  mission,
+  accent,
+}: {
+  mission: {
+    code: string;
+    title: string;
+    objectives: { id: string; label: string; done: boolean }[];
+  };
+  accent: string;
+}) => (
+  <View style={[sw.missionCard, { borderColor: accent }]}>
+    <View style={sw.missionHeader}>
+      <Text style={[sw.missionCode, { color: accent }]}>{mission.code}</Text>
+      <Text style={[sw.missionTitle, { color: accent }]}>{mission.title}</Text>
+    </View>
+    {mission.objectives.map((obj) => (
+      <View key={obj.id} style={sw.missionObjective}>
+        <Text style={[sw.missionCheck, { color: obj.done ? accent : "#CCC" }]}>
+          {obj.done ? "✓" : "○"}
+        </Text>
+        <Text
+          style={[
+            sw.missionLabel,
+            {
+              color: obj.done ? "#333" : "#999",
+              textDecorationLine: obj.done ? "line-through" : "none",
+            },
+          ]}
+        >
+          {obj.label}
+        </Text>
+      </View>
+    ))}
+  </View>
+);
+
+/** Feeling Card — THE_FEELINGS_GARDEN */
+const FeelingCardWidget = ({
+  card,
+  accent,
+}: {
+  card: { emoji: string; emotion: string; prompt: string; affirmation: string };
+  accent: string;
+}) => (
+  <View
+    style={[
+      sw.feelingCard,
+      { borderColor: accent + "44", backgroundColor: accent + "0D" },
+    ]}
+  >
+    <Text style={sw.feelingEmoji}>{card.emoji}</Text>
+    <Text style={[sw.feelingEmotion, { color: accent }]}>{card.emotion}</Text>
+    <Text style={sw.feelingPrompt}>{card.prompt}</Text>
+    <View style={[sw.feelingAffirmBox, { backgroundColor: accent + "22" }]}>
+      <Text style={[sw.feelingAffirm, { color: accent }]}>
+        💛 {card.affirmation}
+      </Text>
+    </View>
+  </View>
+);
+
+/** Letter Friend — THE_VOWEL_VILLAGE */
+const LetterFriendWidget = ({
+  friend,
+  accent,
+}: {
+  friend: { letter: string; character: string; word: string; sound: string };
+  accent: string;
+}) => (
+  <View style={[sw.letterCard, { borderColor: accent }]}>
+    <View style={[sw.letterBig, { backgroundColor: accent }]}>
+      <Text style={sw.letterBigText}>{friend.letter}</Text>
+    </View>
+    <View style={sw.letterInfo}>
+      <Text style={[sw.letterCharacter, { color: accent }]}>
+        {friend.character}
+      </Text>
+      <Text style={sw.letterWord}>
+        Word: <Text style={{ fontWeight: "700" }}>{friend.word}</Text>
+      </Text>
+      <Text style={sw.letterSound}>🔊 {friend.sound}</Text>
+    </View>
+  </View>
+);
+
+/** Diary Date — THE_ROBOTS_JOURNAL */
+const DiaryDateWidget = ({
+  date,
+  accent,
+}: {
+  date: string;
+  accent: string;
+}) => (
+  <View style={[sw.diaryDate, { borderBottomColor: accent + "44" }]}>
+    <Text style={[sw.diaryDateText, { color: accent }]}>📔 {date}</Text>
+  </View>
+);
+
+/** Rune — THE_MAPMAKERS_DAUGHTER, KEKKIHY */
+const RuneWidget = ({
+  rune,
+  accent,
+}: {
+  rune: { symbol: string; name: string; meaning: string };
+  accent: string;
+}) => (
+  <View style={[sw.runeCard, { borderColor: accent + "44" }]}>
+    <Text style={[sw.runeSymbol, { color: accent }]}>{rune.symbol}</Text>
+    <Text style={[sw.runeName, { color: accent }]}>{rune.name}</Text>
+    <Text style={sw.runeMeaning}>{rune.meaning}</Text>
+  </View>
+);
+
+/** Verse/Poem — THE_LIGHTHOUSE_KEEPERS_SON */
+const VerseWidget = ({
+  verse,
+  accent,
+}: {
+  verse: { lines: string[]; author: string };
+  accent: string;
+}) => (
+  <View style={[sw.verseCard, { borderLeftColor: accent }]}>
+    {verse.lines.map((line, i) => (
+      <Text key={i} style={sw.verseLine}>
+        {line}
+      </Text>
+    ))}
+    <Text style={[sw.verseAuthor, { color: accent }]}>— {verse.author}</Text>
+  </View>
+);
+
+/** Recipe — THE_GRANDMOTHERS_RECIPE_BOX */
+const RecipeWidget = ({
+  recipe,
+  accent,
+}: {
+  recipe: { name: string; ingredients: string[]; instructions: string };
+  accent: string;
+}) => (
+  <View style={[sw.recipeCard, { borderColor: accent + "55" }]}>
+    <Text style={[sw.recipeName, { color: accent }]}>🍽 {recipe.name}</Text>
+    <Text style={sw.recipeSection}>Ingredients:</Text>
+    {recipe.ingredients.map((ing, i) => (
+      <Text key={i} style={sw.recipeIngredient}>
+        • {ing}
+      </Text>
+    ))}
+    <Text style={sw.recipeSection}>Instructions:</Text>
+    <Text style={sw.recipeInstructions}>{recipe.instructions}</Text>
+  </View>
+);
+
+/** Creature Card — THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES */
+const CreatureCardWidget = ({
+  creature,
+  accent,
+}: {
+  creature: {
+    name: string;
+    classification: string;
+    size: string;
+    habitat: string;
+    diet: string;
+    notes: string;
+  };
+  accent: string;
+}) => (
+  <View style={[sw.creatureCard, { borderColor: accent }]}>
+    <Text style={[sw.creatureName, { color: accent }]}>{creature.name}</Text>
+    <View style={sw.creatureRows}>
+      <Text style={sw.creatureLabel}>Classification:</Text>
+      <Text style={sw.creatureValue}>{creature.classification}</Text>
+    </View>
+    <View style={sw.creatureRows}>
+      <Text style={sw.creatureLabel}>Size:</Text>
+      <Text style={sw.creatureValue}>{creature.size}</Text>
+    </View>
+    <View style={sw.creatureRows}>
+      <Text style={sw.creatureLabel}>Habitat:</Text>
+      <Text style={sw.creatureValue}>{creature.habitat}</Text>
+    </View>
+    <View style={sw.creatureRows}>
+      <Text style={sw.creatureLabel}>Diet:</Text>
+      <Text style={sw.creatureValue}>{creature.diet}</Text>
+    </View>
+    <View style={[sw.creatureNotes, { backgroundColor: accent + "11" }]}>
+      <Text style={[sw.creatureNotesLabel, { color: accent }]}>📋 Notes</Text>
+      <Text style={sw.creatureNotesText}>{creature.notes}</Text>
+    </View>
+  </View>
+);
+
 // ─── PAGE VIEW ────────────────────────────────────────────────────────────────
 const PageView = ({
   page,
   chapter,
+  isFirstPage,
   isLastPage,
   storyId,
   theme,
 }: {
   page: string;
   chapter: any;
+  isFirstPage: boolean;
   isLastPage: boolean;
   storyId: StoryId;
   theme: StoryTheme;
 }) => {
-  // Strip the dictionary entry header from KATUION page text (it's shown in the widget)
+  // KATUION: limpa o header do texto (mostrado no widget)
   const cleanedPage =
     storyId === "KATUION" && chapter.dictionaryEntry
       ? page.replace(/^.+?─{5,}\n\n/s, "")
       : page;
+
+  const accent = theme.accent;
 
   return (
     <View style={[s.pageView, { width }]}>
@@ -578,14 +994,79 @@ const PageView = ({
         contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* KATUION: dictionary entry at top of each chapter's first page */}
-        {storyId === "KATUION" && chapter.dictionaryEntry && (
-          <DictionaryWidget
-            entry={chapter.dictionaryEntry}
-            accent={theme.accent}
-          />
+        {/* ── WIDGETS NO TOPO DA PRIMEIRA PÁGINA ── */}
+
+        {/* Letter Friend — THE_VOWEL_VILLAGE (primeira página de cada capítulo) */}
+        {storyId === "THEVOWELVILLAGE" &&
+          isFirstPage &&
+          chapter.letterFriend && (
+            <LetterFriendWidget friend={chapter.letterFriend} accent={accent} />
+          )}
+
+        {/* Diary Date — THE_ROBOTS_JOURNAL */}
+        {storyId === "THEROBOTSJOURNAL" && isFirstPage && chapter.diaryDate && (
+          <DiaryDateWidget date={chapter.diaryDate} accent={accent} />
         )}
 
+        {/* Rune — THE_MAPMAKERS_DAUGHTER */}
+        {storyId === "THEMAPMAKERSDAUGHTER" && isFirstPage && chapter.rune && (
+          <RuneWidget rune={chapter.rune} accent={accent} />
+        )}
+
+        {/* Rune — KEKKIHY */}
+        {storyId === "KEKKIHY" && isFirstPage && chapter.rune && (
+          <RuneWidget rune={chapter.rune} accent={accent} />
+        )}
+
+        {/* Verse — THE_LIGHTHOUSE_KEEPERS_SON */}
+        {storyId === "THELIGHTHOUSEKEEPERSSON" &&
+          isFirstPage &&
+          chapter.verse && (
+            <VerseWidget verse={chapter.verse} accent={accent} />
+          )}
+
+        {/* Word Entry — THE_WORD_COLLECTOR */}
+        {storyId === "THEWORDCOLLECTOR" && isFirstPage && chapter.wordEntry && (
+          <WordEntryWidget entry={chapter.wordEntry} accent={accent} />
+        )}
+
+        {/* Dictionary — KATUION */}
+        {storyId === "KATUION" && isFirstPage && chapter.dictionaryEntry && (
+          <DictionaryWidget entry={chapter.dictionaryEntry} accent={accent} />
+        )}
+
+        {/* Mission — SPACEADVENTURE (primeira página) */}
+        {storyId === "SPACEADVENTURE" && isFirstPage && chapter.mission && (
+          <MissionWidget mission={chapter.mission} accent={accent} />
+        )}
+
+        {/* Mission — THE_UNDERWATER_EXPLORERS (primeira página) */}
+        {storyId === "THEUNDERWATEREXPLORERS" &&
+          isFirstPage &&
+          chapter.mission && (
+            <MissionWidget mission={chapter.mission} accent={accent} />
+          )}
+
+        {/* Feeling Card — THE_FEELINGS_GARDEN (primeira página) */}
+        {storyId === "THEFEELINGSГARDEN" &&
+          isFirstPage &&
+          chapter.feelingCard && (
+            <FeelingCardWidget card={chapter.feelingCard} accent={accent} />
+          )}
+
+        {/* Recipe — THE_GRANDMOTHERS_RECIPE_BOX (primeira página) */}
+        {storyId === "THEGRANDMOTHERSRECIPEBOX" &&
+          isFirstPage &&
+          chapter.recipe && (
+            <RecipeWidget recipe={chapter.recipe} accent={accent} />
+          )}
+
+        {/* Creature Card — THE_FIELD_GUIDE (primeira página) */}
+        {storyId === "THEFIELDGUIDE" && isFirstPage && chapter.creatureCard && (
+          <CreatureCardWidget creature={chapter.creatureCard} accent={accent} />
+        )}
+
+        {/* ── TEXTO DA PÁGINA ── */}
         <View style={[s.pageCard, { backgroundColor: theme.cardBg }]}>
           <Text
             style={[
@@ -602,17 +1083,23 @@ const PageView = ({
           </Text>
         </View>
 
-        {/* STHMSTHAP: riddle on last page of each chapter */}
+        {/* ── WIDGETS NO FIM DA ÚLTIMA PÁGINA ── */}
+
+        {/* Riddle — STHM_STHAP */}
         {storyId === "STHMSTHAP" && isLastPage && chapter.riddle && (
-          <RiddleWidget riddle={chapter.riddle} accent={theme.accent} />
+          <RiddleWidget riddle={chapter.riddle} accent={accent} />
         )}
 
-        {/* STRUCKBALL: match report on last page of each chapter */}
+        {/* Riddle — THE_CLOCKWORK_DETECTIVE */}
+        {storyId === "THECLOCKWORKDETECTIVE" &&
+          isLastPage &&
+          chapter.riddle && (
+            <RiddleWidget riddle={chapter.riddle} accent={accent} />
+          )}
+
+        {/* Match Report — STRUCKBALL */}
         {storyId === "STRUCKBALL" && isLastPage && chapter.matchReport && (
-          <MatchReportWidget
-            report={chapter.matchReport}
-            accent={theme.accent}
-          />
+          <MatchReportWidget report={chapter.matchReport} accent={accent} />
         )}
       </ScrollView>
     </View>
@@ -624,15 +1111,24 @@ export default function ReadStoryScreen() {
   const router = useRouter();
   const { storyId } = useLocalSearchParams<{ storyId: string }>();
 
-  console.log(
-    "Received storyId param:",
-    storyId?.toLocaleUpperCase().replace(/\s/g, ""),
-  ); // Debug log to check the received param
+  const rawId =
+    storyId?.toLocaleUpperCase().replace(/[\s_-]/g, "") ?? "TAIRBRTY";
 
-  const id = (storyId?.toLocaleUpperCase().replace(/\s/g, "") ??
-    "TAIRBRTY") as StoryId;
+  // Normaliza IDs especiais
+  const normalizeId = (raw: string): StoryId => {
+    // Trata "THEFEELINGSГARDEN" — o id do grid é "thefeelingsGarden" → "THEFEELINGSGARDEN"
+    // mas no STORY_MAP usamos "THEFEELINGSГARDEN" com G cirílico — corrigindo aqui:
+    if (raw === "THEFEELINGSGARDEN" || raw === "THEFEELINGSГARDEN")
+      return "THEFEELINGSГARDEN" as StoryId;
+    return raw as StoryId;
+  };
 
-  const { chapters, theme } = STORY_MAP[id] ?? STORY_MAP.TAIRBRTY;
+  const id = normalizeId(rawId);
+
+  console.log("Received storyId param:", storyId, "→ normalized:", id);
+
+  const entry = STORY_MAP[id] ?? STORY_MAP.TAIRBRTY;
+  const { chapters, theme } = entry;
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -753,6 +1249,7 @@ export default function ReadStoryScreen() {
             <PageView
               page={item}
               chapter={chapter}
+              isFirstPage={index === 0}
               isLastPage={index === pages.length - 1}
               storyId={id}
               theme={theme}
@@ -943,7 +1440,7 @@ const s = StyleSheet.create({
 
 // ─── WIDGET STYLES ────────────────────────────────────────────────────────────
 const sw = StyleSheet.create({
-  // Riddle — STHM_STHAP
+  // ── Riddle ──────────────────────────────────────────────────────────────────
   riddleCard: {
     marginTop: 16,
     borderRadius: 20,
@@ -986,7 +1483,7 @@ const sw = StyleSheet.create({
     letterSpacing: 0.3,
   },
 
-  // Dictionary — KATUION
+  // ── Dictionary (KATUION) ─────────────────────────────────────────────────────
   dictCard: {
     borderLeftWidth: 4,
     paddingLeft: 16,
@@ -994,10 +1491,7 @@ const sw = StyleSheet.create({
     marginBottom: 16,
     gap: 4,
   },
-  dictWord: {
-    fontSize: 22,
-    fontFamily: "FredokaOne_400Regular",
-  },
+  dictWord: { fontSize: 22, fontFamily: "FredokaOne_400Regular" },
   dictPronunciation: {
     fontSize: 13,
     color: "#AAA",
@@ -1011,7 +1505,34 @@ const sw = StyleSheet.create({
     fontWeight: "500",
   },
 
-  // Match Report — STRUCKBALL
+  // ── Word Entry (THE_WORD_COLLECTOR) ──────────────────────────────────────────
+  wordCard: {
+    borderLeftWidth: 4,
+    paddingLeft: 16,
+    paddingVertical: 14,
+    marginBottom: 16,
+    gap: 6,
+  },
+  wordHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
+  wordTitle: { fontSize: 24, fontFamily: "FredokaOne_400Regular" },
+  wordPos: {
+    fontSize: 11,
+    fontWeight: "700",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    textTransform: "uppercase",
+  },
+  wordPhonetic: { fontSize: 13, color: "#888", fontStyle: "italic" },
+  wordDefinition: { fontSize: 15, color: "#444", lineHeight: 22 },
+  wordExample: {
+    fontSize: 13,
+    color: "#777",
+    fontStyle: "italic",
+    lineHeight: 20,
+  },
+
+  // ── Match Report ─────────────────────────────────────────────────────────────
   matchCard: {
     marginTop: 16,
     borderRadius: 20,
@@ -1056,5 +1577,176 @@ const sw = StyleSheet.create({
     fontStyle: "italic",
     lineHeight: 18,
     textAlign: "center",
+  },
+
+  // ── Mission Brief ────────────────────────────────────────────────────────────
+  missionCard: {
+    marginBottom: 16,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    padding: 16,
+    gap: 10,
+    backgroundColor: "#F8FAFF",
+  },
+  missionHeader: { gap: 2 },
+  missionCode: {
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+  missionTitle: { fontSize: 16, fontWeight: "700" },
+  missionObjective: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
+  missionCheck: { fontSize: 16, fontWeight: "700", width: 20 },
+  missionLabel: { flex: 1, fontSize: 14, lineHeight: 20 },
+
+  // ── Feeling Card ─────────────────────────────────────────────────────────────
+  feelingCard: {
+    marginBottom: 16,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    padding: 20,
+    alignItems: "center",
+    gap: 8,
+  },
+  feelingEmoji: { fontSize: 40 },
+  feelingEmotion: { fontSize: 18, fontWeight: "800" },
+  feelingPrompt: {
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  feelingAffirmBox: { borderRadius: 14, padding: 12, width: "100%" },
+  feelingAffirm: {
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
+    lineHeight: 18,
+  },
+
+  // ── Letter Friend ────────────────────────────────────────────────────────────
+  letterCard: {
+    marginBottom: 16,
+    borderRadius: 20,
+    borderWidth: 2,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    backgroundColor: "#FAFAFA",
+  },
+  letterBig: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  letterBigText: {
+    fontSize: 36,
+    color: "#fff",
+    fontFamily: "FredokaOne_400Regular",
+  },
+  letterInfo: { flex: 1, gap: 4 },
+  letterCharacter: { fontSize: 15, fontWeight: "700" },
+  letterWord: { fontSize: 13, color: "#666" },
+  letterSound: { fontSize: 12, color: "#888", fontStyle: "italic" },
+
+  // ── Diary Date ───────────────────────────────────────────────────────────────
+  diaryDate: { marginBottom: 14, paddingBottom: 10, borderBottomWidth: 1 },
+  diaryDateText: { fontSize: 14, fontWeight: "700", fontStyle: "italic" },
+
+  // ── Rune ─────────────────────────────────────────────────────────────────────
+  runeCard: {
+    marginBottom: 16,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    padding: 16,
+    alignItems: "center",
+    gap: 6,
+  },
+  runeSymbol: { fontSize: 42 },
+  runeName: {
+    fontSize: 14,
+    fontWeight: "800",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+  runeMeaning: {
+    fontSize: 13,
+    color: "#666",
+    textAlign: "center",
+    fontStyle: "italic",
+    lineHeight: 18,
+  },
+
+  // ── Verse ────────────────────────────────────────────────────────────────────
+  verseCard: {
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    paddingLeft: 16,
+    paddingVertical: 12,
+    gap: 4,
+  },
+  verseLine: {
+    fontSize: 14,
+    color: "#444",
+    lineHeight: 22,
+    fontStyle: "italic",
+  },
+  verseAuthor: { fontSize: 11, fontWeight: "700", marginTop: 8 },
+
+  // ── Recipe ───────────────────────────────────────────────────────────────────
+  recipeCard: {
+    marginBottom: 16,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    padding: 18,
+    gap: 8,
+    backgroundColor: "#FFFAF5",
+  },
+  recipeName: { fontSize: 16, fontWeight: "800" },
+  recipeSection: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#888",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginTop: 4,
+  },
+  recipeIngredient: { fontSize: 13, color: "#555", lineHeight: 20 },
+  recipeInstructions: {
+    fontSize: 13,
+    color: "#555",
+    lineHeight: 20,
+    fontStyle: "italic",
+  },
+
+  // ── Creature Card ────────────────────────────────────────────────────────────
+  creatureCard: {
+    marginBottom: 16,
+    borderRadius: 20,
+    borderWidth: 2,
+    padding: 18,
+    gap: 8,
+    backgroundColor: "#FAFFFE",
+  },
+  creatureName: { fontSize: 18, fontWeight: "800" },
+  creatureRows: { flexDirection: "row", gap: 6 },
+  creatureLabel: { fontSize: 12, fontWeight: "700", color: "#888", width: 100 },
+  creatureValue: { fontSize: 12, color: "#444", flex: 1 },
+  creatureNotes: { borderRadius: 12, padding: 12, marginTop: 4, gap: 4 },
+  creatureNotesLabel: {
+    fontSize: 11,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  creatureNotesText: {
+    fontSize: 13,
+    color: "#555",
+    lineHeight: 18,
+    fontStyle: "italic",
   },
 });

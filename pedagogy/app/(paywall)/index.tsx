@@ -27,7 +27,7 @@ import { usePurchases } from "../../hooks/usePurchases";
 const { width } = Dimensions.get("window");
 
 const TERMS_URL =
-  "https://app.notion.com/p/Pol-tica-de-Privacidade-Pedagogy-3750df0a2e798004a8fcd6029d729866?source=copy_link";
+  "https://app.notion.com/p/Terms-of-Use-EULA-Pedagogy-3790df0a2e798017b3d2d9d60a5d8308";
 const PRIVACY_URL =
   "https://app.notion.com/p/Pol-tica-de-Privacidade-Pedagogy-3750df0a2e798004a8fcd6029d729866?source=copy_link";
 
