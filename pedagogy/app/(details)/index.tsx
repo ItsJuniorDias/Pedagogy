@@ -1146,6 +1146,8 @@ export default function ReadStoryScreen() {
   const switchChapter = async (idx: number) => {
     const status = await AsyncStorage.getItem("@subscription_status");
 
+    console.log(status, "STATUSSSSS");
+
     if (chapters[idx].locked && status !== "active") {
       router.push("/(paywall)");
       return;

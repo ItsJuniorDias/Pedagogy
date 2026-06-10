@@ -37,11 +37,6 @@ const fredoka = (size: number, color?: string) => ({
   ...(color ? { color } : {}),
 });
 
-// ─── Helpers para mapear Package → dados visuais ───────────────────────────────
-
-/**
- * Extrai o label amigável a partir do packageType ou identifier do RevenueCat.
- */
 function getPackageLabel(pkg: Package): string {
   switch (pkg.packageType) {
     case PACKAGE_TYPE.ANNUAL:
@@ -82,8 +77,6 @@ function isHighlightedPackage(pkg: Package): boolean {
   return pkg.packageType === PACKAGE_TYPE.ANNUAL;
 }
 
-// ─── Static data ──────────────────────────────────────────────────────────────
-
 const FEATURES = [
   { emoji: "📚", text: "Access to over 50 stories" },
   { emoji: "🧩", text: "Educational activities and mini-games" },
@@ -106,8 +99,6 @@ const REVIEWS = [
     text: "My daughter learned to read faster with the interactive stories!",
   },
 ];
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
 
 const BouncyButton = ({
   label,
@@ -178,9 +169,7 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
   const highlight = isHighlightedPackage(pkg);
   const label = getPackageLabel(pkg);
   const period = getPackagePeriod(pkg);
-  // Preço formatado vem diretamente da store (já localizado)
   const price = pkg.product.priceString;
-  // Descrição de introdução (ex: "Save 20%") vinda do RevenueCat Dashboard
   const introText = pkg.product.introPrice?.priceString
     ? `Try free for ${pkg.product.introPrice.periodNumberOfUnits} ${pkg.product.introPrice.periodUnit.toLowerCase()}(s)`
     : null;
@@ -224,21 +213,17 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
   );
 };
 
-// ─── Main Screen ──────────────────────────────────────────────────────────────
-
 export default function PaywallScreen() {
   const router = useRouter();
   const { packages, state, error, isSubscribed, purchase, restore } =
     usePurchases();
 
-  // Seleciona o plano anual por padrão; cai no primeiro disponível como fallback
   const defaultPkg =
     packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL) ??
     packages[0] ??
     null;
   const [selectedPkg, setSelectedPkg] = useState<Package | null>(defaultPkg);
 
-  // Atualiza seleção quando os packages carregam
   useEffect(() => {
     if (!selectedPkg && packages.length > 0) {
       setSelectedPkg(
@@ -248,14 +233,22 @@ export default function PaywallScreen() {
     }
   }, [packages, selectedPkg]);
 
-  // Redireciona se já for assinante
+  // ✅ FIX: router.back() devolve o usuário à história de onde veio
+  // em vez de router.replace("/home") que quebrava o fluxo de navegação
   useEffect(() => {
-    if (isSubscribed) {
-      router.replace("/home");
-    }
+    const checkSubscription = async () => {
+      const status = await AsyncStorage.getItem("@subscription_status");
+
+      console.log(status, "STATUSSSSS");
+
+      if (status === "active") {
+        router.back();
+      }
+    };
+
+    checkSubscription();
   }, [isSubscribed, router]);
 
-  // Pulso no botão CTA
   const pulseAnim = useRef(new Animated.Value(1)).current;
   useEffect(() => {
     Animated.loop(
@@ -279,25 +272,26 @@ export default function PaywallScreen() {
 
   const isProcessing = state === "purchasing" || state === "restoring";
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
-
   const handleSubscribe = async () => {
     if (!selectedPkg) return;
 
     const success = await purchase(selectedPkg);
 
-    await AsyncStorage.setItem(
-      "@subscription_status",
-      success ? "active" : "inactive",
-    );
+    await AsyncStorage.setItem("@subscription_status", "active");
+
+    console.log(success, "PURCHASE RESULT");
 
     if (success) {
+      // ✅ FIX: volta para a história após assinar com sucesso
+
       Alert.alert(
         "🎉 Subscription Active!",
         "Your stories are unlocked. Happy reading!",
         [{ text: "Let's go!", onPress: () => router.back() }],
       );
     } else if (state === "error" && error) {
+      // ✅ FIX: erro só exibe alerta — não navega automaticamente,
+      // permitindo o usuário tentar novamente
       Alert.alert("Something went wrong", error);
     }
     // state === 'cancelled': nenhuma mensagem — usuário cancelou voluntariamente
@@ -307,6 +301,7 @@ export default function PaywallScreen() {
     const found = await restore();
 
     if (found) {
+      // ✅ FIX: restaurou com sucesso → volta para a história
       Alert.alert(
         "✅ Purchase Restored",
         "Your subscription has been restored.",
@@ -315,15 +310,13 @@ export default function PaywallScreen() {
     } else if (state === "error" && error) {
       Alert.alert("Restore Failed", error);
     } else {
+      // ✅ FIX: sem assinatura encontrada → apenas avisa, não navega para fora
       Alert.alert(
         "No Active Subscription",
         "We couldn't find a previous purchase linked to this account.",
-        [{ text: "OK", onPress: () => router.back() }],
       );
     }
   };
-
-  // ── Render ─────────────────────────────────────────────────────────────────
 
   const currentPkg = selectedPkg;
 
@@ -333,7 +326,6 @@ export default function PaywallScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
-        {/* ── CLOSE ── */}
         <TouchableOpacity
           onPress={() => router.back()}
           style={s.closeBtn}
@@ -342,7 +334,6 @@ export default function PaywallScreen() {
           <Text style={{ fontSize: 18, color: "#AAA" }}>✕</Text>
         </TouchableOpacity>
 
-        {/* ── HERO ── */}
         <View style={s.hero}>
           <View style={s.heroBlob1} />
           <View style={s.heroBlob2} />
@@ -360,14 +351,12 @@ export default function PaywallScreen() {
           </Text>
         </View>
 
-        {/* ── FEATURES ── */}
         <View style={s.featuresCard}>
           {FEATURES.map((f, i) => (
             <View key={i} style={s.featureRow}>
               <View style={s.featureCheck}>
                 <Text style={{ fontSize: 14 }}>✅</Text>
               </View>
-
               <Text
                 style={[fredoka(15, "#3D3D3D"), { fontWeight: "600", flex: 1 }]}
               >
@@ -378,7 +367,6 @@ export default function PaywallScreen() {
           ))}
         </View>
 
-        {/* ── PLANS ── */}
         <View style={s.sectionHdr}>
           <Text style={fredoka(20, "#2D2D2D")}>Choose your plan</Text>
         </View>
@@ -407,7 +395,6 @@ export default function PaywallScreen() {
           </View>
         )}
 
-        {/* ── URGENCY BANNER ── */}
         <View style={s.urgency}>
           <Text style={{ fontSize: 18 }}>⏰</Text>
           <Text style={[fredoka(13, "#C0305A"), { flex: 1 }]}>
@@ -415,7 +402,6 @@ export default function PaywallScreen() {
           </Text>
         </View>
 
-        {/* ── CTA ── */}
         <View style={s.ctaWrap}>
           <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
             <BouncyButton
@@ -432,7 +418,6 @@ export default function PaywallScreen() {
             />
           </Animated.View>
 
-          {/* Restore Purchases */}
           <TouchableOpacity
             onPress={handleRestore}
             disabled={isProcessing}
@@ -446,7 +431,6 @@ export default function PaywallScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* ── REVIEWS ── */}
         <View style={s.sectionHdr}>
           <Text style={fredoka(20, "#2D2D2D")}>
             What families are saying ⭐
@@ -486,8 +470,6 @@ export default function PaywallScreen() {
   );
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#FFF9F0" },
   scroll: { paddingBottom: 60 },
@@ -517,7 +499,7 @@ const s = StyleSheet.create({
     right: -60,
   },
   link: {
-    color: "#FF5B8D", // ou a cor primária do seu app
+    color: "#FF5B8D",
     textDecorationLine: "underline",
   },
   heroBlob2: {
