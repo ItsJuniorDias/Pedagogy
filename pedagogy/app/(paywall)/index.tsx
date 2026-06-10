@@ -473,7 +473,7 @@ export default function PaywallScreen() {
           Billing is done automatically. You can cancel at any time in your
           account settings. By subscribing, you agree to our{" "}
           <Text style={s.link} onPress={() => Linking.openURL(TERMS_URL)}>
-            Terms of Use
+            Terms of Use (EULA)
           </Text>{" "}
           and{" "}
           <Text style={s.link} onPress={() => Linking.openURL(PRIVACY_URL)}>
