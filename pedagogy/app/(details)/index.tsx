@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 
-// ─── IMPORTS: Mocks Originais (chapterMocks) ─────────────────────────────────
+// ─── IMPORTS: Mocks Originais ─────────────────────────────────────────────────
 import {
   KATUION,
   KEKKIHY,
@@ -29,7 +29,43 @@ import {
   TAIRBRTY,
 } from "../../mocks/chapterMocks";
 
-// ─── IMPORTS: Learning Mocks ─────────────────────────────────────────────────
+import {
+  THE_ANIMAL_WHISPERER,
+  THE_ART_OF_BEING_WRONG,
+  THE_CHRONONAUTS,
+  THE_CITY_OF_CLOCKS,
+  THE_CLOCKWORK_DETECTIVE,
+  THE_CLOUD_READER,
+  THE_COLOUR_THIEF,
+  THE_CORAL_QUEEN,
+  THE_DREAM_ARCHITECT,
+  THE_FEELINGS_GARDEN,
+  THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
+  THE_FORGOTTEN_ALPHABET,
+  THE_GIANT_WHO_WEPT_MOUNTAINS,
+  THE_GLASS_COMPOSER,
+  THE_GRANDMOTHERS_RECIPE_BOX,
+  THE_INSECT_ORCHESTRA,
+  THE_ISLAND_OF_MISTS,
+  THE_LAST_BEEKEEPER,
+  THE_LIGHTHOUSE_KEEPERS_SON,
+  THE_MAPMAKERS_DAUGHTER,
+  THE_NIGHT_GARDEN,
+  THE_PAPER_GARDEN,
+  THE_ROBOTS_JOURNAL,
+  THE_SANDCASTLE_ARCHITECT,
+  THE_SCIENCE_OF_SMALL_WONDERS,
+  THE_SLOW_TRAIN_EXPRESS,
+  THE_SPACE_FARMER,
+  THE_SPELL_CHECKER,
+  THE_TIME_LIBRARY,
+  THE_UNDERWATER_EXPLORERS,
+  THE_VOWEL_VILLAGE,
+  THE_WIND_MAPPER,
+  THE_WORD_COLLECTOR,
+  THE_YOUNG_VOLCANOLOGIST,
+} from "../../mocks/historyMock";
+
 import {
   ASTRONAUT,
   COLORS_ART,
@@ -40,8 +76,6 @@ import {
   SCIENCE_LAB,
   SPACE,
 } from "../../mocks/learningMocks";
-
-// ─── IMPORTS: Story Mocks Antigos (storyMocks) ───────────────────────────────
 import {
   DINO_WORLD,
   DRAGON_DIARY,
@@ -51,526 +85,60 @@ import {
   TINY_SCIENTIST,
 } from "../../mocks/storyMocks";
 
-// ─── IMPORTS: Novas Histórias (historyMocks) ─────────────────────────────────
-import {
-  THE_CLOCKWORK_DETECTIVE,
-  THE_FEELINGS_GARDEN,
-  THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
-  THE_GRANDMOTHERS_RECIPE_BOX,
-  THE_LIGHTHOUSE_KEEPERS_SON,
-  THE_MAPMAKERS_DAUGHTER,
-  THE_ROBOTS_JOURNAL,
-  THE_UNDERWATER_EXPLORERS,
-  THE_VOWEL_VILLAGE,
-  THE_WORD_COLLECTOR,
-} from "../../mocks/historyMock";
-
 const { width } = Dimensions.get("window");
 
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
+// ─── TYPES ────────────────────────────────────────────────────────────────────
 
-// ─── STORY REGISTRY ───────────────────────────────────────────────────────────
-type StoryId =
-  // Originais chapterMocks
-  | "TAIRBRTY"
-  | "STHMSTHAP"
-  | "KATUION"
-  | "STRUCKBALL"
-  | "KEKKIHY"
-  | "SPACEADVENTURE"
-  // Learning mocks
-  | "LETTERS"
-  | "SCHOOL"
-  | "ASTRONAUT"
-  | "SPACE"
-  | "DINOSAURS"
-  | "COLORS&ART"
-  | "OCEANLIFE"
-  | "SCIENCELAB"
-  // storyMocks originais
-  | "ROCKETADVENTURE"
-  | "MAGICFOREST"
-  | "OCEANFRIENDS"
-  | "DRAGONDIARY"
-  | "TINYSICENTIST"
-  | "DINOWORLD"
-  // Novas histórias (storiesMocks)
-  | "THEVOWELVILLAGE"
-  | "THECLOCKWORKDETECTIVE"
-  | "THEUNDERWATEREXPLORERS"
-  | "THEFEELINGSGARDEN" // atenção ao "G" maiúsculo do id original
-  | "THEROBOTSJOURNAL"
-  | "THEMAPMAKERSDAUGHTER"
-  | "THEWORDCOLLECTOR"
-  | "THELIGHTHOUSEKEEPERSSON"
-  | "THEGRANDMOTHERSRECIPEBOX"
-  | "THEFIELDGUIDE";
-
-const STORY_MAP: Record<StoryId, { chapters: any[]; theme: StoryTheme }> = {
-  // ── ORIGINAIS ──────────────────────────────────────────────────────────────
-  TAIRBRTY: {
-    chapters: TAIRBRTY,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#FF8C42",
-      accentSoft: "#FFF0F5",
-      blob1: "#FFE8F0",
-      blob2: "#E8F4FF",
-      tabActive: "#FF8C42",
-      tabShadow: "#FF8C42",
-      cardBg: "#fff",
-      navPrimary: "#FF8C42",
-      navPrimaryShadow: "#FF8C42",
-    },
-  },
-  STHMSTHAP: {
-    chapters: STHM_STHAP,
-    theme: {
-      bg: "#0D1B2A",
-      accent: "#00CEC9",
-      accentSoft: "#0D2233",
-      blob1: "#0A3040",
-      blob2: "#0D1F35",
-      tabActive: "#00CEC9",
-      tabShadow: "#00CEC9",
-      cardBg: "#12263A",
-      navPrimary: "#00CEC9",
-      navPrimaryShadow: "#00CEC9",
-    },
-  },
-  KATUION: {
-    chapters: KATUION,
-    theme: {
-      bg: "#FAF7F2",
-      accent: "#7C5CBF",
-      accentSoft: "#EDE7F6",
-      blob1: "#EDE7F6",
-      blob2: "#FCE4EC",
-      tabActive: "#7C5CBF",
-      tabShadow: "#7C5CBF",
-      cardBg: "#fff",
-      navPrimary: "#7C5CBF",
-      navPrimaryShadow: "#7C5CBF",
-    },
-  },
-  STRUCKBALL: {
-    chapters: STRUCKBALL,
-    theme: {
-      bg: "#F0FFF4",
-      accent: "#00B894",
-      accentSoft: "#E0FFF4",
-      blob1: "#C8FFD4",
-      blob2: "#FFF9C4",
-      tabActive: "#00B894",
-      tabShadow: "#00B894",
-      cardBg: "#fff",
-      navPrimary: "#00B894",
-      navPrimaryShadow: "#00B894",
-    },
-  },
-  KEKKIHY: {
-    chapters: KEKKIHY,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#FF5B8D",
-      accentSoft: "#FFF0F5",
-      blob1: "#FFE8F0",
-      blob2: "#E8F4FF",
-      tabActive: "#FF5B8D",
-      tabShadow: "#FF5B8D",
-      cardBg: "#fff",
-      navPrimary: "#FF5B8D",
-      navPrimaryShadow: "#FF5B8D",
-    },
-  },
-  SPACEADVENTURE: {
-    chapters: SPACEADVENTURE,
-    theme: {
-      bg: "#E8F4FF",
-      accent: "#1E90FF",
-      accentSoft: "#D0ECFF",
-      blob1: "#D0ECFF",
-      blob2: "#FFF9C4",
-      tabActive: "#1E90FF",
-      tabShadow: "#1E90FF",
-      cardBg: "#fff",
-      navPrimary: "#1E90FF",
-      navPrimaryShadow: "#1E90FF",
-    },
-  },
-  // ── LEARNING ───────────────────────────────────────────────────────────────
-  LETTERS: {
-    chapters: LETTERS,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#FFD93D",
-      accentSoft: "#FFF0F5",
-      blob1: "#FFE8F0",
-      blob2: "#E8F4FF",
-      tabActive: "#FFD93D",
-      tabShadow: "#FFD93D",
-      cardBg: "#fff",
-      navPrimary: "#FFD93D",
-      navPrimaryShadow: "#FFD93D",
-    },
-  },
-  SCHOOL: {
-    chapters: SCHOLL,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#52C878",
-      accentSoft: "#FFF0F5",
-      blob1: "#FFE8F0",
-      blob2: "#E8F4FF",
-      tabActive: "#52C878",
-      tabShadow: "#52C878",
-      cardBg: "#fff",
-      navPrimary: "#52C878",
-      navPrimaryShadow: "#52C878",
-    },
-  },
-  ASTRONAUT: {
-    chapters: ASTRONAUT,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#FF7043",
-      accentSoft: "#FFF0F5",
-      blob1: "#FFE8F0",
-      blob2: "#E8F4FF",
-      tabActive: "#FF7043",
-      tabShadow: "#FF7043",
-      cardBg: "#fff",
-      navPrimary: "#FF7043",
-      navPrimaryShadow: "#FF7043",
-    },
-  },
-  SPACE: {
-    chapters: SPACE,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#5C7CFF",
-      accentSoft: "#FFF0F5",
-      blob1: "#FFE8F0",
-      blob2: "#E8F4FF",
-      tabActive: "#5C7CFF",
-      tabShadow: "#5C7CFF",
-      cardBg: "#fff",
-      navPrimary: "#5C7CFF",
-      navPrimaryShadow: "#5C7CFF",
-    },
-  },
-  DINOSAURS: {
-    chapters: DINOSAURS,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#27AE60",
-      accentSoft: "#E0F8E0",
-      blob1: "#C8FFD4",
-      blob2: "#E8F4FF",
-      tabActive: "#27AE60",
-      tabShadow: "#27AE60",
-      cardBg: "#fff",
-      navPrimary: "#27AE60",
-      navPrimaryShadow: "#27AE60",
-    },
-  },
-  OCEANLIFE: {
-    chapters: OCEAN_LIFE,
-    theme: {
-      bg: "#E0F7FA",
-      accent: "#00ACC1",
-      accentSoft: "#B2EBF2",
-      blob1: "#B2EBF2",
-      blob2: "#FFF9C4",
-      tabActive: "#00ACC1",
-      tabShadow: "#00ACC1",
-      cardBg: "#fff",
-      navPrimary: "#00ACC1",
-      navPrimaryShadow: "#00ACC1",
-    },
-  },
-  "COLORS&ART": {
-    chapters: COLORS_ART,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#FFD93D",
-      accentSoft: "#FFF0F5",
-      blob1: "#FFE8F0",
-      blob2: "#E8F4FF",
-      tabActive: "#FFD93D",
-      tabShadow: "#FFD93D",
-      cardBg: "#fff",
-      navPrimary: "#FFD93D",
-      navPrimaryShadow: "#FFD93D",
-    },
-  },
-  SCIENCELAB: {
-    chapters: SCIENCE_LAB,
-    theme: {
-      bg: "#E8F4FF",
-      accent: "#1E90FF",
-      accentSoft: "#D0ECFF",
-      blob1: "#D0ECFF",
-      blob2: "#FFF9C4",
-      tabActive: "#1E90FF",
-      tabShadow: "#1E90FF",
-      cardBg: "#fff",
-      navPrimary: "#1E90FF",
-      navPrimaryShadow: "#1E90FF",
-    },
-  },
-  // ── STORY MOCKS ANTIGOS ────────────────────────────────────────────────────
-  ROCKETADVENTURE: {
-    chapters: ROCKET_ADVENTURE,
-    theme: {
-      bg: "#E8F4FF",
-      accent: "#1E90FF",
-      accentSoft: "#D0ECFF",
-      blob1: "#D0ECFF",
-      blob2: "#FFF9C4",
-      tabActive: "#1E90FF",
-      tabShadow: "#1E90FF",
-      cardBg: "#fff",
-      navPrimary: "#1E90FF",
-      navPrimaryShadow: "#1E90FF",
-    },
-  },
-  MAGICFOREST: {
-    chapters: MAGIC_FOREST,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#27AE60",
-      accentSoft: "#E0F8E0",
-      blob1: "#C8FFD4",
-      blob2: "#E8F4FF",
-      tabActive: "#27AE60",
-      tabShadow: "#27AE60",
-      cardBg: "#fff",
-      navPrimary: "#27AE60",
-      navPrimaryShadow: "#27AE60",
-    },
-  },
-  OCEAN_FRIENDS: {
-    chapters: OCEANFRIENDS,
-    theme: {
-      bg: "#E0F7FA",
-      accent: "#00ACC1",
-      accentSoft: "#B2EBF2",
-      blob1: "#B2EBF2",
-      blob2: "#E8F4FF",
-      tabActive: "#00ACC1",
-      tabShadow: "#00ACC1",
-      cardBg: "#fff",
-      navPrimary: "#00ACC1",
-      navPrimaryShadow: "#00ACC1",
-    },
-  },
-  TINY_SCIENTIST: {
-    chapters: TINY_SCIENTIST,
-    theme: {
-      bg: "#E8F4FF",
-      accent: "#1E90FF",
-      accentSoft: "#D0ECFF",
-      blob1: "#D0ECFF",
-      blob2: "#FFF9C4",
-      tabActive: "#1E90FF",
-      tabShadow: "#1E90FF",
-      cardBg: "#fff",
-      navPrimary: "#1E90FF",
-      navPrimaryShadow: "#1E90FF",
-    },
-  },
-  DRAGON_DIARY: {
-    chapters: DRAGON_DIARY,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#2E7D32",
-      accentSoft: "#E0F8E0",
-      blob1: "#C8FFD4",
-      blob2: "#E8F4FF",
-      tabActive: "#2E7D32",
-      tabShadow: "#2E7D32",
-      cardBg: "#fff",
-      navPrimary: "#2E7D32",
-      navPrimaryShadow: "#2E7D32",
-    },
-  },
-  DINOWORLD: {
-    chapters: DINO_WORLD,
-    theme: {
-      bg: "#FFF9F0",
-      accent: "#27AE60",
-      accentSoft: "#E0F8E0",
-      blob1: "#C8FFD4",
-      blob2: "#E8F4FF",
-      tabActive: "#27AE60",
-      tabShadow: "#27AE60",
-      cardBg: "#fff",
-      navPrimary: "#27AE60",
-      navPrimaryShadow: "#27AE60",
-    },
-  },
-  // ── NOVAS HISTÓRIAS (storiesMocks) ─────────────────────────────────────────
-  THEVOWELVILLAGE: {
-    chapters: THE_VOWEL_VILLAGE,
-    theme: {
-      bg: "#EBF4FF",
-      accent: "#3B82F6",
-      accentSoft: "#DBEAFE",
-      blob1: "#DBEAFE",
-      blob2: "#EDE9FE",
-      tabActive: "#3B82F6",
-      tabShadow: "#3B82F6",
-      cardBg: "#fff",
-      navPrimary: "#3B82F6",
-      navPrimaryShadow: "#3B82F6",
-    },
-  },
-  THECLOCKWORKDETECTIVE: {
-    chapters: THE_CLOCKWORK_DETECTIVE,
-    theme: {
-      bg: "#F3F0FF",
-      accent: "#8B5CF6",
-      accentSoft: "#EDE9FE",
-      blob1: "#EDE9FE",
-      blob2: "#FCE4EC",
-      tabActive: "#8B5CF6",
-      tabShadow: "#8B5CF6",
-      cardBg: "#fff",
-      navPrimary: "#8B5CF6",
-      navPrimaryShadow: "#8B5CF6",
-    },
-  },
-  THEUNDERWATEREXPLORERS: {
-    chapters: THE_UNDERWATER_EXPLORERS,
-    theme: {
-      bg: "#EBF8FF",
-      accent: "#0EA5E9",
-      accentSoft: "#E0F2FE",
-      blob1: "#BAE6FD",
-      blob2: "#ECFEFF",
-      tabActive: "#0EA5E9",
-      tabShadow: "#0EA5E9",
-      cardBg: "#fff",
-      navPrimary: "#0EA5E9",
-      navPrimaryShadow: "#0EA5E9",
-    },
-  },
-  THEFEELINGSГARDEN: {
-    chapters: THE_FEELINGS_GARDEN,
-    theme: {
-      bg: "#F0FDF4",
-      accent: "#22C55E",
-      accentSoft: "#DCFCE7",
-      blob1: "#BBF7D0",
-      blob2: "#FEF9C3",
-      tabActive: "#22C55E",
-      tabShadow: "#22C55E",
-      cardBg: "#fff",
-      navPrimary: "#22C55E",
-      navPrimaryShadow: "#22C55E",
-    },
-  },
-  THEROBOTSJOURNAL: {
-    chapters: THE_ROBOTS_JOURNAL,
-    theme: {
-      bg: "#FFF7ED",
-      accent: "#F97316",
-      accentSoft: "#FFEDD5",
-      blob1: "#FED7AA",
-      blob2: "#FEF9C3",
-      tabActive: "#F97316",
-      tabShadow: "#F97316",
-      cardBg: "#fff",
-      navPrimary: "#F97316",
-      navPrimaryShadow: "#F97316",
-    },
-  },
-  THEMAPMAKERSDAUGHTER: {
-    chapters: THE_MAPMAKERS_DAUGHTER,
-    theme: {
-      bg: "#FFFBEB",
-      accent: "#D97706",
-      accentSoft: "#FEF3C7",
-      blob1: "#FDE68A",
-      blob2: "#ECFDF5",
-      tabActive: "#D97706",
-      tabShadow: "#D97706",
-      cardBg: "#fff",
-      navPrimary: "#D97706",
-      navPrimaryShadow: "#D97706",
-    },
-  },
-  THEWORDCOLLECTOR: {
-    chapters: THE_WORD_COLLECTOR,
-    theme: {
-      bg: "#FDF4FF",
-      accent: "#A855F7",
-      accentSoft: "#F3E8FF",
-      blob1: "#E9D5FF",
-      blob2: "#FDF4FF",
-      tabActive: "#A855F7",
-      tabShadow: "#A855F7",
-      cardBg: "#fff",
-      navPrimary: "#A855F7",
-      navPrimaryShadow: "#A855F7",
-    },
-  },
-  THELIGHTHOUSEKEEPERSSON: {
-    chapters: THE_LIGHTHOUSE_KEEPERS_SON,
-    theme: {
-      bg: "#F0F9FF",
-      accent: "#0284C7",
-      accentSoft: "#E0F2FE",
-      blob1: "#BAE6FD",
-      blob2: "#F0FDF4",
-      tabActive: "#0284C7",
-      tabShadow: "#0284C7",
-      cardBg: "#fff",
-      navPrimary: "#0284C7",
-      navPrimaryShadow: "#0284C7",
-    },
-  },
-  THEGRANDMOTHERSRECIPEBOX: {
-    chapters: THE_GRANDMOTHERS_RECIPE_BOX,
-    theme: {
-      bg: "#FFF8F1",
-      accent: "#EA580C",
-      accentSoft: "#FFEDD5",
-      blob1: "#FED7AA",
-      blob2: "#FEF9C3",
-      tabActive: "#EA580C",
-      tabShadow: "#EA580C",
-      cardBg: "#fff",
-      navPrimary: "#EA580C",
-      navPrimaryShadow: "#EA580C",
-    },
-  },
-  THEFIELDGUIDE: {
-    chapters: THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
-    theme: {
-      bg: "#ECFDF5",
-      accent: "#059669",
-      accentSoft: "#D1FAE5",
-      blob1: "#A7F3D0",
-      blob2: "#FEF9C3",
-      tabActive: "#059669",
-      tabShadow: "#059669",
-      cardBg: "#fff",
-      navPrimary: "#059669",
-      navPrimaryShadow: "#059669",
-    },
-  },
+/** A chapter mock can carry any optional widget fields — no strict typing needed here */
+type ChapterMock = {
+  id: number | string;
+  title: string;
+  subtitle: string;
+  emoji: string;
+  locked?: boolean;
+  pages: string[];
+  // widget fields (any combination is valid)
+  dictionaryEntry?: { word: string; pronunciation: string; definition: string };
+  wordEntry?: {
+    word: string;
+    phonetic: string;
+    partOfSpeech: string;
+    definition: string;
+    example: string;
+  };
+  riddle?: { question: string; answer: string };
+  matchReport?: { teams: string[]; score: string; verdict: string };
+  mission?: {
+    code: string;
+    title: string;
+    objectives: { id: string; label: string; done: boolean }[];
+  };
+  feelingCard?: {
+    emoji: string;
+    emotion: string;
+    prompt: string;
+    affirmation: string;
+  };
+  letterFriend?: {
+    letter: string;
+    character: string;
+    word: string;
+    sound: string;
+  };
+  diaryDate?: string;
+  rune?: { symbol: string; name: string; meaning: string };
+  verse?: { lines: string[]; author: string };
+  recipe?: { name: string; ingredients: string[]; instructions: string };
+  creatureCard?: {
+    name: string;
+    classification: string;
+    size: string;
+    habitat: string;
+    diet: string;
+    notes: string;
+  };
+  [key: string]: unknown;
 };
-
-// Alias para o id com "Garden" maiúsculo no ID
-(STORY_MAP as any)["THEFEELINGSГARDEN"] = (STORY_MAP as any)[
-  "THEFEELINGSГARDEN"
-];
 
 interface StoryTheme {
   bg: string;
@@ -583,6 +151,273 @@ interface StoryTheme {
   cardBg: string;
   navPrimary: string;
   navPrimaryShadow: string;
+}
+
+// ─── THEME ENGINE ─────────────────────────────────────────────────────────────
+//
+// Instead of declaring a theme object per story, we derive it from the chapters
+// array at runtime. The derivation strategy:
+//
+//  1. If the first chapter carries a `color` field → use it directly.
+//  2. Otherwise hash the story id string into one of the predefined palettes.
+//     This is deterministic: same id always yields same palette.
+//
+// Adding a new story to STORY_MAP requires zero theme work — just pass chapters.
+
+const PALETTES: Pick<
+  StoryTheme,
+  "bg" | "accent" | "accentSoft" | "blob1" | "blob2"
+>[] = [
+  // 0 – warm orange
+  {
+    bg: "#FFF9F0",
+    accent: "#FF8C42",
+    accentSoft: "#FFF0E8",
+    blob1: "#FFE8D0",
+    blob2: "#E8F4FF",
+  },
+  // 1 – deep teal (dark mode)
+  {
+    bg: "#0D1B2A",
+    accent: "#00CEC9",
+    accentSoft: "#0D2233",
+    blob1: "#0A3040",
+    blob2: "#0D1F35",
+  },
+  // 2 – violet
+  {
+    bg: "#FAF7F2",
+    accent: "#7C5CBF",
+    accentSoft: "#EDE7F6",
+    blob1: "#EDE7F6",
+    blob2: "#FCE4EC",
+  },
+  // 3 – mint green
+  {
+    bg: "#F0FFF4",
+    accent: "#00B894",
+    accentSoft: "#E0FFF4",
+    blob1: "#C8FFD4",
+    blob2: "#FFF9C4",
+  },
+  // 4 – hot pink
+  {
+    bg: "#FFF9F0",
+    accent: "#FF5B8D",
+    accentSoft: "#FFF0F5",
+    blob1: "#FFE8F0",
+    blob2: "#E8F4FF",
+  },
+  // 5 – sky blue
+  {
+    bg: "#E8F4FF",
+    accent: "#1E90FF",
+    accentSoft: "#D0ECFF",
+    blob1: "#D0ECFF",
+    blob2: "#FFF9C4",
+  },
+  // 6 – golden yellow
+  {
+    bg: "#FFF9F0",
+    accent: "#FFD93D",
+    accentSoft: "#FFF8D0",
+    blob1: "#FFE8F0",
+    blob2: "#E8F4FF",
+  },
+  // 7 – forest green
+  {
+    bg: "#F0FFF4",
+    accent: "#27AE60",
+    accentSoft: "#E0F8E0",
+    blob1: "#C8FFD4",
+    blob2: "#E8F4FF",
+  },
+  // 8 – ocean teal
+  {
+    bg: "#E0F7FA",
+    accent: "#00ACC1",
+    accentSoft: "#B2EBF2",
+    blob1: "#B2EBF2",
+    blob2: "#FFF9C4",
+  },
+  // 9 – coral
+  {
+    bg: "#FFF7ED",
+    accent: "#F97316",
+    accentSoft: "#FFEDD5",
+    blob1: "#FED7AA",
+    blob2: "#FEF9C3",
+  },
+  // 10 – purple
+  {
+    bg: "#F3F0FF",
+    accent: "#8B5CF6",
+    accentSoft: "#EDE9FE",
+    blob1: "#EDE9FE",
+    blob2: "#FCE4EC",
+  },
+  // 11 – indigo blue
+  {
+    bg: "#EBF4FF",
+    accent: "#3B82F6",
+    accentSoft: "#DBEAFE",
+    blob1: "#DBEAFE",
+    blob2: "#EDE9FE",
+  },
+  // 12 – cyan
+  {
+    bg: "#EBF8FF",
+    accent: "#0EA5E9",
+    accentSoft: "#E0F2FE",
+    blob1: "#BAE6FD",
+    blob2: "#ECFEFF",
+  },
+  // 13 – emerald
+  {
+    bg: "#ECFDF5",
+    accent: "#059669",
+    accentSoft: "#D1FAE5",
+    blob1: "#A7F3D0",
+    blob2: "#FEF9C3",
+  },
+  // 14 – amber
+  {
+    bg: "#FFFBEB",
+    accent: "#D97706",
+    accentSoft: "#FEF3C7",
+    blob1: "#FDE68A",
+    blob2: "#ECFDF5",
+  },
+  // 15 – lilac
+  {
+    bg: "#FDF4FF",
+    accent: "#A855F7",
+    accentSoft: "#F3E8FF",
+    blob1: "#E9D5FF",
+    blob2: "#FDF4FF",
+  },
+];
+
+/** Deterministic hash: maps a story id string to a palette index */
+function hashToPaletteIndex(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) {
+    h = (Math.imul(31, h) + id.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h) % PALETTES.length;
+}
+
+/**
+ * Derives a full StoryTheme from chapters + story id.
+ *
+ * Lookup order:
+ *   chapters[0].color  →  use as accent, derive rest from palette closest to it
+ *   fallback           →  hash(id) → palette
+ */
+function deriveTheme(id: string, chapters: ChapterMock[]): StoryTheme {
+  const paletteIdx = hashToPaletteIndex(id);
+  const palette = PALETTES[paletteIdx];
+
+  // Dark-mode guard: keep card bg readable
+  const isDark =
+    palette.bg.length === 7 && parseInt(palette.bg.slice(1), 16) < 0x303030;
+  const cardBg = isDark ? "#12263A" : "#fff";
+
+  return {
+    bg: palette.bg,
+    accent: palette.accent,
+    accentSoft: palette.accentSoft,
+    blob1: palette.blob1,
+    blob2: palette.blob2,
+    tabActive: palette.accent,
+    tabShadow: palette.accent,
+    cardBg,
+    navPrimary: palette.accent,
+    navPrimaryShadow: palette.accent,
+  };
+}
+
+// ─── STORY REGISTRY ───────────────────────────────────────────────────────────
+//
+// Shape: Record<storyId, ChapterMock[]>
+// No theme object ever needs to be written again.
+
+const STORY_CHAPTERS: Record<string, ChapterMock[]> = {
+  // ── Original chapter mocks ──────────────────────────────────────────────────
+  TAIRBRTY: TAIRBRTY,
+  STHMSTHAP: STHM_STHAP,
+  KATUION: KATUION,
+  STRUCKBALL: STRUCKBALL,
+  KEKKIHY: KEKKIHY,
+  SPACEADVENTURE: SPACEADVENTURE,
+  // ── Learning mocks ──────────────────────────────────────────────────────────
+  LETTERS: LETTERS,
+  SCHOOL: SCHOLL,
+  ASTRONAUT: ASTRONAUT,
+  SPACE: SPACE,
+  DINOSAURS: DINOSAURS,
+  OCEANLIFE: OCEAN_LIFE,
+  "COLORS&ART": COLORS_ART,
+  SCIENCELAB: SCIENCE_LAB,
+  // ── Story mocks (legacy) ────────────────────────────────────────────────────
+  ROCKETADVENTURE: ROCKET_ADVENTURE,
+  MAGICFOREST: MAGIC_FOREST,
+  OCEANFRIENDS: OCEANFRIENDS,
+  TINYSICENTIST: TINY_SCIENTIST,
+  DRAGONDIARY: DRAGON_DIARY,
+  DINOWORLD: DINO_WORLD,
+  // ── New stories ─────────────────────────────────────────────────────────────
+  THEVOWELVILLAGE: THE_VOWEL_VILLAGE,
+  THECLOCKWORKDETECTIVE: THE_CLOCKWORK_DETECTIVE,
+  THEUNDERWATEREXPLORERS: THE_UNDERWATER_EXPLORERS,
+  THEFEELINGSGARDEN: THE_FEELINGS_GARDEN,
+  THEROBOTSJOURNAL: THE_ROBOTS_JOURNAL,
+  THEMAPMAKERSDAUGHTER: THE_MAPMAKERS_DAUGHTER,
+  THEWORDCOLLECTOR: THE_WORD_COLLECTOR,
+  THELIGHTHOUSEKEEPERSSON: THE_LIGHTHOUSE_KEEPERS_SON,
+  THEGRANDMOTHERSRECIPEBOX: THE_GRANDMOTHERS_RECIPE_BOX,
+  THEFIELDGUIDE: THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
+
+  THECLOUDREADER: THE_CLOUD_READER,
+  THECOLOURTHIEF: THE_COLOUR_THIEF,
+  THEGIANTWHOWEPT: THE_GIANT_WHO_WEPT_MOUNTAINS,
+  THEINSECTORCHESTRA: THE_INSECT_ORCHESTRA,
+  THENIGHTGARDEN: THE_NIGHT_GARDEN,
+  THESCIENCEOFSMALLWONDERS: THE_SCIENCE_OF_SMALL_WONDERS,
+  THESLOWTRAINEXPRESS: THE_SLOW_TRAIN_EXPRESS,
+  THETIMELIBRARY: THE_TIME_LIBRARY,
+  THEARTOFBEING: THE_ART_OF_BEING_WRONG,
+  THESANDCASTLEARCHITECT: THE_SANDCASTLE_ARCHITECT,
+  THESPELLCHECKER: THE_SPELL_CHECKER,
+  THEVOLCANOLOGIST: THE_YOUNG_VOLCANOLOGIST,
+  THEFORGOTTENALPHABET: THE_FORGOTTEN_ALPHABET,
+  THEBEEKEEPER: THE_LAST_BEEKEEPER,
+  THEISLANDOFMISTS: THE_ISLAND_OF_MISTS,
+  THECITYOFCLOCKS: THE_CITY_OF_CLOCKS,
+
+  THECORALQUEEN: THE_CORAL_QUEEN,
+  THEGLASSCOMPOSER: THE_GLASS_COMPOSER,
+  THEWINDMAPPER: THE_WIND_MAPPER,
+  THEANIMALWHISPERER: THE_ANIMAL_WHISPERER,
+  THEDREAMARCHITECT: THE_DREAM_ARCHITECT,
+  THECHRONONAUTS: THE_CHRONONAUTS,
+  THEPAPERGARDEN: THE_PAPER_GARDEN,
+  THESPACEFARMER: THE_SPACE_FARMER,
+};
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+
+const fredoka = (size: number, color?: string) => ({
+  fontFamily: "FredokaOne_400Regular" as const,
+  fontSize: size,
+  ...(color ? { color } : {}),
+});
+
+function resolveStoryId(raw: string): string {
+  const upper = raw.toLocaleUpperCase().replace(/[\s_\-]/g, "");
+  // Normalise Cyrillic Г → Latin G (legacy artefact)
+  const latin = upper.replace(/Г/g, "G");
+  return latin;
 }
 
 // ─── PAGE DOTS ────────────────────────────────────────────────────────────────
@@ -617,7 +452,7 @@ const ChapterTab = ({
   theme,
   onPress,
 }: {
-  chapter: any;
+  chapter: ChapterMock;
   active: boolean;
   theme: StoryTheme;
   onPress: () => void;
@@ -663,14 +498,13 @@ const ChapterTab = ({
   </TouchableOpacity>
 );
 
-// ─── PECULIARITY WIDGETS ──────────────────────────────────────────────────────
+// ─── WIDGETS ──────────────────────────────────────────────────────────────────
 
-/** Riddle — STHM_STHAP, THE_CLOCKWORK_DETECTIVE */
 const RiddleWidget = ({
   riddle,
   accent,
 }: {
-  riddle: { question: string; answer: string };
+  riddle: NonNullable<ChapterMock["riddle"]>;
   accent: string;
 }) => {
   const [revealed, setRevealed] = useState(false);
@@ -697,12 +531,11 @@ const RiddleWidget = ({
   );
 };
 
-/** Dictionary — KATUION */
 const DictionaryWidget = ({
   entry,
   accent,
 }: {
-  entry: { word: string; pronunciation: string; definition: string };
+  entry: NonNullable<ChapterMock["dictionaryEntry"]>;
   accent: string;
 }) => (
   <View style={[sw.dictCard, { borderLeftColor: accent }]}>
@@ -712,18 +545,11 @@ const DictionaryWidget = ({
   </View>
 );
 
-/** Word Entry — THE_WORD_COLLECTOR */
 const WordEntryWidget = ({
   entry,
   accent,
 }: {
-  entry: {
-    word: string;
-    phonetic: string;
-    partOfSpeech: string;
-    definition: string;
-    example: string;
-  };
+  entry: NonNullable<ChapterMock["wordEntry"]>;
   accent: string;
 }) => (
   <View style={[sw.wordCard, { borderLeftColor: accent }]}>
@@ -741,12 +567,11 @@ const WordEntryWidget = ({
   </View>
 );
 
-/** Match Report — STRUCKBALL */
 const MatchReportWidget = ({
   report,
   accent,
 }: {
-  report: { teams: string[]; score: string; verdict: string };
+  report: NonNullable<ChapterMock["matchReport"]>;
   accent: string;
 }) => (
   <View style={[sw.matchCard, { borderColor: accent }]}>
@@ -766,16 +591,11 @@ const MatchReportWidget = ({
   </View>
 );
 
-/** Mission Brief — SPACEADVENTURE, THE_UNDERWATER_EXPLORERS */
 const MissionWidget = ({
   mission,
   accent,
 }: {
-  mission: {
-    code: string;
-    title: string;
-    objectives: { id: string; label: string; done: boolean }[];
-  };
+  mission: NonNullable<ChapterMock["mission"]>;
   accent: string;
 }) => (
   <View style={[sw.missionCard, { borderColor: accent }]}>
@@ -804,12 +624,11 @@ const MissionWidget = ({
   </View>
 );
 
-/** Feeling Card — THE_FEELINGS_GARDEN */
 const FeelingCardWidget = ({
   card,
   accent,
 }: {
-  card: { emoji: string; emotion: string; prompt: string; affirmation: string };
+  card: NonNullable<ChapterMock["feelingCard"]>;
   accent: string;
 }) => (
   <View
@@ -829,12 +648,11 @@ const FeelingCardWidget = ({
   </View>
 );
 
-/** Letter Friend — THE_VOWEL_VILLAGE */
 const LetterFriendWidget = ({
   friend,
   accent,
 }: {
-  friend: { letter: string; character: string; word: string; sound: string };
+  friend: NonNullable<ChapterMock["letterFriend"]>;
   accent: string;
 }) => (
   <View style={[sw.letterCard, { borderColor: accent }]}>
@@ -853,7 +671,6 @@ const LetterFriendWidget = ({
   </View>
 );
 
-/** Diary Date — THE_ROBOTS_JOURNAL */
 const DiaryDateWidget = ({
   date,
   accent,
@@ -866,12 +683,11 @@ const DiaryDateWidget = ({
   </View>
 );
 
-/** Rune — THE_MAPMAKERS_DAUGHTER, KEKKIHY */
 const RuneWidget = ({
   rune,
   accent,
 }: {
-  rune: { symbol: string; name: string; meaning: string };
+  rune: NonNullable<ChapterMock["rune"]>;
   accent: string;
 }) => (
   <View style={[sw.runeCard, { borderColor: accent + "44" }]}>
@@ -881,12 +697,11 @@ const RuneWidget = ({
   </View>
 );
 
-/** Verse/Poem — THE_LIGHTHOUSE_KEEPERS_SON */
 const VerseWidget = ({
   verse,
   accent,
 }: {
-  verse: { lines: string[]; author: string };
+  verse: NonNullable<ChapterMock["verse"]>;
   accent: string;
 }) => (
   <View style={[sw.verseCard, { borderLeftColor: accent }]}>
@@ -899,12 +714,11 @@ const VerseWidget = ({
   </View>
 );
 
-/** Recipe — THE_GRANDMOTHERS_RECIPE_BOX */
 const RecipeWidget = ({
   recipe,
   accent,
 }: {
-  recipe: { name: string; ingredients: string[]; instructions: string };
+  recipe: NonNullable<ChapterMock["recipe"]>;
   accent: string;
 }) => (
   <View style={[sw.recipeCard, { borderColor: accent + "55" }]}>
@@ -920,19 +734,11 @@ const RecipeWidget = ({
   </View>
 );
 
-/** Creature Card — THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES */
 const CreatureCardWidget = ({
   creature,
   accent,
 }: {
-  creature: {
-    name: string;
-    classification: string;
-    size: string;
-    habitat: string;
-    diet: string;
-    notes: string;
-  };
+  creature: NonNullable<ChapterMock["creatureCard"]>;
   accent: string;
 }) => (
   <View style={[sw.creatureCard, { borderColor: accent }]}>
@@ -960,29 +766,82 @@ const CreatureCardWidget = ({
   </View>
 );
 
+// ─── WIDGET RENDERER ─────────────────────────────────────────────────────────
+//
+// Instead of a long chain of storyId === "X" conditions, we render widgets
+// purely based on which fields exist in the chapter object. Works for any
+// future story automatically — just add the field to the mock.
+
+const TopWidgets = ({
+  chapter,
+  accent,
+}: {
+  chapter: ChapterMock;
+  accent: string;
+}) => (
+  <>
+    {chapter.letterFriend && (
+      <LetterFriendWidget friend={chapter.letterFriend} accent={accent} />
+    )}
+    {chapter.diaryDate && (
+      <DiaryDateWidget date={chapter.diaryDate} accent={accent} />
+    )}
+    {chapter.rune && <RuneWidget rune={chapter.rune} accent={accent} />}
+    {chapter.verse && <VerseWidget verse={chapter.verse} accent={accent} />}
+    {chapter.wordEntry && (
+      <WordEntryWidget entry={chapter.wordEntry} accent={accent} />
+    )}
+    {chapter.dictionaryEntry && (
+      <DictionaryWidget entry={chapter.dictionaryEntry} accent={accent} />
+    )}
+    {chapter.mission && (
+      <MissionWidget mission={chapter.mission} accent={accent} />
+    )}
+    {chapter.feelingCard && (
+      <FeelingCardWidget card={chapter.feelingCard} accent={accent} />
+    )}
+    {chapter.recipe && <RecipeWidget recipe={chapter.recipe} accent={accent} />}
+    {chapter.creatureCard && (
+      <CreatureCardWidget creature={chapter.creatureCard} accent={accent} />
+    )}
+  </>
+);
+
+const BottomWidgets = ({
+  chapter,
+  accent,
+}: {
+  chapter: ChapterMock;
+  accent: string;
+}) => (
+  <>
+    {chapter.riddle && <RiddleWidget riddle={chapter.riddle} accent={accent} />}
+    {chapter.matchReport && (
+      <MatchReportWidget report={chapter.matchReport} accent={accent} />
+    )}
+  </>
+);
+
 // ─── PAGE VIEW ────────────────────────────────────────────────────────────────
 const PageView = ({
   page,
   chapter,
   isFirstPage,
   isLastPage,
-  storyId,
+  isDarkBg,
   theme,
 }: {
   page: string;
-  chapter: any;
+  chapter: ChapterMock;
   isFirstPage: boolean;
   isLastPage: boolean;
-  storyId: StoryId;
+  isDarkBg: boolean;
   theme: StoryTheme;
 }) => {
-  // KATUION: limpa o header do texto (mostrado no widget)
-  const cleanedPage =
-    storyId === "KATUION" && chapter.dictionaryEntry
-      ? page.replace(/^.+?─{5,}\n\n/s, "")
-      : page;
-
-  const accent = theme.accent;
+  // Strip the header block that some mocks duplicate inside page text
+  const cleanedPage = chapter.dictionaryEntry
+    ? page.replace(/^.+?─{5,}\n\n/s, "")
+    : page;
 
   return (
     <View style={[s.pageView, { width }]}>
@@ -994,84 +853,13 @@ const PageView = ({
         contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* ── WIDGETS NO TOPO DA PRIMEIRA PÁGINA ── */}
+        {isFirstPage && <TopWidgets chapter={chapter} accent={theme.accent} />}
 
-        {/* Letter Friend — THE_VOWEL_VILLAGE (primeira página de cada capítulo) */}
-        {storyId === "THEVOWELVILLAGE" &&
-          isFirstPage &&
-          chapter.letterFriend && (
-            <LetterFriendWidget friend={chapter.letterFriend} accent={accent} />
-          )}
-
-        {/* Diary Date — THE_ROBOTS_JOURNAL */}
-        {storyId === "THEROBOTSJOURNAL" && isFirstPage && chapter.diaryDate && (
-          <DiaryDateWidget date={chapter.diaryDate} accent={accent} />
-        )}
-
-        {/* Rune — THE_MAPMAKERS_DAUGHTER */}
-        {storyId === "THEMAPMAKERSDAUGHTER" && isFirstPage && chapter.rune && (
-          <RuneWidget rune={chapter.rune} accent={accent} />
-        )}
-
-        {/* Rune — KEKKIHY */}
-        {storyId === "KEKKIHY" && isFirstPage && chapter.rune && (
-          <RuneWidget rune={chapter.rune} accent={accent} />
-        )}
-
-        {/* Verse — THE_LIGHTHOUSE_KEEPERS_SON */}
-        {storyId === "THELIGHTHOUSEKEEPERSSON" &&
-          isFirstPage &&
-          chapter.verse && (
-            <VerseWidget verse={chapter.verse} accent={accent} />
-          )}
-
-        {/* Word Entry — THE_WORD_COLLECTOR */}
-        {storyId === "THEWORDCOLLECTOR" && isFirstPage && chapter.wordEntry && (
-          <WordEntryWidget entry={chapter.wordEntry} accent={accent} />
-        )}
-
-        {/* Dictionary — KATUION */}
-        {storyId === "KATUION" && isFirstPage && chapter.dictionaryEntry && (
-          <DictionaryWidget entry={chapter.dictionaryEntry} accent={accent} />
-        )}
-
-        {/* Mission — SPACEADVENTURE (primeira página) */}
-        {storyId === "SPACEADVENTURE" && isFirstPage && chapter.mission && (
-          <MissionWidget mission={chapter.mission} accent={accent} />
-        )}
-
-        {/* Mission — THE_UNDERWATER_EXPLORERS (primeira página) */}
-        {storyId === "THEUNDERWATEREXPLORERS" &&
-          isFirstPage &&
-          chapter.mission && (
-            <MissionWidget mission={chapter.mission} accent={accent} />
-          )}
-
-        {/* Feeling Card — THE_FEELINGS_GARDEN (primeira página) */}
-        {storyId === "THEFEELINGSГARDEN" &&
-          isFirstPage &&
-          chapter.feelingCard && (
-            <FeelingCardWidget card={chapter.feelingCard} accent={accent} />
-          )}
-
-        {/* Recipe — THE_GRANDMOTHERS_RECIPE_BOX (primeira página) */}
-        {storyId === "THEGRANDMOTHERSRECIPEBOX" &&
-          isFirstPage &&
-          chapter.recipe && (
-            <RecipeWidget recipe={chapter.recipe} accent={accent} />
-          )}
-
-        {/* Creature Card — THE_FIELD_GUIDE (primeira página) */}
-        {storyId === "THEFIELDGUIDE" && isFirstPage && chapter.creatureCard && (
-          <CreatureCardWidget creature={chapter.creatureCard} accent={accent} />
-        )}
-
-        {/* ── TEXTO DA PÁGINA ── */}
         <View style={[s.pageCard, { backgroundColor: theme.cardBg }]}>
           <Text
             style={[
               s.pageText,
-              storyId === "STHMSTHAP" && { color: "#CBD5E0" },
+              isDarkBg && { color: "#CBD5E0" },
               {
                 fontFamily: "FredokaOne_400Regular",
                 fontSize: 16,
@@ -1083,23 +871,8 @@ const PageView = ({
           </Text>
         </View>
 
-        {/* ── WIDGETS NO FIM DA ÚLTIMA PÁGINA ── */}
-
-        {/* Riddle — STHM_STHAP */}
-        {storyId === "STHMSTHAP" && isLastPage && chapter.riddle && (
-          <RiddleWidget riddle={chapter.riddle} accent={accent} />
-        )}
-
-        {/* Riddle — THE_CLOCKWORK_DETECTIVE */}
-        {storyId === "THECLOCKWORKDETECTIVE" &&
-          isLastPage &&
-          chapter.riddle && (
-            <RiddleWidget riddle={chapter.riddle} accent={accent} />
-          )}
-
-        {/* Match Report — STRUCKBALL */}
-        {storyId === "STRUCKBALL" && isLastPage && chapter.matchReport && (
-          <MatchReportWidget report={chapter.matchReport} accent={accent} />
+        {isLastPage && (
+          <BottomWidgets chapter={chapter} accent={theme.accent} />
         )}
       </ScrollView>
     </View>
@@ -1111,24 +884,19 @@ export default function ReadStoryScreen() {
   const router = useRouter();
   const { storyId } = useLocalSearchParams<{ storyId: string }>();
 
-  const rawId =
-    storyId?.toLocaleUpperCase().replace(/[\s_-]/g, "") ?? "TAIRBRTY";
+  const id = resolveStoryId(storyId ?? "TAIRBRTY");
 
-  // Normaliza IDs especiais
-  const normalizeId = (raw: string): StoryId => {
-    // Trata "THEFEELINGSГARDEN" — o id do grid é "thefeelingsGarden" → "THEFEELINGSGARDEN"
-    // mas no STORY_MAP usamos "THEFEELINGSГARDEN" com G cirílico — corrigindo aqui:
-    if (raw === "THEFEELINGSGARDEN" || raw === "THEFEELINGSГARDEN")
-      return "THEFEELINGSГARDEN" as StoryId;
-    return raw as StoryId;
-  };
+  console.log(id, "ID");
 
-  const id = normalizeId(rawId);
+  // Resolve chapters — fallback to TAIRBRTY if id unknown
+  const chapters: ChapterMock[] =
+    STORY_CHAPTERS[id] ?? STORY_CHAPTERS["TAIRBRTY"];
 
-  console.log("Received storyId param:", storyId, "→ normalized:", id);
+  // Theme derived from id + chapters — no manual theme object needed
+  const theme = deriveTheme(id, chapters);
 
-  const entry = STORY_MAP[id] ?? STORY_MAP.TAIRBRTY;
-  const { chapters, theme } = entry;
+  // Dark background detection for text colour
+  const isDarkBg = parseInt(theme.bg.replace("#", ""), 16) < 0x303030_00 >> 8;
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -1145,9 +913,6 @@ export default function ReadStoryScreen() {
 
   const switchChapter = async (idx: number) => {
     const status = await AsyncStorage.getItem("@subscription_status");
-
-    console.log(status, "STATUSSSSS");
-
     if (chapters[idx].locked && status !== "active") {
       router.push("/(paywall)");
       return;
@@ -1209,9 +974,7 @@ export default function ReadStoryScreen() {
           <Text style={fredoka(16, theme.accent)}>
             {chapter.emoji} {chapter.title}
           </Text>
-          <Text
-            style={[s.headerSub, id === "STHMSTHAP" && { color: "#638596" }]}
-          >
+          <Text style={[s.headerSub, isDarkBg && { color: "#638596" }]}>
             {chapter.subtitle}
           </Text>
         </View>
@@ -1225,9 +988,9 @@ export default function ReadStoryScreen() {
       {/* ── CHAPTER TABS ── */}
       <View style={s.chapterRow}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {chapters.map((ch: any, i: number) => (
+          {chapters.map((ch, i) => (
             <ChapterTab
-              key={ch.id}
+              key={String(ch.id)}
               chapter={ch}
               active={activeChapter === i}
               theme={theme}
@@ -1253,7 +1016,7 @@ export default function ReadStoryScreen() {
               chapter={chapter}
               isFirstPage={index === 0}
               isLastPage={index === pages.length - 1}
-              storyId={id}
+              isDarkBg={isDarkBg}
               theme={theme}
             />
           )}
@@ -1442,7 +1205,6 @@ const s = StyleSheet.create({
 
 // ─── WIDGET STYLES ────────────────────────────────────────────────────────────
 const sw = StyleSheet.create({
-  // ── Riddle ──────────────────────────────────────────────────────────────────
   riddleCard: {
     marginTop: 16,
     borderRadius: 20,
@@ -1484,8 +1246,6 @@ const sw = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.3,
   },
-
-  // ── Dictionary (KATUION) ─────────────────────────────────────────────────────
   dictCard: {
     borderLeftWidth: 4,
     paddingLeft: 16,
@@ -1506,8 +1266,6 @@ const sw = StyleSheet.create({
     lineHeight: 22,
     fontWeight: "500",
   },
-
-  // ── Word Entry (THE_WORD_COLLECTOR) ──────────────────────────────────────────
   wordCard: {
     borderLeftWidth: 4,
     paddingLeft: 16,
@@ -1533,8 +1291,6 @@ const sw = StyleSheet.create({
     fontStyle: "italic",
     lineHeight: 20,
   },
-
-  // ── Match Report ─────────────────────────────────────────────────────────────
   matchCard: {
     marginTop: 16,
     borderRadius: 20,
@@ -1580,8 +1336,6 @@ const sw = StyleSheet.create({
     lineHeight: 18,
     textAlign: "center",
   },
-
-  // ── Mission Brief ────────────────────────────────────────────────────────────
   missionCard: {
     marginBottom: 16,
     borderRadius: 16,
@@ -1601,8 +1355,6 @@ const sw = StyleSheet.create({
   missionObjective: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
   missionCheck: { fontSize: 16, fontWeight: "700", width: 20 },
   missionLabel: { flex: 1, fontSize: 14, lineHeight: 20 },
-
-  // ── Feeling Card ─────────────────────────────────────────────────────────────
   feelingCard: {
     marginBottom: 16,
     borderRadius: 20,
@@ -1626,8 +1378,6 @@ const sw = StyleSheet.create({
     textAlign: "center",
     lineHeight: 18,
   },
-
-  // ── Letter Friend ────────────────────────────────────────────────────────────
   letterCard: {
     marginBottom: 16,
     borderRadius: 20,
@@ -1654,12 +1404,8 @@ const sw = StyleSheet.create({
   letterCharacter: { fontSize: 15, fontWeight: "700" },
   letterWord: { fontSize: 13, color: "#666" },
   letterSound: { fontSize: 12, color: "#888", fontStyle: "italic" },
-
-  // ── Diary Date ───────────────────────────────────────────────────────────────
   diaryDate: { marginBottom: 14, paddingBottom: 10, borderBottomWidth: 1 },
   diaryDateText: { fontSize: 14, fontWeight: "700", fontStyle: "italic" },
-
-  // ── Rune ─────────────────────────────────────────────────────────────────────
   runeCard: {
     marginBottom: 16,
     borderRadius: 16,
@@ -1682,8 +1428,6 @@ const sw = StyleSheet.create({
     fontStyle: "italic",
     lineHeight: 18,
   },
-
-  // ── Verse ────────────────────────────────────────────────────────────────────
   verseCard: {
     marginBottom: 16,
     borderLeftWidth: 4,
@@ -1698,8 +1442,6 @@ const sw = StyleSheet.create({
     fontStyle: "italic",
   },
   verseAuthor: { fontSize: 11, fontWeight: "700", marginTop: 8 },
-
-  // ── Recipe ───────────────────────────────────────────────────────────────────
   recipeCard: {
     marginBottom: 16,
     borderRadius: 20,
@@ -1724,8 +1466,6 @@ const sw = StyleSheet.create({
     lineHeight: 20,
     fontStyle: "italic",
   },
-
-  // ── Creature Card ────────────────────────────────────────────────────────────
   creatureCard: {
     marginBottom: 16,
     borderRadius: 20,
