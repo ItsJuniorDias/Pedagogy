@@ -74,6 +74,11 @@ export default function RootLayout() {
         />
 
         <Stack.Screen name="(gravity)/index" options={{ headerShown: false }} />
+
+        <Stack.Screen
+          name="(farm-game)/index"
+          options={{ headerShown: false }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

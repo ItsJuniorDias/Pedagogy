@@ -141,6 +141,19 @@ const LEARNING_PATHS = [
 // Props completas incluindo tagBg, tagColor e iconBg (correção do bug)
 const GAMES = [
   {
+    id: "farm-game",
+    title: "Farm Game",
+    sub: "Manage your farm and harvest crops!",
+    tagLabel: "New ✨",
+    tagVariant: "emerald",
+    tagBg: "#D1FAE5",
+    tagColor: "#065F46",
+    iconBg: "#FFF7E0",
+    canvasBg: "#FFFBEB",
+    emoji: "🚜",
+    category: "farming",
+  },
+  {
     id: "pixel-run",
     title: "Pixel Run",
     sub: "Endless runner in space!",
@@ -246,6 +259,7 @@ const LearningCard = ({
 
 // Todas as props agora usadas corretamente (tagBg, tagColor, iconBg)
 const PopularCard = ({
+  id,
   emoji,
   title,
   sub,
@@ -262,7 +276,12 @@ const PopularCard = ({
       activeOpacity={0.85}
       onPress={() =>
         router.push({
-          pathname: title === "Pixel Run" ? "/(pixel-run)" : "/(gravity)",
+          pathname:
+            id === "pixel-run"
+              ? "/(pixel-run)"
+              : id === "gravity"
+                ? "/(gravity)"
+                : "/(farm-game)",
         })
       }
     >
