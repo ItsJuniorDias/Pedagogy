@@ -79,6 +79,11 @@ export default function RootLayout() {
           name="(farm-game)/index"
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen
+          name="(ping-pong)/index"
+          options={{ headerShown: false }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

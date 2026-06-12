@@ -154,6 +154,19 @@ const GAMES = [
     category: "farming",
   },
   {
+    id: "ping-pong",
+    title: "Ping Pong",
+    sub: "Classic ping pong game!",
+    tagLabel: "Top ⭐",
+    tagVariant: "yellow",
+    tagBg: "#FEF3C7",
+    tagColor: "#92400E",
+    iconBg: "#FFF7E0",
+    canvasBg: "#FFFBEB",
+    emoji: "🏓",
+    category: "sports",
+  },
+  {
     id: "pixel-run",
     title: "Pixel Run",
     sub: "Endless runner in space!",
@@ -270,20 +283,23 @@ const PopularCard = ({
 }: (typeof GAMES)[0]) => {
   const router = useRouter();
 
+  const redirectGameScreen = () => {
+    if (id === "pixel-run") {
+      router.push("/(pixel-run)");
+    } else if (id === "gravity") {
+      router.push("/(gravity)");
+    } else if (id === "farm-game") {
+      router.push("/(farm-game)");
+    } else if (id === "ping-pong") {
+      router.push("/(ping-pong)");
+    }
+  };
+
   return (
     <TouchableOpacity
       style={s.popCard}
       activeOpacity={0.85}
-      onPress={() =>
-        router.push({
-          pathname:
-            id === "pixel-run"
-              ? "/(pixel-run)"
-              : id === "gravity"
-                ? "/(gravity)"
-                : "/(farm-game)",
-        })
-      }
+      onPress={() => redirectGameScreen()}
     >
       <View style={[s.popIcon, { backgroundColor: iconBg }]}>
         <Text style={s.popIconEmoji}>{emoji}</Text>

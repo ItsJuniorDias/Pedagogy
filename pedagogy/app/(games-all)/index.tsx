@@ -20,6 +20,20 @@ const fredoka = (size: number, color?: string) => ({
 
 const ALL_GAMES = [
   {
+    id: "farm-game",
+    title: "Farm Game",
+    sub: "Manage your farm and harvest crops!",
+    tagLabel: "New ✨",
+    tagVariant: "emerald",
+    tagBg: "#D1FAE5",
+    tagColor: "#065F46",
+    iconBg: "#FFF7E0",
+    canvasBg: "#FFFBEB",
+    emoji: "🚜",
+    route: "/(farm-game)",
+    category: "farming",
+  },
+  {
     id: "pixel-run",
     emoji: "👾",
     title: "Pixel Run",
