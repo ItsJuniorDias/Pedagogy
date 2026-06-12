@@ -1,8 +1,16 @@
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { useFonts } from "expo-font";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import * as Speech from "expo-speech";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -87,9 +95,12 @@ import {
 
 const { width } = Dimensions.get("window");
 
+// ─── MÚSICA DE FUNDO ──────────────────────────────────────────────────────────
+const BG_MUSIC_URL =
+  "https://www.bensound.com/bensound-music/bensound-tenderness.mp3";
+
 // ─── TYPES ────────────────────────────────────────────────────────────────────
 
-/** A chapter mock can carry any optional widget fields — no strict typing needed here */
 type ChapterMock = {
   id: number | string;
   title: string;
@@ -97,7 +108,6 @@ type ChapterMock = {
   emoji: string;
   locked?: boolean;
   pages: string[];
-  // widget fields (any combination is valid)
   dictionaryEntry?: { word: string; pronunciation: string; definition: string };
   wordEntry?: {
     word: string;
@@ -153,22 +163,41 @@ interface StoryTheme {
   navPrimaryShadow: string;
 }
 
+// ─── TOKEN PARA HIGHLIGHT ─────────────────────────────────────────────────────
+// Representa cada fragmento do texto: palavra ou espaço/pontuação
+type TextToken = {
+  text: string;
+  charStart: number; // posição no texto original (cleanedText)
+  isWord: boolean;
+};
+
+/**
+ * Divide o texto em tokens preservando a posição de cada caractere.
+ * Tokens alternados: palavra | separador
+ */
+function tokenizeText(text: string): TextToken[] {
+  const tokens: TextToken[] = [];
+  // Separa em palavras e não-palavras mantendo delimitadores
+  const parts = text.split(/(\s+)/);
+  let cursor = 0;
+  for (const part of parts) {
+    if (part.length === 0) continue;
+    tokens.push({
+      text: part,
+      charStart: cursor,
+      isWord: /\S/.test(part),
+    });
+    cursor += part.length;
+  }
+  return tokens;
+}
+
 // ─── THEME ENGINE ─────────────────────────────────────────────────────────────
-//
-// Instead of declaring a theme object per story, we derive it from the chapters
-// array at runtime. The derivation strategy:
-//
-//  1. If the first chapter carries a `color` field → use it directly.
-//  2. Otherwise hash the story id string into one of the predefined palettes.
-//     This is deterministic: same id always yields same palette.
-//
-// Adding a new story to STORY_MAP requires zero theme work — just pass chapters.
 
 const PALETTES: Pick<
   StoryTheme,
   "bg" | "accent" | "accentSoft" | "blob1" | "blob2"
 >[] = [
-  // 0 – warm orange
   {
     bg: "#FFF9F0",
     accent: "#FF8C42",
@@ -176,7 +205,6 @@ const PALETTES: Pick<
     blob1: "#FFE8D0",
     blob2: "#E8F4FF",
   },
-  // 1 – deep teal (dark mode)
   {
     bg: "#0D1B2A",
     accent: "#00CEC9",
@@ -184,7 +212,6 @@ const PALETTES: Pick<
     blob1: "#0A3040",
     blob2: "#0D1F35",
   },
-  // 2 – violet
   {
     bg: "#FAF7F2",
     accent: "#7C5CBF",
@@ -192,7 +219,6 @@ const PALETTES: Pick<
     blob1: "#EDE7F6",
     blob2: "#FCE4EC",
   },
-  // 3 – mint green
   {
     bg: "#F0FFF4",
     accent: "#00B894",
@@ -200,7 +226,6 @@ const PALETTES: Pick<
     blob1: "#C8FFD4",
     blob2: "#FFF9C4",
   },
-  // 4 – hot pink
   {
     bg: "#FFF9F0",
     accent: "#FF5B8D",
@@ -208,7 +233,6 @@ const PALETTES: Pick<
     blob1: "#FFE8F0",
     blob2: "#E8F4FF",
   },
-  // 5 – sky blue
   {
     bg: "#E8F4FF",
     accent: "#1E90FF",
@@ -216,7 +240,6 @@ const PALETTES: Pick<
     blob1: "#D0ECFF",
     blob2: "#FFF9C4",
   },
-  // 6 – golden yellow
   {
     bg: "#FFF9F0",
     accent: "#FFD93D",
@@ -224,7 +247,6 @@ const PALETTES: Pick<
     blob1: "#FFE8F0",
     blob2: "#E8F4FF",
   },
-  // 7 – forest green
   {
     bg: "#F0FFF4",
     accent: "#27AE60",
@@ -232,7 +254,6 @@ const PALETTES: Pick<
     blob1: "#C8FFD4",
     blob2: "#E8F4FF",
   },
-  // 8 – ocean teal
   {
     bg: "#E0F7FA",
     accent: "#00ACC1",
@@ -240,7 +261,6 @@ const PALETTES: Pick<
     blob1: "#B2EBF2",
     blob2: "#FFF9C4",
   },
-  // 9 – coral
   {
     bg: "#FFF7ED",
     accent: "#F97316",
@@ -248,7 +268,6 @@ const PALETTES: Pick<
     blob1: "#FED7AA",
     blob2: "#FEF9C3",
   },
-  // 10 – purple
   {
     bg: "#F3F0FF",
     accent: "#8B5CF6",
@@ -256,7 +275,6 @@ const PALETTES: Pick<
     blob1: "#EDE9FE",
     blob2: "#FCE4EC",
   },
-  // 11 – indigo blue
   {
     bg: "#EBF4FF",
     accent: "#3B82F6",
@@ -264,7 +282,6 @@ const PALETTES: Pick<
     blob1: "#DBEAFE",
     blob2: "#EDE9FE",
   },
-  // 12 – cyan
   {
     bg: "#EBF8FF",
     accent: "#0EA5E9",
@@ -272,7 +289,6 @@ const PALETTES: Pick<
     blob1: "#BAE6FD",
     blob2: "#ECFEFF",
   },
-  // 13 – emerald
   {
     bg: "#ECFDF5",
     accent: "#059669",
@@ -280,7 +296,6 @@ const PALETTES: Pick<
     blob1: "#A7F3D0",
     blob2: "#FEF9C3",
   },
-  // 14 – amber
   {
     bg: "#FFFBEB",
     accent: "#D97706",
@@ -288,7 +303,6 @@ const PALETTES: Pick<
     blob1: "#FDE68A",
     blob2: "#ECFDF5",
   },
-  // 15 – lilac
   {
     bg: "#FDF4FF",
     accent: "#A855F7",
@@ -298,7 +312,6 @@ const PALETTES: Pick<
   },
 ];
 
-/** Deterministic hash: maps a story id string to a palette index */
 function hashToPaletteIndex(id: string): number {
   let h = 0;
   for (let i = 0; i < id.length; i++) {
@@ -307,22 +320,12 @@ function hashToPaletteIndex(id: string): number {
   return Math.abs(h) % PALETTES.length;
 }
 
-/**
- * Derives a full StoryTheme from chapters + story id.
- *
- * Lookup order:
- *   chapters[0].color  →  use as accent, derive rest from palette closest to it
- *   fallback           →  hash(id) → palette
- */
-function deriveTheme(id: string, chapters: ChapterMock[]): StoryTheme {
+function deriveTheme(id: string, _chapters: ChapterMock[]): StoryTheme {
   const paletteIdx = hashToPaletteIndex(id);
   const palette = PALETTES[paletteIdx];
-
-  // Dark-mode guard: keep card bg readable
   const isDark =
     palette.bg.length === 7 && parseInt(palette.bg.slice(1), 16) < 0x303030;
   const cardBg = isDark ? "#12263A" : "#fff";
-
   return {
     bg: palette.bg,
     accent: palette.accent,
@@ -338,35 +341,28 @@ function deriveTheme(id: string, chapters: ChapterMock[]): StoryTheme {
 }
 
 // ─── STORY REGISTRY ───────────────────────────────────────────────────────────
-//
-// Shape: Record<storyId, ChapterMock[]>
-// No theme object ever needs to be written again.
 
 const STORY_CHAPTERS: Record<string, ChapterMock[]> = {
-  // ── Original chapter mocks ──────────────────────────────────────────────────
-  TAIRBRTY: TAIRBRTY,
+  TAIRBRTY,
   STHMSTHAP: STHM_STHAP,
-  KATUION: KATUION,
-  STRUCKBALL: STRUCKBALL,
-  KEKKIHY: KEKKIHY,
-  SPACEADVENTURE: SPACEADVENTURE,
-  // ── Learning mocks ──────────────────────────────────────────────────────────
-  LETTERS: LETTERS,
+  KATUION,
+  STRUCKBALL,
+  KEKKIHY,
+  SPACEADVENTURE,
+  LETTERS,
   SCHOOL: SCHOLL,
-  ASTRONAUT: ASTRONAUT,
-  SPACE: SPACE,
-  DINOSAURS: DINOSAURS,
+  ASTRONAUT,
+  SPACE,
+  DINOSAURS,
   OCEANLIFE: OCEAN_LIFE,
   "COLORS&ART": COLORS_ART,
   SCIENCELAB: SCIENCE_LAB,
-  // ── Story mocks (legacy) ────────────────────────────────────────────────────
   ROCKETADVENTURE: ROCKET_ADVENTURE,
   MAGICFOREST: MAGIC_FOREST,
-  OCEANFRIENDS: OCEANFRIENDS,
+  OCEANFRIENDS,
   TINYSICENTIST: TINY_SCIENTIST,
   DRAGONDIARY: DRAGON_DIARY,
   DINOWORLD: DINO_WORLD,
-  // ── New stories ─────────────────────────────────────────────────────────────
   THEVOWELVILLAGE: THE_VOWEL_VILLAGE,
   THECLOCKWORKDETECTIVE: THE_CLOCKWORK_DETECTIVE,
   THEUNDERWATEREXPLORERS: THE_UNDERWATER_EXPLORERS,
@@ -377,7 +373,6 @@ const STORY_CHAPTERS: Record<string, ChapterMock[]> = {
   THELIGHTHOUSEKEEPERSSON: THE_LIGHTHOUSE_KEEPERS_SON,
   THEGRANDMOTHERSRECIPEBOX: THE_GRANDMOTHERS_RECIPE_BOX,
   THEFIELDGUIDE: THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
-
   THECLOUDREADER: THE_CLOUD_READER,
   THECOLOURTHIEF: THE_COLOUR_THIEF,
   THEGIANTWHOWEPT: THE_GIANT_WHO_WEPT_MOUNTAINS,
@@ -394,7 +389,6 @@ const STORY_CHAPTERS: Record<string, ChapterMock[]> = {
   THEBEEKEEPER: THE_LAST_BEEKEEPER,
   THEISLANDOFMISTS: THE_ISLAND_OF_MISTS,
   THECITYOFCLOCKS: THE_CITY_OF_CLOCKS,
-
   THECORALQUEEN: THE_CORAL_QUEEN,
   THEGLASSCOMPOSER: THE_GLASS_COMPOSER,
   THEWINDMAPPER: THE_WIND_MAPPER,
@@ -415,9 +409,7 @@ const fredoka = (size: number, color?: string) => ({
 
 function resolveStoryId(raw: string): string {
   const upper = raw.toLocaleUpperCase().replace(/[\s_\-]/g, "");
-  // Normalise Cyrillic Г → Latin G (legacy artefact)
-  const latin = upper.replace(/Г/g, "G");
-  return latin;
+  return upper.replace(/Г/g, "G");
 }
 
 // ─── PAGE DOTS ────────────────────────────────────────────────────────────────
@@ -496,6 +488,110 @@ const ChapterTab = ({
       </View>
     )}
   </TouchableOpacity>
+);
+
+// ─── HIGHLIGHTED TEXT ─────────────────────────────────────────────────────────
+
+/**
+ * Renderiza o texto do capítulo com highlight word-by-word sincronizado ao TTS.
+ *
+ * charIndex: posição atual sendo lida (do onBoundary/onProgress do Speech)
+ * charLength: comprimento da palavra atual
+ * accent: cor do tema para o highlight
+ * isDarkBg: ajusta contraste do texto base
+ */
+const HighlightedPageText = React.memo(
+  ({
+    text,
+    charIndex,
+    charLength,
+    accent,
+    isDarkBg,
+    isSpeaking,
+  }: {
+    text: string;
+    charIndex: number;
+    charLength: number;
+    accent: string;
+    isDarkBg: boolean;
+    isSpeaking: boolean;
+  }) => {
+    // Tokeniza apenas quando o texto muda (memoized)
+    const tokens = useMemo(() => tokenizeText(text), [text]);
+
+    // Determina o índice final da palavra atual no texto original
+    const highlightEnd = charIndex + charLength;
+
+    return (
+      <Text
+        style={[
+          s.pageText,
+          isDarkBg && { color: "#CBD5E0" },
+          { fontFamily: "FredokaOne_400Regular", fontSize: 16, lineHeight: 26 },
+        ]}
+      >
+        {tokens.map((token, idx) => {
+          if (!isSpeaking || !token.isWord) {
+            // Sem highlight: texto normal
+            return (
+              <Text
+                key={idx}
+                style={isDarkBg ? { color: "#CBD5E0" } : { color: "#3D3D3D" }}
+              >
+                {token.text}
+              </Text>
+            );
+          }
+
+          const tokenEnd = token.charStart + token.text.length;
+          const isActive =
+            token.charStart >= charIndex && tokenEnd <= highlightEnd + 1;
+
+          // Palavra sendo lida agora: highlight colorido com underline suave
+          if (isActive) {
+            return (
+              <Text
+                key={idx}
+                style={[
+                  sh.wordHighlight,
+                  {
+                    backgroundColor: accent + "33", // 20% opacidade
+                    color: accent,
+                    textDecorationColor: accent,
+                  },
+                ]}
+              >
+                {token.text}
+              </Text>
+            );
+          }
+
+          // Palavras já lidas: levemente apagadas para guiar o olho
+          const alreadyRead = token.charStart < charIndex;
+          if (alreadyRead) {
+            return (
+              <Text
+                key={idx}
+                style={{ color: isDarkBg ? "#5A7A8A" : "#AAAAAA" }}
+              >
+                {token.text}
+              </Text>
+            );
+          }
+
+          // Palavras ainda não lidas: cor normal
+          return (
+            <Text
+              key={idx}
+              style={isDarkBg ? { color: "#CBD5E0" } : { color: "#3D3D3D" }}
+            >
+              {token.text}
+            </Text>
+          );
+        })}
+      </Text>
+    );
+  },
 );
 
 // ─── WIDGETS ──────────────────────────────────────────────────────────────────
@@ -766,11 +862,7 @@ const CreatureCardWidget = ({
   </View>
 );
 
-// ─── WIDGET RENDERER ─────────────────────────────────────────────────────────
-//
-// Instead of a long chain of storyId === "X" conditions, we render widgets
-// purely based on which fields exist in the chapter object. Works for any
-// future story automatically — just add the field to the mock.
+// ─── WIDGET RENDERER ──────────────────────────────────────────────────────────
 
 const TopWidgets = ({
   chapter,
@@ -830,6 +922,10 @@ const PageView = ({
   isLastPage,
   isDarkBg,
   theme,
+  // Highlight props
+  isSpeaking,
+  speechCharIndex,
+  speechCharLength,
 }: {
   page: string;
   chapter: ChapterMock;
@@ -837,8 +933,10 @@ const PageView = ({
   isLastPage: boolean;
   isDarkBg: boolean;
   theme: StoryTheme;
+  isSpeaking: boolean;
+  speechCharIndex: number;
+  speechCharLength: number;
 }) => {
-  // Strip the header block that some mocks duplicate inside page text
   const cleanedPage = chapter.dictionaryEntry
     ? page.replace(/^.+?─{5,}\n\n/s, "")
     : page;
@@ -847,7 +945,6 @@ const PageView = ({
     <View style={[s.pageView, { width }]}>
       <View style={[s.pageBlob1, { backgroundColor: theme.blob1 }]} />
       <View style={[s.pageBlob2, { backgroundColor: theme.blob2 }]} />
-
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -856,19 +953,15 @@ const PageView = ({
         {isFirstPage && <TopWidgets chapter={chapter} accent={theme.accent} />}
 
         <View style={[s.pageCard, { backgroundColor: theme.cardBg }]}>
-          <Text
-            style={[
-              s.pageText,
-              isDarkBg && { color: "#CBD5E0" },
-              {
-                fontFamily: "FredokaOne_400Regular",
-                fontSize: 16,
-                lineHeight: 26,
-              },
-            ]}
-          >
-            {cleanedPage}
-          </Text>
+          {/* ── TEXTO COM HIGHLIGHT SINCRONIZADO ── */}
+          <HighlightedPageText
+            text={cleanedPage}
+            charIndex={speechCharIndex}
+            charLength={speechCharLength}
+            accent={theme.accent}
+            isDarkBg={isDarkBg}
+            isSpeaking={isSpeaking}
+          />
         </View>
 
         {isLastPage && (
@@ -885,38 +978,128 @@ export default function ReadStoryScreen() {
   const { storyId } = useLocalSearchParams<{ storyId: string }>();
 
   const id = resolveStoryId(storyId ?? "TAIRBRTY");
-
-  console.log(id, "ID");
-
-  // Resolve chapters — fallback to TAIRBRTY if id unknown
   const chapters: ChapterMock[] =
     STORY_CHAPTERS[id] ?? STORY_CHAPTERS["TAIRBRTY"];
-
-  // Theme derived from id + chapters — no manual theme object needed
   const theme = deriveTheme(id, chapters);
-
-  // Dark background detection for text colour
   const isDarkBg = parseInt(theme.bg.replace("#", ""), 16) < 0x303030_00 >> 8;
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // ── Estado do highlight ─────────────────────────────────────────────────────
+  // charIndex: offset no texto da palavra atual sendo lida
+  // charLength: comprimento da palavra atual
+  const [speechCharIndex, setSpeechCharIndex] = useState(0);
+  const [speechCharLength, setSpeechCharLength] = useState(0);
+
   const flatRef = useRef<FlatList>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
+  const player = useAudioPlayer({ uri: BG_MUSIC_URL });
+  const playerStatus = useAudioPlayerStatus(player);
+
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
 
-  const chapter = chapters[activeChapter];
-  const pages = chapter.pages;
-  const isLastPage = currentPage === pages.length - 1;
-  const nextChapter = chapters[activeChapter + 1];
+  // ─── Para tudo ao trocar página ou capítulo ──────────────────────────────
+  useEffect(() => {
+    stopAll();
+  }, [currentPage, activeChapter]);
 
+  // ─── Cleanup ao sair da tela ─────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      stopAll();
+    };
+  }, []);
+
+  // ─── Para Speech + música + reseta highlight ─────────────────────────────
+  const stopAll = useCallback(() => {
+    Speech.stop();
+    try {
+      player.pause();
+      player.seekTo(0);
+    } catch (_) {}
+    setIsSpeaking(false);
+    setSpeechCharIndex(0);
+    setSpeechCharLength(0);
+  }, [player]);
+
+  // ─── Resolve o texto limpo da página atual ────────────────────────────────
+  const getCleanedText = useCallback(
+    (chapterIdx: number, pageIdx: number): string => {
+      const ch = chapters[chapterIdx];
+      const raw = ch.pages[pageIdx];
+      return ch.dictionaryEntry ? raw.replace(/^.+?─{5,}\n\n/s, "") : raw;
+    },
+    [chapters],
+  );
+
+  // ─── HANDLER: botão ▶️ / ⏸ ───────────────────────────────────────────────
+  const handleSpeech = async () => {
+    const status = await AsyncStorage.getItem("@subscription_status");
+    if (status !== "active") {
+      router.push("/(paywall)");
+      return;
+    }
+
+    if (isSpeaking) {
+      stopAll();
+      return;
+    }
+
+    const cleanedText = getCleanedText(activeChapter, currentPage);
+
+    // Liga música de fundo
+    try {
+      player.seekTo(0);
+      player.volume = 0.18;
+      player.loop = true;
+      player.play();
+    } catch (_) {}
+
+    // Reseta highlight
+    setSpeechCharIndex(0);
+    setSpeechCharLength(0);
+    setIsSpeaking(true);
+
+    Speech.speak(cleanedText, {
+      language: "en-US",
+      rate: 0.85,
+      pitch: 1.0,
+
+      // ── WORD BOUNDARY CALLBACK ──
+      // Chamado em cada palavra pelo engine TTS (iOS e Android)
+      // charIndex: posição do caractere no texto
+      // charLength: comprimento da palavra (nem sempre disponível no Android)
+      onBoundary: (event: { charIndex: number; charLength?: number }) => {
+        setSpeechCharIndex(event.charIndex ?? 0);
+        // charLength pode ser undefined em alguns devices Android;
+        // nesse caso inferimos a partir do próximo espaço
+        if (event.charLength != null) {
+          setSpeechCharLength(event.charLength);
+        } else {
+          // Fallback: calcula até o próximo espaço
+          const remaining = cleanedText.slice(event.charIndex);
+          const nextSpace = remaining.search(/\s/);
+          setSpeechCharLength(nextSpace >= 0 ? nextSpace : remaining.length);
+        }
+      },
+
+      onDone: () => stopAll(),
+      onStopped: () => stopAll(),
+      onError: () => stopAll(),
+    });
+  };
+
+  // ─── Chapter switch ───────────────────────────────────────────────────────
   const switchChapter = async (idx: number) => {
     const status = await AsyncStorage.getItem("@subscription_status");
     if (chapters[idx].locked && status !== "active") {
       router.push("/(paywall)");
       return;
     }
+    stopAll();
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 180,
@@ -939,7 +1122,7 @@ export default function ReadStoryScreen() {
   };
 
   const goNext = () => {
-    if (currentPage < pages.length - 1) {
+    if (currentPage < chapter.pages.length - 1) {
       flatRef.current?.scrollToIndex({
         index: currentPage + 1,
         animated: true,
@@ -959,6 +1142,13 @@ export default function ReadStoryScreen() {
     }
   };
 
+  if (!fontsLoaded) return <AppLoading />;
+
+  const chapter = chapters[activeChapter];
+  const pages = chapter.pages;
+  const isLastPage = currentPage === pages.length - 1;
+  const nextChapter = chapters[activeChapter + 1];
+
   return (
     <View style={[s.root, { backgroundColor: theme.bg }]}>
       {/* ── HEADER ── */}
@@ -970,6 +1160,7 @@ export default function ReadStoryScreen() {
         >
           <Text style={{ fontSize: 18 }}>←</Text>
         </TouchableOpacity>
+
         <View style={{ flex: 1, alignItems: "center" }}>
           <Text style={fredoka(16, theme.accent)}>
             {chapter.emoji} {chapter.title}
@@ -978,6 +1169,22 @@ export default function ReadStoryScreen() {
             {chapter.subtitle}
           </Text>
         </View>
+
+        {/* ── BOTÃO VOZ + MÚSICA ── */}
+        <TouchableOpacity
+          onPress={handleSpeech}
+          activeOpacity={0.8}
+          style={[
+            s.speechBtn,
+            {
+              backgroundColor: isSpeaking ? theme.accent : theme.accentSoft,
+              borderColor: theme.accent,
+            },
+          ]}
+        >
+          <Text style={{ fontSize: 16 }}>{isSpeaking ? "⏸" : "▶️"}</Text>
+        </TouchableOpacity>
+
         <View style={[s.pageCounter, { backgroundColor: theme.accentSoft }]}>
           <Text style={fredoka(12, theme.accent)}>
             {currentPage + 1}/{pages.length}
@@ -1018,6 +1225,10 @@ export default function ReadStoryScreen() {
               isLastPage={index === pages.length - 1}
               isDarkBg={isDarkBg}
               theme={theme}
+              // Passa o estado de highlight para a página ativa
+              isSpeaking={isSpeaking && index === currentPage}
+              speechCharIndex={speechCharIndex}
+              speechCharLength={speechCharLength}
             />
           )}
         />
@@ -1079,6 +1290,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     marginBottom: 16,
+    gap: 8,
   },
   backBtn: {
     width: 40,
@@ -1092,11 +1304,19 @@ const s = StyleSheet.create({
     shadowRadius: 6,
   },
   headerSub: { fontSize: 11, color: "#AAA", fontWeight: "600", marginTop: 2 },
-  pageCounter: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+  speechBtn: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.5,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
   },
+  pageCounter: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
   chapterRow: { paddingHorizontal: 20, marginBottom: 24 },
   chapterTab: {
     height: 60,
@@ -1126,11 +1346,7 @@ const s = StyleSheet.create({
     elevation: 3,
   },
   pagesArea: { flex: 1 },
-  pageView: {
-    paddingHorizontal: 20,
-    position: "relative",
-    flex: 1,
-  },
+  pageView: { paddingHorizontal: 20, position: "relative", flex: 1 },
   pageBlob1: {
     position: "absolute",
     width: 160,
@@ -1200,6 +1416,17 @@ const s = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.4,
     shadowRadius: 10,
+  },
+});
+
+// ─── HIGHLIGHT STYLES ─────────────────────────────────────────────────────────
+const sh = StyleSheet.create({
+  wordHighlight: {
+    borderRadius: 4,
+    textDecorationStyle: "solid",
+    fontWeight: "800",
+    // paddingHorizontal: 1 — não suportado inline no RN Text nesting, mas o
+    // backgroundColor + borderRadius já cria o efeito visual desejado
   },
 });
 
