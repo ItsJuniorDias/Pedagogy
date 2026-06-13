@@ -251,7 +251,7 @@ export function usePongGame(options: UsePongGameOptions = {}) {
       setSpeedMul(r.speedMul);
       // Corte forte do jogador: aviso + vibração diferenciada
       if (isPlayer && spinMag >= SPIN.labelAt) {
-        spawnLabel("🌀 EFEITO!", NEON.cyan);
+        spawnLabel("🌀 EFFECT!", NEON.cyan);
         Vibration.vibrate([0, 14, 22, 14]);
       } else {
         Vibration.vibrate(10);

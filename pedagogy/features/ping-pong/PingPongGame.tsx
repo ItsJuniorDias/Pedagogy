@@ -49,7 +49,7 @@ const HINT: Record<Phase, string> = {
   over: "MATCH OVER",
 };
 
-function PongGameInner() {
+export function PongGameInner() {
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   const insets = useSafeAreaInsets();
 

@@ -28,7 +28,7 @@ export const RankButton: React.FC<Props> = ({ top, totalPoints, onPress }) => {
       <Glass style={rb.pill} intensity={55}>
         <Text style={rb.emoji}>{tier.current.emoji}</Text>
         <Text style={[rb.pts, { color: tier.current.color }]}>
-          {totalPoints.toLocaleString("pt-BR")}
+          {totalPoints.toLocaleString("en-US")}
         </Text>
       </Glass>
     </TouchableOpacity>

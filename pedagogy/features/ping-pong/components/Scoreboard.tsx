@@ -16,6 +16,10 @@ interface Props {
   rally: number;
   bestRally: number;
   speedMul: number;
+  /** Apelido do lado esquerdo (você). Padrão: "YOU". */
+  leftName?: string;
+  /** Apelido do lado direito (oponente). Padrão: "CPU". */
+  rightName?: string;
 }
 
 export const Scoreboard: React.FC<Props> = ({
@@ -24,6 +28,8 @@ export const Scoreboard: React.FC<Props> = ({
   rally,
   bestRally,
   speedMul,
+  leftName = "YOU",
+  rightName = "CPU",
 }) => (
   <View style={[sb.scoreWrap, { top }]} pointerEvents="none">
     <View style={shared.floatShadow}>
@@ -31,7 +37,12 @@ export const Scoreboard: React.FC<Props> = ({
         <View style={sb.scoreTop}>
           <View style={sb.scoreSide}>
             <View style={[sb.sideDot, { backgroundColor: NEON.cyan }]} />
-            <Text style={[sb.scoreName, { color: NEON.cyan }]}>YOU</Text>
+            <Text
+              style={[sb.scoreName, { color: NEON.cyan }]}
+              numberOfLines={1}
+            >
+              {leftName}
+            </Text>
             <Text style={[sb.scoreBig, { color: NEON.cyan }]}>{score.p}</Text>
           </View>
 
@@ -43,7 +54,12 @@ export const Scoreboard: React.FC<Props> = ({
 
           <View style={sb.scoreSide}>
             <View style={[sb.sideDot, { backgroundColor: NEON.magenta }]} />
-            <Text style={[sb.scoreName, { color: NEON.magenta }]}>CPU</Text>
+            <Text
+              style={[sb.scoreName, { color: NEON.magenta }]}
+              numberOfLines={1}
+            >
+              {rightName}
+            </Text>
             <Text style={[sb.scoreBig, { color: NEON.magenta }]}>{score.c}</Text>
           </View>
         </View>
@@ -71,12 +87,13 @@ const sb = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  scoreSide: { alignItems: "center", minWidth: 64 },
+  scoreSide: { alignItems: "center", width: 92 },
   sideDot: { width: 6, height: 6, borderRadius: 3, marginBottom: 2 },
   scoreName: {
     fontFamily: FF,
     fontSize: 9,
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
+    maxWidth: 92,
   },
   scoreBig: {
     fontFamily: FF,

@@ -11,3 +11,5 @@ export { ControlBar } from "./ControlBar";
 export { GameOverModal } from "./GameOverModal";
 export { RankingModal } from "./RankingModal";
 export { RankButton } from "./RankButton";
+export { Lobby } from "./Lobby";
+export { ModeSelect } from "./ModeSelect";

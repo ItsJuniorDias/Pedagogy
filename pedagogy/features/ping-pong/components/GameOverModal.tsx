@@ -98,7 +98,7 @@ export const GameOverModal: React.FC<{
               return (
                 <Text style={gm.overTier}>
                   {tier.current.emoji} {tier.current.label} ·{" "}
-                  {totalPoints.toLocaleString("pt-BR")} pts
+                  {totalPoints.toLocaleString("en-US")} pts
                 </Text>
               );
             })()}
@@ -112,7 +112,7 @@ export const GameOverModal: React.FC<{
 
           {onViewRanking && (
             <TouchableOpacity onPress={onViewRanking} style={gm.overLink}>
-              <Text style={gm.overLinkTxt}>🏆 VER RANKING</Text>
+              <Text style={gm.overLinkTxt}>🏆 VIEW RANKING</Text>
             </TouchableOpacity>
           )}
         </Animated.View>
