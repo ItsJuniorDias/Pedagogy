@@ -67,11 +67,12 @@ Arrastar o dedo revela o que está em cada direção (a direção do gesto = a d
 revelada):
 
 - ⬆️ **arrastar pra cima** → a **casinha do cachorro** (com o cãozinho)
+- ⬅️ **arrastar pra esquerda** → a **casa do fazendeiro** (chalé com chaminé)
 - ➡️ **arrastar pra direita** → o **celeiro** (com a vaquinha)
 - ⬇️ **arrastar pra baixo** → a **caixa de abelha** (colmeia + abelhas + pote de mel)
 
 Tudo isso só aparece depois de **comprar na loja**, e são desbloqueios de **nível
-alto** (doghouse Lv 7, barn Lv 11, beehive Lv 14). Os modelos 3D são low-poly
+alto** (doghouse Lv 7, casa Lv 9, barn Lv 11, beehive Lv 14). Os modelos 3D são low-poly
 "realistas" (`MeshStandardMaterial`, com sombra), construídos em `three/structures.ts`
 e posicionados nos cantos da grama por `data/structures.ts` (`structurePos`).
 

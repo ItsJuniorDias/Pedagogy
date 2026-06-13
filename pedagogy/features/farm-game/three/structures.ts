@@ -407,10 +407,139 @@ function buildBeehive(): THREE.Group {
   return g;
 }
 
+// ─── 🏡 Casa do fazendeiro ───────────────────────────────────────────────────
+
+function buildFarmhouse(): THREE.Group {
+  const g = new THREE.Group();
+  const wall = 0xf3e9d6; // reboco creme
+  const trim = 0xffffff;
+  const roofC = 0x8f4a36; // telha terracota
+  const woodDoor = 0x6b4423;
+  const stone = 0x9e958a;
+  const glassC = 0xbfe3f2;
+  const W = 2.4;
+  const H = 1.5;
+  const D = 2.0;
+  const baseY = 0.18; // topo da fundação (onde as paredes começam)
+  const topY = baseY + H; // topo das paredes
+  const fz = D / 2; // plano da frente (+z)
+
+  // fundação de pedra
+  const found = box(W + 0.16, 0.18, D + 0.16, stone, 0.95);
+  found.position.y = 0.09;
+  g.add(found);
+
+  // corpo
+  const body = box(W, H, D, wall, 0.9);
+  body.position.y = baseY + H / 2;
+  g.add(body);
+
+  // empenas sob o telhado
+  for (const sz of [-1, 1]) {
+    const end = gableEnd(W, 0.9, wall);
+    end.position.set(0, topY, (D / 2) * sz);
+    g.add(end);
+  }
+
+  // telhado
+  const roof = gableRoof(W + 0.22, D + 0.18, 0.9, roofC, 0.16);
+  roof.position.y = topY;
+  g.add(roof);
+
+  // chaminé de tijolo + fumacinha
+  const chimney = box(0.3, 0.7, 0.3, 0x9b4a3a, 0.95);
+  chimney.position.set(-0.7, topY + 0.55, -0.3);
+  g.add(chimney);
+  const chimCap = box(0.38, 0.08, 0.38, stone, 0.9);
+  chimCap.position.set(-0.7, topY + 0.92, -0.3);
+  g.add(chimCap);
+  const smokeMat = new THREE.MeshStandardMaterial({
+    color: 0xdfe2e6,
+    roughness: 1,
+    transparent: true,
+    opacity: 0.5,
+  });
+  const puffs: [number, number, number, number][] = [
+    [0, 1.05, 0, 0.1],
+    [0.06, 1.22, 0.04, 0.13],
+    [-0.05, 1.42, -0.03, 0.16],
+  ];
+  puffs.forEach(([dx, sy, dz, r]) => {
+    const puff = msh(new THREE.SphereGeometry(r, 10, 8), smokeMat);
+    puff.castShadow = false;
+    puff.receiveShadow = false;
+    puff.position.set(-0.7 + dx, topY + sy, -0.3 + dz);
+    g.add(puff);
+  });
+
+  // porta + moldura + degrau
+  const doorFrame = box(0.62, 0.92, 0.06, trim, 0.85);
+  doorFrame.position.set(0, baseY + 0.46, fz + 0.01);
+  g.add(doorFrame);
+  const door = box(0.5, 0.82, 0.06, woodDoor, 0.8);
+  door.position.set(0, baseY + 0.41, fz + 0.04);
+  g.add(door);
+  const knob = sph(0.03, 0xd4af37, 0.4);
+  knob.position.set(0.17, baseY + 0.41, fz + 0.08);
+  g.add(knob);
+  const step = box(0.8, 0.1, 0.3, stone, 0.95);
+  step.position.set(0, baseY + 0.05, fz + 0.18);
+  g.add(step);
+
+  // alpendre sobre a porta (telhadinho + dois pilares)
+  for (const sx of [-1, 1]) {
+    const post = cyl(0.04, 0.04, 0.92, woodDoor, 8);
+    post.position.set(0.34 * sx, baseY + 0.46, fz + 0.28);
+    g.add(post);
+  }
+  const porch = box(0.92, 0.07, 0.52, roofC, 0.8);
+  porch.position.set(0, baseY + 0.95, fz + 0.2);
+  g.add(porch);
+
+  // duas janelas com vidro, cruzeta e venezianas
+  for (const sx of [-1, 1]) {
+    const wx = 0.78 * sx;
+    const wy = baseY + 0.85;
+    const frame = box(0.5, 0.5, 0.05, trim, 0.85);
+    frame.position.set(wx, wy, fz + 0.01);
+    g.add(frame);
+    const pane = box(0.4, 0.4, 0.04, glassC, 0.25);
+    pane.position.set(wx, wy, fz + 0.03);
+    g.add(pane);
+    const mh = box(0.42, 0.04, 0.05, trim, 0.85);
+    mh.position.set(wx, wy, fz + 0.05);
+    g.add(mh);
+    const mv = box(0.04, 0.42, 0.05, trim, 0.85);
+    mv.position.set(wx, wy, fz + 0.05);
+    g.add(mv);
+    for (const s of [-1, 1]) {
+      const shutter = box(0.12, 0.5, 0.04, 0x4f7a52, 0.85);
+      shutter.position.set(wx + 0.31 * s, wy, fz + 0.02);
+      g.add(shutter);
+    }
+  }
+
+  // floreira sob a janela direita
+  const fbx = 0.78;
+  const fbY = baseY + 0.55;
+  const fbox = box(0.5, 0.1, 0.12, woodDoor, 0.85);
+  fbox.position.set(fbx, fbY, fz + 0.08);
+  g.add(fbox);
+  const flowerCols = [0xff6b6b, 0xffd93d, 0xff8fc7];
+  [-0.15, 0, 0.15].forEach((ox, i) => {
+    const fl = sph(0.05, flowerCols[i], 0.7);
+    fl.position.set(fbx + ox, fbY + 0.09, fz + 0.08);
+    g.add(fl);
+  });
+
+  return g;
+}
+
 // ─── Registro ─────────────────────────────────────────────────────────────────
 
 const BUILDERS: Record<StructureId, () => THREE.Group> = {
   doghouse: buildDoghouse,
+  farmhouse: buildFarmhouse,
   barn: buildBarn,
   beehive: buildBeehive,
 };
@@ -418,6 +547,7 @@ const BUILDERS: Record<StructureId, () => THREE.Group> = {
 /** Roda a construção pra encarar o centro da fazenda (a frente fica visível). */
 const FACE_Y: Record<StructureId, number> = {
   doghouse: Math.PI * 0.75, // canto "up" (-x,-z)
+  farmhouse: Math.PI * 0.25, // canto "left" (-x,+z)
   barn: Math.PI * 1.25, // canto "right" (+x,-z)
   beehive: Math.PI * 1.75, // canto "down" (+x,+z)
 };

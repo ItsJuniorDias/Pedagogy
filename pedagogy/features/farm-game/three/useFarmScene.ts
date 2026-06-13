@@ -27,7 +27,7 @@ const SQ = Math.SQRT1_2;
 const SCREEN_RIGHT = new THREE.Vector3(SQ, 0, -SQ);
 const SCREEN_UP = new THREE.Vector3(-SQ, 0, -SQ);
 // Limites do pan (em unidades de mundo ao longo de cada eixo de tela).
-const PAN_RIGHT_MIN = -2.5; // esquerda: pouco (só fazenda)
+const PAN_RIGHT_MIN = -7.5; // esquerda: até a casa do fazendeiro
 const PAN_RIGHT_MAX = 7.5; // direita: até o celeiro
 const PAN_UP_MIN = -7.5; // baixo: até a colmeia
 const PAN_UP_MAX = 7.5; // cima: até a casinha

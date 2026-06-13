@@ -20,7 +20,7 @@ export const TILE_H = 0.2;
 export const TILE_GAP = 0.07;
 export const STRIDE = TILE_W + TILE_GAP;
 export const FIELD_HALF = (COLS * STRIDE) / 2;
-export const GRASS_BORDER = 13;
+export const GRASS_BORDER = 12;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

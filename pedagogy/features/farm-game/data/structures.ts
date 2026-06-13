@@ -49,6 +49,17 @@ export const STRUCTURES: Record<StructureId, Structure> = {
     dist: 6,
     hint: "⬆️ Drag up to visit",
   },
+  farmhouse: {
+    id: "farmhouse",
+    emoji: "🏡",
+    name: "Farmer's House",
+    desc: "A cozy cottage with a chimney and flower boxes.",
+    cost: 6_000,
+    minLevel: 9,
+    dir: "left",
+    dist: 6,
+    hint: "⬅️ Drag left to visit",
+  },
   barn: {
     id: "barn",
     emoji: "🐮",

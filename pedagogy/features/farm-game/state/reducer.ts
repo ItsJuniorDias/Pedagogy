@@ -25,6 +25,7 @@ export const initialTiles = (): Tile[] =>
 
 const noStructures = (): Record<StructureId, boolean> => ({
   doghouse: false,
+  farmhouse: false,
   barn: false,
   beehive: false,
 });
