@@ -13,7 +13,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import MODEL from "../assets/Cow.glb";
 
 export const COW_SCALE = 0.5; // ~0.85 de altura no mundo (maior que a raposa)
-export const COW_ROT_Y = Math.PI / 3.5; // se ela aparecer de costas, troque p/ Math.PI
+export const COW_ROT_Y = Math.PI / 2; // facing da vaca no cercado (diagonal 3/4
+// com a câmera). Agora é aplicado UMA vez. Gire à vontade; +Math.PI vira de frente↔costas.
 
 // Cor (hex sRGB) — branca com pintas quase pretas, estilo holandesa (malhada).
 const BASE_COLOR = 0xf2f2f2;
@@ -117,19 +118,25 @@ export async function createCow(): Promise<LoadedCow> {
   });
 
   scene.scale.setScalar(COW_SCALE);
-  scene.rotation.y = COW_ROT_Y;
 
-  // recentra: pés no y=0 e corpo centrado em x/z (o .obj tem a origem no meio)
+  // recentra: pés no y=0 e corpo centrado em x/z (o .obj tem a origem no meio).
+  // Sem rotação aqui — quem orienta a vaca é o `root` (no structures.ts), pra a
+  // rotação não ser aplicada duas vezes.
   scene.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(scene);
   scene.position.x -= (box.min.x + box.max.x) / 2;
   scene.position.z -= (box.min.z + box.max.z) / 2;
   scene.position.y -= box.min.y;
 
+  // hierarquia: root (orientação + posição, no structures.ts)
+  //           > bobber (animação idle; pivota no chão → pés grudados)
+  //           > scene (modelo já escalado e apoiado em y=0)
+  const bobber = new THREE.Group();
+  bobber.add(scene);
   const root = new THREE.Group();
-  root.add(scene);
+  root.add(bobber);
 
-  // animação do próprio .glb, se existir
+  // se o .glb tiver animação (ex.: a vaca CC0 do Quaternius), toca ela e pronto
   if (clips.length > 0) {
     const mixer = new THREE.AnimationMixer(scene);
     const clip = THREE.AnimationClip.findByName(clips, IDLE_CLIP) ?? clips[0];
@@ -137,14 +144,18 @@ export async function createCow(): Promise<LoadedCow> {
     return { group: root, update: (dt) => mixer.update(dt) };
   }
 
-  // idle procedural (sem esqueleto): respira e muda o peso, bem de leve
+  // idle procedural (Spot não tem esqueleto): respira, balança o peso, olha em
+  // volta e abaixa a cabeça pra "pastar". Tudo no `bobber` (pivot no chão).
   let t = 0;
   return {
     group: root,
     update: (dt: number) => {
       t += dt;
-      root.position.y = 0.012 * (0.5 + 0.5 * Math.sin(t * 1.7)); // respira
-      root.rotation.z = 0.012 * Math.sin(t * 0.9); // muda o peso
+      bobber.scale.setScalar(1 + 0.02 * Math.sin(t * 1.5)); // respira (pulsa de leve)
+      bobber.position.y = 0.025 * (0.5 + 0.5 * Math.sin(t * 1.5)); // sobe/desce
+      bobber.rotation.z = 0.03 * Math.sin(t * 0.8); // muda o peso de lado
+      bobber.rotation.y = 0.12 * Math.sin(t * 0.45); // olha pros lados
+      bobber.rotation.x = 0.04 * Math.sin(t * 0.65 + 1); // abaixa/levanta a cabeça
     },
   };
 }
