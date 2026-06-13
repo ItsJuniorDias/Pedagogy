@@ -1,19 +1,24 @@
 /**
  * config.ts — Endereço do servidor do saguão.
  *
- * ⚠️ IMPORTANTE em dispositivo físico:
- *   "localhost" aponta para o PRÓPRIO celular, não para o seu PC. Use o IP da
- *   sua máquina na rede local, ex.: ws://192.168.0.12:8080 — ou defina a env
- *   pública do Expo `EXPO_PUBLIC_PONG_SERVER` (lida automaticamente abaixo).
+ * Em produção o app usa o servidor hospedado no Render (wss://, SEM porta na
+ * URL — o Render roteia o 443 para a porta interna do serviço).
  *
- *   # no terminal, antes de `expo start`:
- *   EXPO_PUBLIC_PONG_SERVER=ws://192.168.0.12:8080 npx expo start
+ * Para desenvolvimento local, sobrescreva com a env pública do Expo apontando
+ * para o IP da sua máquina na rede (NÃO use "localhost" em celular físico):
  *
- * No emulador Android use ws://10.0.2.2:8080; no simulador iOS, ws://localhost:8080.
+ *   # PC + celular no mesmo Wi-Fi (troque pelo IP do seu PC):
+ *   EXPO_PUBLIC_PONG_SERVER=ws://192.168.1.16:8080 npx expo start --clear
+ *
+ *   # emulador Android: ws://10.0.2.2:8080
+ *   # web / simulador iOS no mesmo PC: ws://localhost:8080
  */
 
+/** URL de produção (Render). Troque pelo nome do SEU serviço .onrender.com. */
+const PROD_SERVER_URL = "wss://neon-pong-server.onrender.com";
+
 export const SERVER_URL: string =
-  process.env.EXPO_PUBLIC_PONG_SERVER?.trim() || "ws://162.120.185.213:8080";
+  process.env.EXPO_PUBLIC_PONG_SERVER?.trim() || PROD_SERVER_URL;
 
 /** Frequência de envio do estado/input em ms (~30 Hz). */
 export const NET_TICK_MS = 33;

@@ -18,6 +18,7 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { createServer } from "node:http";
 import { WebSocketServer } from "ws";
 
 import { makeNickname } from "./nicknames.js";
@@ -119,9 +120,18 @@ function endMatch(p, notifyOpponent = true) {
 
 // ── Servidor ────────────────────────────────────────────────────────────────
 
-const wss = new WebSocketServer({ port: PORT });
+// HTTP server: responde GET (health check do Render / teste no navegador) e
+// faz o "upgrade" das conexões WebSocket na MESMA porta (modelo do Render).
+const httpServer = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("NEON PONG lobby ok 🏓");
+});
 
-console.log(`🏓 NEON PONG lobby ouvindo em ws://0.0.0.0:${PORT}`);
+const wss = new WebSocketServer({ server: httpServer });
+
+httpServer.listen(PORT, "0.0.0.0", () => {
+  console.log(`🏓 NEON PONG lobby ouvindo na porta ${PORT}`);
+});
 
 wss.on("connection", (ws) => {
   const { nick, emoji } = makeNickname(takenNicks());
