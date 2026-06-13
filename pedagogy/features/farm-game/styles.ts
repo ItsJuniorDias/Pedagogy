@@ -358,16 +358,51 @@ export const s = StyleSheet.create({
   },
   getCoinsTxt: { fontFamily: FF, fontSize: 12, color: P.white },
 
-  raritySection: {
+  // ── Accordion (shop sections) ──
+  accSection: { marginBottom: 8 },
+  accHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginTop: 10,
-    marginBottom: 6,
+    gap: 7,
+    paddingVertical: 11,
+    paddingHorizontal: 12,
+    borderRadius: 13,
+    backgroundColor: P.gray1,
+    borderWidth: 2,
+    borderColor: "transparent",
   },
-  rarityDot: { width: 8, height: 8, borderRadius: 4 },
-  rarityTitle: { fontFamily: FF, fontSize: 12, letterSpacing: 0.5 },
-  rarityHint: { fontFamily: FF, fontSize: 10, color: "#9CA3AF" },
+  accHeaderOpen: {
+    backgroundColor: "#EEF2F0",
+    borderColor: "rgba(20,83,45,0.10)",
+  },
+  accChevron: {
+    fontFamily: FF,
+    fontSize: 13,
+    color: "#9CA3AF",
+    width: 12,
+    textAlign: "center",
+  },
+  accChevronOpen: { transform: [{ rotate: "90deg" }] },
+  accEmoji: { fontSize: 18 },
+  accDot: { width: 8, height: 8, borderRadius: 4 },
+  accTitle: { fontFamily: FF, fontSize: 13, letterSpacing: 0.3 },
+  accRange: { fontFamily: FF, fontSize: 10, color: "#9CA3AF" },
+  accCount: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 9,
+    backgroundColor: "#E5E7EB",
+  },
+  accCountLocked: { backgroundColor: "rgba(156,163,175,0.22)" },
+  accCountTxt: { fontFamily: FF, fontSize: 9, color: "#4B5563" },
+  accBody: { paddingTop: 8 },
+  accHint: {
+    fontFamily: FF,
+    fontSize: 10,
+    color: "#9CA3AF",
+    marginBottom: 6,
+    marginLeft: 2,
+  },
 
   cropRow: {
     flexDirection: "row",
