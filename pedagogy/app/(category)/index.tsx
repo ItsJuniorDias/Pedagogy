@@ -11,6 +11,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
+
+import {
+  DealIn,
+  enterPop,
+  enterUp,
+  PressBounce,
+  Swing,
+  Twinkle,
+} from "../../shared/motion";
 
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
@@ -218,42 +228,53 @@ export default function CategoryScreen() {
     <View style={[s.container, { backgroundColor: "#FFF9F0" }]}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
 
-      {/* Header */}
-      <View style={s.header}>
+      {/* Header — desce com mola */}
+      <Animated.View entering={enterUp(0)} style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
         </TouchableOpacity>
         <Text style={fredoka(22, "#2D2D2D")}>{label}</Text>
         <View style={{ width: 40 }} />
-      </View>
+      </Animated.View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
-        {/* Category hero */}
-        <View style={[s.hero, { backgroundColor: colors.bg }]}>
-          <Text style={fredoka(28, colors.accent)}>{label} ✨</Text>
+        {/* Category hero — pop com overshoot + ✨ piscando */}
+        <Animated.View
+          entering={enterPop(80)}
+          style={[s.hero, { backgroundColor: colors.bg }]}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Text style={fredoka(28, colors.accent)}>{label}</Text>
+            <Twinkle duration={1100}>
+              <Text style={{ fontSize: 24 }}>✨</Text>
+            </Twinkle>
+          </View>
           <Text style={s.heroSub}>{items.length} activities for you</Text>
-        </View>
+        </Animated.View>
 
-        {/* Grid de cards */}
+        {/* Grid de cards — "cartas dadas na mesa": cada uma cai girando
+            de um lado (zigue-zague) e assenta com mola */}
         <View style={s.grid}>
           {items.map((item, i) => (
-            <TouchableOpacity
-              key={i}
-              style={[s.card, { borderColor: colors.accent + "40" }]}
-              activeOpacity={0.85}
-              onPress={() => handleCardPress(item)}
-            >
-              <View style={[s.cardImg, { backgroundColor: colors.bg }]}>
-                <Text style={{ fontSize: 44 }}>{item.emoji}</Text>
-              </View>
-              <Text style={[s.cardTitle, fredoka(15, "#2D2D2D")]}>
-                {item.title}
-              </Text>
-              <Text style={s.cardSub}>{item.sub}</Text>
-            </TouchableOpacity>
+            <DealIn key={item.storyId} index={i} style={s.cardWrap}>
+              <PressBounce
+                style={[s.card, { borderColor: colors.accent + "40" }]}
+                onPress={() => handleCardPress(item)}
+              >
+                <View style={[s.cardImg, { backgroundColor: colors.bg }]}>
+                  <Swing delay={i * 300} angle={6} duration={2400}>
+                    <Text style={{ fontSize: 44 }}>{item.emoji}</Text>
+                  </Swing>
+                </View>
+                <Text style={[s.cardTitle, fredoka(15, "#2D2D2D")]}>
+                  {item.title}
+                </Text>
+                <Text style={s.cardSub}>{item.sub}</Text>
+              </PressBounce>
+            </DealIn>
           ))}
         </View>
       </ScrollView>
@@ -295,8 +316,9 @@ const s = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
+  cardWrap: { width: "48%" },
   card: {
-    width: "48%",
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 20,
     borderWidth: 2,

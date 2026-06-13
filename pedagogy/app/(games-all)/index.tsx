@@ -11,6 +11,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
+
+import {
+  Breathe,
+  enterPop,
+  enterRight,
+  enterUp,
+  PressBounce,
+  Wiggle,
+} from "../../shared/motion";
 
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
@@ -44,7 +54,7 @@ const ALL_GAMES = [
     iconBg: "#FFF7E0",
     canvasBg: "#FFFBEB",
     emoji: "🏓",
-    router: "/(ping-pong)",
+    route: "/(ping-pong)",
     category: "sports",
   },
   {
@@ -96,42 +106,55 @@ export default function GamesAllScreen() {
       <View style={[s.blob, s.blob1]} />
 
       {/* Header */}
-      <View style={s.header}>
+      <Animated.View entering={enterUp(0)} style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
         </TouchableOpacity>
-        <Text style={fredoka(20, "#2D2D2D")}>Games 🎮</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+          <Text style={fredoka(20, "#2D2D2D")}>Games</Text>
+          <Wiggle angle={12} pause={1800}>
+            <Text style={{ fontSize: 20 }}>🎮</Text>
+          </Wiggle>
+        </View>
         <View style={{ width: 40 }} />
-      </View>
+      </Animated.View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
+        {/* Cards chegam em "esteira" pela direita, um atrás do outro.
+            O emoji de cada jogo sacode como um joystick 🕹️ e o selo respira */}
         {filtered.map((game, i) => (
-          <TouchableOpacity
-            key={i}
+          <PressBounce
+            key={game.id}
+            entering={enterRight(i * 110)}
             style={s.card}
-            activeOpacity={0.85}
             onPress={() => router.push(game.route as any)}
           >
             <View style={[s.icon, { backgroundColor: game.iconBg }]}>
-              <Text style={s.iconEmoji}>{game.emoji}</Text>
+              <Wiggle delay={600 + i * 700} angle={10} pause={2600}>
+                <Text style={s.iconEmoji}>{game.emoji}</Text>
+              </Wiggle>
             </View>
             <View style={s.body}>
               <Text style={fredoka(16, "#2D2D2D")}>{game.title}</Text>
               <Text style={s.sub}>{game.sub}</Text>
             </View>
-            <View style={[s.tag, { backgroundColor: game.tagBg }]}>
-              <Text style={[s.tagText, { color: game.tagColor }]}>
-                {game.tagLabel}
-              </Text>
-            </View>
-          </TouchableOpacity>
+            <Breathe delay={i * 350} scaleTo={1.1} duration={1600}>
+              <View style={[s.tag, { backgroundColor: game.tagBg }]}>
+                <Text style={[s.tagText, { color: game.tagColor }]}>
+                  {game.tagLabel}
+                </Text>
+              </View>
+            </Breathe>
+          </PressBounce>
         ))}
 
         {filtered.length === 0 && (
-          <Text style={s.empty}>No games here yet 🎯</Text>
+          <Animated.Text entering={enterPop(100)} style={s.empty}>
+            No games here yet 🎯
+          </Animated.Text>
         )}
       </ScrollView>
     </View>

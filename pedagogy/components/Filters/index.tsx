@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
+
+import { enterPop, PressBounce } from "../../shared/motion";
 
 export default function Filters({ filters }: { filters: string[] }) {
   const [activeChip, setActiveChip] = useState(0);
@@ -10,17 +12,19 @@ export default function Filters({ filters }: { filters: string[] }) {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={s.filtersRow}
     >
+      {/* Chips estouram em cascata e respondem ao toque com mola */}
       {filters.map((chip, i) => (
-        <TouchableOpacity
-          key={i}
+        <PressBounce
+          key={chip}
+          entering={enterPop(80 + i * 70)}
+          scaleTo={0.88}
           style={[s.chip, activeChip === i && s.chipActive]}
           onPress={() => setActiveChip(i)}
-          activeOpacity={0.8}
         >
           <Text style={[s.chipText, activeChip === i && s.chipTextActive]}>
             {chip}
           </Text>
-        </TouchableOpacity>
+        </PressBounce>
       ))}
     </ScrollView>
   );

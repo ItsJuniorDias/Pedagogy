@@ -11,6 +11,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated, { FlipInEasyX } from "react-native-reanimated";
+
+import {
+  Breathe,
+  enterLeft,
+  enterPop,
+  enterUp,
+  PressBounce,
+  Swing,
+} from "../../shared/motion";
 
 // ─── PROGRESSO REAL (substitui os mocks) ─────────────────────────────────────
 import {
@@ -78,38 +88,45 @@ export default function ProfileScreen() {
       <View style={[s.blob, s.blob1]} />
 
       {/* Header */}
-      <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
+      <Animated.View entering={enterUp(0)} style={s.header}>
+        <PressBounce style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
-        </TouchableOpacity>
+        </PressBounce>
         <Text style={fredoka(20, "#2D2D2D")}>My Profile</Text>
         <View style={{ width: 40 }} />
-      </View>
+      </Animated.View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
-        {/* Avatar card */}
-        <View style={s.avatarCard}>
-          <View style={s.avatar}>
-            <Text style={{ fontSize: 48 }}>🐻</Text>
-          </View>
+        {/* Avatar card — cerimônia de entrada: o ursinho dá um pop
+            com overshoot e fica balançando feliz */}
+        <Animated.View entering={enterUp(60)} style={s.avatarCard}>
+          <Animated.View entering={enterPop(250)} style={s.avatar}>
+            <Swing angle={6} duration={2000} delay={800}>
+              <Text style={{ fontSize: 48 }}>🐻</Text>
+            </Swing>
+          </Animated.View>
           <Text style={fredoka(22, "#2D2D2D")}>Little Explorer</Text>
           <Text style={s.avatarSub}>Age 6 · Level {level} ⭐</Text>
-          <TouchableOpacity style={s.editBtn} activeOpacity={0.8}>
+          <PressBounce style={s.editBtn} scaleTo={0.9}>
             <Text style={fredoka(13, "#6C5CE7")}>✏️ Edit profile</Text>
-          </TouchableOpacity>
-        </View>
+          </PressBounce>
+        </Animated.View>
 
-        {/* Stats row */}
+        {/* Stats row — cards viram como medalhas (flip 3D em cascata) */}
         <View style={s.statsRow}>
           {stats.map((stat, i) => (
-            <View key={i} style={s.statCard}>
+            <Animated.View
+              key={stat.label}
+              entering={FlipInEasyX.delay(300 + i * 120).springify().damping(14)}
+              style={s.statCard}
+            >
               <Text style={{ fontSize: 22 }}>{stat.emoji}</Text>
               <Text style={fredoka(18, "#2D2D2D")}>{stat.value}</Text>
               <Text style={s.statLabel}>{stat.label}</Text>
-            </View>
+            </Animated.View>
           ))}
         </View>
 
@@ -119,20 +136,29 @@ export default function ProfileScreen() {
         >
           My Badges 🏆
         </Text>
+        {/* Badges conquistados dão pop e "respiram" de orgulho;
+            os bloqueados ficam quietinhos */}
         <View style={s.badgesGrid}>
-          {badges.map((badge) => (
-            <View
+          {badges.map((badge, i) => (
+            <Animated.View
               key={badge.id}
+              entering={enterPop(400 + i * 80)}
               style={[s.badgeCard, !badge.earned && s.badgeCardLocked]}
             >
-              <Text style={[{ fontSize: 32 }, !badge.earned && s.emojiLocked]}>
-                {badge.emoji}
-              </Text>
+              {badge.earned ? (
+                <Breathe scaleTo={1.12} duration={1800} delay={i * 300}>
+                  <Text style={{ fontSize: 32 }}>{badge.emoji}</Text>
+                </Breathe>
+              ) : (
+                <Text style={[{ fontSize: 32 }, s.emojiLocked]}>
+                  {badge.emoji}
+                </Text>
+              )}
               <Text style={[s.badgeLabel, !badge.earned && s.badgeLabelLocked]}>
                 {badge.label}
               </Text>
               {!badge.earned && <Text style={s.lockIcon}>🔒</Text>}
-            </View>
+            </Animated.View>
           ))}
         </View>
 
@@ -143,17 +169,19 @@ export default function ProfileScreen() {
           Settings ⚙️
         </Text>
         <View style={s.menuList}>
+          {/* Itens do menu deslizam da esquerda, um por vez */}
           {MENU_ITEMS.map((item, i) => (
-            <TouchableOpacity
-              key={i}
-              style={s.menuItem}
-              activeOpacity={0.75}
-              // onPress={() => router.push(item.route as any)}
-            >
-              <Text style={{ fontSize: 22 }}>{item.emoji}</Text>
-              <Text style={s.menuLabel}>{item.label}</Text>
-              <Text style={s.menuArrow}>›</Text>
-            </TouchableOpacity>
+            <Animated.View key={item.label} entering={enterLeft(500 + i * 90)}>
+              <TouchableOpacity
+                style={s.menuItem}
+                activeOpacity={0.75}
+                // onPress={() => router.push(item.route as any)}
+              >
+                <Text style={{ fontSize: 22 }}>{item.emoji}</Text>
+                <Text style={s.menuLabel}>{item.label}</Text>
+                <Text style={s.menuArrow}>›</Text>
+              </TouchableOpacity>
+            </Animated.View>
           ))}
         </View>
       </ScrollView>

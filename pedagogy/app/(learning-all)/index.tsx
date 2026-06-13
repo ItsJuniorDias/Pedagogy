@@ -9,9 +9,18 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
+
+import {
+  Breathe,
+  enterPop,
+  enterRise,
+  enterUp,
+  GrowBar,
+  PressBounce,
+} from "../../shared/motion";
 
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
@@ -132,13 +141,18 @@ export default function LearningAllScreen() {
       <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
 
       {/* Header */}
-      <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
+      <Animated.View entering={enterUp(0)} style={s.header}>
+        <PressBounce style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
-        </TouchableOpacity>
-        <Text style={fredoka(20, "#2D2D2D")}>Learning Path 🌱</Text>
+        </PressBounce>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+          <Text style={fredoka(20, "#2D2D2D")}>Learning Path</Text>
+          <Breathe scaleTo={1.18} duration={1800}>
+            <Text style={{ fontSize: 20 }}>🌱</Text>
+          </Breathe>
+        </View>
         <View style={{ width: 40 }} />
-      </View>
+      </Animated.View>
 
       {/* Filter chips */}
       <Filters filters={FILTERS} />
@@ -147,16 +161,18 @@ export default function LearningAllScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
+        {/* Jardim crescendo 🌱: cards brotam de baixo em cascata e as
+            barras de progresso crescem de 0 até o valor real */}
         <View style={s.grid}>
-          {filtered.map((item) => {
+          {filtered.map((item, i) => {
             const pct = (item.progress / item.total) * 100;
             const done = item.progress === item.total;
 
             return (
-              <TouchableOpacity
+              <PressBounce
                 key={item.id}
+                entering={enterRise(i * 90)}
                 style={[s.card, { borderColor: item.cardBorder }]}
-                activeOpacity={0.85}
                 onPress={() =>
                   router.push({
                     pathname: "/(details)",
@@ -172,27 +188,35 @@ export default function LearningAllScreen() {
                 <View style={s.body}>
                   <Text style={fredoka(15, "#2D2D2D")}>{item.title}</Text>
                   <View style={s.progressWrap}>
-                    <View
-                      style={[
-                        s.progressFill,
-                        {
-                          width: `${pct}%` as any,
-                          backgroundColor: item.barColor,
-                        },
-                      ]}
+                    <GrowBar
+                      pct={pct}
+                      color={item.barColor}
+                      delay={350 + i * 90}
+                      style={s.progressFill}
                     />
                   </View>
-                  <Text style={s.progressLabel}>
-                    {item.progress}/{item.total} {done ? "🎉" : "⭐"}
-                  </Text>
+                  <View style={s.progressLabelRow}>
+                    <Text style={s.progressLabel}>
+                      {item.progress}/{item.total}{" "}
+                    </Text>
+                    {done ? (
+                      <Breathe scaleTo={1.25} duration={1400} delay={i * 200}>
+                        <Text style={s.progressLabel}>🎉</Text>
+                      </Breathe>
+                    ) : (
+                      <Text style={s.progressLabel}>⭐</Text>
+                    )}
+                  </View>
                 </View>
-              </TouchableOpacity>
+              </PressBounce>
             );
           })}
         </View>
 
         {filtered.length === 0 && (
-          <Text style={s.empty}>Nothing here yet 🌱</Text>
+          <Animated.Text entering={enterPop(100)} style={s.empty}>
+            Nothing here yet 🌱
+          </Animated.Text>
         )}
       </ScrollView>
     </View>
@@ -283,6 +307,7 @@ const s = StyleSheet.create({
     overflow: "hidden",
   },
   progressFill: { height: 6, borderRadius: 10 },
+  progressLabelRow: { flexDirection: "row", alignItems: "center" },
   progressLabel: {
     fontSize: 10,
     fontWeight: "800",

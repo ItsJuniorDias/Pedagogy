@@ -12,6 +12,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
+
+import {
+  enterPop,
+  enterUp,
+  FloatY,
+  PressBounce,
+  Swing,
+  Twinkle,
+} from "../../shared/motion";
 
 import { STORIES_GRID } from "../../mocks/historyMock";
 
@@ -49,26 +59,37 @@ export default function StoriesScreen() {
       <View style={[s.blob, s.blob2]} />
 
       {/* Header */}
-      <View style={s.header}>
+      <Animated.View entering={enterUp(0)} style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
         </TouchableOpacity>
         <Text style={fredoka(22, "#2D2D2D")}>Magic Stories ✨</Text>
         <View style={{ width: 40 }} />
-      </View>
+      </Animated.View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
-        {/* Hero banner */}
-        <View style={s.hero}>
-          <Text style={fredoka(26, "#fff")}>{`A world of\nadventures 🌍`}</Text>
+        {/* Hero banner — globo flutuando + estrelinhas piscando */}
+        <Animated.View entering={enterUp(60)} style={s.hero}>
+          <Twinkle style={s.heroStar1} duration={1200}>
+            <Text style={{ fontSize: 18 }}>✨</Text>
+          </Twinkle>
+          <Twinkle style={s.heroStar2} duration={1600} delay={500}>
+            <Text style={{ fontSize: 14 }}>⭐</Text>
+          </Twinkle>
+          <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+            <Text style={fredoka(26, "#fff")}>{`A world of\nadventures `}</Text>
+            <FloatY distance={5} duration={2200}>
+              <Text style={{ fontSize: 26 }}>🌍</Text>
+            </FloatY>
+          </View>
           <Text style={s.heroSub}>Pick a story and start reading!</Text>
           <Text style={s.heroCount}>
             {STORIES_GRID.length} stories available
           </Text>
-        </View>
+        </Animated.View>
 
         {/* Tags */}
         <ScrollView
@@ -77,26 +98,28 @@ export default function StoriesScreen() {
           contentContainerStyle={s.tagsRow}
         >
           {ALL_TAGS.map((tag, i) => (
-            <TouchableOpacity
-              key={i}
+            <PressBounce
+              key={tag}
+              entering={enterPop(120 + i * 60)}
+              scaleTo={0.88}
               style={[s.tag, activeTag === i && s.tagActive]}
               onPress={() => setActiveTag(i)}
-              activeOpacity={0.8}
             >
               <Text style={[s.tagText, activeTag === i && s.tagTextActive]}>
                 {tag}
               </Text>
-            </TouchableOpacity>
+            </PressBounce>
           ))}
         </ScrollView>
 
-        {/* Stories grid */}
+        {/* Stories grid — cards estouram como bolhas, em cascata.
+            A key inclui o filtro ativo: trocar de tag re-dispara o pop 🫧 */}
         <View style={s.grid}>
-          {filtered.map((story) => (
-            <TouchableOpacity
-              key={story.id}
+          {filtered.map((story, i) => (
+            <PressBounce
+              key={`${activeTag}-${story.id}`}
+              entering={enterPop(i * 70)}
               style={[s.card, { backgroundColor: story.bg }]}
-              activeOpacity={0.85}
               onPress={() =>
                 router.push({
                   pathname: "/(details)",
@@ -109,7 +132,9 @@ export default function StoriesScreen() {
                   <Text style={s.badgeText}>{story.badge}</Text>
                 </View>
               )}
-              <Text style={s.storyEmoji}>{story.emoji}</Text>
+              <Swing delay={i * 250} angle={5} duration={2600}>
+                <Text style={s.storyEmoji}>{story.emoji}</Text>
+              </Swing>
               <Text style={[s.storyTitle, fredoka(15, "#2D2D2D")]}>
                 {story.title}
               </Text>
@@ -121,7 +146,7 @@ export default function StoriesScreen() {
                   Ages {story.ageRange}
                 </Text>
               )}
-            </TouchableOpacity>
+            </PressBounce>
           ))}
         </View>
       </ScrollView>
@@ -192,6 +217,8 @@ const s = StyleSheet.create({
     fontWeight: "600",
     marginTop: 4,
   },
+  heroStar1: { position: "absolute", top: 14, right: 18 },
+  heroStar2: { position: "absolute", bottom: 16, right: 44 },
 
   tagsRow: { paddingBottom: 20, gap: 10 },
   tag: {

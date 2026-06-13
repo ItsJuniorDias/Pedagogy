@@ -1,20 +1,34 @@
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Animated,
   Dimensions,
   Linking,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+
+import {
+  Breathe,
+  enterPop,
+  enterRight,
+  enterUp,
+  FloatY,
+  PressBounce,
+  Swing,
+  Wiggle,
+} from "../../shared/motion";
 
 import {
   PurchasesPackage as Package,
@@ -107,57 +121,36 @@ const BouncyButton = ({
   shadowBg,
   onPress,
   isLoading,
-}: any) => {
-  const scale = useRef(new Animated.Value(1)).current;
-  const animIn = () =>
-    Animated.spring(scale, { toValue: 0.96, useNativeDriver: true }).start();
-  const animOut = () =>
-    Animated.spring(scale, {
-      toValue: 1,
-      friction: 4,
-      tension: 50,
-      useNativeDriver: true,
-    }).start();
-
-  return (
-    <Pressable
-      onPressIn={animIn}
-      onPressOut={animOut}
-      onPress={onPress}
-      disabled={isLoading}
+}: any) => (
+  <PressBounce onPress={onPress} disabled={isLoading} scaleTo={0.96}>
+    <View style={[s.cta3dShadow, { backgroundColor: shadowBg }]} />
+    <View
+      style={[s.ctaBtn, { backgroundColor: bg, opacity: isLoading ? 0.7 : 1 }]}
     >
-      <Animated.View style={{ transform: [{ scale }] }}>
-        <View style={[s.cta3dShadow, { backgroundColor: shadowBg }]} />
-        <View
-          style={[
-            s.ctaBtn,
-            { backgroundColor: bg, opacity: isLoading ? 0.7 : 1 },
-          ]}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <Text style={fredoka(20, "#fff")}>{label}</Text>
-              {subLabel && (
-                <Text
-                  style={{
-                    color: "rgba(255,255,255,0.8)",
-                    fontSize: 13,
-                    fontWeight: "700",
-                    marginTop: 2,
-                  }}
-                >
-                  {subLabel}
-                </Text>
-              )}
-            </>
+      {isLoading ? (
+        <ActivityIndicator color="#fff" />
+      ) : (
+        <>
+          <Text style={fredoka(20, "#fff")}>{label}</Text>
+          {subLabel && (
+            <Text
+              style={{
+                color: "rgba(255,255,255,0.8)",
+                fontSize: 13,
+                fontWeight: "700",
+                marginTop: 2,
+              }}
+            >
+              {subLabel}
+            </Text>
           )}
-        </View>
-      </Animated.View>
-    </Pressable>
-  );
-};
+        </>
+      )}
+    </View>
+  </PressBounce>
+);
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 interface PlanCardProps {
   pkg: Package;
@@ -174,11 +167,24 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
     ? `Try free for ${pkg.product.introPrice.periodNumberOfUnits} ${pkg.product.introPrice.periodUnit.toLowerCase()}(s)`
     : null;
 
+  // O card selecionado "incha" levemente com mola, como se fosse abraçado
+  const scale = useSharedValue(1);
+  useEffect(() => {
+    scale.value = withSpring(selected ? 1.03 : 1, {
+      damping: 11,
+      stiffness: 180,
+    });
+  }, [selected, scale]);
+  const selStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
   return (
-    <TouchableOpacity
+    <AnimatedTouchable
       onPress={onSelect}
       activeOpacity={0.85}
       style={[
+      selStyle,
         s.planCard,
         {
           backgroundColor: highlight ? "#FFF0F5" : "#fff",
@@ -209,9 +215,10 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
           <Text style={s.planPeriod}>{period}</Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </AnimatedTouchable>
   );
 };
+
 
 export default function PaywallScreen() {
   const router = useRouter();
@@ -248,24 +255,6 @@ export default function PaywallScreen() {
 
     checkSubscription();
   }, [isSubscribed, router]);
-
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.03,
-          duration: 900,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 900,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
 
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   if (!fontsLoaded) return null;
@@ -337,23 +326,35 @@ export default function PaywallScreen() {
         <View style={s.hero}>
           <View style={s.heroBlob1} />
           <View style={s.heroBlob2} />
-          <Text style={{ fontSize: 72, marginBottom: 8 }}>📚</Text>
-          <Text
+          {/* O livrão flutua e balança como num sonho */}
+          <Animated.View entering={enterPop(0)}>
+            <FloatY distance={8} duration={2400}>
+              <Swing angle={4} duration={3200}>
+                <Text style={{ fontSize: 72, marginBottom: 8 }}>📚</Text>
+              </Swing>
+            </FloatY>
+          </Animated.View>
+          <Animated.Text
+            entering={enterUp(150)}
             style={[
               fredoka(30, "#2D2D2D"),
               { textAlign: "center", lineHeight: 36 },
             ]}
           >
             Unlock a world of stories for your child
-          </Text>
-          <Text style={s.heroSub}>
+          </Animated.Text>
+          <Animated.Text entering={enterUp(280)} style={s.heroSub}>
             Over 50 adventures waiting for your little reader
-          </Text>
+          </Animated.Text>
         </View>
 
-        <View style={s.featuresCard}>
+        <Animated.View entering={enterUp(350)} style={s.featuresCard}>
           {FEATURES.map((f, i) => (
-            <View key={i} style={s.featureRow}>
+            <Animated.View
+              key={f.text}
+              entering={enterRight(450 + i * 120)}
+              style={s.featureRow}
+            >
               <View style={s.featureCheck}>
                 <Text style={{ fontSize: 14 }}>✅</Text>
               </View>
@@ -363,9 +364,9 @@ export default function PaywallScreen() {
                 <Text style={{ fontSize: 16 }}>{f.emoji} </Text>
                 {f.text}
               </Text>
-            </View>
+            </Animated.View>
           ))}
-        </View>
+        </Animated.View>
 
         <View style={s.sectionHdr}>
           <Text style={fredoka(20, "#2D2D2D")}>Choose your plan</Text>
@@ -384,26 +385,29 @@ export default function PaywallScreen() {
           </View>
         ) : (
           <View style={s.plansCol}>
-            {packages.map((pkg) => (
-              <PlanCard
-                key={pkg.identifier}
-                pkg={pkg}
-                selected={selectedPkg?.identifier === pkg.identifier}
-                onSelect={() => !isProcessing && setSelectedPkg(pkg)}
-              />
+            {packages.map((pkg, i) => (
+              <Animated.View key={pkg.identifier} entering={enterPop(i * 130)}>
+                <PlanCard
+                  pkg={pkg}
+                  selected={selectedPkg?.identifier === pkg.identifier}
+                  onSelect={() => !isProcessing && setSelectedPkg(pkg)}
+                />
+              </Animated.View>
             ))}
           </View>
         )}
 
         <View style={s.urgency}>
-          <Text style={{ fontSize: 18 }}>⏰</Text>
+          <Wiggle angle={14} pause={1200}>
+            <Text style={{ fontSize: 18 }}>⏰</Text>
+          </Wiggle>
           <Text style={[fredoka(13, "#C0305A"), { flex: 1 }]}>
             20% off for the first 100 subscribers!
           </Text>
         </View>
 
         <View style={s.ctaWrap}>
-          <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+          <Breathe scaleTo={1.03} duration={900}>
             <BouncyButton
               label="🎉 Start Now!"
               subLabel={
@@ -416,7 +420,7 @@ export default function PaywallScreen() {
               isLoading={state === "purchasing"}
               onPress={handleSubscribe}
             />
-          </Animated.View>
+          </Breathe>
 
           <TouchableOpacity
             onPress={handleRestore}
@@ -442,14 +446,18 @@ export default function PaywallScreen() {
           contentContainerStyle={s.reviewsRow}
         >
           {REVIEWS.map((r, i) => (
-            <View key={i} style={s.reviewCard}>
+            <Animated.View
+              key={r.name}
+              entering={enterRight(200 + i * 140)}
+              style={s.reviewCard}
+            >
               <View style={s.reviewAvatar}>
                 <Text style={fredoka(16, "#FF5B8D")}>{r.name[0]}</Text>
               </View>
               <Text style={fredoka(14, "#2D2D2D")}>{r.name}</Text>
               <Text style={s.reviewStars}>{"⭐".repeat(r.stars)}</Text>
               <Text style={s.reviewText}>{r.text}</Text>
-            </View>
+            </Animated.View>
           ))}
         </ScrollView>
 

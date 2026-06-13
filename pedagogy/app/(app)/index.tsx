@@ -10,10 +10,20 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   ViewToken,
 } from "react-native";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  interpolateColor,
+  SharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
+
+import { Breathe, enterPop, enterUp, PressBounce } from "../../shared/motion";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -66,14 +76,32 @@ const fredoka = (size: number, color?: string) => ({
   ...(color ? { color } : {}),
 });
 
-function Dots({ total, activeIndex }: { total: number; activeIndex: number }) {
+// Cada dot estica e muda de cor conforme o dedo arrasta o carrossel —
+// a transição acompanha o gesto em tempo real, não o "snap" da página.
+function Dot({ i, scrollX }: { i: number; scrollX: SharedValue<number> }) {
+  const aStyle = useAnimatedStyle(() => {
+    const range = [
+      (i - 1) * SCREEN_WIDTH,
+      i * SCREEN_WIDTH,
+      (i + 1) * SCREEN_WIDTH,
+    ];
+    return {
+      width: interpolate(scrollX.value, range, [8, 24, 8], Extrapolation.CLAMP),
+      backgroundColor: interpolateColor(scrollX.value, range, [
+        "#E0E0E0",
+        "#FF5B8D",
+        "#E0E0E0",
+      ]),
+    };
+  });
+  return <Animated.View style={[styles.dot, aStyle]} />;
+}
+
+function Dots({ total, scrollX }: { total: number; scrollX: SharedValue<number> }) {
   return (
     <View style={styles.dots}>
       {Array.from({ length: total }).map((_, i) => (
-        <View
-          key={i}
-          style={[styles.dot, i === activeIndex && styles.dotActive]}
-        />
+        <Dot key={i} i={i} scrollX={scrollX} />
       ))}
     </View>
   );
@@ -81,18 +109,83 @@ function Dots({ total, activeIndex }: { total: number; activeIndex: number }) {
 
 // ─── Single slide ─────────────────────────────────────────────────────────────
 
-function SlideItem({ item }: { item: Slide }) {
+// Parallax dirigido pelo gesto: a ilustração viaja mais devagar que a
+// página (meio scroll), encolhe e gira de leve ao sair; o texto entra
+// atrasado vindo de baixo e some em fade. Tudo interpolado do scrollX.
+function SlideItem({
+  item,
+  index,
+  scrollX,
+}: {
+  item: Slide;
+  index: number;
+  scrollX: SharedValue<number>;
+}) {
+  const range = [
+    (index - 1) * SCREEN_WIDTH,
+    index * SCREEN_WIDTH,
+    (index + 1) * SCREEN_WIDTH,
+  ];
+
+  const imageStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateX: interpolate(
+          scrollX.value,
+          range,
+          [SCREEN_WIDTH * 0.45, 0, -SCREEN_WIDTH * 0.45],
+          Extrapolation.CLAMP,
+        ),
+      },
+      {
+        scale: interpolate(
+          scrollX.value,
+          range,
+          [0.55, 1, 0.55],
+          Extrapolation.CLAMP,
+        ),
+      },
+      {
+        rotate: `${interpolate(
+          scrollX.value,
+          range,
+          [8, 0, -8],
+          Extrapolation.CLAMP,
+        )}deg`,
+      },
+    ],
+  }));
+
+  const textStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      scrollX.value,
+      range,
+      [0, 1, 0],
+      Extrapolation.CLAMP,
+    ),
+    transform: [
+      {
+        translateY: interpolate(
+          scrollX.value,
+          range,
+          [36, 0, 36],
+          Extrapolation.CLAMP,
+        ),
+      },
+    ],
+  }));
+
   return (
     <View style={styles.slideItem}>
-      <View style={styles.imageContainer}>
+      <Animated.View style={[styles.imageContainer, imageStyle]}>
         <Image
           source={item.image}
           style={styles.illustration}
           resizeMode="contain"
         />
-      </View>
+      </Animated.View>
 
-      <View style={styles.textSection}>
+      <Animated.View style={[styles.textSection, textStyle]}>
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{item.badge}</Text>
         </View>
@@ -100,7 +193,7 @@ function SlideItem({ item }: { item: Slide }) {
         <Text style={fredoka(30, "#2D2D2D")}>{item.title}</Text>
 
         <Text style={styles.description}>{item.description}</Text>
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -113,6 +206,12 @@ export default function AppScreen() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList<Slide>>(null);
+
+  // Posição do scroll compartilhada com a UI thread (parallax + dots)
+  const scrollX = useSharedValue(0);
+  const onScroll = useAnimatedScrollHandler((e) => {
+    scrollX.value = e.contentOffset.x;
+  });
 
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -147,37 +246,45 @@ export default function AppScreen() {
       <View style={[styles.blob, styles.blob1]} />
       <View style={[styles.blob, styles.blob2]} />
 
-      {/* Carousel */}
-      <FlatList
-        ref={flatListRef}
+      {/* Carousel com parallax */}
+      <Animated.FlatList
+        ref={flatListRef as any}
         data={SLIDES}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <SlideItem item={item} />}
+        renderItem={({ item, index }) => (
+          <SlideItem item={item} index={index} scrollX={scrollX} />
+        )}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         style={styles.flatList}
       />
 
       {/* Dots + Button pinned at bottom */}
-      <View style={styles.bottomArea}>
-        <Dots total={SLIDES.length} activeIndex={activeIndex} />
+      <Animated.View entering={enterUp(300)} style={styles.bottomArea}>
+        <Dots total={SLIDES.length} scrollX={scrollX} />
 
-        <View style={styles.btnArea}>
+        <Breathe scaleTo={1.03} duration={1400} style={styles.btnArea}>
           <View style={styles.btnShadow} />
-          <TouchableOpacity
+          <PressBounce
             onPress={handleButtonPress}
             style={styles.btn}
-            activeOpacity={0.85}
+            scaleTo={0.95}
           >
-            <Text style={fredoka(20, "#fff")}>
+            <Animated.Text
+              key={isLastSlide ? "go" : "next"}
+              entering={enterPop(0)}
+              style={fredoka(20, "#fff")}
+            >
               {isLastSlide ? "Let's go 👍" : "Next"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            </Animated.Text>
+          </PressBounce>
+        </Breathe>
+      </Animated.View>
     </SafeAreaView>
   );
 }
