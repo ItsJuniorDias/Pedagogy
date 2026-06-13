@@ -26,6 +26,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Reanimated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+
+import { Breathe, enterPop, enterRise, enterUp } from "../../shared/motion";
 
 // ─── INTEGRAÇÃO PROGRESSO ─────────────────────────────────────────────────────
 // Ajuste o caminho conforme onde você salvou o readingProgress.ts
@@ -417,6 +424,24 @@ function resolveStoryId(raw: string): string {
 }
 
 // ─── PAGE DOTS ────────────────────────────────────────────────────────────────
+// Cada dot estica com mola quando vira o ativo — efeito "pílula" 💊
+const SpringDot = ({ active, accent }: { active: boolean; accent: string }) => {
+  const w = useSharedValue(active ? 22 : 8);
+  React.useEffect(() => {
+    w.value = withSpring(active ? 22 : 8, { damping: 14, stiffness: 220 });
+  }, [active, w]);
+  const aStyle = useAnimatedStyle(() => ({ width: w.value }));
+  return (
+    <Reanimated.View
+      style={[
+        s.dot,
+        { backgroundColor: active ? accent : "#00000022" },
+        aStyle,
+      ]}
+    />
+  );
+};
+
 const PageDots = ({
   total,
   current,
@@ -428,15 +453,7 @@ const PageDots = ({
 }) => (
   <View style={s.dotsRow}>
     {Array.from({ length: total }).map((_, i) => (
-      <View
-        key={i}
-        style={[
-          s.dot,
-          i === current
-            ? [s.dotActive, { backgroundColor: accent }]
-            : s.dotInactive,
-        ]}
-      />
+      <SpringDot key={i} active={i === current} accent={accent} />
     ))}
   </View>
 );
@@ -964,9 +981,16 @@ const PageView = ({
         contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {isFirstPage && <TopWidgets chapter={chapter} accent={theme.accent} />}
+        {isFirstPage && (
+          <Reanimated.View entering={enterPop(60)}>
+            <TopWidgets chapter={chapter} accent={theme.accent} />
+          </Reanimated.View>
+        )}
 
-        <View style={[s.pageCard, { backgroundColor: theme.cardBg }]}>
+        <Reanimated.View
+          entering={enterRise(120)}
+          style={[s.pageCard, { backgroundColor: theme.cardBg }]}
+        >
           {/* ── TEXTO COM HIGHLIGHT SINCRONIZADO ── */}
           <HighlightedPageText
             text={cleanedPage}
@@ -976,10 +1000,12 @@ const PageView = ({
             isDarkBg={isDarkBg}
             isSpeaking={isSpeaking}
           />
-        </View>
+        </Reanimated.View>
 
         {isLastPage && (
-          <BottomWidgets chapter={chapter} accent={theme.accent} />
+          <Reanimated.View entering={enterPop(200)}>
+            <BottomWidgets chapter={chapter} accent={theme.accent} />
+          </Reanimated.View>
         )}
       </ScrollView>
     </View>
@@ -1201,7 +1227,7 @@ export default function ReadStoryScreen() {
   return (
     <View style={[s.root, { backgroundColor: theme.bg }]}>
       {/* ── HEADER ── */}
-      <View style={s.header}>
+      <Reanimated.View entering={enterUp(0)} style={s.header}>
         <TouchableOpacity
           onPress={() => router.back()}
           style={[s.backBtn, { backgroundColor: theme.cardBg }]}
@@ -1219,27 +1245,45 @@ export default function ReadStoryScreen() {
           </Text>
         </View>
 
-        {/* ── BOTÃO VOZ + MÚSICA ── */}
-        <TouchableOpacity
-          onPress={handleSpeech}
-          activeOpacity={0.8}
-          style={[
-            s.speechBtn,
-            {
-              backgroundColor: isSpeaking ? theme.accent : theme.accentSoft,
-              borderColor: theme.accent,
-            },
-          ]}
-        >
-          <Text style={{ fontSize: 16 }}>{isSpeaking ? "⏸" : "▶️"}</Text>
-        </TouchableOpacity>
+        {/* ── BOTÃO VOZ + MÚSICA ── (pulsa enquanto está narrando) */}
+        {isSpeaking ? (
+          <Breathe scaleTo={1.12} duration={700}>
+            <TouchableOpacity
+              onPress={handleSpeech}
+              activeOpacity={0.8}
+              style={[
+                s.speechBtn,
+                {
+                  backgroundColor: theme.accent,
+                  borderColor: theme.accent,
+                },
+              ]}
+            >
+              <Text style={{ fontSize: 16 }}>⏸</Text>
+            </TouchableOpacity>
+          </Breathe>
+        ) : (
+          <TouchableOpacity
+            onPress={handleSpeech}
+            activeOpacity={0.8}
+            style={[
+              s.speechBtn,
+              {
+                backgroundColor: theme.accentSoft,
+                borderColor: theme.accent,
+              },
+            ]}
+          >
+            <Text style={{ fontSize: 16 }}>▶️</Text>
+          </TouchableOpacity>
+        )}
 
         <View style={[s.pageCounter, { backgroundColor: theme.accentSoft }]}>
           <Text style={fredoka(12, theme.accent)}>
             {currentPage + 1}/{pages.length}
           </Text>
         </View>
-      </View>
+      </Reanimated.View>
 
       {/* ── CHAPTER TABS ── */}
       <View style={s.chapterRow}>
