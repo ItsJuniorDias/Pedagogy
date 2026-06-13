@@ -2,6 +2,7 @@
 import * as THREE from "three";
 
 import type { StructureId } from "../types";
+import { createDog, DOG_ROT_Y } from "./dogModel";
 
 // ─── Modelos 3D das construções (low-poly "realista") ────────────────────────
 // Mesma pegada do solo/grama: MeshStandardMaterial (PBR) reagindo às mesmas
@@ -37,6 +38,29 @@ const sph = (rad: number, c: number, r = 0.85) =>
   msh(new THREE.SphereGeometry(rad, 14, 12), mat(c, r));
 const cone = (rad: number, h: number, c: number, seg = 10) =>
   msh(new THREE.ConeGeometry(rad, h, seg), mat(c));
+
+// ─── Animação ────────────────────────────────────────────────────────────────
+// Uma construção pode expor `group.userData.tick(t, dt)` — o loop de render o
+// chama a cada frame (t em segundos). As partes que se movem ficam dentro de um
+// "pivô" (Group) pra girarem em torno da BASE (pescoço, garupa…), não do centro
+// da geometria. Tudo é construído uma vez, então o custo por frame é só o sin().
+type Tick = (t: number, dt: number) => void;
+
+/** Group-pivô numa âncora do mundo; reparenta os meshes p/ coords locais dela. */
+function pivotAt(
+  x: number,
+  y: number,
+  z: number,
+  ...parts: THREE.Object3D[]
+): THREE.Group {
+  const p = new THREE.Group();
+  p.position.set(x, y, z);
+  for (const o of parts) {
+    o.position.set(o.position.x - x, o.position.y - y, o.position.z - z);
+    p.add(o);
+  }
+  return p;
+}
 
 /** Telhado de duas águas: duas placas que se encontram na cumeeira (y=height). */
 function gableRoof(
@@ -89,34 +113,47 @@ function buildDog(): THREE.Group {
   body.position.y = 0.2;
   g.add(body);
 
+  // cabeça (+ focinho/olhos/orelhas) num pivô no pescoço → olha em volta e arfa
   const head = sph(0.14, fur);
   head.position.set(0, 0.34, 0.22);
-  g.add(head);
-
   const snout = box(0.1, 0.08, 0.11, furDark);
   snout.position.set(0, 0.3, 0.34);
-  g.add(snout);
   const nose = sph(0.03, 0x1a1a1a);
   nose.position.set(0, 0.32, 0.41);
-  g.add(nose);
-
+  const headParts: THREE.Object3D[] = [head, snout, nose];
   for (const sx of [-1, 1]) {
     const eye = sph(0.022, 0x1a1a1a);
     eye.position.set(0.06 * sx, 0.38, 0.32);
-    g.add(eye);
     const ear = sph(0.06, furDark);
     ear.scale.set(0.55, 1.25, 0.4);
     ear.position.set(0.12 * sx, 0.36, 0.18);
-    g.add(ear);
+    headParts.push(eye, ear);
+  }
+  const headPivot = pivotAt(0, 0.26, 0.12, ...headParts);
+  g.add(headPivot);
+
+  // patas dianteiras (cão sentado) — ficam fixas no corpo
+  for (const sx of [-1, 1]) {
     const legF = cyl(0.04, 0.04, 0.2, fur);
     legF.position.set(0.08 * sx, 0.1, 0.33);
     g.add(legF);
   }
 
+  // rabo num pivô na base (junto ao corpo) → abana de um lado pro outro
   const tail = cyl(0.03, 0.02, 0.2, fur, 6);
   tail.position.set(0, 0.3, -0.22);
   tail.rotation.x = -0.9;
-  g.add(tail);
+  const tailPivot = pivotAt(0, 0.235, -0.14, tail);
+  g.add(tailPivot);
+
+  g.userData.tick = ((t: number) => {
+    tailPivot.rotation.y = 0.6 * Math.sin(t * 8); // abanada feliz e rápida
+    headPivot.rotation.y = 0.2 * Math.sin(t * 0.9); // olhando em volta
+    headPivot.rotation.x = 0.05 * Math.sin(t * 2.4); // leve arfada
+    headPivot.rotation.z = 0.1 * Math.sin(t * 0.37); // cabecinha curiosa
+    const br = 1 + 0.03 * Math.sin(t * 2.2); // respiração
+    body.scale.set(1.1 * br, 1.0 * br, 1.45);
+  }) as Tick;
 
   return g;
 }
@@ -158,11 +195,27 @@ function buildDoghouse(): THREE.Group {
   bowl.position.set(0.52, 0.035, 0.55);
   g.add(bowl);
 
-  // o cachorro, sentado na frente
-  const dog = buildDog();
-  dog.position.set(-0.18, 0, 0.95);
-  dog.rotation.y = -0.25;
-  g.add(dog);
+  // 🦊 o "cachorro" agora é um modelo low-poly animado (raposa CC0). O GLB
+  // carrega de forma assíncrona: o canil já aparece e o bicho entra quando o
+  // modelo termina de carregar, com o AnimationMixer tocando o idle. Se o load
+  // falhar, cai no cachorro procedural antigo — o canil nunca fica vazio.
+  let tickFn: Tick = () => {};
+  g.userData.tick = ((t: number, dt: number) => tickFn(t, dt)) as Tick;
+
+  createDog()
+    .then(({ group, mixer }) => {
+      group.position.set(-0.05, 0, 1.0);
+      group.rotation.y = DOG_ROT_Y;
+      g.add(group);
+      tickFn = (_t, dt) => mixer.update(dt); // anima o esqueleto
+    })
+    .catch(() => {
+      const dog = buildDog(); // fallback procedural
+      dog.position.set(-0.18, 0, 0.95);
+      dog.rotation.y = -0.25;
+      g.add(dog);
+      tickFn = dog.userData.tick as Tick;
+    });
 
   return g;
 }
@@ -194,30 +247,29 @@ function buildCow(): THREE.Group {
     g.add(s);
   });
 
+  // cabeça (+ focinho/olhos/orelhas/chifres) num pivô no pescoço → pasta e mastiga
   const head = sph(0.2, white, 0.8);
   head.position.set(0, 0.62, 0.52);
-  g.add(head);
   const snout = box(0.19, 0.15, 0.13, pink);
   snout.position.set(0, 0.55, 0.64);
-  g.add(snout);
+  const headParts: THREE.Object3D[] = [head, snout];
   for (const sx of [-1, 1]) {
     const nostril = sph(0.022, 0x6b4a4f);
     nostril.position.set(0.05 * sx, 0.54, 0.71);
-    g.add(nostril);
     const eye = sph(0.035, 0x1a1a1a);
     eye.position.set(0.09 * sx, 0.7, 0.58);
-    g.add(eye);
     const ear = sph(0.07, white, 0.85);
     ear.scale.set(0.5, 0.9, 1.1);
     ear.position.set(0.21 * sx, 0.66, 0.46);
-    g.add(ear);
     const horn = cone(0.04, 0.12, 0xe8e0cf);
     horn.position.set(0.09 * sx, 0.8, 0.5);
     horn.rotation.z = -0.3 * sx;
-    g.add(horn);
+    headParts.push(nostril, eye, ear, horn);
   }
+  const headPivot = pivotAt(0, 0.5, 0.3, ...headParts);
+  g.add(headPivot);
 
-  // pernas com casco escuro
+  // pernas com casco escuro (fixas no corpo)
   const legPos: [number, number][] = [
     [0.18, 0.45],
     [-0.18, 0.45],
@@ -238,13 +290,27 @@ function buildCow(): THREE.Group {
   udder.position.set(0, 0.28, 0.18);
   g.add(udder);
 
+  // rabo + tufo num pivô na garupa → balança como pêndulo, enxotando moscas
   const tail = cyl(0.03, 0.02, 0.5, white, 6);
   tail.position.set(0, 0.5, -0.72);
   tail.rotation.x = 0.5;
-  g.add(tail);
   const tuft = sph(0.05, spot);
   tuft.position.set(0, 0.27, -0.86);
-  g.add(tuft);
+  const tailPivot = pivotAt(0, 0.72, -0.6, tail, tuft);
+  g.add(tailPivot);
+
+  g.userData.tick = ((t: number) => {
+    // pasto: de tempos em tempos abaixa a cabeça; de cabeça erguida, mastiga
+    const graze = Math.max(0, Math.sin(t * 0.4)) ** 3;
+    const chew = (1 - graze) * 0.025 * Math.sin(t * 7);
+    headPivot.rotation.x = 0.95 * graze + chew;
+    headPivot.rotation.y = 0.06 * Math.sin(t * 0.5);
+    // rabo: pêndulo lento + flick ocasional
+    tailPivot.rotation.z = 0.22 * Math.sin(t * 1.1) + 0.12 * Math.sin(t * 0.43);
+    tailPivot.rotation.x = 0.06 * Math.sin(t * 2.0);
+    const br = 1 + 0.025 * Math.sin(t * 1.6); // respiração
+    body.scale.set(1.2 * br, 1.0 * br, 1.7);
+  }) as Tick;
 
   return g;
 }
@@ -327,6 +393,7 @@ function buildBarn(): THREE.Group {
   cow.position.set(0.1, 0, 1.35);
   cow.rotation.y = -0.4;
   g.add(cow);
+  g.userData.tick = cow.userData.tick; // anima a vaca
 
   return g;
 }
@@ -378,22 +445,31 @@ function buildBeehive(): THREE.Group {
   cap.position.y = y + 0.095;
   g.add(cap);
 
-  // abelhas
-  const beeSpots: [number, number, number][] = [
+  // abelhas — cada uma (corpo + faixa) num grupinho que paira perto da entrada
+  const beeHomes: [number, number, number][] = [
     [0.18, 0.55, 0.45],
     [-0.1, 0.7, 0.4],
     [0.05, 0.45, 0.5],
     [0.3, 0.62, 0.2],
   ];
-  beeSpots.forEach(([x, by, z]) => {
-    const bee = sph(0.035, 0xf6c615, 0.6);
-    bee.scale.set(1.2, 1, 1);
-    bee.position.set(x, by, z);
-    g.add(bee);
+  const bees = beeHomes.map(([hx, hy, hz], i) => {
+    const bee = new THREE.Group();
+    const bd = sph(0.035, 0xf6c615, 0.6);
+    bd.scale.set(1.2, 1, 1);
     const band = sph(0.037, 0x222222, 0.6);
     band.scale.set(0.5, 1.05, 1.05);
-    band.position.set(x, by, z);
-    g.add(band);
+    bee.add(bd, band);
+    bee.position.set(hx, hy, hz);
+    g.add(bee);
+    return {
+      bee,
+      hx,
+      hy,
+      hz,
+      ph: i * 1.7, // fase única → cada uma voa diferente
+      sp: 1.6 + i * 0.25, // velocidade da órbita
+      r: 0.13 + (i % 2) * 0.05, // raio da órbita
+    };
   });
 
   // pote de mel ao lado
@@ -403,6 +479,18 @@ function buildBeehive(): THREE.Group {
   const jarLid = cyl(0.13, 0.13, 0.05, 0x7a5a34, 14);
   jarLid.position.set(0.6, 0.55, 0.3);
   g.add(jarLid);
+
+  g.userData.tick = ((t: number) => {
+    for (const b of bees) {
+      const a = t * b.sp + b.ph;
+      b.bee.position.set(
+        b.hx + b.r * Math.cos(a) + 0.03 * Math.sin(t * 22 + b.ph), // + zumbido
+        b.hy + 0.1 * Math.sin(a * 1.7) + 0.02 * Math.sin(t * 30 + b.ph),
+        b.hz + b.r * Math.sin(a * 1.3),
+      );
+      b.bee.rotation.y = -a; // aponta o corpo na direção do voo (aprox.)
+    }
+  }) as Tick;
 
   return g;
 }
@@ -453,24 +541,37 @@ function buildFarmhouse(): THREE.Group {
   const chimCap = box(0.38, 0.08, 0.38, stone, 0.9);
   chimCap.position.set(-0.7, topY + 0.92, -0.3);
   g.add(chimCap);
-  const smokeMat = new THREE.MeshStandardMaterial({
-    color: 0xdfe2e6,
-    roughness: 1,
-    transparent: true,
-    opacity: 0.5,
-  });
-  const puffs: [number, number, number, number][] = [
-    [0, 1.05, 0, 0.1],
-    [0.06, 1.22, 0.04, 0.13],
-    [-0.05, 1.42, -0.03, 0.16],
-  ];
-  puffs.forEach(([dx, sy, dz, r]) => {
-    const puff = msh(new THREE.SphereGeometry(r, 10, 8), smokeMat);
+  const smokeX = -0.7;
+  const smokeZ = -0.3;
+  const smokeY0 = topY + 0.95; // logo acima da tampa da chaminé
+  const RISE = 1.15; // o quanto sobe ao longo da vida
+  const DRIFT = 0.45; // deriva lateral com o "vento"
+  const puffs = Array.from({ length: 6 }, (_, i) => {
+    const m = new THREE.MeshStandardMaterial({
+      color: 0xdfe2e6,
+      roughness: 1,
+      transparent: true,
+      opacity: 0,
+    });
+    const puff = msh(new THREE.SphereGeometry(0.12, 10, 8), m);
     puff.castShadow = false;
     puff.receiveShadow = false;
-    puff.position.set(-0.7 + dx, topY + sy, -0.3 + dz);
+    puff.position.set(smokeX, smokeY0, smokeZ);
     g.add(puff);
+    return { puff, m, phase: i / 6 }; // fases espaçadas → fluxo contínuo
   });
+  g.userData.tick = ((t: number) => {
+    for (const { puff, m, phase } of puffs) {
+      const u = (t * 0.16 + phase) % 1; // vida 0→1 (sobe, expande, some)
+      puff.position.set(
+        smokeX + DRIFT * u + 0.05 * Math.sin(t * 1.4 + phase * 6),
+        smokeY0 + RISE * u,
+        smokeZ + 0.04 * Math.sin(t * 1.1 + phase * 6),
+      );
+      puff.scale.setScalar(0.6 + 1.6 * u); // dilata ao subir
+      m.opacity = Math.min(u * 6, 1) * (1 - u) * 0.6; // surge rápido, some no fim
+    }
+  }) as Tick;
 
   // porta + moldura + degrau
   const doorFrame = box(0.62, 0.92, 0.06, trim, 0.85);

@@ -328,7 +328,7 @@ export function useFarmScene({
           g.scale.set(sc, sc, sc);
         });
 
-        // construções: leve pop ao surgir
+        // construções: leve pop ao surgir + animações dos bichos/fumaça
         (Object.keys(r.structureObjs) as StructureId[]).forEach((id) => {
           const g = r.structureObjs[id];
           if (!g) return;
@@ -339,6 +339,9 @@ export function useFarmScene({
           } else if (g.scale.x !== 1) {
             g.scale.setScalar(1);
           }
+          (
+            g.userData.tick as ((t: number, dt: number) => void) | undefined
+          )?.(now / 1000, dt);
         });
 
         r.renderer!.render(r.scene!, r.camera!);

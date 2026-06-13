@@ -102,6 +102,57 @@ Detalhes de implementação (`three/useFarmScene.ts`):
 - **Regras de jogo:** isoladas e testáveis em `state/reducer.ts` e
   `state/rewards.ts` (funções puras).
 
+## 🦊 Cachorro: modelo 3D animado (substitui o procedural)
+
+O "cachorro" do canil deixou de ser geometria procedural e agora é um **modelo
+low-poly animado** (`assets/Fox.glb` — uma raposa, que é canídeo e fica ótima na
+fazenda), carregado e animado em `three/dogModel.ts` com `GLTFLoader` +
+`THREE.AnimationMixer`. O modelo tem 3 clipes (`Survey`, `Walk`, `Run`); por
+padrão toca **`Survey`** (idle, olhando em volta) em loop.
+
+**Como liga na cena:** `buildDoghouse` (em `three/structures.ts`) monta o canil
+na hora e chama `createDog()` de forma **assíncrona** — o bicho entra no grupo
+quando o GLB termina de carregar. O `mixer` é avançado todo frame pelo
+`group.userData.tick(t, dt)` que o loop de render já chama
+(`mixer.update(dt)`). Se o carregamento falhar, cai no **cachorro procedural
+antigo** (fallback), então o canil nunca fica vazio.
+
+**Dependências:**
+- `expo-asset` (quase certo que já está no projeto) — resolve o `.glb` empacotado.
+- `GLTFLoader` vem de `three/examples/jsm/...`. Se o **Metro** reclamar
+  (`Unable to resolve three/examples/jsm…`), instale `three-stdlib` e troque o
+  import em `dogModel.ts` por `import { GLTFLoader } from "three-stdlib";`.
+
+**Metro (OBRIGATÓRIO — sem isso o bundle nem sobe):** registre as extensões
+binárias no `metro.config.js` da raiz do projeto:
+
+```js
+const { getDefaultConfig } = require("expo/metro-config");
+const config = getDefaultConfig(__dirname);
+config.resolver.assetExts.push("glb", "gltf", "bin");
+module.exports = config;
+```
+
+**Botões de ajuste** (topo do `three/dogModel.ts`) — pra acertar no olho, já que
+a raposa vem gigante e virada num eixo qualquer:
+- `DOG_SCALE` (0.0055) — tamanho no mundo (≈ o cão antigo).
+- `DOG_ROT_Y` (0) — se ela aparecer **de costas**, troque pra `Math.PI`.
+- `IDLE_CLIP` ("Survey") — clipe tocado parado (`Survey` | `Walk` | `Run`).
+
+**Trocar por outro bicho/cachorro:** ponha o novo `.glb` em `assets/`, mude o
+`import MODEL` em `dogModel.ts` e ajuste os 3 botões acima. Nada mais muda. Dica:
+pacotes CC0 do **Quaternius** (ex.: "LowPoly Animated Animals", que tem um **pug**)
+trazem glTF prontos — baixe pelo site dele e jogue na pasta `assets/`.
+
+### Créditos (OBRIGATÓRIO — a animação é CC BY 4.0)
+
+A malha é CC0, mas o rig/animação e a conversão glTF são **CC BY 4.0**, então
+publicar exige creditar. Inclua em algum lugar visível (tela de créditos/README):
+
+> Modelo "Fox" — malha por **PixelMannen** (CC0); rig e animação por
+> **tomkranis** (CC BY 4.0); conversão glTF por **@AsoboStudio** e **@scurest**
+> (CC BY 4.0). Via KhronosGroup/glTF-Sample-Assets.
+
 ## Observações
 
 - O import do coin store continua **relativo** (`../../hooks/UseCoinStore` a partir
