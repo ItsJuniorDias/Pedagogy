@@ -2,6 +2,7 @@
 import * as THREE from "three";
 
 import type { StructureId } from "../types";
+import { COW_ROT_Y, createCow } from "./cowModel";
 import { createDog, DOG_ROT_Y } from "./dogModel";
 
 // ─── Modelos 3D das construções (low-poly "realista") ────────────────────────
@@ -10,7 +11,11 @@ import { createDog, DOG_ROT_Y } from "./dogModel";
 // posiciona no chão. Construídas uma única vez (quando compradas) → custo ok.
 
 const MATS = new Map<string, THREE.MeshStandardMaterial>();
-function mat(color: number, rough = 0.92, metal = 0): THREE.MeshStandardMaterial {
+function mat(
+  color: number,
+  rough = 0.92,
+  metal = 0,
+): THREE.MeshStandardMaterial {
   const key = `${color}|${rough}|${metal}`;
   let m = MATS.get(key);
   if (!m) {
@@ -315,85 +320,185 @@ function buildCow(): THREE.Group {
   return g;
 }
 
+/** Cercadinho retangular de madeira (postes + 2 trilhos) com portão no lado +z. */
+function buildPaddockFence(
+  width: number,
+  depth: number,
+  gateW: number,
+): THREE.Group {
+  const g = new THREE.Group();
+  const woodPost = 0x7a5230;
+  const woodRail = 0x9c6f47;
+  const PH = 0.55;
+  const PW = 0.09;
+  const railH = [0.22, 0.44];
+  const hw = width / 2;
+  const hd = depth / 2;
+
+  const post = (x: number, z: number) => {
+    const p = box(PW, PH, PW, woodPost, 0.9);
+    p.position.set(x, PH / 2, z);
+    g.add(p);
+  };
+  const rail = (ax: number, az: number, bx: number, bz: number) => {
+    const len = Math.hypot(bx - ax, bz - az);
+    const ang = Math.atan2(bz - az, bx - ax);
+    for (const y of railH) {
+      const r = box(len, 0.06, 0.035, woodRail, 0.85);
+      r.position.set((ax + bx) / 2, y, (az + bz) / 2);
+      r.rotation.y = -ang;
+      g.add(r);
+    }
+  };
+
+  // postes: 4 cantos + meio das laterais/fundo + 2 batentes do portão
+  post(-hw, -hd);
+  post(hw, -hd);
+  post(-hw, hd);
+  post(hw, hd);
+  post(0, -hd);
+  post(-hw, 0);
+  post(hw, 0);
+  post(-gateW / 2, hd);
+  post(gateW / 2, hd);
+
+  // trilhos: fundo + laterais inteiros; frente (+z) com o vão do portão no meio
+  rail(-hw, -hd, hw, -hd);
+  rail(-hw, -hd, -hw, hd);
+  rail(hw, -hd, hw, hd);
+  rail(-hw, hd, -gateW / 2, hd);
+  rail(gateW / 2, hd, hw, hd);
+
+  return g;
+}
+
 function buildBarn(): THREE.Group {
   const g = new THREE.Group();
-  const red = 0xa11e1e;
-  const roofC = 0x3f3f46;
-  const trim = 0xf3f3f3;
+  const red = 0xa6231f;
+  const roofC = 0x3a3a42;
+  const trim = 0xf5f5f5;
   const cream = 0xe8e0cf;
+  const stone = 0x9e958a;
   const W = 2.3;
   const H = 1.5;
-  const D = 1.9;
+  const D = 1.8;
+  const baseY = 0.2; // topo da fundação
+  const topY = baseY + H; // topo das paredes
 
+  // fundação de pedra
+  const found = box(W + 0.16, baseY, D + 0.16, stone, 0.95);
+  found.position.y = baseY / 2;
+  g.add(found);
+
+  // corpo
   const body = box(W, H, D, red, 0.95);
-  body.position.y = H / 2;
+  body.position.y = baseY + H / 2;
   g.add(body);
 
+  // empenas + telhado
   for (const sz of [-1, 1]) {
     const end = gableEnd(W, 0.8, red);
-    end.position.set(0, H, (D / 2) * sz);
+    end.position.set(0, topY, (D / 2) * sz);
     g.add(end);
   }
-
   const roof = gableRoof(W + 0.22, D + 0.16, 0.8, roofC, 0.16);
-  roof.position.y = H;
+  roof.position.y = topY;
   g.add(roof);
 
   // batentes brancos nas quinas
   for (const sx of [-1, 1])
     for (const sz of [-1, 1]) {
       const post = box(0.09, H, 0.09, trim, 0.85);
-      post.position.set((W / 2 - 0.02) * sx, H / 2, (D / 2 - 0.02) * sz);
+      post.position.set(
+        (W / 2 - 0.02) * sx,
+        baseY + H / 2,
+        (D / 2 - 0.02) * sz,
+      );
       g.add(post);
     }
 
   // portões duplos com "X" branco
   for (const sx of [-1, 1]) {
     const door = box(0.86, 1.12, 0.06, cream, 0.9);
-    door.position.set(0.46 * sx, 0.56, D / 2 + 0.02);
+    door.position.set(0.46 * sx, baseY + 0.56, D / 2 + 0.02);
     g.add(door);
     const diag = Math.atan2(1.1, 0.84);
     for (const s of [-1, 1]) {
       const batten = box(0.06, 1.4, 0.04, trim, 0.85);
-      batten.position.set(0.46 * sx, 0.56, D / 2 + 0.06);
+      batten.position.set(0.46 * sx, baseY + 0.56, D / 2 + 0.06);
       batten.rotation.z = diag * s;
       g.add(batten);
     }
   }
-  // viga branca acima dos portões
   const lintel = box(1.9, 0.1, 0.07, trim, 0.85);
-  lintel.position.set(0, 1.16, D / 2 + 0.04);
+  lintel.position.set(0, baseY + 1.16, D / 2 + 0.04);
   g.add(lintel);
 
   // janelinha do sótão na empena
   const loft = box(0.42, 0.42, 0.06, 0x5e3c1d);
-  loft.position.set(0, 1.28, D / 2 + 0.03);
+  loft.position.set(0, baseY + 1.28, D / 2 + 0.03);
   g.add(loft);
   const lh = box(0.42, 0.05, 0.07, trim, 0.85);
-  lh.position.set(0, 1.28, D / 2 + 0.05);
+  lh.position.set(0, baseY + 1.28, D / 2 + 0.05);
   g.add(lh);
   const lv = box(0.05, 0.42, 0.07, trim, 0.85);
-  lv.position.set(0, 1.28, D / 2 + 0.05);
+  lv.position.set(0, baseY + 1.28, D / 2 + 0.05);
   g.add(lv);
 
   // cupola + cata-vento na cumeeira
   const cupBody = box(0.32, 0.3, 0.32, trim, 0.85);
-  cupBody.position.set(0, H + 0.85, 0);
+  cupBody.position.set(0, topY + 0.85, 0);
   g.add(cupBody);
   const cupRoof = cone(0.27, 0.24, roofC, 4);
-  cupRoof.position.set(0, H + 1.12, 0);
+  cupRoof.position.set(0, topY + 1.12, 0);
   cupRoof.rotation.y = Math.PI / 4;
   g.add(cupRoof);
   const vane = cyl(0.012, 0.012, 0.2, 0x222222, 6);
-  vane.position.set(0, H + 1.32, 0);
+  vane.position.set(0, topY + 1.32, 0);
   g.add(vane);
 
-  // a vaca, na frente do celeiro
-  const cow = buildCow();
-  cow.position.set(0.1, 0, 1.35);
-  cow.rotation.y = -0.4;
-  g.add(cow);
-  g.userData.tick = cow.userData.tick; // anima a vaca
+  // 🥫 silo ao lado (cilindro metálico + cúpula + anéis) → cara de fazenda
+  const siloX = -(W / 2) - 0.62;
+  const siloZ = -0.15;
+  const siloR = 0.5;
+  const siloH = 1.95;
+  const siloBody = cyl(siloR, siloR, siloH, 0xcfcabf, 18, 0.6);
+  siloBody.position.set(siloX, siloH / 2, siloZ);
+  g.add(siloBody);
+  const dome = sph(siloR, 0xb4afa6, 0.5);
+  dome.scale.set(1, 0.55, 1);
+  dome.position.set(siloX, siloH, siloZ);
+  g.add(dome);
+  for (const ry of [0.45, 0.95, 1.45]) {
+    const ring = cyl(siloR + 0.02, siloR + 0.02, 0.05, 0x9a958c, 18, 0.7);
+    ring.position.set(siloX, ry, siloZ);
+    g.add(ring);
+  }
+
+  // 🐮 paddock cercado na frente (+z), com a vaquinha dentro
+  const padW = 2.6;
+  const padD = 2.2;
+  const padZ = D / 2 + padD / 2 + 0.05; // borda de trás logo à frente do celeiro
+  const fence = buildPaddockFence(padW, padD, 0.8);
+  fence.position.set(0, 0, padZ);
+  g.add(fence);
+
+  // a vaca entra de forma assíncrona (igual à raposa). Fallback: vaca procedural.
+  let tickFn: Tick = () => {};
+  g.userData.tick = ((t: number, dt: number) => tickFn(t, dt)) as Tick;
+  createCow()
+    .then(({ group, update }) => {
+      group.position.set(0, 0, padZ + 0.1);
+      group.rotation.y = COW_ROT_Y; // encara o portão / centro
+      g.add(group);
+      tickFn = (_t, dt) => update(dt);
+    })
+    .catch(() => {
+      const cow = buildCow(); // fallback procedural
+      cow.position.set(0, 0, padZ);
+      g.add(cow);
+      tickFn = cow.userData.tick as Tick;
+    });
 
   return g;
 }
@@ -649,7 +754,9 @@ const BUILDERS: Record<StructureId, () => THREE.Group> = {
 const FACE_Y: Record<StructureId, number> = {
   doghouse: Math.PI * 0.75, // canto "up" (-x,-z)
   farmhouse: Math.PI * 0.25, // canto "left" (-x,+z)
-  barn: Math.PI * 1.25, // canto "right" (+x,-z)
+  // O +z do celeiro (portas + cercado + vaca) tem que encarar a câmera, senão
+  // o cercado fica ATRÁS. Câmera ortográfica olha de (+x,+z) → 0.25π = de frente.
+  barn: Math.PI * 0.25, // encara a câmera (cercado/vaca na frente)
   beehive: Math.PI * 1.75, // canto "down" (+x,+z)
 };
 

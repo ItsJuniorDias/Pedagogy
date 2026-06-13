@@ -153,6 +153,44 @@ publicar exige creditar. Inclua em algum lugar visível (tela de créditos/READM
 > **tomkranis** (CC BY 4.0); conversão glTF por **@AsoboStudio** e **@scurest**
 > (CC BY 4.0). Via KhronosGroup/glTF-Sample-Assets.
 
+## 🐮 Celeiro refeito + vaca 3D malhada + cercado
+
+O celeiro antigo foi refeito (`three/structures.ts`, `buildBarn`). Agora ele tem
+fundação de pedra, um **silo** ao lado (cilindro + cúpula + anéis — dá cara de
+fazenda na hora) e, na frente, um **cercadinho de madeira** (`buildPaddockFence`:
+postes + 2 trilhos, com vão de portão no lado de frente) com uma **vaca** dentro.
+
+A vaca segue o **mesmo esquema da raposa**: é um `.glb` de verdade
+(`assets/Cow.glb`) carregado em `three/cowModel.ts` com `GLTFLoader`. É a "Spot",
+a vaca clássica de domínio público do **Keenan Crane**, convertida de `.obj` pra
+`.glb`. Como você falou, **GLB vem sem cor** — e essa em particular vem sem cor e
+sem esqueleto. Então:
+
+- **Pintura branca com pintas pretas:** feita por **cor por vértice**, calculada
+  na hora a partir de um ruído 3D (não depende de UV, então funciona em qualquer
+  malha). ~30% de cobertura preta, em manchas. O `.obj` também não trazia normais,
+  então o loader chama `computeVertexNormals()` pra luz pegar certo.
+- **Animação:** como a Spot não tem esqueleto, ela ganha um **idle procedural**
+  (respira + muda o peso de leve). Se você trocar por um `.glb` **com** animação
+  (ex.: a vaca CC0 do **Quaternius**), o loader detecta o clipe e toca ele no lugar
+  do idle — sem mexer em mais nada.
+
+**Botões de ajuste** (topo do `three/cowModel.ts`):
+
+- `COW_SCALE` (padrão `0.5` → ~0,85 de altura) e `COW_ROT_Y` (vire `Math.PI` se ela
+  aparecer de costas) — mesmos chutes da raposa, **não testei no device**.
+- `BASE_COLOR` / `SPOT_COLOR` (branco / preto das pintas) e
+  `SPOT_SCALE` / `SPOT_THRESHOLD` (tamanho e quantidade das manchas).
+
+Não precisa de nada novo no `metro.config.js` além do que a raposa já pediu (as
+extensões `glb`/`gltf`/`bin` já cobrem a vaca). Se o `Cow.glb` falhar ao carregar,
+o celeiro cai no **fallback** da vaca procedural antiga.
+
+### Créditos da vaca (domínio público)
+
+> Modelo "Spot" — **Keenan Crane** (domínio público). Via
+> alecjacobson/common-3d-test-models.
+
 ## Observações
 
 - O import do coin store continua **relativo** (`../../hooks/UseCoinStore` a partir
