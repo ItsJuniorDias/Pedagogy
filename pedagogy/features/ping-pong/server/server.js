@@ -17,8 +17,9 @@
  *   npm start          # PORT=8080 por padrão
  */
 
-import { WebSocketServer } from "ws";
 import { randomUUID } from "node:crypto";
+import { WebSocketServer } from "ws";
+
 import { makeNickname } from "./nicknames.js";
 
 const PORT = Number(process.env.PORT) || 8080;
@@ -52,7 +53,11 @@ function lobbyPlayers() {
 
 function broadcastLobby() {
   const waiting = lobbyPlayers();
-  const snapshot = { type: "lobby", players: waiting.map(identity), count: waiting.length };
+  const snapshot = {
+    type: "lobby",
+    players: waiting.map(identity),
+    count: waiting.length,
+  };
   for (const p of waiting) send(p, snapshot);
 }
 
@@ -80,7 +85,9 @@ function tryMatch() {
       isHost: false,
       opponent: identity(host),
     });
-    console.log(`🎮 match ${matchId.slice(0, 8)}  ${host.nick} (host) × ${guest.nick}`);
+    console.log(
+      `🎮 match ${matchId.slice(0, 8)}  ${host.nick} (host) × ${guest.nick}`,
+    );
   }
   broadcastLobby();
 }
@@ -113,15 +120,26 @@ function endMatch(p, notifyOpponent = true) {
 // ── Servidor ────────────────────────────────────────────────────────────────
 
 const wss = new WebSocketServer({ port: PORT });
+
 console.log(`🏓 NEON PONG lobby ouvindo em ws://0.0.0.0:${PORT}`);
 
 wss.on("connection", (ws) => {
   const { nick, emoji } = makeNickname(takenNicks());
-  const player = { id: randomUUID(), nick, emoji, ws, alive: true, lobby: false, matchId: null };
+  const player = {
+    id: randomUUID(),
+    nick,
+    emoji,
+    ws,
+    alive: true,
+    lobby: false,
+    matchId: null,
+  };
   players.set(player.id, player);
 
   send(player, { type: "welcome", you: identity(player) });
-  console.log(`✨ ${player.emoji} ${player.nick} conectou  (online: ${players.size})`);
+  console.log(
+    `✨ ${player.emoji} ${player.nick} conectou  (online: ${players.size})`,
+  );
 
   ws.on("pong", () => {
     player.alive = true;
@@ -168,7 +186,9 @@ wss.on("connection", (ws) => {
     endMatch(player, true);
     players.delete(player.id);
     broadcastLobby();
-    console.log(`👋 ${player.emoji} ${player.nick} saiu  (online: ${players.size})`);
+    console.log(
+      `👋 ${player.emoji} ${player.nick} saiu  (online: ${players.size})`,
+    );
   });
 
   ws.on("error", () => {

@@ -13,7 +13,7 @@
  */
 
 export const SERVER_URL: string =
-  process.env.EXPO_PUBLIC_PONG_SERVER?.trim() || "ws://localhost:8080";
+  process.env.EXPO_PUBLIC_PONG_SERVER?.trim() || "ws://162.120.185.213:8080";
 
 /** Frequência de envio do estado/input em ms (~30 Hz). */
 export const NET_TICK_MS = 33;
