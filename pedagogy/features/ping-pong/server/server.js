@@ -46,6 +46,31 @@ const takenNicks = () => new Set([...players.values()].map((p) => p.nick));
 
 const identity = (p) => ({ id: p.id, nick: p.nick, emoji: p.emoji });
 
+// ── Logs / estatísticas ─────────────────────────────────────────────────────
+
+const ts = () =>
+  new Date().toLocaleTimeString("pt-BR", {
+    hour12: false,
+    timeZone: "America/Sao_Paulo",
+  });
+
+/** Foto do estado atual do servidor. */
+const stats = () => ({
+  online: players.size, // conexões ativas
+  fila: lobbyPlayers().length, // esperando na fila do saguão
+  partidas: matches.size, // partidas em andamento
+});
+
+/** Linha curta pra carimbar no fim de cada log. */
+const snap = () => {
+  const { online, fila, partidas } = stats();
+  return `online=${online} • fila=${fila} • partidas=${partidas}`;
+};
+
+/** Log padronizado: [hora] emoji  mensagem  • online=… fila=… partidas=… */
+const log = (emoji, msg) =>
+  console.log(`[${ts()}] ${emoji} ${msg} • ${snap()}`);
+
 // ── Saguão ────────────────────────────────────────────────────────────────
 
 function lobbyPlayers() {
@@ -86,8 +111,9 @@ function tryMatch() {
       isHost: false,
       opponent: identity(host),
     });
-    console.log(
-      `🎮 match ${matchId.slice(0, 8)}  ${host.nick} (host) × ${guest.nick}`,
+    log(
+      "🎮",
+      `partida ${matchId.slice(0, 8)} iniciada  ${host.nick} (host) × ${guest.nick}`,
     );
   }
   broadcastLobby();
@@ -116,6 +142,7 @@ function endMatch(p, notifyOpponent = true) {
       opp.lobby = true;
     }
   }
+  log("🏁", `partida ${matchId.slice(0, 8)} encerrada`);
 }
 
 // ── Servidor ────────────────────────────────────────────────────────────────
@@ -147,9 +174,7 @@ wss.on("connection", (ws) => {
   players.set(player.id, player);
 
   send(player, { type: "welcome", you: identity(player) });
-  console.log(
-    `✨ ${player.emoji} ${player.nick} conectou  (online: ${players.size})`,
-  );
+  log("✨", `${player.emoji} ${player.nick} conectou`);
 
   ws.on("pong", () => {
     player.alive = true;
@@ -167,12 +192,16 @@ wss.on("connection", (ws) => {
         if (!player.matchId) {
           player.lobby = true;
           send(player, { type: "lobby_joined" });
+          log("🪑", `${player.emoji} ${player.nick} entrou na fila`);
           tryMatch();
         }
         break;
 
       case "leave_lobby":
-        player.lobby = false;
+        if (player.lobby) {
+          player.lobby = false;
+          log("🚪", `${player.emoji} ${player.nick} saiu da fila`);
+        }
         broadcastLobby();
         break;
 
@@ -196,9 +225,7 @@ wss.on("connection", (ws) => {
     endMatch(player, true);
     players.delete(player.id);
     broadcastLobby();
-    console.log(
-      `👋 ${player.emoji} ${player.nick} saiu  (online: ${players.size})`,
-    );
+    log("👋", `${player.emoji} ${player.nick} saiu`);
   });
 
   ws.on("error", () => {
@@ -208,6 +235,9 @@ wss.on("connection", (ws) => {
 
 // Heartbeat: derruba conexões mortas a cada 30s.
 const heartbeat = setInterval(() => {
+  // Pulso do servidor: só carimba quando há alguém online (não polui o log vazio).
+  if (players.size > 0) console.log(`[${ts()}] 📊 ${snap()}`);
+
   for (const p of players.values()) {
     if (!p.alive) {
       p.ws.terminate();
