@@ -6,21 +6,18 @@
  * este hook retorna — nenhum JSX ou estilo mora aqui.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  LayoutChangeEvent,
-  Vibration,
-} from "react-native";
 import { Renderer } from "expo-three";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Animated, Easing, LayoutChangeEvent, Vibration } from "react-native";
 import * as THREE from "three";
 
 import {
   BALL_R,
   BALL_Y,
+  CATCH_ASSIST,
   DIFFS,
   PADDLE,
+  SPIN,
   TABLE,
   WIN_SCORE,
 } from "../constants";
@@ -72,6 +69,7 @@ export function usePongGame(options: UsePongGameOptions = {}) {
     ai: null,
     orbs: [],
     vel: { x: 0, z: 0 },
+    spin: 0,
     targetX: 0,
     phase: "idle",
     serveAt: 0,
@@ -143,6 +141,7 @@ export function usePongGame(options: UsePongGameOptions = {}) {
     if (r.ball) r.ball.position.set(0, BALL_Y, 0);
     r.vel.x = 0;
     r.vel.z = 0;
+    r.spin = 0;
     r.speedMul = 1;
     setSpeedMul(1);
   }, []);
@@ -240,17 +239,26 @@ export function usePongGame(options: UsePongGameOptions = {}) {
 
   // ── Rebatida ───────────────────────────────────────────────────────────────
 
-  const onHit = useCallback(() => {
-    const r = refs.current;
-    r.rally += 1;
-    setRally(r.rally);
-    if (r.rally > bestRef.current) {
-      bestRef.current = r.rally;
-      setBestRally(r.rally);
-    }
-    setSpeedMul(r.speedMul);
-    Vibration.vibrate(10);
-  }, []);
+  const onHit = useCallback(
+    (spinMag = 0, isPlayer = false) => {
+      const r = refs.current;
+      r.rally += 1;
+      setRally(r.rally);
+      if (r.rally > bestRef.current) {
+        bestRef.current = r.rally;
+        setBestRally(r.rally);
+      }
+      setSpeedMul(r.speedMul);
+      // Corte forte do jogador: aviso + vibração diferenciada
+      if (isPlayer && spinMag >= SPIN.labelAt) {
+        spawnLabel("🌀 EFEITO!", NEON.cyan);
+        Vibration.vibrate([0, 14, 22, 14]);
+      } else {
+        Vibration.vibrate(10);
+      }
+    },
+    [spawnLabel],
+  );
   const onHitRef = useRef(onHit);
   useEffect(() => {
     onHitRef.current = onHit;
@@ -286,9 +294,9 @@ export function usePongGame(options: UsePongGameOptions = {}) {
     r.scene.add(magentaLight);
 
     // Câmera atrás do jogador, olhando mesa abaixo
-    r.camera = new THREE.PerspectiveCamera(52, w / h, 0.1, 100);
-    r.camera.position.set(0, 5.3, 8.1);
-    r.camera.lookAt(0, -0.4, -1.2);
+    r.camera = new THREE.PerspectiveCamera(56, w / h, 0.1, 100);
+    r.camera.position.set(0, 5.6, 9.0);
+    r.camera.lookAt(0, -0.4, -1.0);
 
     buildArena(r.scene, r);
     buildTable(r.scene);
@@ -337,7 +345,11 @@ export function usePongGame(options: UsePongGameOptions = {}) {
       // Raquete do jogador persegue o dedo (suave) e INCLINA ao deslizar
       const limX = TABLE.halfW - PADDLE.halfW;
       const tx = THREE.MathUtils.clamp(r.targetX, -limX, limX);
-      player.position.x += (tx - player.position.x) * Math.min(1, dt * 16);
+      const playerPrevX = player.position.x;
+      player.position.x += (tx - player.position.x) * Math.min(1, dt * 24);
+      // Velocidade lateral da raquete (un/s) — fonte do efeito/corte
+      player.userData.vx =
+        (player.position.x - playerPrevX) / Math.max(dt, 1e-4);
       const lean = THREE.MathUtils.clamp(
         (player.position.x - tx) * 0.55,
         -0.38,
@@ -355,17 +367,46 @@ export function usePongGame(options: UsePongGameOptions = {}) {
       }
 
       if (r.phase === "play") {
-        // CPU: segue a bola quando ela vem, senão volta ao centro
-        const aiTarget = v.z < 0 ? ball.position.x : 0;
+        // CPU: mira ONDE a bola vai chegar (lê a reta) p/ rebater de verdade.
+        // Como o efeito curva a bola DEPOIS que ela se posiciona, um bom corte
+        // ainda passa pela raquete dela.
+        let aiTarget = 0;
+        if (v.z < 0) {
+          const aiPlaneZ = -(PADDLE.z - BALL_R - PADDLE.d / 2);
+          const tReach = (aiPlaneZ - ball.position.z) / (v.z || -1e-6);
+          let predX = ball.position.x + v.x * Math.max(0, tReach);
+          // dobra a previsão pelas paredes laterais (reflexão triangular)
+          const mX = TABLE.halfW - BALL_R;
+          const period = 4 * mX;
+          const p = (((predX + mX) % period) + period) % period;
+          aiTarget = (p <= 2 * mX ? p : period - p) - mX;
+        }
         const dx = aiTarget - ai.position.x;
         const maxMove = diffCfg.aiSpeed * dt;
+        const aiPrevX = ai.position.x;
         ai.position.x = THREE.MathUtils.clamp(
           ai.position.x + THREE.MathUtils.clamp(dx, -maxMove, maxMove),
           -limX,
           limX,
         );
+        ai.userData.vx = (ai.position.x - aiPrevX) / Math.max(dt, 1e-4);
         const aiLean = THREE.MathUtils.clamp(dx * 0.4, -0.35, 0.35);
         ai.rotation.z += (aiLean - ai.rotation.z) * Math.min(1, dt * 10);
+
+        // ── Efeito (sidespin): curva a trajetória de forma fluida ──
+        // Rotaciona o vetor velocidade um pouco por quadro (mantém a rapidez,
+        // só muda a direção) e deixa o efeito decair suavemente.
+        if (r.spin !== 0) {
+          const ang = r.spin * dt;
+          const cs = Math.cos(ang);
+          const sn = Math.sin(ang);
+          const rvx = v.x * cs - v.z * sn;
+          const rvz = v.x * sn + v.z * cs;
+          v.x = rvx;
+          v.z = rvz;
+          r.spin *= Math.exp(-dt / SPIN.tau);
+          if (Math.abs(r.spin) < 0.02) r.spin = 0;
+        }
 
         // Física da bola
         const prevZ = ball.position.z;
@@ -377,9 +418,11 @@ export function usePongGame(options: UsePongGameOptions = {}) {
         if (nx > maxX) {
           nx = maxX - (nx - maxX);
           v.x = -Math.abs(v.x);
+          r.spin *= 0.5;
         } else if (nx < -maxX) {
           nx = -maxX + (-maxX - nx);
           v.x = Math.abs(v.x);
+          r.spin *= 0.5;
         }
 
         // Colisão com raquete (checa o cruzamento do plano p/ não atravessar)
@@ -396,13 +439,21 @@ export function usePongGame(options: UsePongGameOptions = {}) {
           if (!crossed) return false;
           const tFrac = (plane - prevZ) / (nz - prevZ || 1e-6);
           const hitX = ball.position.x + v.x * dt * tFrac;
-          if (Math.abs(hitX - paddle.position.x) > PADDLE.halfW + BALL_R * 0.7)
+          if (
+            Math.abs(hitX - paddle.position.x) >
+            PADDLE.halfW + BALL_R + CATCH_ASSIST
+          )
             return false;
 
           // Rebatida: acelera e angula conforme o ponto de impacto
           r.speedMul = Math.min(2, r.speedMul * 1.05);
           const base = diffCfg.ballSpeed * r.speedMul;
-          let vx = v.x + (hitX - paddle.position.x) * 3.1;
+          // Velocidade lateral da raquete no impacto → corte/efeito
+          const paddleVX = (paddle.userData.vx as number) ?? 0;
+          let vx =
+            v.x +
+            (hitX - paddle.position.x) * 3.1 + // ângulo pelo ponto de impacto
+            paddleVX * SPIN.kick; // empurrão imediato do deslize
           vx = THREE.MathUtils.clamp(vx, -base * 0.8, base * 0.8);
           const minVz = base * 0.62;
           const vz = Math.max(
@@ -411,9 +462,16 @@ export function usePongGame(options: UsePongGameOptions = {}) {
           );
           v.x = vx;
           v.z = -dirSign * vz;
+          // Efeito persistente: curva a bola no ar no sentido do deslize.
+          // dirSign embute a orientação correta da curva p/ cada lado da mesa.
+          r.spin = THREE.MathUtils.clamp(
+            paddleVX * SPIN.gain * -dirSign,
+            -SPIN.max,
+            SPIN.max,
+          );
           nz = plane;
           (paddle as any).hitAt = now;
-          onHitRef.current();
+          onHitRef.current(Math.abs(r.spin), dirSign === 1);
           return true;
         };
 
@@ -445,6 +503,7 @@ export function usePongGame(options: UsePongGameOptions = {}) {
       }
       ball.rotation.x += v.z * dt * 2;
       ball.rotation.z -= v.x * dt * 2;
+      ball.rotation.y += r.spin * dt * 3; // giro visível do efeito
 
       r.renderer!.render(r.scene!, r.camera!);
       (gl as any).endFrameEXP?.();
