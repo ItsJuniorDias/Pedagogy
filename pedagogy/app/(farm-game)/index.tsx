@@ -1,24 +1,37 @@
 /**
  * FarmGame3D.tsx — Isometric 2.5D Farm Game (Three.js + Expo)
  *
- * v3 — Liquid glass + status bar:
- *  • Header verde agora cobre também a área da status bar (edge-to-edge),
- *    com ícones claros (light-content) e translucent no Android.
- *  • Footer redesenhado: botões FLUTUAM sobre o cenário 3D com efeito
- *    liquid glass (expo-blur) — dock de ferramentas, FABs de Seeds /
- *    Next Day e chip da semente selecionada, tudo em vidro.
- *  • A dica contextual virou um chip de vidro flutuando no topo do cenário.
+ * v5 — Real IAP (expo-iap, iOS/App Store only):
+ *  • COIN MARKET now uses the real store: products and localized
+ *    prices come from the App Store via useCoinStore (./useCoinStore.ts).
+ *    In dev without a store (Expo Go) it automatically falls back to a
+ *    simulated mode.
+ *  • Requires a DEV BUILD (expo-iap does not run in Expo Go):
+ *      npx expo install expo-iap
+ *      eas build --profile development --platform ios
  *
- * v2 — Correções e melhorias:
- *  • FIX: plantas agora aparecem e crescem até a colheita (plantas 3D
- *    procedurais com 3 estágios; os sprites de emoji eram invisíveis no RN).
- *  • HUD: badge de nível, ouro animado, XP com %, badges de contagem,
- *    banner de LEVEL UP.
+ * v4 — Persistence + free-to-play economy:
+ *  • ASYNC STORAGE: progress is saved automatically (600ms debounce) and
+ *    restored on launch. plantedAt is persisted → plants keep growing
+ *    "offline" (on reopen, they may be ready to harvest).
+ *  • EXPANDED CATALOG: 15 seeds across 5 rarities (common, uncommon,
+ *    rare, epic, legendary). Expensive items have much longer growTime
+ *    (up to 40 min) and pay out far more.
+ *  • ROTATING RARITY: rare/epic/legendary are NOT always in the shop.
+ *    Each new day the game rolls which ones appear (35% / 15% / 5%) and
+ *    with limited stock (3 / 2 / 1 seeds). Unrolled slots show up as
+ *    "???" — scarcity + FOMO.
+ *  • COIN MARKET: modal with coin packs. Tighter economy (starting gold
+ *    50) to nudge players toward the store.
+ *
+ * v3 — Liquid glass + status bar. v2 — procedural 3D plants + HUD.
  *
  * Install dependencies:
  *   npx expo install expo-gl expo-three three
  *   npx expo install expo-blur react-native-safe-area-context
  *   npx expo install @expo-google-fonts/fredoka-one expo-font
+ *   npx expo install @react-native-async-storage/async-storage
+ *   npx expo install expo-iap
  *
  * Usage:
  *   import FarmGame3D from './FarmGame3D';
@@ -29,6 +42,7 @@ import {
   FredokaOne_400Regular,
   useFonts,
 } from "@expo-google-fonts/fredoka-one";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BlurView } from "expo-blur";
 import { GLView } from "expo-gl";
 import { Renderer } from "expo-three";
@@ -48,6 +62,7 @@ import {
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -61,17 +76,49 @@ import {
 } from "react-native-safe-area-context";
 import * as THREE from "three";
 
+import { useCoinStore, type StorePack } from "../../hooks/UseCoinStore";
+
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const COLS = 5;
 const ROWS = 5;
 
+const STORAGE_KEY = "@happyfarm/save/v4";
+const SAVE_DEBOUNCE_MS = 600;
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type CropId = "wheat" | "corn" | "carrot" | "tomato" | "sunflower";
+type CropId =
+  | "wheat"
+  | "lettuce"
+  | "carrot"
+  | "potato"
+  | "corn"
+  | "tomato"
+  | "strawberry"
+  | "sunflower"
+  | "pumpkin"
+  | "watermelon"
+  | "grape"
+  | "dragonfruit"
+  | "golden_wheat"
+  | "crystal_rose"
+  | "star_fruit";
+
+type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 type TileState = "empty" | "tilled" | "planted" | "growing" | "ready";
 type ToolId = "till" | "seed" | "harvest" | "water";
+
+/** 3D visual archetypes — new crops reuse parameterized builders */
+type PlantVisual =
+  | "wheat"
+  | "corn"
+  | "carrot"
+  | "bush"
+  | "sunflower"
+  | "melon"
+  | "crystal";
 
 interface Crop {
   id: CropId;
@@ -82,6 +129,14 @@ interface Crop {
   seedCost: number;
   xp: number;
   color: string;
+  color3d: number; // main color of the mature 3D plant
+  rarity: Rarity;
+  minLevel: number;
+  visual: PlantVisual;
+  /** Chance (0-1) of appearing in the shop each new day. 1 = always. */
+  appearChance: number;
+  /** Stock per day when it appears. Infinity for commons. */
+  stockPerDay: number;
 }
 
 interface Tile {
@@ -111,11 +166,32 @@ interface GameState {
   selectedCrop: CropId;
   day: number;
   totalHarvested: number;
+  /** Daily stock of rare+ items rolled today. Absent = didn't appear. */
+  dailyStock: Partial<Record<CropId, number>>;
+  /** Total coins purchased in the market (analytics / achievements). */
+  coinsPurchased: number;
 }
 
+// ─── Rarity meta ──────────────────────────────────────────────────────────────
+
+const RARITY_META: Record<
+  Rarity,
+  { label: string; color: string; order: number }
+> = {
+  common: { label: "Common", color: "#78716C", order: 0 },
+  uncommon: { label: "Uncommon", color: "#22C55E", order: 1 },
+  rare: { label: "Rare", color: "#3B82F6", order: 2 },
+  epic: { label: "Epic", color: "#A855F7", order: 3 },
+  legendary: { label: "Legendary", color: "#F59E0B", order: 4 },
+};
+
 // ─── Crop Catalog ─────────────────────────────────────────────────────────────
+// growTime scales strongly with price: commons take seconds, legendaries
+// take tens of minutes. Expensive seeds + rare stock = pressure to buy
+// coins in the market.
 
 const CROPS: Record<CropId, Crop> = {
+  // ── COMMON — always in the shop, cheap, fast ──
   wheat: {
     id: "wheat",
     emoji: "🌾",
@@ -125,16 +201,28 @@ const CROPS: Record<CropId, Crop> = {
     seedCost: 5,
     xp: 10,
     color: "#F59E0B",
+    color3d: 0xd9a02b,
+    rarity: "common",
+    minLevel: 1,
+    visual: "wheat",
+    appearChance: 1,
+    stockPerDay: Infinity,
   },
-  corn: {
-    id: "corn",
-    emoji: "🌽",
-    name: "Corn",
-    growTime: 35_000,
-    price: 30,
-    seedCost: 10,
-    xp: 20,
-    color: "#FCD34D",
+  lettuce: {
+    id: "lettuce",
+    emoji: "🥬",
+    name: "Lettuce",
+    growTime: 15_000,
+    price: 10,
+    seedCost: 4,
+    xp: 7,
+    color: "#84CC16",
+    color3d: 0x84cc16,
+    rarity: "common",
+    minLevel: 1,
+    visual: "bush",
+    appearChance: 1,
+    stockPerDay: Infinity,
   },
   carrot: {
     id: "carrot",
@@ -145,32 +233,242 @@ const CROPS: Record<CropId, Crop> = {
     seedCost: 8,
     xp: 15,
     color: "#F97316",
+    color3d: 0xf97316,
+    rarity: "common",
+    minLevel: 1,
+    visual: "carrot",
+    appearChance: 1,
+    stockPerDay: Infinity,
+  },
+  potato: {
+    id: "potato",
+    emoji: "🥔",
+    name: "Potato",
+    growTime: 35_000,
+    price: 28,
+    seedCost: 10,
+    xp: 18,
+    color: "#A16207",
+    color3d: 0xb8860b,
+    rarity: "common",
+    minLevel: 2,
+    visual: "melon",
+    appearChance: 1,
+    stockPerDay: Infinity,
+  },
+
+  // ── UNCOMMON — always in the shop, level gated ──
+  corn: {
+    id: "corn",
+    emoji: "🌽",
+    name: "Corn",
+    growTime: 50_000,
+    price: 45,
+    seedCost: 18,
+    xp: 25,
+    color: "#FCD34D",
+    color3d: 0xfcd34d,
+    rarity: "uncommon",
+    minLevel: 3,
+    visual: "corn",
+    appearChance: 1,
+    stockPerDay: Infinity,
   },
   tomato: {
     id: "tomato",
     emoji: "🍅",
     name: "Tomato",
-    growTime: 45_000,
-    price: 50,
-    seedCost: 15,
-    xp: 30,
+    growTime: 70_000,
+    price: 65,
+    seedCost: 25,
+    xp: 32,
     color: "#EF4444",
+    color3d: 0xef4444,
+    rarity: "uncommon",
+    minLevel: 4,
+    visual: "bush",
+    appearChance: 1,
+    stockPerDay: Infinity,
+  },
+  strawberry: {
+    id: "strawberry",
+    emoji: "🍓",
+    name: "Strawberry",
+    growTime: 90_000,
+    price: 85,
+    seedCost: 32,
+    xp: 40,
+    color: "#FB7185",
+    color3d: 0xfb7185,
+    rarity: "uncommon",
+    minLevel: 5,
+    visual: "bush",
+    appearChance: 1,
+    stockPerDay: Infinity,
   },
   sunflower: {
     id: "sunflower",
     emoji: "🌻",
     name: "Sunflower",
-    growTime: 60_000,
-    price: 80,
-    seedCost: 25,
-    xp: 50,
+    growTime: 120_000,
+    price: 130,
+    seedCost: 45,
+    xp: 55,
     color: "#EAB308",
+    color3d: 0xfacc15,
+    rarity: "uncommon",
+    minLevel: 6,
+    visual: "sunflower",
+    appearChance: 1,
+    stockPerDay: Infinity,
+  },
+
+  // ── RARE — 35% chance per day, stock of 3 ──
+  pumpkin: {
+    id: "pumpkin",
+    emoji: "🎃",
+    name: "Pumpkin",
+    growTime: 4 * 60_000,
+    price: 320,
+    seedCost: 110,
+    xp: 90,
+    color: "#EA580C",
+    color3d: 0xea580c,
+    rarity: "rare",
+    minLevel: 7,
+    visual: "melon",
+    appearChance: 0.35,
+    stockPerDay: 3,
+  },
+  watermelon: {
+    id: "watermelon",
+    emoji: "🍉",
+    name: "Watermelon",
+    growTime: 6 * 60_000,
+    price: 520,
+    seedCost: 170,
+    xp: 120,
+    color: "#16A34A",
+    color3d: 0x15803d,
+    rarity: "rare",
+    minLevel: 8,
+    visual: "melon",
+    appearChance: 0.35,
+    stockPerDay: 3,
+  },
+  grape: {
+    id: "grape",
+    emoji: "🍇",
+    name: "Grape",
+    growTime: 8 * 60_000,
+    price: 750,
+    seedCost: 240,
+    xp: 150,
+    color: "#7C3AED",
+    color3d: 0x7c3aed,
+    rarity: "rare",
+    minLevel: 9,
+    visual: "bush",
+    appearChance: 0.35,
+    stockPerDay: 3,
+  },
+
+  // ── EPIC — 15% chance per day, stock of 2 ──
+  dragonfruit: {
+    id: "dragonfruit",
+    emoji: "🐉",
+    name: "Dragonfruit",
+    growTime: 12 * 60_000,
+    price: 1_600,
+    seedCost: 480,
+    xp: 260,
+    color: "#EC4899",
+    color3d: 0xec4899,
+    rarity: "epic",
+    minLevel: 10,
+    visual: "bush",
+    appearChance: 0.15,
+    stockPerDay: 2,
+  },
+  golden_wheat: {
+    id: "golden_wheat",
+    emoji: "✨",
+    name: "Golden Wheat",
+    growTime: 15 * 60_000,
+    price: 2_300,
+    seedCost: 700,
+    xp: 320,
+    color: "#FBBF24",
+    color3d: 0xffd700,
+    rarity: "epic",
+    minLevel: 11,
+    visual: "wheat",
+    appearChance: 0.15,
+    stockPerDay: 2,
+  },
+
+  // ── LEGENDARY — 5% chance per day, stock of 1 ──
+  crystal_rose: {
+    id: "crystal_rose",
+    emoji: "💎",
+    name: "Crystal Rose",
+    growTime: 25 * 60_000,
+    price: 6_000,
+    seedCost: 1_800,
+    xp: 700,
+    color: "#22D3EE",
+    color3d: 0x22d3ee,
+    rarity: "legendary",
+    minLevel: 12,
+    visual: "crystal",
+    appearChance: 0.05,
+    stockPerDay: 1,
+  },
+  star_fruit: {
+    id: "star_fruit",
+    emoji: "🌟",
+    name: "Star Fruit",
+    growTime: 40 * 60_000,
+    price: 12_000,
+    seedCost: 3_500,
+    xp: 1_200,
+    color: "#FDE047",
+    color3d: 0xfde047,
+    rarity: "legendary",
+    minLevel: 13,
+    visual: "sunflower",
+    appearChance: 0.05,
+    stockPerDay: 1,
   },
 };
 
-const LEVEL_THRESHOLDS = [0, 50, 150, 350, 700, 1200, 2000, 3200, 5000, 8000];
+const CROP_LIST = Object.values(CROPS).sort(
+  (a, b) =>
+    RARITY_META[a.rarity].order - RARITY_META[b.rarity].order ||
+    a.seedCost - b.seedCost,
+);
+
+const LEVEL_THRESHOLDS = [
+  0, 50, 150, 350, 700, 1200, 2000, 3200, 5000, 8000, 12000, 17500, 25000,
+  35000, 50000,
+];
 const XP_FOR_LEVEL = (lvl: number) =>
   LEVEL_THRESHOLDS[Math.min(lvl, LEVEL_THRESHOLDS.length - 1)];
+
+const isLimited = (c: Crop) =>
+  c.rarity === "rare" || c.rarity === "epic" || c.rarity === "legendary";
+
+function fmtTime(ms: number): string {
+  const s = Math.round(ms / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  const rem = s % 60;
+  return rem > 0 ? `${m}m ${rem}s` : `${m}m`;
+}
+
+// ─── Coin Market ──────────────────────────────────────────────────────────────
+// The SKU catalog + purchase flow moved to ./useCoinStore.ts (expo-iap).
+// Displayed prices come localized straight from the store.
 
 // ─── Initial State ─────────────────────────────────────────────────────────────
 
@@ -182,15 +480,29 @@ const initialTiles = (): Tile[] =>
     waterCount: 0,
   }));
 
+/** Rolls the daily stock of rare/epic/legendary items. */
+function rollDailyStock(): Partial<Record<CropId, number>> {
+  const stock: Partial<Record<CropId, number>> = {};
+  for (const crop of CROP_LIST) {
+    if (!isLimited(crop)) continue;
+    if (Math.random() < crop.appearChance) {
+      stock[crop.id] = crop.stockPerDay;
+    }
+  }
+  return stock;
+}
+
 const INITIAL_STATE: GameState = {
   tiles: initialTiles(),
-  gold: 100,
+  gold: 50, // ↓ from 100 — tighter economy
   xp: 0,
   level: 1,
   selectedTool: "till",
   selectedCrop: "wheat",
   day: 1,
   totalHarvested: 0,
+  dailyStock: {},
+  coinsPurchased: 0,
 };
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
@@ -204,6 +516,8 @@ type Action =
   | { type: "SELECT_CROP"; crop: CropId }
   | { type: "TICK" }
   | { type: "NEXT_DAY" }
+  | { type: "BUY_COINS"; amount: number }
+  | { type: "HYDRATE"; payload: Partial<GameState> }
   | { type: "RESET" };
 
 function xpToLevel(xp: number): number {
@@ -227,6 +541,16 @@ function reducer(state: GameState, action: Action): GameState {
       if (tile.state !== "tilled") return state;
       const crop = CROPS[state.selectedCrop];
       if (state.gold < crop.seedCost) return state;
+      if (state.level < crop.minLevel) return state;
+
+      // Limited items: must have stock rolled today
+      let dailyStock = state.dailyStock;
+      if (isLimited(crop)) {
+        const left = state.dailyStock[crop.id] ?? 0;
+        if (left <= 0) return state;
+        dailyStock = { ...state.dailyStock, [crop.id]: left - 1 };
+      }
+
       const tiles = [...state.tiles];
       tiles[action.id] = {
         ...tile,
@@ -236,7 +560,7 @@ function reducer(state: GameState, action: Action): GameState {
         watered: false,
         waterCount: 0,
       };
-      return { ...state, tiles, gold: state.gold - crop.seedCost };
+      return { ...state, tiles, dailyStock, gold: state.gold - crop.seedCost };
     }
     case "WATER": {
       const tile = state.tiles[action.id];
@@ -276,28 +600,98 @@ function reducer(state: GameState, action: Action): GameState {
       return { ...state, selectedCrop: action.crop };
     case "TICK": {
       const now = Date.now();
+      let changed = false;
       const tiles = state.tiles.map((t) => {
         if (t.state !== "planted" && t.state !== "growing") return t;
         const crop = CROPS[t.cropId!];
         const boost = t.waterCount > 0 ? 0.7 : 1;
         const elapsed = now - t.plantedAt!;
         const effective = elapsed / boost;
-        if (effective >= crop.growTime)
+        if (effective >= crop.growTime) {
+          changed = true;
           return { ...t, state: "ready" as TileState };
-        if (effective >= crop.growTime * 0.5 && t.state === "planted")
+        }
+        if (effective >= crop.growTime * 0.5 && t.state === "planted") {
+          changed = true;
           return { ...t, state: "growing" as TileState, watered: false };
+        }
         return t;
       });
-      return { ...state, tiles };
+      return changed ? { ...state, tiles } : state;
     }
     case "NEXT_DAY": {
       const tiles = state.tiles.map((t) => ({ ...t, watered: false }));
-      return { ...state, tiles, day: state.day + 1 };
+      return {
+        ...state,
+        tiles,
+        day: state.day + 1,
+        dailyStock: rollDailyStock(), // 🎲 new rare roll
+      };
+    }
+    case "BUY_COINS":
+      return {
+        ...state,
+        gold: state.gold + action.amount,
+        coinsPurchased: state.coinsPurchased + action.amount,
+      };
+    case "HYDRATE": {
+      // Defensive merge: new schema fields fall back to defaults
+      const p = action.payload;
+      return {
+        ...INITIAL_STATE,
+        ...p,
+        tiles:
+          Array.isArray(p.tiles) && p.tiles.length === ROWS * COLS
+            ? (p.tiles as Tile[])
+            : initialTiles(),
+        dailyStock: p.dailyStock ?? rollDailyStock(),
+        level: xpToLevel(p.xp ?? 0),
+      };
     }
     case "RESET":
-      return INITIAL_STATE;
+      return { ...INITIAL_STATE, dailyStock: rollDailyStock() };
     default:
       return state;
+  }
+}
+
+// ─── Persistence helpers ──────────────────────────────────────────────────────
+
+function toPersistable(state: GameState) {
+  // Everything is serializable (plantedAt is epoch ms → free offline growth)
+  const {
+    tiles,
+    gold,
+    xp,
+    level,
+    selectedTool,
+    selectedCrop,
+    day,
+    totalHarvested,
+    dailyStock,
+    coinsPurchased,
+  } = state;
+  return {
+    tiles,
+    gold,
+    xp,
+    level,
+    selectedTool,
+    selectedCrop,
+    day,
+    totalHarvested,
+    dailyStock,
+    coinsPurchased,
+  };
+}
+
+async function loadSave(): Promise<Partial<GameState> | null> {
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Partial<GameState>) : null;
+  } catch (e) {
+    console.warn("[FarmGame] Failed to load save:", e);
+    return null;
   }
 }
 
@@ -365,7 +759,7 @@ function makeTileMaterials(
 
 function tileStateKey(tile: Tile): TileState | "watered" {
   if ((tile.state === "planted" || tile.state === "growing") && tile.watered)
-    return "watered"; // terra escura/úmida
+    return "watered"; // dark/moist soil
   return tile.state;
 }
 
@@ -382,23 +776,37 @@ function applyTileMat(mesh: THREE.Mesh, tile: Tile, hovered = false) {
 }
 
 // ─── Procedural plant meshes ──────────────────────────────────────────────────
-// Plantas 3D reais (3 estágios). Geometrias e materiais compartilhados a
-// nível de módulo para custo praticamente zero por tile.
+// Real 3D plants (3 stages). Materials cached per color; geometries
+// shared at module level — ~zero cost per tile.
+
+const MAT_CACHE = new Map<number, THREE.MeshLambertMaterial>();
+function lam(color: number): THREE.MeshLambertMaterial {
+  let m = MAT_CACHE.get(color);
+  if (!m) {
+    m = new THREE.MeshLambertMaterial({ color });
+    MAT_CACHE.set(color, m);
+  }
+  return m;
+}
 
 const PLANT_MAT = {
-  sprout: new THREE.MeshLambertMaterial({ color: 0x86efac }),
-  stem: new THREE.MeshLambertMaterial({ color: 0x16a34a }),
-  leaf: new THREE.MeshLambertMaterial({ color: 0x22c55e }),
-  leafDark: new THREE.MeshLambertMaterial({ color: 0x15803d }),
-  wheat: new THREE.MeshLambertMaterial({ color: 0xd9a02b }),
-  wheatTip: new THREE.MeshLambertMaterial({ color: 0xfbbf24 }),
-  corn: new THREE.MeshLambertMaterial({ color: 0xfcd34d }),
-  cornHusk: new THREE.MeshLambertMaterial({ color: 0x65a30d }),
-  carrot: new THREE.MeshLambertMaterial({ color: 0xf97316 }),
-  tomato: new THREE.MeshLambertMaterial({ color: 0xef4444 }),
-  sunPetal: new THREE.MeshLambertMaterial({ color: 0xfacc15 }),
-  sunCenter: new THREE.MeshLambertMaterial({ color: 0x78350f }),
+  sprout: lam(0x86efac),
+  stem: lam(0x16a34a),
+  leaf: lam(0x22c55e),
+  leafDark: lam(0x15803d),
+  wheatTip: lam(0xfbbf24),
+  cornHusk: lam(0x65a30d),
+  sunCenter: lam(0x78350f),
 };
+
+// Special material for the legendary crystal — self-glowing
+const CRYSTAL_MAT = new THREE.MeshPhongMaterial({
+  color: 0x22d3ee,
+  emissive: 0x0e7490,
+  shininess: 90,
+  transparent: true,
+  opacity: 0.92,
+});
 
 const PLANT_GEO = {
   sproutLeaf: new THREE.ConeGeometry(0.05, 0.2, 5),
@@ -415,6 +823,8 @@ const PLANT_GEO = {
   sunStem: new THREE.CylinderGeometry(0.03, 0.045, 0.68, 6),
   sunHead: new THREE.CylinderGeometry(0.17, 0.17, 0.05, 14),
   sunCore: new THREE.SphereGeometry(0.08, 8, 8),
+  melon: new THREE.SphereGeometry(0.22, 12, 12),
+  crystalShard: new THREE.ConeGeometry(0.07, 0.42, 6),
 };
 
 function pm(geo: THREE.BufferGeometry, mat: THREE.Material): THREE.Mesh {
@@ -423,7 +833,7 @@ function pm(geo: THREE.BufferGeometry, mat: THREE.Material): THREE.Mesh {
   return m;
 }
 
-/** Estágio 1 — broto recém-plantado (igual p/ todas as culturas) */
+/** Stage 1 — freshly planted sprout (same for all crops) */
 function buildSprout(): THREE.Group {
   const g = new THREE.Group();
   const l1 = pm(PLANT_GEO.sproutLeaf, PLANT_MAT.sprout);
@@ -436,7 +846,7 @@ function buildSprout(): THREE.Group {
   return g;
 }
 
-/** Estágio 2 — planta jovem (caule + folhas) */
+/** Stage 2 — young plant (stem + leaves) */
 function buildYoung(): THREE.Group {
   const g = new THREE.Group();
   const stem = pm(PLANT_GEO.stem, PLANT_MAT.stem);
@@ -455,95 +865,139 @@ function buildYoung(): THREE.Group {
   return g;
 }
 
-/** Estágio 3 — planta madura, visual único por cultura */
-function buildMature(cropId: CropId): THREE.Group {
+/** Stage 3 — mature plant. Archetypes parameterized by the crop's color. */
+function buildMature(crop: Crop): THREE.Group {
   const g = new THREE.Group();
+  const main = lam(crop.color3d);
 
-  if (cropId === "wheat") {
-    const offsets: [number, number][] = [
-      [0, 0],
-      [0.12, 0.06],
-      [-0.12, 0.04],
-      [0.05, -0.11],
-      [-0.07, -0.1],
-    ];
-    offsets.forEach(([x, z], i) => {
-      const stalk = pm(PLANT_GEO.stalk, PLANT_MAT.wheat);
-      stalk.position.set(x, 0.25, z);
-      stalk.rotation.z = (i % 2 === 0 ? 1 : -1) * 0.07;
-      const tip = pm(PLANT_GEO.stalkTip, PLANT_MAT.wheatTip);
-      tip.position.set(x, 0.55, z);
-      tip.rotation.z = stalk.rotation.z;
-      g.add(stalk, tip);
-    });
-  } else if (cropId === "corn") {
-    const stem = pm(PLANT_GEO.tallStem, PLANT_MAT.cornHusk);
-    stem.position.y = 0.31;
-    g.add(stem);
-    const ear = pm(PLANT_GEO.ear, PLANT_MAT.corn);
-    ear.scale.set(1, 1.7, 1);
-    ear.position.set(0.1, 0.34, 0);
-    ear.rotation.z = -0.2;
-    g.add(ear);
-    for (let i = 0; i < 2; i++) {
+  switch (crop.visual) {
+    case "wheat": {
+      const offsets: [number, number][] = [
+        [0, 0],
+        [0.12, 0.06],
+        [-0.12, 0.04],
+        [0.05, -0.11],
+        [-0.07, -0.1],
+      ];
+      const tipMat =
+        crop.id === "golden_wheat" ? lam(0xfff3b0) : PLANT_MAT.wheatTip;
+      offsets.forEach(([x, z], i) => {
+        const stalk = pm(PLANT_GEO.stalk, main);
+        stalk.position.set(x, 0.25, z);
+        stalk.rotation.z = (i % 2 === 0 ? 1 : -1) * 0.07;
+        const tip = pm(PLANT_GEO.stalkTip, tipMat);
+        tip.position.set(x, 0.55, z);
+        tip.rotation.z = stalk.rotation.z;
+        g.add(stalk, tip);
+      });
+      break;
+    }
+    case "corn": {
+      const stem = pm(PLANT_GEO.tallStem, PLANT_MAT.cornHusk);
+      stem.position.y = 0.31;
+      g.add(stem);
+      const ear = pm(PLANT_GEO.ear, main);
+      ear.scale.set(1, 1.7, 1);
+      ear.position.set(0.1, 0.34, 0);
+      ear.rotation.z = -0.2;
+      g.add(ear);
+      for (let i = 0; i < 2; i++) {
+        const leaf = pm(PLANT_GEO.leaf, PLANT_MAT.leaf);
+        leaf.position.set(i === 0 ? 0.12 : -0.12, 0.56, 0);
+        leaf.rotation.z = i === 0 ? -1.1 : 1.1;
+        g.add(leaf);
+      }
+      break;
+    }
+    case "carrot": {
+      const top = pm(PLANT_GEO.carrotTop, main);
+      top.position.y = 0.06;
+      g.add(top);
+      for (let i = 0; i < 4; i++) {
+        const tuft = pm(PLANT_GEO.tuft, PLANT_MAT.leafDark);
+        const pivot = new THREE.Group();
+        tuft.position.y = 0.14;
+        tuft.rotation.z = 0.35;
+        pivot.add(tuft);
+        pivot.position.y = 0.1;
+        pivot.rotation.y = i * (Math.PI / 2) + 0.4;
+        g.add(pivot);
+      }
+      break;
+    }
+    case "bush": {
+      const bush = pm(PLANT_GEO.bush, PLANT_MAT.leafDark);
+      bush.scale.set(1, 0.85, 1);
+      bush.position.y = 0.2;
+      g.add(bush);
+      const fruitPos: [number, number, number][] = [
+        [0.16, 0.26, 0.1],
+        [-0.14, 0.18, 0.14],
+        [0.02, 0.32, -0.16],
+      ];
+      fruitPos.forEach(([x, y, z]) => {
+        const f = pm(PLANT_GEO.fruit, main);
+        f.position.set(x, y, z);
+        g.add(f);
+      });
+      break;
+    }
+    case "melon": {
+      // big fruit "on the ground" (pumpkin, watermelon, potato...)
+      const body = pm(PLANT_GEO.melon, main);
+      body.scale.set(1, 0.8, 1);
+      body.position.y = 0.16;
+      g.add(body);
       const leaf = pm(PLANT_GEO.leaf, PLANT_MAT.leaf);
-      leaf.position.set(i === 0 ? 0.12 : -0.12, 0.56, 0);
-      leaf.rotation.z = i === 0 ? -1.1 : 1.1;
+      leaf.position.set(0.06, 0.34, 0);
+      leaf.rotation.z = -0.7;
       g.add(leaf);
+      break;
     }
-  } else if (cropId === "carrot") {
-    // topo da cenoura aparecendo na terra + ramas verdes
-    const top = pm(PLANT_GEO.carrotTop, PLANT_MAT.carrot);
-    top.position.y = 0.06;
-    g.add(top);
-    for (let i = 0; i < 4; i++) {
-      const tuft = pm(PLANT_GEO.tuft, PLANT_MAT.leafDark);
-      const pivot = new THREE.Group();
-      tuft.position.y = 0.14;
-      tuft.rotation.z = 0.35;
-      pivot.add(tuft);
-      pivot.position.y = 0.1;
-      pivot.rotation.y = i * (Math.PI / 2) + 0.4;
-      g.add(pivot);
+    case "crystal": {
+      // cluster of glowing crystals (legendary)
+      const offs: [number, number, number, number][] = [
+        [0, 0.2, 0, 1.15],
+        [0.11, 0.14, 0.06, 0.8],
+        [-0.1, 0.13, 0.08, 0.7],
+        [0.04, 0.12, -0.12, 0.6],
+      ];
+      offs.forEach(([x, y, z, sc]) => {
+        const shard = pm(PLANT_GEO.crystalShard, CRYSTAL_MAT);
+        shard.position.set(x, y, z);
+        shard.scale.setScalar(sc);
+        shard.rotation.set((Math.abs(x) + Math.abs(z)) * 1.2, 0, x * 1.5);
+        g.add(shard);
+      });
+      break;
     }
-  } else if (cropId === "tomato") {
-    const bush = pm(PLANT_GEO.bush, PLANT_MAT.leafDark);
-    bush.scale.set(1, 0.85, 1);
-    bush.position.y = 0.2;
-    g.add(bush);
-    const fruitPos: [number, number, number][] = [
-      [0.16, 0.26, 0.1],
-      [-0.14, 0.18, 0.14],
-      [0.02, 0.32, -0.16],
-    ];
-    fruitPos.forEach(([x, y, z]) => {
-      const f = pm(PLANT_GEO.fruit, PLANT_MAT.tomato);
-      f.position.set(x, y, z);
-      g.add(f);
-    });
-  } else {
-    // sunflower
-    const stem = pm(PLANT_GEO.sunStem, PLANT_MAT.stem);
-    stem.position.y = 0.34;
-    g.add(stem);
-    const head = pm(PLANT_GEO.sunHead, PLANT_MAT.sunPetal);
-    head.position.set(0, 0.7, 0.04);
-    head.rotation.x = -0.95; // inclina o disco para "olhar" para a câmera
-    const core = pm(PLANT_GEO.sunCore, PLANT_MAT.sunCenter);
-    core.scale.set(1, 0.5, 1);
-    core.position.y = 0.04; // ao longo do eixo do disco
-    head.add(core);
-    g.add(head);
-    const leaf = pm(PLANT_GEO.leaf, PLANT_MAT.leaf);
-    leaf.position.set(0.1, 0.3, 0);
-    leaf.rotation.z = -1.1;
-    g.add(leaf);
+    case "sunflower":
+    default: {
+      const stem = pm(PLANT_GEO.sunStem, PLANT_MAT.stem);
+      stem.position.y = 0.34;
+      g.add(stem);
+      const head = pm(PLANT_GEO.sunHead, main);
+      head.position.set(0, 0.7, 0.04);
+      head.rotation.x = -0.95; // tilts the disc to "look" at the camera
+      const coreMat =
+        crop.id === "star_fruit" ? lam(0xffffff) : PLANT_MAT.sunCenter;
+      const core = pm(PLANT_GEO.sunCore, coreMat);
+      core.scale.set(1, 0.5, 1);
+      core.position.y = 0.04; // along the disc's axis
+      head.add(core);
+      g.add(head);
+      const leaf = pm(PLANT_GEO.leaf, PLANT_MAT.leaf);
+      leaf.position.set(0.1, 0.3, 0);
+      leaf.rotation.z = -1.1;
+      g.add(leaf);
+      break;
+    }
   }
 
   return g;
 }
 
-/** Chave de cache: só reconstruímos o mesh quando o estágio muda */
+/** Cache key: we only rebuild the mesh when the stage changes */
 function plantKey(t: Tile): string | null {
   if (t.state === "planted") return "planted";
   if (t.state === "growing") return "growing";
@@ -554,7 +1008,7 @@ function plantKey(t: Tile): string | null {
 function buildPlant(t: Tile): THREE.Group | null {
   if (t.state === "planted") return buildSprout();
   if (t.state === "growing") return buildYoung();
-  if (t.state === "ready" && t.cropId) return buildMature(t.cropId);
+  if (t.state === "ready" && t.cropId) return buildMature(CROPS[t.cropId]);
   return null;
 }
 
@@ -638,9 +1092,6 @@ interface SceneRefs {
 }
 
 // ─── Liquid Glass wrapper ─────────────────────────────────────────────────────
-// BlurView (expo-blur) + véu branco translúcido + borda clara = "liquid glass".
-// No Android, experimentalBlurMethod ativa blur real; sem ele cai num
-// fallback semitransparente que continua bonito.
 
 const Glass: React.FC<{
   style?: any;
@@ -659,7 +1110,10 @@ const Glass: React.FC<{
 
 // ─── Animated Gold Counter ────────────────────────────────────────────────────
 
-const GoldCounter: React.FC<{ gold: number }> = ({ gold }) => {
+const GoldCounter: React.FC<{ gold: number; onPress?: () => void }> = ({
+  gold,
+  onPress,
+}) => {
   const anim = useRef(new Animated.Value(gold)).current;
   const [display, setDisplay] = useState(gold);
 
@@ -678,10 +1132,17 @@ const GoldCounter: React.FC<{ gold: number }> = ({ gold }) => {
   }, [gold]);
 
   return (
-    <View style={s.goldChip}>
-      <Text style={s.goldIcon}>💰</Text>
-      <Text style={s.goldTxt}>{display.toLocaleString()}</Text>
-    </View>
+    <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+      <View style={s.goldChip}>
+        <Text style={s.goldIcon}>💰</Text>
+        <Text style={s.goldTxt}>{display.toLocaleString()}</Text>
+        {onPress && (
+          <View style={s.goldPlus}>
+            <Text style={s.goldPlusTxt}>+</Text>
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -753,10 +1214,22 @@ const FloatLabel: React.FC<{ label: FloatingLabel }> = ({ label }) => {
 const ShopModal: React.FC<{
   visible: boolean;
   gold: number;
+  level: number;
   selectedCrop: CropId;
+  dailyStock: Partial<Record<CropId, number>>;
   onSelectCrop: (id: CropId) => void;
+  onOpenMarket: () => void;
   onClose: () => void;
-}> = ({ visible, gold, selectedCrop, onSelectCrop, onClose }) => {
+}> = ({
+  visible,
+  gold,
+  level,
+  selectedCrop,
+  dailyStock,
+  onSelectCrop,
+  onOpenMarket,
+  onClose,
+}) => {
   const slide = useRef(new Animated.Value(600)).current;
 
   useEffect(() => {
@@ -766,6 +1239,207 @@ const ShopModal: React.FC<{
       friction: 7,
     }).start();
   }, [visible]);
+
+  // Group by rarity to render sections
+  const sections = useMemo(() => {
+    const map = new Map<Rarity, Crop[]>();
+    CROP_LIST.forEach((c) => {
+      const arr = map.get(c.rarity) ?? [];
+      arr.push(c);
+      map.set(c.rarity, arr);
+    });
+    return [...map.entries()];
+  }, []);
+
+  return (
+    <Modal
+      transparent
+      animationType="none"
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <Pressable style={s.modalOverlay} onPress={onClose}>
+        <Animated.View
+          style={[s.shopPanel, { transform: [{ translateY: slide }] }]}
+        >
+          <Pressable style={{ flexShrink: 1 }}>
+            <View style={s.shopHandle} />
+            <View style={s.shopHeader}>
+              <View>
+                <Text style={s.shopTitle}>🌿 Seed Shop</Text>
+                <Text style={s.shopGold}>💰 {gold.toLocaleString()} coins</Text>
+              </View>
+              <TouchableOpacity
+                style={s.getCoinsBtn}
+                onPress={onOpenMarket}
+                activeOpacity={0.85}
+              >
+                <Text style={s.getCoinsTxt}>+ Coins</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView
+              style={{ flexGrow: 0 }}
+              showsVerticalScrollIndicator={false}
+            >
+              {sections.map(([rarity, crops]) => {
+                const meta = RARITY_META[rarity];
+                return (
+                  <View key={rarity}>
+                    <View style={s.raritySection}>
+                      <View
+                        style={[s.rarityDot, { backgroundColor: meta.color }]}
+                      />
+                      <Text style={[s.rarityTitle, { color: meta.color }]}>
+                        {meta.label}
+                      </Text>
+                      {rarity !== "common" && rarity !== "uncommon" && (
+                        <Text style={s.rarityHint}>· daily rotation</Text>
+                      )}
+                    </View>
+
+                    {crops.map((crop) => {
+                      const limited = isLimited(crop);
+                      const stock = limited
+                        ? (dailyStock[crop.id] ?? 0)
+                        : Infinity;
+                      const inShopToday =
+                        !limited || dailyStock[crop.id] !== undefined;
+                      const locked = level < crop.minLevel;
+                      const soldOut = limited && inShopToday && stock <= 0;
+                      const canAfford = gold >= crop.seedCost;
+                      const selected = selectedCrop === crop.id;
+                      const buyable =
+                        !locked && inShopToday && !soldOut && canAfford;
+
+                      // Mystery slot: rare item not rolled today
+                      if (limited && !inShopToday) {
+                        return (
+                          <View key={crop.id} style={[s.cropRow, s.mysteryRow]}>
+                            <Text style={s.cropEm}>❔</Text>
+                            <View style={{ flex: 1 }}>
+                              <Text style={s.mysteryName}>
+                                Mystery {meta.label}
+                              </Text>
+                              <Text style={s.cropDet}>
+                                Might appear tomorrow… check back daily! 🎲
+                              </Text>
+                            </View>
+                          </View>
+                        );
+                      }
+
+                      return (
+                        <TouchableOpacity
+                          key={crop.id}
+                          style={[
+                            s.cropRow,
+                            selected && s.cropRowSel,
+                            !buyable && s.cropRowDim,
+                            limited && {
+                              borderColor: selected
+                                ? meta.color
+                                : `${crop.color}55`,
+                            },
+                          ]}
+                          onPress={() => {
+                            if (!canAfford) {
+                              // No coins → push to the market 💸
+                              onOpenMarket();
+                              return;
+                            }
+                            onSelectCrop(crop.id);
+                            onClose();
+                          }}
+                          disabled={locked || soldOut}
+                          activeOpacity={0.75}
+                        >
+                          <Text style={s.cropEm}>{crop.emoji}</Text>
+                          <View style={{ flex: 1 }}>
+                            <View style={s.cropNameRow}>
+                              <Text style={s.cropName}>{crop.name}</Text>
+                              {limited && !soldOut && (
+                                <View
+                                  style={[
+                                    s.stockBadge,
+                                    { backgroundColor: meta.color },
+                                  ]}
+                                >
+                                  <Text style={s.stockBadgeTxt}>
+                                    {stock} today
+                                  </Text>
+                                </View>
+                              )}
+                              {soldOut && (
+                                <View style={[s.stockBadge, s.soldOutBadge]}>
+                                  <Text style={s.stockBadgeTxt}>SOLD OUT</Text>
+                                </View>
+                              )}
+                            </View>
+                            <Text style={s.cropDet}>
+                              {locked
+                                ? `🔒 Unlocks at level ${crop.minLevel}`
+                                : `⏱ ${fmtTime(crop.growTime)} · 🌾 Sell: ${crop.price.toLocaleString()} · 🌱 Seed: ${crop.seedCost.toLocaleString()}`}
+                            </Text>
+                          </View>
+                          <View
+                            style={[s.xpBadge, { backgroundColor: crop.color }]}
+                          >
+                            <Text style={s.xpBadgeTxt}>+{crop.xp}XP</Text>
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                );
+              })}
+            </ScrollView>
+
+            <TouchableOpacity style={s.closeBtn} onPress={onClose}>
+              <Text style={s.closeBtnTxt}>Close</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Animated.View>
+      </Pressable>
+    </Modal>
+  );
+};
+
+// ─── Coin Market Modal ────────────────────────────────────────────────────────
+// Localized prices come from the store (pack.displayPrice). The real
+// purchase is triggered by onBuy(sku) → useCoinStore → native store sheet.
+
+const MarketModal: React.FC<{
+  visible: boolean;
+  gold: number;
+  packs: StorePack[];
+  connected: boolean;
+  purchasingSku: string | null;
+  storeError: string | null;
+  onBuy: (sku: string) => void;
+  onClose: () => void;
+}> = ({
+  visible,
+  gold,
+  packs,
+  connected,
+  purchasingSku,
+  storeError,
+  onBuy,
+  onClose,
+}) => {
+  const slide = useRef(new Animated.Value(600)).current;
+
+  useEffect(() => {
+    Animated.spring(slide, {
+      toValue: visible ? 0 : 600,
+      useNativeDriver: true,
+      friction: 7,
+    }).start();
+  }, [visible]);
+
+  const anySimulated = packs.some((p) => p.simulated && p.available);
+  const loading = !connected && !anySimulated;
 
   return (
     <Modal
@@ -780,41 +1454,68 @@ const ShopModal: React.FC<{
         >
           <Pressable>
             <View style={s.shopHandle} />
-            <Text style={s.shopTitle}>🌿 Seed Shop</Text>
-            <Text style={s.shopGold}>💰 {gold} coins available</Text>
+            <Text style={s.shopTitle}>🏦 Coin Market</Text>
+            <Text style={s.shopGold}>
+              Current balance: 💰 {gold.toLocaleString()}
+            </Text>
+            <Text style={s.marketSub}>
+              Out of coins for that rare seed? Grab a pack 👇
+            </Text>
 
-            {(Object.values(CROPS) as Crop[]).map((crop) => {
-              const canAfford = gold >= crop.seedCost;
-              const selected = selectedCrop === crop.id;
+            {loading && (
+              <Text style={s.storeStatus}>Connecting to the store… ⏳</Text>
+            )}
+
+            {!!storeError && <Text style={s.storeError}>⚠️ {storeError}</Text>}
+
+            {packs.map((pack) => {
+              const total = pack.coins + pack.bonus;
+              const busy = purchasingSku === pack.sku;
+              const disabled = !pack.available || !!purchasingSku;
               return (
                 <TouchableOpacity
-                  key={crop.id}
+                  key={pack.sku}
                   style={[
-                    s.cropRow,
-                    selected && s.cropRowSel,
-                    !canAfford && s.cropRowDim,
+                    s.packRow,
+                    pack.tag && s.packRowHot,
+                    !pack.available && s.packRowDim,
                   ]}
-                  onPress={() => {
-                    onSelectCrop(crop.id);
-                    onClose();
-                  }}
-                  disabled={!canAfford}
-                  activeOpacity={0.75}
+                  onPress={() => onBuy(pack.sku)}
+                  activeOpacity={0.8}
+                  disabled={disabled}
                 >
-                  <Text style={s.cropEm}>{crop.emoji}</Text>
+                  {pack.tag && (
+                    <View style={s.packTag}>
+                      <Text style={s.packTagTxt}>{pack.tag}</Text>
+                    </View>
+                  )}
+                  <Text style={s.packEm}>{pack.emoji}</Text>
                   <View style={{ flex: 1 }}>
-                    <Text style={s.cropName}>{crop.name}</Text>
-                    <Text style={s.cropDet}>
-                      ⏱ {crop.growTime / 1000}s · 🌾 Sell: {crop.price} · 🌱
-                      Seed: {crop.seedCost}
+                    <Text style={s.packCoins}>
+                      {total.toLocaleString()} coins
                     </Text>
+                    {pack.bonus > 0 && (
+                      <Text style={s.packBonus}>
+                        {pack.coins.toLocaleString()} +{" "}
+                        {pack.bonus.toLocaleString()} bonus 🎁
+                      </Text>
+                    )}
                   </View>
-                  <View style={[s.xpBadge, { backgroundColor: crop.color }]}>
-                    <Text style={s.xpBadgeTxt}>+{crop.xp}XP</Text>
+                  <View style={[s.packPrice, busy && s.packPriceBusy]}>
+                    <Text style={s.packPriceTxt}>
+                      {busy ? "..." : pack.displayPrice}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               );
             })}
+
+            {anySimulated && (
+              <Text style={s.marketDisclaimer}>
+                Dev mode: store unavailable (Expo Go?) — simulated purchase, no
+                real money is charged.
+              </Text>
+            )}
 
             <TouchableOpacity style={s.closeBtn} onPress={onClose}>
               <Text style={s.closeBtnTxt}>Close</Text>
@@ -865,8 +1566,11 @@ const DayModal: React.FC<{
         <Animated.View style={[s.dayCard, { transform: [{ scale: sc }] }]}>
           <Text style={s.daySun}>🌅</Text>
           <Text style={s.dayTitle}>Day {day} Complete!</Text>
-          <Text style={s.dayStat}>💰 Total coins: {gold}</Text>
+          <Text style={s.dayStat}>💰 Total coins: {gold.toLocaleString()}</Text>
           <Text style={s.dayStat}>🧺 Total harvested: {totalHarvested}</Text>
+          <Text style={s.dayHint}>
+            🎲 The shop rolls new rare seeds tomorrow!
+          </Text>
           <TouchableOpacity style={s.dayBtn} onPress={onClose}>
             <Text style={s.dayBtnTxt}>Next Day ➡</Text>
           </TouchableOpacity>
@@ -890,10 +1594,58 @@ function FarmGameInner() {
     stateRef.current = state;
   }, [state]);
 
+  const [hydrated, setHydrated] = useState(false);
   const [shopVisible, setShopVisible] = useState(false);
+  const [marketVisible, setMarketVisible] = useState(false);
   const [dayModalVisible, setDayModalVisible] = useState(false);
   const [floatLabels, setFloatLabels] = useState<FloatingLabel[]>([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
+
+  // ── IAP: coin store (expo-iap) ──────────────────────────────────────────────
+  // onCoinsGranted only fires after a completed purchase + dedupe (and, in
+  // production, after receipt validation inside useCoinStore).
+
+  const coinStore = useCoinStore({
+    onCoinsGranted: (coins) => {
+      dispatch({ type: "BUY_COINS", amount: coins });
+      Vibration.vibrate([0, 30, 40, 30]);
+      setMarketVisible(false);
+    },
+  });
+
+  // ── Persistence: load on mount ──────────────────────────────────────────────
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const save = await loadSave();
+      if (cancelled) return;
+      if (save) {
+        dispatch({ type: "HYDRATE", payload: save });
+        // Immediate TICK: plants that grew offline become "ready" right away
+        setTimeout(() => dispatch({ type: "TICK" }), 0);
+      } else {
+        dispatch({ type: "HYDRATE", payload: {} }); // rolls the first stock
+      }
+      setHydrated(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // ── Persistence: debounced save on every change ─────────────────────────────
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const t = setTimeout(() => {
+      AsyncStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(toPersistable(state)),
+      ).catch((e) => console.warn("[FarmGame] Failed to save:", e));
+    }, SAVE_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [state, hydrated]);
 
   // GL drawing buffer size (PHYSICAL pixels)
   const glSize = useRef({ w: 1, h: 1 });
@@ -914,7 +1666,6 @@ function FarmGameInner() {
 
   // ── HUD animations ──────────────────────────────────────────────────────────
 
-  // Pulso contínuo (usado no badge de "pronto p/ colher")
   const pulse = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.loop(
@@ -939,11 +1690,10 @@ function FarmGameInner() {
     outputRange: [1, 1.12],
   });
 
-  // Banner de LEVEL UP
   const prevLevel = useRef(state.level);
   const lvlAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    if (state.level > prevLevel.current) {
+    if (hydrated && state.level > prevLevel.current) {
       setShowLevelUp(true);
       lvlAnim.setValue(0);
       Animated.sequence([
@@ -962,7 +1712,7 @@ function FarmGameInner() {
       Vibration.vibrate([0, 40, 60, 40]);
     }
     prevLevel.current = state.level;
-  }, [state.level]);
+  }, [state.level, hydrated]);
   const lvlScale = lvlAnim.interpolate({
     inputRange: [0, 1, 2],
     outputRange: [0.3, 1, 1.15],
@@ -1022,6 +1772,11 @@ function FarmGameInner() {
         const crop = CROPS[st.selectedCrop];
         if (st.gold < crop.seedCost) {
           spawnLabel(tileId, "❌ No coins!", "#EF4444");
+          setMarketVisible(true); // 💸 out of coins → show the market
+          return;
+        }
+        if (isLimited(crop) && (st.dailyStock[crop.id] ?? 0) <= 0) {
+          spawnLabel(tileId, "❌ Out of stock today!", "#EF4444");
           return;
         }
         dispatch({ type: "PLANT", id: tileId });
@@ -1060,8 +1815,6 @@ function FarmGameInner() {
   );
 
   // ── Sync Three.js scene when game state changes ─────────────────────────────
-  // Gerencia plantas 3D por estágio. O mesh só é reconstruído quando o
-  // estágio muda (planted → growing → ready).
 
   useEffect(() => {
     const r = refs.current;
@@ -1073,7 +1826,7 @@ function FarmGameInner() {
 
       const want = plantKey(tile);
       const cur = r.plantObjs[id];
-      if (cur && cur.userData.key === want) return; // estágio inalterado
+      if (cur && cur.userData.key === want) return; // stage unchanged
 
       if (cur) {
         r.scene!.remove(cur);
@@ -1083,10 +1836,10 @@ function FarmGameInner() {
 
       const g = buildPlant(tile)!;
       g.userData.key = want;
-      g.userData.spawnAt = performance.now(); // anima o "pop" de entrada
+      g.userData.spawnAt = performance.now(); // animates the entry "pop"
       const pos = tileWorldPos(id);
       g.position.set(pos.x, TILE_H / 2, pos.z);
-      g.rotation.y = (id % 7) * 0.9; // variação determinística entre tiles
+      g.rotation.y = (id % 7) * 0.9; // deterministic variation across tiles
       r.scene!.add(g);
       r.plantObjs[id] = g;
     });
@@ -1153,7 +1906,7 @@ function FarmGameInner() {
       r.tileObjs[id] = mesh;
     }
 
-    // Caso o estado já tenha plantas (hot reload), sincroniza uma vez
+    // Sync existing state (restored save or hot reload)
     stateRef.current.tiles.forEach((tile, id) => {
       const want = plantKey(tile);
       if (!want) return;
@@ -1168,7 +1921,7 @@ function FarmGameInner() {
       applyTileMat(r.tileObjs[id], tile);
     });
 
-    // Render loop — pop-in das plantas + balanço das prontas
+    // Render loop — plant pop-in + swaying of ready crops
     let lastT = performance.now();
     const animate = () => {
       r.animFrame = requestAnimationFrame(animate);
@@ -1182,7 +1935,7 @@ function FarmGameInner() {
         const g = r.plantObjs[i];
         if (!g) return;
 
-        // animação de entrada (pop)
+        // entry animation (pop)
         const age = now - (g.userData.spawnAt ?? now);
         let sc = 1;
         if (age < 350) sc = 0.4 + 0.6 * Math.min(1, age / 350);
@@ -1191,7 +1944,7 @@ function FarmGameInner() {
           sc *= 1 + 0.06 * Math.sin(r.readyAnim + i);
           g.rotation.z = 0.05 * Math.sin(r.readyAnim * 1.3 + i);
         } else {
-          g.rotation.z = 0.02 * Math.sin(r.readyAnim * 0.7 + i); // brisa leve
+          g.rotation.z = 0.02 * Math.sin(r.readyAnim * 0.7 + i); // light breeze
         }
         g.scale.set(sc, sc, sc);
       });
@@ -1303,21 +2056,22 @@ function FarmGameInner() {
 
   const activeTool = TOOLS.find((t) => t.id === state.selectedTool)!;
   const crop = CROPS[state.selectedCrop];
+  const cropRarity = RARITY_META[crop.rarity];
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || !hydrated) return null;
 
   // ─────────────────────────────────────────────────────────────────────────────
 
   return (
     <View style={s.root}>
-      {/* Status bar translúcida — o verde do header aparece por trás */}
+      {/* Translucent status bar — the header green shows through behind it */}
       <StatusBar
         barStyle="light-content"
         translucent
         backgroundColor="transparent"
       />
 
-      {/* ── Header (paddingTop = inset → o verde cobre a status bar) ── */}
+      {/* ── Header (paddingTop = inset → green covers the status bar) ── */}
       <View style={[s.headerWrap, { paddingTop: insets.top + 6 }]}>
         <View style={s.header}>
           <View style={s.headerLeft}>
@@ -1334,7 +2088,10 @@ function FarmGameInner() {
           </View>
 
           <View style={s.chips}>
-            <GoldCounter gold={state.gold} />
+            <GoldCounter
+              gold={state.gold}
+              onPress={() => setMarketVisible(true)}
+            />
             {readyCount > 0 && (
               <Animated.View
                 style={[s.readyChip, { transform: [{ scale: pulseScale }] }]}
@@ -1348,7 +2105,7 @@ function FarmGameInner() {
         <XPBar xp={state.xp} level={state.level} />
       </View>
 
-      {/* ── 3D Canvas — vai até o fim da tela; HUD flutua por cima ── */}
+      {/* ── 3D Canvas — extends to the bottom of the screen; HUD floats on top ── */}
       <View style={s.canvasWrap} onLayout={onCanvasLayout}>
         <GLView
           style={StyleSheet.absoluteFill}
@@ -1357,7 +2114,7 @@ function FarmGameInner() {
           onTouchEnd={onTouchEnd}
         />
 
-        {/* Dica contextual — chip de vidro flutuante */}
+        {/* Contextual hint — floating glass chip */}
         <Glass style={s.hintChip} intensity={35}>
           <View style={[s.hintDot, { backgroundColor: activeTool.color }]} />
           <Text style={s.hintTxt}>
@@ -1390,12 +2147,12 @@ function FarmGameInner() {
           </Animated.View>
         )}
 
-        {/* ── Footer flutuante em liquid glass ── */}
+        {/* ── Floating liquid-glass footer ── */}
         <View
           style={[s.floatFooter, { bottom: insets.bottom + 14 }]}
           pointerEvents="box-none"
         >
-          {/* Linha de FABs + chip da semente */}
+          {/* FAB row + selected seed chip */}
           <View style={s.fabRow} pointerEvents="box-none">
             <TouchableOpacity
               onPress={() => setShopVisible(true)}
@@ -1416,8 +2173,22 @@ function FarmGameInner() {
               <Glass style={s.cropChip}>
                 <Text style={s.cropChipEm}>{crop.emoji}</Text>
                 <View>
-                  <Text style={s.cropChipName}>{crop.name}</Text>
-                  <Text style={s.cropChipCost}>🌱 {crop.seedCost} coins</Text>
+                  <View style={s.cropChipTop}>
+                    <Text style={s.cropChipName}>{crop.name}</Text>
+                    <View
+                      style={[
+                        s.cropChipRarity,
+                        { backgroundColor: cropRarity.color },
+                      ]}
+                    >
+                      <Text style={s.cropChipRarityTxt}>
+                        {cropRarity.label}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={s.cropChipCost}>
+                    🌱 {crop.seedCost.toLocaleString()} coins
+                  </Text>
                 </View>
               </Glass>
             </TouchableOpacity>
@@ -1434,7 +2205,7 @@ function FarmGameInner() {
             </TouchableOpacity>
           </View>
 
-          {/* Dock de ferramentas em vidro */}
+          {/* Glass tool dock */}
           <View style={s.floatShadow}>
             <Glass style={s.toolDock} intensity={55}>
               {TOOLS.map((tool) => {
@@ -1475,9 +2246,28 @@ function FarmGameInner() {
       <ShopModal
         visible={shopVisible}
         gold={state.gold}
+        level={state.level}
         selectedCrop={state.selectedCrop}
+        dailyStock={state.dailyStock}
         onSelectCrop={(c) => dispatch({ type: "SELECT_CROP", crop: c })}
+        onOpenMarket={() => {
+          setShopVisible(false);
+          setMarketVisible(true);
+        }}
         onClose={() => setShopVisible(false)}
+      />
+      <MarketModal
+        visible={marketVisible}
+        gold={state.gold}
+        packs={coinStore.packs}
+        connected={coinStore.connected}
+        purchasingSku={coinStore.purchasingSku}
+        storeError={coinStore.storeError}
+        onBuy={coinStore.buy}
+        onClose={() => {
+          coinStore.clearError();
+          setMarketVisible(false);
+        }}
       />
       <DayModal
         visible={dayModalVisible}
@@ -1515,13 +2305,13 @@ const P = {
   goldLight: "#FBBF24",
   white: "#FFFFFF",
   gray1: "#F5F5F4",
-  ink: "#14532D", // texto escuro sobre vidro
+  ink: "#14532D", // dark text over glass
 };
 
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#87CEEB" },
 
-  // Header (cobre a status bar)
+  // Header (covers the status bar)
   headerWrap: { backgroundColor: P.green1 },
   header: {
     flexDirection: "row",
@@ -1583,6 +2373,21 @@ const s = StyleSheet.create({
   },
   goldIcon: { fontSize: 13 },
   goldTxt: { color: P.goldLight, fontFamily: FF, fontSize: 13 },
+  goldPlus: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: P.goldLight,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 1,
+  },
+  goldPlusTxt: {
+    fontFamily: FF,
+    fontSize: 11,
+    color: P.greenDeep,
+    lineHeight: 13,
+  },
   readyChip: {
     backgroundColor: P.cream,
     paddingHorizontal: 10,
@@ -1654,7 +2459,7 @@ const s = StyleSheet.create({
     }),
   },
 
-  // Hint chip (vidro, topo do cenário)
+  // Hint chip (glass, top of the scene)
   hintChip: {
     position: "absolute",
     top: 12,
@@ -1691,7 +2496,7 @@ const s = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  // ── Footer flutuante ──
+  // ── Floating footer ──
   floatFooter: {
     position: "absolute",
     left: 14,
@@ -1721,10 +2526,17 @@ const s = StyleSheet.create({
     borderRadius: 26,
   },
   cropChipEm: { fontSize: 21 },
+  cropChipTop: { flexDirection: "row", alignItems: "center", gap: 5 },
   cropChipName: { fontSize: 12, fontFamily: FF, color: P.ink },
+  cropChipRarity: {
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 6,
+  },
+  cropChipRarityTxt: { fontSize: 7, fontFamily: FF, color: P.white },
   cropChipCost: { fontSize: 9, fontFamily: FF, color: P.brown2 },
 
-  // Dock de ferramentas (vidro)
+  // Tool dock (glass)
   toolDock: {
     flexDirection: "row",
     gap: 5,
@@ -1794,8 +2606,33 @@ const s = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 14,
   },
+  shopHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
   shopTitle: { fontSize: 19, fontFamily: FF, color: P.green1, marginBottom: 3 },
-  shopGold: { fontSize: 13, fontFamily: FF, color: P.brown2, marginBottom: 14 },
+  shopGold: { fontSize: 13, fontFamily: FF, color: P.brown2 },
+  getCoinsBtn: {
+    backgroundColor: P.gold,
+    paddingHorizontal: 13,
+    paddingVertical: 8,
+    borderRadius: 18,
+  },
+  getCoinsTxt: { fontFamily: FF, fontSize: 12, color: P.white },
+
+  raritySection: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 10,
+    marginBottom: 6,
+  },
+  rarityDot: { width: 8, height: 8, borderRadius: 4 },
+  rarityTitle: { fontFamily: FF, fontSize: 12, letterSpacing: 0.5 },
+  rarityHint: { fontFamily: FF, fontSize: 10, color: "#9CA3AF" },
+
   cropRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1808,10 +2645,24 @@ const s = StyleSheet.create({
     borderColor: "transparent",
   },
   cropRowSel: { borderColor: P.green2, backgroundColor: P.green3 },
-  cropRowDim: { opacity: 0.4 },
+  cropRowDim: { opacity: 0.45 },
+  mysteryRow: {
+    backgroundColor: "#F8FAFC",
+    borderStyle: "dashed",
+    borderColor: "#CBD5E1",
+  },
+  mysteryName: { fontSize: 14, fontFamily: FF, color: "#64748B" },
   cropEm: { fontSize: 27 },
+  cropNameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   cropName: { fontSize: 14, fontFamily: FF, color: "#1F2937" },
   cropDet: { fontSize: 11, fontFamily: FF, color: "#6B7280", marginTop: 2 },
+  stockBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 7,
+  },
+  soldOutBadge: { backgroundColor: "#9CA3AF" },
+  stockBadgeTxt: { fontSize: 8, fontFamily: FF, color: P.white },
   xpBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 7 },
   xpBadgeTxt: { color: P.white, fontFamily: FF, fontSize: 10 },
   closeBtn: {
@@ -1822,6 +2673,82 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   closeBtnTxt: { fontFamily: FF, color: "#374151", fontSize: 13 },
+
+  // Coin market
+  marketSub: {
+    fontSize: 12,
+    fontFamily: FF,
+    color: "#6B7280",
+    marginTop: 6,
+    marginBottom: 12,
+  },
+  packRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    padding: 13,
+    borderRadius: 14,
+    backgroundColor: P.gray1,
+    marginBottom: 8,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  packRowHot: {
+    borderColor: P.goldLight,
+    backgroundColor: "#FFFBEB",
+  },
+  packRowDim: { opacity: 0.4 },
+  storeStatus: {
+    fontSize: 11,
+    fontFamily: FF,
+    color: "#6B7280",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  storeError: {
+    fontSize: 11,
+    fontFamily: FF,
+    color: "#DC2626",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  packTag: {
+    position: "absolute",
+    top: -8,
+    right: 12,
+    backgroundColor: P.gold,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    zIndex: 2,
+  },
+  packTagTxt: {
+    fontFamily: FF,
+    fontSize: 8,
+    color: P.white,
+    letterSpacing: 0.5,
+  },
+  packEm: { fontSize: 28 },
+  packCoins: { fontSize: 15, fontFamily: FF, color: "#1F2937" },
+  packBonus: { fontSize: 10, fontFamily: FF, color: P.green2, marginTop: 2 },
+  packPrice: {
+    backgroundColor: P.green2,
+    paddingHorizontal: 13,
+    paddingVertical: 9,
+    borderRadius: 11,
+    minWidth: 84,
+    alignItems: "center",
+  },
+  packPriceTxt: { fontFamily: FF, fontSize: 12, color: P.white },
+  packPriceBusy: { backgroundColor: "#86EFAC" },
+  marketDisclaimer: {
+    fontSize: 9,
+    fontFamily: FF,
+    color: "#9CA3AF",
+    textAlign: "center",
+    marginTop: 4,
+    marginBottom: 6,
+  },
 
   // Day modal
   dayOverlay: {
@@ -1850,6 +2777,12 @@ const s = StyleSheet.create({
   daySun: { fontSize: 52 },
   dayTitle: { fontSize: 22, fontFamily: FF, color: P.green1 },
   dayStat: { fontSize: 15, fontFamily: FF, color: "#374151" },
+  dayHint: {
+    fontSize: 11,
+    fontFamily: FF,
+    color: "#9CA3AF",
+    textAlign: "center",
+  },
   dayBtn: {
     marginTop: 8,
     backgroundColor: P.green2,
