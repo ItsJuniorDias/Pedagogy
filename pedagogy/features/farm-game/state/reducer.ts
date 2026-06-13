@@ -2,7 +2,15 @@
 import { COLS, ROWS } from "../constants";
 import { CROPS } from "../data/crops";
 import { xpToLevel } from "../data/leveling";
-import type { CropId, GameState, Tile, TileState, ToolId } from "../types";
+import { STRUCTURES } from "../data/structures";
+import type {
+  CropId,
+  GameState,
+  StructureId,
+  Tile,
+  TileState,
+  ToolId,
+} from "../types";
 import { growthMultiplier } from "./rewards";
 
 // ─── Estado inicial ─────────────────────────────────────────────────────────
@@ -15,6 +23,12 @@ export const initialTiles = (): Tile[] =>
     waterCount: 0,
   }));
 
+const noStructures = (): Record<StructureId, boolean> => ({
+  doghouse: false,
+  barn: false,
+  beehive: false,
+});
+
 export const INITIAL_STATE: GameState = {
   tiles: initialTiles(),
   gold: 50, // ↓ de 100 — economia mais apertada
@@ -25,6 +39,7 @@ export const INITIAL_STATE: GameState = {
   day: 1,
   totalHarvested: 0,
   coinsPurchased: 0,
+  structures: noStructures(),
 };
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
@@ -39,6 +54,7 @@ export type Action =
   | { type: "TICK" }
   | { type: "NEXT_DAY" }
   | { type: "BUY_COINS"; amount: number }
+  | { type: "BUY_STRUCTURE"; id: StructureId }
   | { type: "HYDRATE"; payload: Partial<GameState> }
   | { type: "RESET" };
 
@@ -144,6 +160,17 @@ export function reducer(state: GameState, action: Action): GameState {
         gold: state.gold + action.amount,
         coinsPurchased: state.coinsPurchased + action.amount,
       };
+    case "BUY_STRUCTURE": {
+      if (state.structures[action.id]) return state; // já possui
+      const def = STRUCTURES[action.id];
+      if (state.level < def.minLevel) return state;
+      if (state.gold < def.cost) return state;
+      return {
+        ...state,
+        gold: state.gold - def.cost,
+        structures: { ...state.structures, [action.id]: true },
+      };
+    }
     case "HYDRATE": {
       // Defensive merge: campos novos caem nos defaults; saves antigos com
       // `dailyStock` são simplesmente ignorados (regra agora é por nível).
@@ -155,11 +182,12 @@ export function reducer(state: GameState, action: Action): GameState {
           Array.isArray(p.tiles) && p.tiles.length === ROWS * COLS
             ? (p.tiles as Tile[])
             : initialTiles(),
+        structures: { ...noStructures(), ...(p.structures ?? {}) },
         level: xpToLevel(p.xp ?? 0),
       };
     }
     case "RESET":
-      return { ...INITIAL_STATE };
+      return { ...INITIAL_STATE, structures: noStructures() };
     default:
       return state;
   }

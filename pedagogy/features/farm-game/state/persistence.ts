@@ -16,6 +16,7 @@ export function toPersistable(state: GameState) {
     day,
     totalHarvested,
     coinsPurchased,
+    structures,
   } = state;
   return {
     tiles,
@@ -27,6 +28,7 @@ export function toPersistable(state: GameState) {
     day,
     totalHarvested,
     coinsPurchased,
+    structures,
   };
 }
 

@@ -24,6 +24,9 @@ export type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 export type TileState = "empty" | "tilled" | "planted" | "growing" | "ready";
 export type ToolId = "till" | "seed" | "harvest" | "water";
 
+/** Construções decorativas compráveis na loja (níveis altos). */
+export type StructureId = "doghouse" | "barn" | "beehive";
+
 /** Traço único de cada semente — sua "peculiaridade". */
 export type PeculiarityId =
   | "hardy"
@@ -144,4 +147,6 @@ export interface GameState {
   totalHarvested: number;
   /** Total de moedas compradas no mercado (analytics / conquistas). */
   coinsPurchased: number;
+  /** Construções já compradas (aparecem no cenário ao redor da fazenda). */
+  structures: Record<StructureId, boolean>;
 }

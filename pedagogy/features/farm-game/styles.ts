@@ -185,6 +185,29 @@ export const s = StyleSheet.create({
   },
   hintDot: { width: 8, height: 8, borderRadius: 4 },
   hintTxt: { fontFamily: FF, fontSize: 11, color: P.ink },
+  recenterBtn: { position: "absolute", top: 10, right: 12 },
+  recenterGlass: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  recenterTxt: { fontSize: 18 },
+  buyBtn: {
+    minWidth: 64,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 13,
+    backgroundColor: P.gold,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buyBtnTxt: { fontFamily: FF, fontSize: 12, color: "#5A3A00" },
+  buyBtnOwned: { backgroundColor: "rgba(76,175,80,0.18)" },
+  buyBtnOwnedTxt: { fontFamily: FF, fontSize: 12, color: "#2E7D32" },
+  buyBtnLocked: { backgroundColor: "rgba(156,163,175,0.22)" },
+  buyBtnLockedTxt: { fontFamily: FF, fontSize: 13, color: "#6B7280" },
 
   // Level up banner
   lvlUpBanner: {

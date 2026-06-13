@@ -237,15 +237,22 @@ function FarmGameInner() {
 
   // ── Three.js scene (context, render loop, picking, touch) ───────────────────
 
-  const { onContextCreate, onCanvasLayout, onTouchStart, onTouchEnd } =
-    useFarmScene({
-      tiles: state.tiles,
-      stateRef,
-      refs: sceneRefs,
-      viewSize,
-      glSize,
-      onTilePress: handleTilePress,
-    });
+  const {
+    onContextCreate,
+    onCanvasLayout,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+    recenter,
+  } = useFarmScene({
+    tiles: state.tiles,
+    structures: state.structures,
+    stateRef,
+    refs: sceneRefs,
+    viewSize,
+    glSize,
+    onTilePress: handleTilePress,
+  });
 
   // ── Derived ──────────────────────────────────────────────────────────────────
 
@@ -332,6 +339,7 @@ function FarmGameInner() {
           style={StyleSheet.absoluteFill}
           onContextCreate={onContextCreate}
           onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         />
 
@@ -342,6 +350,17 @@ function FarmGameInner() {
             {activeTool.emoji} {HINT[state.selectedTool]}
           </Text>
         </Glass>
+
+        {/* Recenter camera — drag the field to look at the house/barn/beehive */}
+        <TouchableOpacity
+          style={s.recenterBtn}
+          onPress={recenter}
+          activeOpacity={0.8}
+        >
+          <Glass style={s.recenterGlass} intensity={45}>
+            <Text style={s.recenterTxt}>🎯</Text>
+          </Glass>
+        </TouchableOpacity>
 
         {/* Floating labels overlay */}
         {floatLabels.map((lbl) => (
@@ -472,7 +491,12 @@ function FarmGameInner() {
         gold={state.gold}
         level={state.level}
         selectedCrop={state.selectedCrop}
+        structures={state.structures}
         onSelectCrop={(c) => dispatch({ type: "SELECT_CROP", crop: c })}
+        onBuyStructure={(id) => {
+          dispatch({ type: "BUY_STRUCTURE", id });
+          Vibration.vibrate([0, 30, 40, 30]);
+        }}
         onOpenMarket={() => {
           setShopVisible(false);
           setMarketVisible(true);

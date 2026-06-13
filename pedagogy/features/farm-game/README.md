@@ -18,10 +18,11 @@ features/farm-game/
 │   ├── crops.ts              #   CROPS (1 por nível), CROP_LIST, RARITY_META,
 │   │                         #   curva nível→stats, unlockedCrops, assertLevelCurve
 │   ├── peculiarities.ts      #   PECULIARITIES (traço por semente) + effectOf
+│   ├── structures.ts         #   STRUCTURES (construções compráveis) + structurePos
 │   ├── leveling.ts           #   LEVEL_THRESHOLDS, XP_FOR_LEVEL, xpToLevel
 │   └── tools.ts              #   TOOLS
 ├── state/                    # regras como LÓGICA
-│   ├── reducer.ts            #   INITIAL_STATE, Action, reducer
+│   ├── reducer.ts            #   INITIAL_STATE, Action, reducer (inc. BUY_STRUCTURE)
 │   ├── rewards.ts            #   computeHarvest / growthMultiplier (puro, testável)
 │   ├── persistence.ts        #   toPersistable, loadSave (AsyncStorage)
 │   └── useFarmGame.ts        #   reducer + hidratação + autosave + tick
@@ -30,7 +31,8 @@ features/farm-game/
 │   ├── soil.ts               #   solo PBR procedural (noise → DataTextures)
 │   ├── plants.ts             #   buildPlant/plantKey + builder por cultura
 │   ├── grass.ts              #   buildGrassField
-│   └── useFarmScene.ts       #   SceneRefs, onContextCreate, loop, picking, toque
+│   ├── structures.ts         #   buildStructure (casinha+cão, celeiro+vaca, colmeia)
+│   └── useFarmScene.ts       #   SceneRefs, loop, picking, toque, PAN da câmera
 └── components/               # UI
     ├── Glass.tsx  GoldCounter.tsx  XPBar.tsx  FloatLabel.tsx
     └── ShopModal.tsx  MarketModal.tsx  DayModal.tsx
@@ -58,8 +60,36 @@ Aplicados de forma pura em `state/rewards.ts` (`computeHarvest`/`growthMultiplie
 e refletidos na loja, no chip da semente e — pras "vistosas" — num floreio 3D
 (`accent`) em `three/plants.ts`.
 
+## Câmera arrastável + construções compráveis
+
+A câmera ortográfica é **fixa** (nunca gira) — ela só faz **pan no plano do chão**.
+Arrastar o dedo revela o que está em cada direção (a direção do gesto = a direção
+revelada):
+
+- ⬆️ **arrastar pra cima** → a **casinha do cachorro** (com o cãozinho)
+- ➡️ **arrastar pra direita** → o **celeiro** (com a vaquinha)
+- ⬇️ **arrastar pra baixo** → a **caixa de abelha** (colmeia + abelhas + pote de mel)
+
+Tudo isso só aparece depois de **comprar na loja**, e são desbloqueios de **nível
+alto** (doghouse Lv 7, barn Lv 11, beehive Lv 14). Os modelos 3D são low-poly
+"realistas" (`MeshStandardMaterial`, com sombra), construídos em `three/structures.ts`
+e posicionados nos cantos da grama por `data/structures.ts` (`structurePos`).
+
+Detalhes de implementação (`three/useFarmScene.ts`):
+- **Toque × arraste:** um movimento abaixo de `DRAG_THRESHOLD` px é um toque (planta/
+  colhe); acima disso vira pan e o realce do tile é cancelado — então nunca planta
+  sem querer ao arrastar.
+- **Pan suavizado + limites:** o alvo do pan é clampado (`PAN_*_MIN/MAX`) pra você
+  alcançar cada construção sem se perder no vazio, e a câmera faz _lerp_ até o alvo
+  (`PAN_EASE`). Sensibilidade em `PAN_SENS`.
+- **Botão 🎯** recentraliza a câmera na fazenda.
+- A sombra direcional foi alargada (±11) pra cobrir as construções nos cantos.
+
 ## Como ganhar features depois
 
+- **Nova construção:** novo `StructureId` em `types.ts` + entrada em
+  `data/structures.ts` (custo, nível, direção, distância) + um builder em
+  `three/structures.ts`. A compra, a posse e o cenário se conectam sozinhos.
 - **Nova cultura:** adicione a entrada no `LADDER` em `data/crops.ts` (na posição
   = nível desejado) com seu `CropId`/`PlantVisual` (em `types.ts`) e uma
   `peculiarity` (em `data/peculiarities.ts`); some um builder de mesh em
