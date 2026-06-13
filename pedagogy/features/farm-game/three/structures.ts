@@ -752,12 +752,12 @@ const BUILDERS: Record<StructureId, () => THREE.Group> = {
 
 /** Roda a construção pra encarar o centro da fazenda (a frente fica visível). */
 const FACE_Y: Record<StructureId, number> = {
-  doghouse: Math.PI * 0.75, // canto "up" (-x,-z)
+  doghouse: Math.PI * 0.5, // canto "up" (-x,-z)
   farmhouse: Math.PI * 0.25, // canto "left" (-x,+z)
   // O +z do celeiro (portas + cercado + vaca) tem que encarar a câmera, senão
   // o cercado fica ATRÁS. Câmera ortográfica olha de (+x,+z) → 0.25π = de frente.
   barn: Math.PI * 0.25, // encara a câmera (cercado/vaca na frente)
-  beehive: Math.PI * 1.75, // canto "down" (+x,+z)
+  beehive: Math.PI * 0.5, // canto "down" (+x,+z)
 };
 
 export function buildStructure(id: StructureId): THREE.Group {
