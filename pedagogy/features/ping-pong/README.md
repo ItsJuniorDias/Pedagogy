@@ -11,6 +11,7 @@ pequenos e burros (apenas apresentação).
 npx expo install expo-gl expo-three three
 npx expo install expo-blur react-native-safe-area-context
 npx expo install @expo-google-fonts/fredoka-one expo-font
+npx expo install @react-native-async-storage/async-storage
 ```
 
 ## 🚀 Uso
@@ -46,7 +47,12 @@ ping-pong/
 │   └── racket.ts            buildRacket() — lâmina + aro neon + cabo
 │
 ├── hooks/
-│   └── usePongGame.ts       🧠 estado + refs + loop (física/render) + toque
+│   ├── usePongGame.ts       🧠 estado + refs + loop (física/render) + toque
+│   └── useRanking.ts        🏆 carrega/salva o ranking (AsyncStorage)
+│
+├── storage/                 Persistência (sem React)
+│   ├── index.ts             barrel
+│   └── ranking.ts           scoreMatch/accumulate/tiers + I/O AsyncStorage
 │
 └── components/              UI em dark glass (só apresentação)
     ├── index.ts             barrel
@@ -56,13 +62,35 @@ ping-pong/
     ├── Scoreboard.tsx       placar flutuante (topo)
     ├── StartOverlay.tsx     overlay "TAP TO PLAY"
     ├── ControlBar.tsx       ⏸ / dificuldade / ↺
-    └── GameOverModal.tsx    modal de fim de partida
+    ├── GameOverModal.tsx    modal de fim de partida (+ pontos ganhos)
+    ├── RankButton.tsx       pílula com a patente + pontos (abre o ranking)
+    └── RankingModal.tsx     painel do ranking (tiers, stats, leaderboard)
 ```
+
+## 🏆 Ranking & acúmulos
+
+Ao fim de cada partida o motor (`usePongGame`) emite o resultado via
+`onMatchEnd`. O `PingPongGame` passa esse gancho para `useRanking.recordMatch`,
+que **registra a partida** e persiste tudo em `AsyncStorage`.
+
+A lógica de acúmulo vive em `storage/ranking.ts` (funções puras, testáveis):
+
+- **`scoreMatch(m)`** → pontos da partida:
+  `(base + saldo·5 + bestRally·3) × multiplicador da dificuldade`
+  (`base` = 100 vitória / 20 derrota; mult. easy 1 · normal 1.5 · hard 2; piso em 0).
+- **`accumulate(profile, record)`** → reduz a partida no perfil: totais,
+  placar somado, **sequência de vitórias** (zera ao perder), recorde de rally,
+  tabela por dificuldade e **leaderboard** (top 10 por pontos).
+- **`tierForPoints(total)`** → patente (Rookie → … → Neon Master) + progresso.
+
+Chave do storage: `@neon_pong/ranking_v1` (suba o sufixo se mudar o formato).
 
 ## 🧩 Por onde mexer
 
 - **Regras / física / IA** → `hooks/usePongGame.ts` e `constants.ts`
   (ajuste `DIFFS` para velocidade da CPU e da bola, `WIN_SCORE`, tamanhos).
+- **Pontuação / acúmulos / tiers** → `storage/ranking.ts`
+  (fórmula em `scoreMatch`, faixas em `TIERS`, top N em `MAX_RANKING`).
 - **Visual do mundo 3D** → `scene/*` e as cores em `theme.ts` (`C3D`).
 - **Aparência da HUD** → `components/*` e a paleta `NEON` em `theme.ts`.
 

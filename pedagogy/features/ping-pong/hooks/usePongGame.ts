@@ -25,10 +25,24 @@ import {
   WIN_SCORE,
 } from "../constants";
 import { buildArena, buildRacket, buildTable, neon } from "../scene";
+import type { MatchResult } from "../storage";
 import { C3D, NEON } from "../theme";
 import type { DiffId, FloatingLabel, Phase, SceneRefs } from "../types";
 
-export function usePongGame() {
+export interface UsePongGameOptions {
+  /**
+   * Chamado UMA vez quando a partida termina (alguém chega em WIN_SCORE),
+   * com o resultado já fechado. É o gancho para registrar o ranking.
+   */
+  onMatchEnd?: (result: MatchResult) => void;
+}
+
+export function usePongGame(options: UsePongGameOptions = {}) {
+  // Mantém o callback num ref para o loop/closure sempre ver a versão atual.
+  const onMatchEndRef = useRef(options.onMatchEnd);
+  useEffect(() => {
+    onMatchEndRef.current = options.onMatchEnd;
+  }, [options.onMatchEnd]);
   // UI state (espelha os refs do loop)
   const [score, setScore] = useState({ p: 0, c: 0 });
   const [phase, setPhase] = useState<Phase>("idle");
@@ -202,6 +216,16 @@ export function usePongGame() {
         resetBall();
         setOverVisible(true);
         Vibration.vibrate([0, 60, 80, 60, 80, 120]);
+
+        // ── Marcação de ponto depois da partida ──
+        // Fecha o resultado e avisa quem estiver ouvindo (ranking persistente).
+        onMatchEndRef.current?.({
+          result: ns.p >= WIN_SCORE ? "win" : "loss",
+          playerScore: ns.p,
+          cpuScore: ns.c,
+          diff: diffRef.current,
+          bestRally: bestRef.current,
+        });
       } else {
         // o saque vai em direção a quem perdeu o ponto
         scheduleServe(isPlayer ? -1 : 1);

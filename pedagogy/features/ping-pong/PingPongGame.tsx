@@ -30,11 +30,14 @@ import {
   ControlBar,
   FloatLabel,
   GameOverModal,
+  RankButton,
+  RankingModal,
   Scoreboard,
   StartOverlay,
 } from "./components";
 import { WIN_SCORE } from "./constants";
 import { usePongGame } from "./hooks/usePongGame";
+import { useRanking } from "./hooks/useRanking";
 import { FF, NEON } from "./theme";
 import type { Phase } from "./types";
 
@@ -49,7 +52,11 @@ const HINT: Record<Phase, string> = {
 function PongGameInner() {
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   const insets = useSafeAreaInsets();
-  const g = usePongGame();
+
+  const ranking = useRanking();
+  const [rankOpen, setRankOpen] = React.useState(false);
+  // O motor avisa o fim da partida -> registra no ranking persistente.
+  const g = usePongGame({ onMatchEnd: ranking.recordMatch });
 
   const playerWon = g.score.p >= WIN_SCORE;
   const showStart = g.phase === "idle";
@@ -80,6 +87,13 @@ function PongGameInner() {
           rally={g.rally}
           bestRally={g.bestRally}
           speedMul={g.speedMul}
+        />
+
+        {/* ── Botão de ranking (patente + pontos) ── */}
+        <RankButton
+          top={insets.top + 92}
+          totalPoints={ranking.profile.totalPoints}
+          onPress={() => setRankOpen(true)}
         />
 
         {/* Floating labels */}
@@ -131,6 +145,17 @@ function PongGameInner() {
         score={g.score}
         bestRally={g.bestRally}
         onPlayAgain={g.startGame}
+        earnedPoints={ranking.lastRecord?.points}
+        totalPoints={ranking.profile.totalPoints}
+        onViewRanking={() => setRankOpen(true)}
+      />
+
+      {/* ── Ranking persistente ── */}
+      <RankingModal
+        visible={rankOpen}
+        profile={ranking.profile}
+        onClose={() => setRankOpen(false)}
+        onReset={ranking.reset}
       />
     </View>
   );

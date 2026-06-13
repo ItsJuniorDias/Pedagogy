@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SCREEN_W } from "../constants";
+import { tierForPoints } from "../storage";
 import { FF, NEON } from "../theme";
 
 export const GameOverModal: React.FC<{
@@ -21,7 +22,22 @@ export const GameOverModal: React.FC<{
   score: { p: number; c: number };
   bestRally: number;
   onPlayAgain: () => void;
-}> = ({ visible, playerWon, score, bestRally, onPlayAgain }) => {
+  /** Pontos de acúmulo ganhos nesta partida (opcional). */
+  earnedPoints?: number;
+  /** Pontuação vitalícia após esta partida (opcional). */
+  totalPoints?: number;
+  /** Abre o ranking completo (opcional). */
+  onViewRanking?: () => void;
+}> = ({
+  visible,
+  playerWon,
+  score,
+  bestRally,
+  onPlayAgain,
+  earnedPoints,
+  totalPoints,
+  onViewRanking,
+}) => {
   const sc = useRef(new Animated.Value(0.5)).current;
   const op = useRef(new Animated.Value(0)).current;
 
@@ -69,12 +85,36 @@ export const GameOverModal: React.FC<{
             </Text>
           </View>
           <Text style={gm.overStat}>🔥 Best rally: {bestRally}</Text>
+
+          {/* Acúmulos: pontos ganhos + patente atualizada */}
+          {earnedPoints != null && (
+            <Text style={[gm.overPts, { color: accent }]}>
+              +{earnedPoints} pts
+            </Text>
+          )}
+          {totalPoints != null &&
+            (() => {
+              const tier = tierForPoints(totalPoints);
+              return (
+                <Text style={gm.overTier}>
+                  {tier.current.emoji} {tier.current.label} ·{" "}
+                  {totalPoints.toLocaleString("pt-BR")} pts
+                </Text>
+              );
+            })()}
+
           <TouchableOpacity
             style={[gm.overBtn, { backgroundColor: accent }]}
             onPress={onPlayAgain}
           >
             <Text style={gm.overBtnTxt}>PLAY AGAIN</Text>
           </TouchableOpacity>
+
+          {onViewRanking && (
+            <TouchableOpacity onPress={onViewRanking} style={gm.overLink}>
+              <Text style={gm.overLinkTxt}>🏆 VER RANKING</Text>
+            </TouchableOpacity>
+          )}
         </Animated.View>
       </Animated.View>
     </Modal>
@@ -121,6 +161,20 @@ const gm = StyleSheet.create({
   overScore: { fontFamily: FF, fontSize: 38 },
   overDash: { fontFamily: FF, fontSize: 22, color: NEON.dim },
   overStat: { fontFamily: FF, fontSize: 13, color: NEON.text },
+  overPts: { fontFamily: FF, fontSize: 18, letterSpacing: 1, marginTop: 2 },
+  overTier: {
+    fontFamily: FF,
+    fontSize: 11,
+    color: NEON.dim,
+    letterSpacing: 1,
+  },
+  overLink: { marginTop: 4, paddingVertical: 4 },
+  overLinkTxt: {
+    fontFamily: FF,
+    fontSize: 11,
+    color: NEON.dim,
+    letterSpacing: 1.5,
+  },
   overBtn: {
     marginTop: 10,
     paddingHorizontal: 28,

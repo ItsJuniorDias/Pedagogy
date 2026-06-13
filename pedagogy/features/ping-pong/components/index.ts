@@ -9,3 +9,5 @@ export { Scoreboard } from "./Scoreboard";
 export { StartOverlay } from "./StartOverlay";
 export { ControlBar } from "./ControlBar";
 export { GameOverModal } from "./GameOverModal";
+export { RankingModal } from "./RankingModal";
+export { RankButton } from "./RankButton";
