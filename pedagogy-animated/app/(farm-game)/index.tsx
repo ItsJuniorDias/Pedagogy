@@ -1,43 +1,3 @@
-/**
- * FarmGame3D.tsx — Isometric 2.5D Farm Game (Three.js + Expo)
- *
- * v5 — Real IAP (expo-iap, iOS/App Store only):
- *  • COIN MARKET now uses the real store: products and localized
- *    prices come from the App Store via useCoinStore (./useCoinStore.ts).
- *    In dev without a store (Expo Go) it automatically falls back to a
- *    simulated mode.
- *  • Requires a DEV BUILD (expo-iap does not run in Expo Go):
- *      npx expo install expo-iap
- *      eas build --profile development --platform ios
- *
- * v4 — Persistence + free-to-play economy:
- *  • ASYNC STORAGE: progress is saved automatically (600ms debounce) and
- *    restored on launch. plantedAt is persisted → plants keep growing
- *    "offline" (on reopen, they may be ready to harvest).
- *  • EXPANDED CATALOG: 15 seeds across 5 rarities (common, uncommon,
- *    rare, epic, legendary). Expensive items have much longer growTime
- *    (up to 40 min) and pay out far more.
- *  • ROTATING RARITY: rare/epic/legendary are NOT always in the shop.
- *    Each new day the game rolls which ones appear (35% / 15% / 5%) and
- *    with limited stock (3 / 2 / 1 seeds). Unrolled slots show up as
- *    "???" — scarcity + FOMO.
- *  • COIN MARKET: modal with coin packs. Tighter economy (starting gold
- *    50) to nudge players toward the store.
- *
- * v3 — Liquid glass + status bar. v2 — procedural 3D plants + HUD.
- *
- * Install dependencies:
- *   npx expo install expo-gl expo-three three
- *   npx expo install expo-blur react-native-safe-area-context
- *   npx expo install @expo-google-fonts/fredoka-one expo-font
- *   npx expo install @react-native-async-storage/async-storage
- *   npx expo install expo-iap
- *
- * Usage:
- *   import FarmGame3D from './FarmGame3D';
- *   <FarmGame3D />
- */
-
 import {
   FredokaOne_400Regular,
   useFonts,
@@ -110,14 +70,21 @@ type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 type TileState = "empty" | "tilled" | "planted" | "growing" | "ready";
 type ToolId = "till" | "seed" | "harvest" | "water";
 
-/** 3D visual archetypes — new crops reuse parameterized builders */
+/** 3D visual archetypes — agora um modelo dedicado por cultura */
 type PlantVisual =
   | "wheat"
-  | "corn"
+  | "lettuce"
   | "carrot"
-  | "bush"
+  | "potato"
+  | "corn"
+  | "tomato"
+  | "strawberry"
   | "sunflower"
-  | "melon"
+  | "starfruit"
+  | "pumpkin"
+  | "watermelon"
+  | "grape"
+  | "dragonfruit"
   | "crystal";
 
 interface Crop {
@@ -220,7 +187,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0x84cc16,
     rarity: "common",
     minLevel: 1,
-    visual: "bush",
+    visual: "lettuce",
     appearChance: 1,
     stockPerDay: Infinity,
   },
@@ -252,7 +219,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0xb8860b,
     rarity: "common",
     minLevel: 2,
-    visual: "melon",
+    visual: "potato",
     appearChance: 1,
     stockPerDay: Infinity,
   },
@@ -286,7 +253,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0xef4444,
     rarity: "uncommon",
     minLevel: 4,
-    visual: "bush",
+    visual: "tomato",
     appearChance: 1,
     stockPerDay: Infinity,
   },
@@ -302,7 +269,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0xfb7185,
     rarity: "uncommon",
     minLevel: 5,
-    visual: "bush",
+    visual: "strawberry",
     appearChance: 1,
     stockPerDay: Infinity,
   },
@@ -336,7 +303,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0xea580c,
     rarity: "rare",
     minLevel: 7,
-    visual: "melon",
+    visual: "pumpkin",
     appearChance: 0.35,
     stockPerDay: 3,
   },
@@ -352,7 +319,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0x15803d,
     rarity: "rare",
     minLevel: 8,
-    visual: "melon",
+    visual: "watermelon",
     appearChance: 0.35,
     stockPerDay: 3,
   },
@@ -368,7 +335,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0x7c3aed,
     rarity: "rare",
     minLevel: 9,
-    visual: "bush",
+    visual: "grape",
     appearChance: 0.35,
     stockPerDay: 3,
   },
@@ -386,7 +353,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0xec4899,
     rarity: "epic",
     minLevel: 10,
-    visual: "bush",
+    visual: "dragonfruit",
     appearChance: 0.15,
     stockPerDay: 2,
   },
@@ -436,7 +403,7 @@ const CROPS: Record<CropId, Crop> = {
     color3d: 0xfde047,
     rarity: "legendary",
     minLevel: 13,
-    visual: "sunflower",
+    visual: "starfruit",
     appearChance: 0.05,
     stockPerDay: 1,
   },
@@ -704,28 +671,8 @@ const TOOLS: { id: ToolId; emoji: string; label: string; color: string }[] = [
   { id: "harvest", emoji: "🧺", label: "Harvest", color: "#F59E0B" },
 ];
 
-// ─── 3D color map per tile state ──────────────────────────────────────────────
+// ─── Ground / grass colors ────────────────────────────────────────────────────
 
-const TILE_TOP_COLOR: Record<TileState | "watered", number> = {
-  empty: 0xc4a882,
-  tilled: 0x8b5e3c,
-  planted: 0x7a5234,
-  growing: 0x6b4a2e,
-  watered: 0x4e3a28,
-  ready: 0x8b5e3c,
-};
-const TILE_SIDE_COLOR: Record<TileState | "watered", number> = {
-  empty: 0xa08060,
-  tilled: 0x6b4423,
-  planted: 0x5e3c1f,
-  growing: 0x52351c,
-  watered: 0x3a2c1c,
-  ready: 0x6b4423,
-};
-const TILE_HOVER_TOP = 0xa3e635;
-const TILE_HOVER_SIDE = 0x65a30d;
-
-// Grass / ground colors
 const GRASS_GROUND = 0x4caf50;
 const GRASS_TUFTS = [0x2e7d32, 0x388e3c, 0x43a047, 0x66bb6a];
 const FLOWER_COLORS = [0xffeb3b, 0xff7043, 0xf06292, 0xffffff];
@@ -747,113 +694,427 @@ function tileWorldPos(id: number): THREE.Vector3 {
   return new THREE.Vector3((col - cx) * STRIDE, 0, (row - cy) * STRIDE);
 }
 
-function makeTileMaterials(
-  topColor: number,
-  sideColor: number,
-): THREE.MeshLambertMaterial[] {
-  const side = new THREE.MeshLambertMaterial({ color: sideColor });
-  const top = new THREE.MeshLambertMaterial({ color: topColor });
-  // BoxGeometry face order: +x, -x, +y (top), -y, +z, -z
-  return [side, side, top, side, side, side];
-}
-
 function tileStateKey(tile: Tile): TileState | "watered" {
   if ((tile.state === "planted" || tile.state === "growing") && tile.watered)
     return "watered"; // dark/moist soil
   return tile.state;
 }
 
-function applyTileMat(mesh: THREE.Mesh, tile: Tile, hovered = false) {
-  if (hovered) {
-    mesh.material = makeTileMaterials(TILE_HOVER_TOP, TILE_HOVER_SIDE);
-  } else {
-    const key = tileStateKey(tile);
-    mesh.material = makeTileMaterials(
-      TILE_TOP_COLOR[key],
-      TILE_SIDE_COLOR[key],
+// ─── Realistic procedural soil ────────────────────────────────────────────────
+// No DOM/Canvas in React Native, so soil maps are baked into DataTextures from a
+// value-noise heightfield. PBR (MeshStandardMaterial) + a normal map gives the
+// dirt real relief; per-state tints/roughness reuse one shared texture set.
+
+/** Tiny fractal value-noise. Deterministic per seed. */
+function makeNoise2D(seed = 1337) {
+  const rand = (x: number, y: number) => {
+    const n = Math.sin(x * 127.1 + y * 311.7 + seed) * 43758.5453;
+    return n - Math.floor(n);
+  };
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+  const smooth = (t: number) => t * t * (3 - 2 * t);
+  const value = (x: number, y: number) => {
+    const xi = Math.floor(x);
+    const yi = Math.floor(y);
+    const u = smooth(x - xi);
+    const v = smooth(y - yi);
+    return lerp(
+      lerp(rand(xi, yi), rand(xi + 1, yi), u),
+      lerp(rand(xi, yi + 1), rand(xi + 1, yi + 1), u),
+      v,
     );
+  };
+  return (x: number, y: number, octaves = 4) => {
+    let amp = 1;
+    let freq = 1;
+    let sum = 0;
+    let norm = 0;
+    for (let o = 0; o < octaves; o++) {
+      sum += value(x * freq, y * freq) * amp;
+      norm += amp;
+      amp *= 0.5;
+      freq *= 2;
+    }
+    return sum / norm;
+  };
+}
+
+const mix3 = (a: number[], b: number[], t: number) => [
+  a[0] + (b[0] - a[0]) * t,
+  a[1] + (b[1] - a[1]) * t,
+  a[2] + (b[2] - a[2]) * t,
+];
+
+/** Works on both modern three (colorSpace) and older expo-three (encoding). */
+function setColorSpace(tex: THREE.Texture, srgb: boolean) {
+  const T: any = THREE;
+  if ("colorSpace" in tex) {
+    (tex as any).colorSpace = srgb ? T.SRGBColorSpace : T.LinearSRGBColorSpace;
+  } else {
+    (tex as any).encoding = srgb ? T.sRGBEncoding : T.LinearEncoding;
   }
 }
 
-// ─── Procedural plant meshes ──────────────────────────────────────────────────
-// Real 3D plants (3 stages). Materials cached per color; geometries
-// shared at module level — ~zero cost per tile.
+let _soilTex: { color: THREE.DataTexture; normal: THREE.DataTexture } | null =
+  null;
 
-const MAT_CACHE = new Map<number, THREE.MeshLambertMaterial>();
+/** Bakes the soil color map (sRGB) + normal map (linear). 128 px = POT → WebGL1. */
+function getSoilTextures() {
+  if (_soilTex) return _soilTex;
+  const size = 128;
+  const noise = makeNoise2D(20240607);
+  const height = new Float32Array(size * size);
+  const pebble = new Float32Array(size * size);
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = y * size + x;
+      const nx = (x / size) * 6;
+      const ny = (y / size) * 6;
+      const base = noise(nx, ny, 5);
+      const p = noise(nx * 3.7 + 40, ny * 3.7 + 40, 2);
+      const peb = p > 0.8 ? (p - 0.8) / 0.2 : 0; // small stones 0..1
+      height[i] = Math.min(1, base * 0.85 + peb * 0.5);
+      pebble[i] = peb;
+    }
+  }
+
+  // Color — lightish base, the material multiplies a per-state tint over it
+  const dark = [120, 86, 56];
+  const midC = [165, 124, 84];
+  const light = [205, 170, 126];
+  const stone = [150, 146, 138];
+  const color = new Uint8Array(size * size * 4);
+  for (let i = 0; i < size * size; i++) {
+    const h = height[i];
+    let c =
+      h < 0.5 ? mix3(dark, midC, h / 0.5) : mix3(midC, light, (h - 0.5) / 0.5);
+    if (pebble[i] > 0.15) c = mix3(c, stone, Math.min(1, pebble[i]));
+    color[i * 4] = c[0];
+    color[i * 4 + 1] = c[1];
+    color[i * 4 + 2] = c[2];
+    color[i * 4 + 3] = 255;
+  }
+
+  // Normal map from the heightfield (central difference, wrapped for tiling)
+  const idx = (x: number, y: number) =>
+    (((y % size) + size) % size) * size + (((x % size) + size) % size);
+  const strength = 2.6;
+  const normal = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = y * size + x;
+      let nx = (height[idx(x - 1, y)] - height[idx(x + 1, y)]) * strength;
+      let ny = (height[idx(x, y - 1)] - height[idx(x, y + 1)]) * strength;
+      let nz = 1;
+      const len = Math.hypot(nx, ny, nz) || 1;
+      nx /= len;
+      ny /= len;
+      nz /= len;
+      normal[i * 4] = (nx * 0.5 + 0.5) * 255;
+      normal[i * 4 + 1] = (ny * 0.5 + 0.5) * 255;
+      normal[i * 4 + 2] = (nz * 0.5 + 0.5) * 255;
+      normal[i * 4 + 3] = 255;
+    }
+  }
+
+  const colorTex = new THREE.DataTexture(color, size, size, THREE.RGBAFormat);
+  setColorSpace(colorTex, true);
+  const normalTex = new THREE.DataTexture(normal, size, size, THREE.RGBAFormat);
+  setColorSpace(normalTex, false);
+  for (const t of [colorTex, normalTex]) {
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.magFilter = THREE.LinearFilter;
+    t.minFilter = THREE.LinearMipmapLinearFilter;
+    t.generateMipmaps = true;
+    t.needsUpdate = true;
+  }
+  _soilTex = { color: colorTex, normal: normalTex };
+  return _soilTex;
+}
+
+/** Subdivided + displaced top surface. Furrowed variant adds plow rows. */
+let _flatGeo: THREE.BufferGeometry | null = null;
+let _furrowGeo: THREE.BufferGeometry | null = null;
+
+function buildSoilSurfaceGeo(furrowed: boolean): THREE.BufferGeometry {
+  const seg = 22;
+  const geo = new THREE.PlaneGeometry(TILE_W, TILE_W, seg, seg);
+  geo.rotateX(-Math.PI / 2); // lie flat, normals up
+  const noise = makeNoise2D(furrowed ? 412 : 77);
+  const pos = geo.attributes.position;
+  const half = TILE_W / 2;
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i);
+    const z = pos.getZ(i);
+    const u = x / TILE_W + 0.5;
+    const v = z / TILE_W + 0.5;
+    let h = (noise(u * 5, v * 5, 3) - 0.5) * 0.05; // fine grain
+    if (furrowed) h += Math.sin(u * Math.PI * 2 * 4) * 0.03; // 4 plow rows
+    // taper height to ~0 at edges so neighbouring tiles meet cleanly
+    const fall =
+      1 - Math.pow(Math.max(Math.abs(x) / half, Math.abs(z) / half), 6);
+    pos.setY(i, h * fall);
+  }
+  pos.needsUpdate = true;
+  geo.computeVertexNormals();
+  return geo;
+}
+
+const getSurfaceGeo = (furrowed: boolean) =>
+  furrowed
+    ? (_furrowGeo ??= buildSoilSurfaceGeo(true))
+    : (_flatGeo ??= buildSoilSurfaceGeo(false));
+
+/** Per-state look. surf/box = tint multiplied over the texture; low rough = wet. */
+const SOIL_LOOK: Record<
+  TileState | "watered",
+  { surf: number; box: number; rough: number; normal: number }
+> = {
+  empty: { surf: 0xb39a73, box: 0x927856, rough: 1.0, normal: 0.55 },
+  tilled: { surf: 0x86603c, box: 0x6a4c2e, rough: 0.96, normal: 1.0 },
+  planted: { surf: 0x7d5836, box: 0x624628, rough: 0.96, normal: 1.0 },
+  growing: { surf: 0x6f4d2f, box: 0x583f24, rough: 0.93, normal: 1.0 },
+  watered: { surf: 0x4a3422, box: 0x3a2a1d, rough: 0.42, normal: 0.9 }, // moist
+  ready: { surf: 0x86603c, box: 0x6a4c2e, rough: 0.96, normal: 1.0 },
+};
+
+const HOVER_EMISSIVE = 0x2f6b1e;
+
+/** Fresh material pair per tile (textures shared) → per-tile hover glow. */
+function createSoilMaterials() {
+  const { color, normal } = getSoilTextures();
+  const surfMat = new THREE.MeshStandardMaterial({
+    map: color,
+    normalMap: normal,
+    roughness: 1,
+    metalness: 0,
+    normalScale: new THREE.Vector2(1, 1),
+  });
+  const boxMat = new THREE.MeshStandardMaterial({
+    map: color,
+    normalMap: normal,
+    roughness: 1,
+    metalness: 0,
+    normalScale: new THREE.Vector2(0.5, 0.5),
+  });
+  return { surfMat, boxMat };
+}
+
+/** Mutates the tile's own materials/geometry — zero allocation after init. */
+function applyTileMat(mesh: THREE.Mesh, tile: Tile, hovered = false) {
+  const surf = mesh.userData.surface as THREE.Mesh | undefined;
+  const surfMat = mesh.userData.surfMat as
+    | THREE.MeshStandardMaterial
+    | undefined;
+  const boxMat = mesh.userData.boxMat as THREE.MeshStandardMaterial | undefined;
+  if (!surf || !surfMat || !boxMat) return;
+
+  const key = tileStateKey(tile);
+  const look = SOIL_LOOK[key];
+
+  surfMat.color.setHex(look.surf);
+  surfMat.roughness = look.rough;
+  surfMat.normalScale.set(look.normal, look.normal);
+  boxMat.color.setHex(look.box);
+  boxMat.roughness = Math.min(1, look.rough + 0.05);
+
+  const wantGeo = getSurfaceGeo(key !== "empty"); // worked soil gets furrows
+  if (surf.geometry !== wantGeo) surf.geometry = wantGeo;
+
+  surfMat.emissive.setHex(hovered ? HOVER_EMISSIVE : 0x000000);
+  surfMat.emissiveIntensity = hovered ? 0.45 : 0;
+}
+
+// ─── Procedural plant meshes (realistic, per-crop) ───────────────────────────
+// Cada cultura tem um modelo próprio e reconhecível (3 estágios).
+// Geometrias e materiais ficam em nível de módulo → ~zero custo por tile.
+// Os materiais respondem às mesmas luzes (Hemisphere + Directional) do solo PBR.
+
+// ── Material caches ───────────────────────────────────────────────────────────
+
+const MAT_LAMBERT = new Map<number, THREE.MeshLambertMaterial>();
+/** Material fosco (folhas, caules, terra). */
 function lam(color: number): THREE.MeshLambertMaterial {
-  let m = MAT_CACHE.get(color);
+  let m = MAT_LAMBERT.get(color);
   if (!m) {
     m = new THREE.MeshLambertMaterial({ color });
-    MAT_CACHE.set(color, m);
+    MAT_LAMBERT.set(color, m);
   }
   return m;
 }
 
-const PLANT_MAT = {
-  sprout: lam(0x86efac),
-  stem: lam(0x16a34a),
-  leaf: lam(0x22c55e),
-  leafDark: lam(0x15803d),
-  wheatTip: lam(0xfbbf24),
-  cornHusk: lam(0x65a30d),
-  sunCenter: lam(0x78350f),
-};
+const MAT_GLOSSY = new Map<number, THREE.MeshPhongMaterial>();
+/** Material levemente brilhante para frutas — dá um specular suave e "molhado". */
+function glossy(color: number, shininess = 55): THREE.MeshPhongMaterial {
+  const key = color * 1000 + shininess;
+  let m = MAT_GLOSSY.get(key);
+  if (!m) {
+    m = new THREE.MeshPhongMaterial({ color, shininess, specular: 0x2a2a2a });
+    MAT_GLOSSY.set(key, m);
+  }
+  return m;
+}
 
-// Special material for the legendary crystal — self-glowing
+// Cristal lendário — auto-iluminado
 const CRYSTAL_MAT = new THREE.MeshPhongMaterial({
-  color: 0x22d3ee,
-  emissive: 0x0e7490,
-  shininess: 90,
+  color: 0x67e8f9,
+  emissive: 0x0891b2,
+  shininess: 100,
   transparent: true,
-  opacity: 0.92,
+  opacity: 0.9,
 });
 
-const PLANT_GEO = {
-  sproutLeaf: new THREE.ConeGeometry(0.05, 0.2, 5),
-  stem: new THREE.CylinderGeometry(0.028, 0.042, 0.34, 6),
-  leaf: new THREE.ConeGeometry(0.07, 0.2, 5),
-  stalk: new THREE.CylinderGeometry(0.018, 0.028, 0.5, 5),
-  stalkTip: new THREE.ConeGeometry(0.05, 0.16, 5),
-  tallStem: new THREE.CylinderGeometry(0.035, 0.05, 0.62, 6),
-  ear: new THREE.SphereGeometry(0.1, 8, 8),
-  bush: new THREE.SphereGeometry(0.24, 10, 10),
-  fruit: new THREE.SphereGeometry(0.075, 8, 8),
-  carrotTop: new THREE.ConeGeometry(0.09, 0.14, 8),
-  tuft: new THREE.ConeGeometry(0.045, 0.28, 5),
-  sunStem: new THREE.CylinderGeometry(0.03, 0.045, 0.68, 6),
-  sunHead: new THREE.CylinderGeometry(0.17, 0.17, 0.05, 14),
-  sunCore: new THREE.SphereGeometry(0.08, 8, 8),
-  melon: new THREE.SphereGeometry(0.22, 12, 12),
-  crystalShard: new THREE.ConeGeometry(0.07, 0.42, 6),
+// Paleta de verdes reaproveitada
+const FOLIAGE = {
+  sprout: 0x86efac,
+  stem: 0x2e7d32,
+  stemLight: 0x43a047,
+  leaf: 0x43a047,
+  leafLight: 0x66bb6a,
+  leafDark: 0x1b5e20,
 };
+
+// ── Geometrias compartilhadas ─────────────────────────────────────────────────
+
+const GEO = {
+  // genéricas / estágios
+  sproutLeaf: new THREE.ConeGeometry(0.05, 0.2, 5),
+  youngStem: new THREE.CylinderGeometry(0.028, 0.042, 0.34, 6),
+  youngLeaf: new THREE.ConeGeometry(0.07, 0.2, 5),
+  leafBlade: new THREE.ConeGeometry(0.08, 0.22, 5),
+  bush: new THREE.SphereGeometry(0.22, 10, 9),
+  frondStem: new THREE.CylinderGeometry(0.01, 0.014, 0.26, 4),
+
+  // trigo
+  wheatStalk: new THREE.CylinderGeometry(0.012, 0.02, 0.5, 5),
+  wheatHead: new THREE.SphereGeometry(0.05, 6, 8),
+  wheatAwn: new THREE.ConeGeometry(0.006, 0.12, 4),
+
+  // alface (folhas em concha)
+  leafCup: new THREE.SphereGeometry(
+    0.2,
+    10,
+    8,
+    0,
+    Math.PI * 2,
+    0,
+    Math.PI * 0.55,
+  ),
+
+  // cenoura
+  carrotRoot: new THREE.ConeGeometry(0.12, 0.22, 10),
+  frondLeaf: new THREE.ConeGeometry(0.03, 0.12, 4),
+
+  // batata
+  tuber: new THREE.SphereGeometry(0.12, 8, 7),
+
+  // milho
+  cornStalk: new THREE.CylinderGeometry(0.035, 0.05, 0.64, 6),
+  cob: new THREE.CylinderGeometry(0.058, 0.045, 0.26, 8),
+  cobTip: new THREE.ConeGeometry(0.045, 0.1, 8),
+  husk: new THREE.ConeGeometry(0.07, 0.3, 5),
+  tassel: new THREE.ConeGeometry(0.01, 0.12, 4),
+  cornLeaf: new THREE.ConeGeometry(0.06, 0.5, 5),
+
+  // tomate / fruta redonda genérica
+  roundFruit: new THREE.SphereGeometry(0.1, 12, 10),
+  calyx: new THREE.ConeGeometry(0.05, 0.04, 5),
+
+  // morango (cone, ponta pra baixo)
+  berryCone: new THREE.ConeGeometry(0.075, 0.16, 8),
+  flowerPetal: new THREE.SphereGeometry(0.03, 6, 6),
+  flowerCore: new THREE.SphereGeometry(0.018, 6, 6),
+
+  // girassol
+  sunStem: new THREE.CylinderGeometry(0.03, 0.045, 0.66, 6),
+  sunDisc: new THREE.CylinderGeometry(0.15, 0.15, 0.05, 16),
+  sunPetal: new THREE.ConeGeometry(0.045, 0.16, 4),
+  sunSeed: new THREE.SphereGeometry(0.1, 12, 8),
+
+  // abóbora (lobos)
+  pumpkinLobe: new THREE.SphereGeometry(0.13, 10, 8),
+  pumpkinStem: new THREE.CylinderGeometry(0.025, 0.035, 0.12, 6),
+
+  // melancia
+  melonBody: new THREE.SphereGeometry(0.24, 14, 12),
+  melonStripe: new THREE.TorusGeometry(0.242, 0.012, 6, 22),
+  vine: new THREE.TorusGeometry(0.05, 0.008, 5, 10, Math.PI * 1.4),
+
+  // uva
+  grapeBall: new THREE.SphereGeometry(0.05, 8, 7),
+  grapeLeaf: new THREE.SphereGeometry(0.12, 8, 6),
+
+  // dragonfruit
+  dragonBody: new THREE.SphereGeometry(0.16, 12, 12),
+  dragonFin: new THREE.ConeGeometry(0.05, 0.2, 4),
+
+  // cristal
+  crystalShard: new THREE.ConeGeometry(0.06, 0.4, 6),
+  crystalCore: new THREE.OctahedronGeometry(0.1),
+};
+
+/** Carambola: estrela de 5 pontas extrudada (a seção transversal é o "look"). */
+function makeStarGeo(): THREE.ExtrudeGeometry {
+  const shape = new THREE.Shape();
+  const spikes = 5;
+  const outer = 0.13;
+  const inner = 0.05;
+  for (let i = 0; i < spikes * 2; i++) {
+    const r = i % 2 === 0 ? outer : inner;
+    const a = (i / (spikes * 2)) * Math.PI * 2 - Math.PI / 2;
+    const x = Math.cos(a) * r;
+    const y = Math.sin(a) * r;
+    if (i === 0) shape.moveTo(x, y);
+    else shape.lineTo(x, y);
+  }
+  shape.closePath();
+  const geo = new THREE.ExtrudeGeometry(shape, {
+    depth: 0.34,
+    bevelEnabled: true,
+    bevelThickness: 0.02,
+    bevelSize: 0.015,
+    bevelSegments: 1,
+    steps: 1,
+  });
+  geo.center();
+  return geo;
+}
+const STAR_GEO = makeStarGeo();
+
+// ── Helper de mesh ─────────────────────────────────────────────────────────────
 
 function pm(geo: THREE.BufferGeometry, mat: THREE.Material): THREE.Mesh {
   const m = new THREE.Mesh(geo, mat);
   m.castShadow = true;
+  m.receiveShadow = true;
   return m;
 }
 
-/** Stage 1 — freshly planted sprout (same for all crops) */
+// ── Estágio 1 — broto (igual para todos) ───────────────────────────────────────
+
 function buildSprout(): THREE.Group {
   const g = new THREE.Group();
-  const l1 = pm(PLANT_GEO.sproutLeaf, PLANT_MAT.sprout);
+  const mat = lam(FOLIAGE.sprout);
+  const l1 = pm(GEO.sproutLeaf, mat);
   l1.position.set(0.035, 0.1, 0);
   l1.rotation.z = -0.35;
-  const l2 = pm(PLANT_GEO.sproutLeaf, PLANT_MAT.sprout);
+  const l2 = pm(GEO.sproutLeaf, mat);
   l2.position.set(-0.035, 0.08, 0);
   l2.rotation.z = 0.35;
   g.add(l1, l2);
   return g;
 }
 
-/** Stage 2 — young plant (stem + leaves) */
-function buildYoung(): THREE.Group {
+// ── Estágio 2 — planta jovem (caule + folhas, com botão da cor da fruta) ───────
+
+function buildYoung(crop: Crop): THREE.Group {
   const g = new THREE.Group();
-  const stem = pm(PLANT_GEO.stem, PLANT_MAT.stem);
+  const stem = pm(GEO.youngStem, lam(FOLIAGE.stem));
   stem.position.y = 0.17;
   g.add(stem);
   for (let i = 0; i < 3; i++) {
-    const leaf = pm(PLANT_GEO.leaf, PLANT_MAT.leaf);
+    const leaf = pm(GEO.youngLeaf, lam(FOLIAGE.leaf));
     const pivot = new THREE.Group();
     leaf.position.set(0.1, 0, 0);
     leaf.rotation.z = -1.0;
@@ -862,139 +1123,473 @@ function buildYoung(): THREE.Group {
     pivot.rotation.y = i * ((Math.PI * 2) / 3);
     g.add(pivot);
   }
+  // botãozinho prenunciando a cor da colheita
+  const bud = pm(GEO.grapeBall, lam(crop.color3d));
+  bud.scale.setScalar(0.7);
+  bud.position.y = 0.36;
+  g.add(bud);
   return g;
 }
 
-/** Stage 3 — mature plant. Archetypes parameterized by the crop's color. */
-function buildMature(crop: Crop): THREE.Group {
+// ── Estágio 3 — builders por cultura ───────────────────────────────────────────
+
+function matWheat(crop: Crop): THREE.Group {
   const g = new THREE.Group();
-  const main = lam(crop.color3d);
+  const stalkMat = lam(0xbfa05a);
+  const golden = crop.id === "golden_wheat";
+  const headMat = golden ? glossy(0xffe066, 90) : lam(crop.color3d);
+  const positions: [number, number][] = [
+    [0, 0],
+    [0.1, 0.05],
+    [-0.1, 0.04],
+    [0.06, -0.1],
+    [-0.07, -0.09],
+    [0.12, -0.04],
+  ];
+  positions.forEach(([x, z], i) => {
+    const lean = (i % 2 ? 1 : -1) * 0.08;
+    const stalk = pm(GEO.wheatStalk, stalkMat);
+    stalk.position.set(x, 0.25, z);
+    stalk.rotation.z = lean;
+    g.add(stalk);
 
-  switch (crop.visual) {
-    case "wheat": {
-      const offsets: [number, number][] = [
-        [0, 0],
-        [0.12, 0.06],
-        [-0.12, 0.04],
-        [0.05, -0.11],
-        [-0.07, -0.1],
-      ];
-      const tipMat =
-        crop.id === "golden_wheat" ? lam(0xfff3b0) : PLANT_MAT.wheatTip;
-      offsets.forEach(([x, z], i) => {
-        const stalk = pm(PLANT_GEO.stalk, main);
-        stalk.position.set(x, 0.25, z);
-        stalk.rotation.z = (i % 2 === 0 ? 1 : -1) * 0.07;
-        const tip = pm(PLANT_GEO.stalkTip, tipMat);
-        tip.position.set(x, 0.55, z);
-        tip.rotation.z = stalk.rotation.z;
-        g.add(stalk, tip);
-      });
-      break;
-    }
-    case "corn": {
-      const stem = pm(PLANT_GEO.tallStem, PLANT_MAT.cornHusk);
-      stem.position.y = 0.31;
-      g.add(stem);
-      const ear = pm(PLANT_GEO.ear, main);
-      ear.scale.set(1, 1.7, 1);
-      ear.position.set(0.1, 0.34, 0);
-      ear.rotation.z = -0.2;
-      g.add(ear);
-      for (let i = 0; i < 2; i++) {
-        const leaf = pm(PLANT_GEO.leaf, PLANT_MAT.leaf);
-        leaf.position.set(i === 0 ? 0.12 : -0.12, 0.56, 0);
-        leaf.rotation.z = i === 0 ? -1.1 : 1.1;
-        g.add(leaf);
-      }
-      break;
-    }
-    case "carrot": {
-      const top = pm(PLANT_GEO.carrotTop, main);
-      top.position.y = 0.06;
-      g.add(top);
-      for (let i = 0; i < 4; i++) {
-        const tuft = pm(PLANT_GEO.tuft, PLANT_MAT.leafDark);
-        const pivot = new THREE.Group();
-        tuft.position.y = 0.14;
-        tuft.rotation.z = 0.35;
-        pivot.add(tuft);
-        pivot.position.y = 0.1;
-        pivot.rotation.y = i * (Math.PI / 2) + 0.4;
-        g.add(pivot);
-      }
-      break;
-    }
-    case "bush": {
-      const bush = pm(PLANT_GEO.bush, PLANT_MAT.leafDark);
-      bush.scale.set(1, 0.85, 1);
-      bush.position.y = 0.2;
-      g.add(bush);
-      const fruitPos: [number, number, number][] = [
-        [0.16, 0.26, 0.1],
-        [-0.14, 0.18, 0.14],
-        [0.02, 0.32, -0.16],
-      ];
-      fruitPos.forEach(([x, y, z]) => {
-        const f = pm(PLANT_GEO.fruit, main);
-        f.position.set(x, y, z);
-        g.add(f);
-      });
-      break;
-    }
-    case "melon": {
-      // big fruit "on the ground" (pumpkin, watermelon, potato...)
-      const body = pm(PLANT_GEO.melon, main);
-      body.scale.set(1, 0.8, 1);
-      body.position.y = 0.16;
-      g.add(body);
-      const leaf = pm(PLANT_GEO.leaf, PLANT_MAT.leaf);
-      leaf.position.set(0.06, 0.34, 0);
-      leaf.rotation.z = -0.7;
-      g.add(leaf);
-      break;
-    }
-    case "crystal": {
-      // cluster of glowing crystals (legendary)
-      const offs: [number, number, number, number][] = [
-        [0, 0.2, 0, 1.15],
-        [0.11, 0.14, 0.06, 0.8],
-        [-0.1, 0.13, 0.08, 0.7],
-        [0.04, 0.12, -0.12, 0.6],
-      ];
-      offs.forEach(([x, y, z, sc]) => {
-        const shard = pm(PLANT_GEO.crystalShard, CRYSTAL_MAT);
-        shard.position.set(x, y, z);
-        shard.scale.setScalar(sc);
-        shard.rotation.set((Math.abs(x) + Math.abs(z)) * 1.2, 0, x * 1.5);
-        g.add(shard);
-      });
-      break;
-    }
-    case "sunflower":
-    default: {
-      const stem = pm(PLANT_GEO.sunStem, PLANT_MAT.stem);
-      stem.position.y = 0.34;
-      g.add(stem);
-      const head = pm(PLANT_GEO.sunHead, main);
-      head.position.set(0, 0.7, 0.04);
-      head.rotation.x = -0.95; // tilts the disc to "look" at the camera
-      const coreMat =
-        crop.id === "star_fruit" ? lam(0xffffff) : PLANT_MAT.sunCenter;
-      const core = pm(PLANT_GEO.sunCore, coreMat);
-      core.scale.set(1, 0.5, 1);
-      core.position.y = 0.04; // along the disc's axis
-      head.add(core);
-      g.add(head);
-      const leaf = pm(PLANT_GEO.leaf, PLANT_MAT.leaf);
-      leaf.position.set(0.1, 0.3, 0);
-      leaf.rotation.z = -1.1;
-      g.add(leaf);
-      break;
-    }
-  }
+    const head = pm(GEO.wheatHead, headMat);
+    head.scale.set(0.7, 1.9, 0.7);
+    head.position.set(x + lean * 0.4, 0.56, z);
+    head.rotation.z = lean;
+    g.add(head);
 
+    for (let a = -1; a <= 1; a += 2) {
+      const awn = pm(GEO.wheatAwn, stalkMat);
+      awn.position.set(x + lean * 0.4 + a * 0.02, 0.66, z);
+      awn.rotation.z = lean + a * 0.2;
+      g.add(awn);
+    }
+  });
   return g;
+}
+
+function matLettuce(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const ring = (
+    count: number,
+    mat: THREE.Material,
+    radius: number,
+    scale: number,
+    tilt: number,
+    y: number,
+    phase = 0,
+  ) => {
+    for (let i = 0; i < count; i++) {
+      const cup = pm(GEO.leafCup, mat);
+      cup.scale.set(scale, scale * 0.7, scale);
+      const a = (i / count) * Math.PI * 2 + phase;
+      cup.position.set(Math.cos(a) * radius, y, Math.sin(a) * radius);
+      cup.rotation.z = Math.cos(a) * tilt;
+      cup.rotation.x = -Math.sin(a) * tilt;
+      g.add(cup);
+    }
+  };
+  ring(5, lam(FOLIAGE.leafDark), 0.12, 1.05, 0.6, 0.08);
+  ring(5, lam(crop.color3d), 0.07, 0.8, 0.35, 0.12, 0.4);
+  const core = pm(GEO.leafCup, lam(0xbef264));
+  core.scale.set(0.55, 0.6, 0.55);
+  core.position.y = 0.14;
+  g.add(core);
+  return g;
+}
+
+function matCarrot(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  // "ombro" laranja saindo da terra (ponta enterrada)
+  const root = pm(GEO.carrotRoot, glossy(crop.color3d, 30));
+  root.scale.set(1, 0.7, 1);
+  root.position.y = 0.05;
+  g.add(root);
+  // folhagem em leque (penacho)
+  for (let i = 0; i < 6; i++) {
+    const pivot = new THREE.Group();
+    const stem = pm(GEO.frondStem, lam(FOLIAGE.leafDark));
+    stem.position.y = 0.18;
+    pivot.add(stem);
+    for (let j = 0; j < 3; j++) {
+      const lf = pm(GEO.frondLeaf, lam(FOLIAGE.leafLight));
+      lf.position.set(0.03, 0.12 + j * 0.07, 0);
+      lf.rotation.z = -0.8;
+      pivot.add(lf);
+    }
+    pivot.rotation.y = i * (Math.PI / 3);
+    pivot.rotation.x = 0.18;
+    g.add(pivot);
+  }
+  return g;
+}
+
+function matPotato(_crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const leafMat = lam(FOLIAGE.leaf);
+  for (let i = 0; i < 4; i++) {
+    const lf = pm(GEO.leafBlade, leafMat);
+    const a = i * (Math.PI / 2) + 0.4;
+    lf.position.set(Math.cos(a) * 0.06, 0.18, Math.sin(a) * 0.06);
+    lf.rotation.z = -0.6;
+    lf.rotation.y = a;
+    g.add(lf);
+  }
+  const top = pm(GEO.bush, leafMat);
+  top.scale.set(0.7, 0.55, 0.7);
+  top.position.y = 0.2;
+  g.add(top);
+  // tubérculos marrons visíveis na terra
+  const tuberMat = glossy(0xb98a55, 18);
+  const tpos: [number, number, number][] = [
+    [0.13, 0.04, 0.05],
+    [-0.1, 0.03, 0.1],
+    [0.02, 0.03, -0.13],
+  ];
+  tpos.forEach(([x, y, z], i) => {
+    const t = pm(GEO.tuber, tuberMat);
+    t.scale.set(1, 0.8, 1.25);
+    t.position.set(x, y, z);
+    t.rotation.y = i;
+    g.add(t);
+  });
+  return g;
+}
+
+function matCorn(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const stalk = pm(GEO.cornStalk, lam(0x4d7c0f));
+  stalk.position.y = 0.32;
+  g.add(stalk);
+  for (let i = 0; i < 4; i++) {
+    const lf = pm(GEO.cornLeaf, lam(FOLIAGE.leaf));
+    lf.scale.set(0.5, 1, 0.3);
+    lf.position.set(0, 0.3 + i * 0.08, 0);
+    lf.rotation.z = i % 2 ? 1.2 : -1.2;
+    lf.rotation.y = i * 1.3;
+    g.add(lf);
+  }
+  const cobMat = glossy(crop.color3d, 40);
+  const cob = pm(GEO.cob, cobMat);
+  cob.position.set(0.09, 0.34, 0.02);
+  cob.rotation.z = -0.18;
+  g.add(cob);
+  const tip = pm(GEO.cobTip, cobMat);
+  tip.position.set(0.12, 0.47, 0.02);
+  tip.rotation.z = -0.18;
+  g.add(tip);
+  const husk = pm(GEO.husk, lam(FOLIAGE.leafLight));
+  husk.scale.set(0.7, 1, 0.7);
+  husk.position.set(0.07, 0.3, 0.02);
+  husk.rotation.z = -0.1;
+  g.add(husk);
+  for (let i = 0; i < 3; i++) {
+    const t = pm(GEO.tassel, lam(0xd9c27a));
+    t.position.set((i - 1) * 0.02, 0.66, 0);
+    t.rotation.z = (i - 1) * 0.25;
+    g.add(t);
+  }
+  return g;
+}
+
+function matTomato(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const bush = pm(GEO.bush, lam(FOLIAGE.leafDark));
+  bush.scale.set(1, 0.7, 1);
+  bush.position.y = 0.16;
+  g.add(bush);
+  for (let i = 0; i < 3; i++) {
+    const lf = pm(GEO.leafBlade, lam(FOLIAGE.leaf));
+    const a = i * 2.1;
+    lf.position.set(Math.cos(a) * 0.18, 0.22, Math.sin(a) * 0.18);
+    lf.rotation.z = -0.9;
+    lf.rotation.y = a;
+    g.add(lf);
+  }
+  const fruitMat = glossy(crop.color3d, 75);
+  const fpos: [number, number, number][] = [
+    [0.15, 0.18, 0.08],
+    [-0.13, 0.12, 0.12],
+    [0.0, 0.26, -0.14],
+    [0.08, 0.1, -0.05],
+  ];
+  fpos.forEach(([x, y, z]) => {
+    const f = pm(GEO.roundFruit, fruitMat);
+    f.scale.set(1, 0.85, 1);
+    f.position.set(x, y, z);
+    g.add(f);
+    const cx = pm(GEO.calyx, lam(FOLIAGE.stem));
+    cx.position.set(x, y + 0.09, z);
+    g.add(cx);
+  });
+  return g;
+}
+
+function matStrawberry(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  for (let i = 0; i < 5; i++) {
+    const lf = pm(GEO.bush, lam(FOLIAGE.leaf));
+    lf.scale.set(0.45, 0.18, 0.45);
+    const a = i * ((Math.PI * 2) / 5);
+    lf.position.set(Math.cos(a) * 0.14, 0.05, Math.sin(a) * 0.14);
+    g.add(lf);
+  }
+  const berryMat = glossy(crop.color3d, 65);
+  const bpos: [number, number, number][] = [
+    [0.1, 0.1, 0.06],
+    [-0.09, 0.09, -0.05],
+    [0.02, 0.12, -0.12],
+  ];
+  bpos.forEach(([x, y, z]) => {
+    const b = pm(GEO.berryCone, berryMat);
+    b.rotation.x = Math.PI; // ponta pra baixo
+    b.position.set(x, y, z);
+    g.add(b);
+    const crown = pm(GEO.calyx, lam(FOLIAGE.leafDark));
+    crown.scale.set(1.4, 1, 1.4);
+    crown.position.set(x, y + 0.09, z);
+    g.add(crown);
+  });
+  // florzinha branca
+  const fc = pm(GEO.flowerCore, lam(0xfde047));
+  fc.position.set(-0.02, 0.13, 0.1);
+  g.add(fc);
+  for (let i = 0; i < 5; i++) {
+    const p = pm(GEO.flowerPetal, lam(0xffffff));
+    const a = i * ((Math.PI * 2) / 5);
+    p.scale.set(1, 0.5, 1);
+    p.position.set(
+      -0.02 + Math.cos(a) * 0.035,
+      0.13,
+      0.1 + Math.sin(a) * 0.035,
+    );
+    g.add(p);
+  }
+  return g;
+}
+
+function matSunflower(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const stem = pm(GEO.sunStem, lam(FOLIAGE.stem));
+  stem.position.y = 0.33;
+  g.add(stem);
+  for (let i = 0; i < 2; i++) {
+    const lf = pm(GEO.leafBlade, lam(FOLIAGE.leaf));
+    lf.scale.set(1, 1.1, 0.5);
+    lf.position.set(i ? 0.1 : -0.1, 0.3, 0);
+    lf.rotation.z = i ? -1.1 : 1.1;
+    g.add(lf);
+  }
+  // cabeça da flor encarando pra cima (câmera fica no alto)
+  const head = new THREE.Group();
+  const petalCount = 12;
+  for (let i = 0; i < petalCount; i++) {
+    const a = (i / petalCount) * Math.PI * 2;
+    const pivot = new THREE.Group();
+    pivot.rotation.y = a;
+    const petal = pm(GEO.sunPetal, lam(crop.color3d));
+    petal.rotation.z = -Math.PI / 2; // deita a pétala apontando pra fora
+    petal.scale.set(1, 1, 0.5);
+    petal.position.set(0.17, 0, 0);
+    pivot.add(petal);
+    head.add(pivot);
+  }
+  const disc = pm(GEO.sunDisc, lam(0x5b3a1a));
+  disc.position.y = 0.02;
+  head.add(disc);
+  const seeds = pm(GEO.sunSeed, lam(0x3b2410));
+  seeds.scale.set(1, 0.3, 1);
+  seeds.position.y = 0.05;
+  head.add(seeds);
+  head.position.set(0, 0.66, 0.02);
+  head.rotation.x = -0.12; // leve inclinação na direção da câmera
+  g.add(head);
+  return g;
+}
+
+function matStarfruit(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  for (let i = 0; i < 4; i++) {
+    const lf = pm(GEO.leafBlade, lam(FOLIAGE.leaf));
+    const a = i * (Math.PI / 2);
+    lf.scale.set(0.7, 0.8, 0.4);
+    lf.position.set(Math.cos(a) * 0.1, 0.06, Math.sin(a) * 0.1);
+    lf.rotation.z = -0.8;
+    lf.rotation.y = a;
+    g.add(lf);
+  }
+  const fruitMat = glossy(crop.color3d, 75);
+  const star = pm(STAR_GEO, fruitMat);
+  star.scale.set(1, 1, 0.95);
+  star.position.set(0.04, 0.28, 0);
+  star.rotation.x = Math.PI / 2; // eixo longo na vertical → estrela vista de cima
+  star.rotation.z = 0.25;
+  star.rotation.y = 0.3;
+  g.add(star);
+  const star2 = pm(STAR_GEO, fruitMat);
+  star2.scale.setScalar(0.55);
+  star2.position.set(-0.12, 0.14, 0.08);
+  star2.rotation.x = Math.PI / 2;
+  star2.rotation.z = -0.4;
+  g.add(star2);
+  return g;
+}
+
+function matPumpkin(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const body = glossy(crop.color3d, 35);
+  // lobos formam as "costelas" da abóbora
+  const center = pm(GEO.pumpkinLobe, body);
+  center.scale.set(1.5, 1.0, 1.5);
+  center.position.y = 0.13;
+  g.add(center);
+  const lobes = 6;
+  for (let i = 0; i < lobes; i++) {
+    const a = (i / lobes) * Math.PI * 2;
+    const lobe = pm(GEO.pumpkinLobe, body);
+    lobe.scale.set(0.55, 1.05, 1.0);
+    lobe.position.set(Math.cos(a) * 0.13, 0.13, Math.sin(a) * 0.13);
+    lobe.rotation.y = -a;
+    g.add(lobe);
+  }
+  const stem = pm(GEO.pumpkinStem, lam(0x4d7c0f));
+  stem.position.y = 0.27;
+  stem.rotation.z = 0.2;
+  g.add(stem);
+  return g;
+}
+
+function matWatermelon(_crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  // casca verde-clara (cor fixa: o color3d do catálogo é escuro demais p/ casca)
+  const body = pm(GEO.melonBody, glossy(0x4d9e4f, 28));
+  body.scale.set(1.05, 0.92, 1.05);
+  body.position.y = 0.2;
+  g.add(body);
+  // listras escuras (anéis verticais; metade interna some dentro do corpo)
+  const stripeMat = lam(0x14532d);
+  for (let i = 0; i < 6; i++) {
+    const stripe = pm(GEO.melonStripe, stripeMat);
+    stripe.scale.set(1.05, 0.92, 1.05);
+    stripe.position.y = 0.2;
+    stripe.rotation.y = (i / 6) * Math.PI;
+    g.add(stripe);
+  }
+  const vine = pm(GEO.vine, lam(FOLIAGE.stem));
+  vine.position.set(0.05, 0.42, 0);
+  vine.rotation.x = 0.6;
+  g.add(vine);
+  return g;
+}
+
+function matGrape(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const grapeMat = glossy(crop.color3d, 75);
+  // cacho afunilado: linhas largas em cima, ponta embaixo
+  const rows = [
+    { y: 0.34, n: 4, r: 0.1 },
+    { y: 0.27, n: 4, r: 0.12 },
+    { y: 0.2, n: 3, r: 0.09 },
+    { y: 0.13, n: 2, r: 0.06 },
+    { y: 0.07, n: 1, r: 0 },
+  ];
+  rows.forEach((row, ri) => {
+    for (let i = 0; i < row.n; i++) {
+      const a = (i / row.n) * Math.PI * 2 + ri * 0.6;
+      const b = pm(GEO.grapeBall, grapeMat);
+      b.position.set(Math.cos(a) * row.r, row.y, Math.sin(a) * row.r);
+      g.add(b);
+    }
+  });
+  const stem = pm(GEO.frondStem, lam(0x6b4423));
+  stem.scale.set(1, 0.5, 1);
+  stem.position.y = 0.4;
+  g.add(stem);
+  const leaf = pm(GEO.grapeLeaf, lam(FOLIAGE.leaf));
+  leaf.scale.set(1.2, 0.3, 1);
+  leaf.position.set(0.08, 0.43, 0);
+  g.add(leaf);
+  return g;
+}
+
+function matDragonfruit(crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const body = pm(GEO.dragonBody, glossy(crop.color3d, 60));
+  body.scale.set(0.85, 1.15, 0.85);
+  body.position.y = 0.22;
+  g.add(body);
+  // escamas/abas verdes ao redor (o "look" da pitaya)
+  const finMat = lam(0x4ade80);
+  const finCount = 7;
+  for (let i = 0; i < finCount; i++) {
+    const a = (i / finCount) * Math.PI * 2;
+    const yy = 0.16 + (i % 3) * 0.07;
+    const fin = pm(GEO.dragonFin, finMat);
+    fin.scale.set(0.8, 1, 0.5);
+    fin.position.set(Math.cos(a) * 0.16, yy, Math.sin(a) * 0.16);
+    fin.rotation.z = -1.1;
+    fin.rotation.y = -a;
+    fin.rotation.x = 0.3;
+    g.add(fin);
+  }
+  // coroa no topo
+  for (let i = 0; i < 4; i++) {
+    const a = i * (Math.PI / 2);
+    const fin = pm(GEO.dragonFin, finMat);
+    fin.scale.set(0.6, 0.9, 0.4);
+    fin.position.set(Math.cos(a) * 0.05, 0.4, Math.sin(a) * 0.05);
+    fin.rotation.z = Math.cos(a) * 0.5;
+    fin.rotation.x = -Math.sin(a) * 0.5;
+    g.add(fin);
+  }
+  return g;
+}
+
+function matCrystal(_crop: Crop): THREE.Group {
+  const g = new THREE.Group();
+  const core = pm(GEO.crystalCore, CRYSTAL_MAT);
+  core.position.y = 0.16;
+  core.rotation.y = 0.4;
+  g.add(core);
+  const shards = 6;
+  for (let i = 0; i < shards; i++) {
+    const a = (i / shards) * Math.PI * 2;
+    const shard = pm(GEO.crystalShard, CRYSTAL_MAT);
+    shard.scale.setScalar(0.6 + (i % 2) * 0.4);
+    shard.position.set(Math.cos(a) * 0.12, 0.14, Math.sin(a) * 0.12);
+    shard.rotation.z = Math.cos(a) * 0.5;
+    shard.rotation.x = -Math.sin(a) * 0.5;
+    g.add(shard);
+  }
+  const tall = pm(GEO.crystalShard, CRYSTAL_MAT);
+  tall.scale.setScalar(1.2);
+  tall.position.y = 0.32;
+  g.add(tall);
+  return g;
+}
+
+// ── Registro: PlantVisual → builder ────────────────────────────────────────────
+
+const VISUAL_BUILDERS: Record<PlantVisual, (crop: Crop) => THREE.Group> = {
+  wheat: matWheat,
+  lettuce: matLettuce,
+  carrot: matCarrot,
+  potato: matPotato,
+  corn: matCorn,
+  tomato: matTomato,
+  strawberry: matStrawberry,
+  sunflower: matSunflower,
+  starfruit: matStarfruit,
+  pumpkin: matPumpkin,
+  watermelon: matWatermelon,
+  grape: matGrape,
+  dragonfruit: matDragonfruit,
+  crystal: matCrystal,
+};
+
+function buildMature(crop: Crop): THREE.Group {
+  return (VISUAL_BUILDERS[crop.visual] ?? matTomato)(crop);
 }
 
 /** Cache key: we only rebuild the mesh when the stage changes */
@@ -1007,7 +1602,8 @@ function plantKey(t: Tile): string | null {
 
 function buildPlant(t: Tile): THREE.Group | null {
   if (t.state === "planted") return buildSprout();
-  if (t.state === "growing") return buildYoung();
+  if (t.state === "growing" && t.cropId) return buildYoung(CROPS[t.cropId]);
+  if (t.state === "growing") return buildSprout();
   if (t.state === "ready" && t.cropId) return buildMature(CROPS[t.cropId]);
   return null;
 }
@@ -1017,7 +1613,11 @@ function buildPlant(t: Tile): THREE.Group | null {
 function buildGrassField(scene: THREE.Scene) {
   const groundSize = FIELD_HALF * 2 + GRASS_BORDER * 2;
   const groundGeo = new THREE.BoxGeometry(groundSize, 0.14, groundSize);
-  const groundMat = new THREE.MeshLambertMaterial({ color: GRASS_GROUND });
+  const groundMat = new THREE.MeshStandardMaterial({
+    color: GRASS_GROUND,
+    roughness: 1,
+    metalness: 0,
+  });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.position.set(0, -TILE_H / 2 - 0.07, 0);
   ground.receiveShadow = true;
@@ -1025,7 +1625,7 @@ function buildGrassField(scene: THREE.Scene) {
 
   const tuftGeo = new THREE.ConeGeometry(0.07, 0.22, 5);
   const tuftMats = GRASS_TUFTS.map(
-    (c) => new THREE.MeshLambertMaterial({ color: c }),
+    (c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.9 }),
   );
   const margin = 0.25;
   const outer = FIELD_HALF + GRASS_BORDER - 0.3;
@@ -1058,7 +1658,10 @@ function buildGrassField(scene: THREE.Scene) {
   }
 
   const stemGeo = new THREE.CylinderGeometry(0.015, 0.015, 0.16, 5);
-  const stemMat = new THREE.MeshLambertMaterial({ color: 0x2e7d32 });
+  const stemMat = new THREE.MeshStandardMaterial({
+    color: 0x2e7d32,
+    roughness: 0.9,
+  });
   const headGeo = new THREE.SphereGeometry(0.05, 8, 8);
 
   for (let i = 0; i < 18; i++) {
@@ -1068,8 +1671,9 @@ function buildGrassField(scene: THREE.Scene) {
     stem.position.y = 0.08;
     const head = new THREE.Mesh(
       headGeo,
-      new THREE.MeshLambertMaterial({
+      new THREE.MeshStandardMaterial({
         color: FLOWER_COLORS[Math.floor(Math.random() * FLOWER_COLORS.length)],
+        roughness: 0.7,
       }),
     );
     head.position.y = 0.18;
@@ -1864,14 +2468,31 @@ function FarmGameInner() {
     r.renderer = new Renderer({ gl });
     r.renderer!.setSize(w, h);
     r.renderer!.shadowMap.enabled = true;
+    r.renderer!.shadowMap.type = THREE.PCFSoftShadowMap;
+    // Correct color management → PBR soil reads right (no washed-out look)
+    {
+      const R: any = r.renderer;
+      if ("outputColorSpace" in R)
+        R.outputColorSpace = (THREE as any).SRGBColorSpace;
+      else R.outputEncoding = (THREE as any).sRGBEncoding;
+    }
 
     r.scene = new THREE.Scene();
     r.scene.background = null;
 
-    r.scene.add(new THREE.AmbientLight(0xffffff, 0.75));
-    const dir = new THREE.DirectionalLight(0xfffbe0, 1.1);
-    dir.position.set(5, 10, 5);
+    // Hemisphere (sky/ground bounce) + warm sun — flatters the soil normals
+    r.scene.add(new THREE.HemisphereLight(0xbfe3ff, 0x6a4a2e, 0.85));
+    const dir = new THREE.DirectionalLight(0xfff2d6, 1.5);
+    dir.position.set(6, 11, 4);
     dir.castShadow = true;
+    dir.shadow.mapSize.set(1024, 1024);
+    dir.shadow.camera.near = 1;
+    dir.shadow.camera.far = 40;
+    dir.shadow.camera.left = -8;
+    dir.shadow.camera.right = 8;
+    dir.shadow.camera.top = 8;
+    dir.shadow.camera.bottom = -8;
+    dir.shadow.bias = -0.0008;
     r.scene.add(dir);
 
     const aspect = w / h;
@@ -1890,24 +2511,39 @@ function FarmGameInner() {
 
     buildGrassField(r.scene);
 
-    const geo = new THREE.BoxGeometry(TILE_W, TILE_H, TILE_W);
+    // Tile = soil block (depth + sides) + a displaced surface plane (the dirt)
+    const boxGeo = new THREE.BoxGeometry(TILE_W, TILE_H, TILE_W);
     for (let id = 0; id < ROWS * COLS; id++) {
-      const mat = makeTileMaterials(
-        TILE_TOP_COLOR.empty,
-        TILE_SIDE_COLOR.empty,
-      );
-      const mesh = new THREE.Mesh(geo, mat);
+      const { surfMat, boxMat } = createSoilMaterials();
+      const mesh = new THREE.Mesh(boxGeo, boxMat);
       mesh.receiveShadow = true;
       mesh.castShadow = true;
+
+      const surf = new THREE.Mesh(getSurfaceGeo(false), surfMat);
+      surf.position.y = TILE_H / 2 + 0.004; // sits on the block's top
+      surf.receiveShadow = true;
+      mesh.add(surf);
+
+      mesh.userData.surface = surf;
+      mesh.userData.surfMat = surfMat;
+      mesh.userData.boxMat = boxMat;
+
       const pos = tileWorldPos(id);
       mesh.position.copy(pos);
       (mesh as any).tileId = id;
+      applyTileMat(mesh, {
+        id,
+        state: "empty",
+        watered: false,
+        waterCount: 0,
+      } as Tile);
       r.scene.add(mesh);
       r.tileObjs[id] = mesh;
     }
 
     // Sync existing state (restored save or hot reload)
     stateRef.current.tiles.forEach((tile, id) => {
+      applyTileMat(r.tileObjs[id], tile);
       const want = plantKey(tile);
       if (!want) return;
       const g = buildPlant(tile)!;
@@ -1918,7 +2554,6 @@ function FarmGameInner() {
       g.rotation.y = (id % 7) * 0.9;
       r.scene!.add(g);
       r.plantObjs[id] = g;
-      applyTileMat(r.tileObjs[id], tile);
     });
 
     // Render loop — plant pop-in + swaying of ready crops
@@ -1967,6 +2602,7 @@ function FarmGameInner() {
 
     const ray = new THREE.Raycaster();
     ray.setFromCamera(new THREE.Vector2(nx, ny), r.camera);
+    // Non-recursive: only the tile blocks are tested (surface children ignored)
     const hits = ray.intersectObjects(r.tileObjs.filter(Boolean), false);
     if (hits.length > 0) return (hits[0].object as any).tileId as number;
     return -1;

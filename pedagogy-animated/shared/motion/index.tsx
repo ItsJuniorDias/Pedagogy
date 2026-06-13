@@ -38,7 +38,11 @@ const RM = ReduceMotion.System;
 
 /** Sobe + fade, com mola (padrão do app) */
 export const enterUp = (delay = 0) =>
-  FadeInDown.delay(delay).springify().damping(14).stiffness(160).reduceMotion(RM);
+  FadeInDown.delay(delay)
+    .springify()
+    .damping(14)
+    .stiffness(160)
+    .reduceMotion(RM);
 
 /** Surge de baixo, como um broto crescendo 🌱 */
 export const enterRise = (delay = 0) =>
@@ -50,11 +54,19 @@ export const enterPop = (delay = 0) =>
 
 /** Desliza da esquerda */
 export const enterLeft = (delay = 0) =>
-  SlideInLeft.delay(delay).springify().damping(15).stiffness(150).reduceMotion(RM);
+  SlideInLeft.delay(delay)
+    .springify()
+    .damping(15)
+    .stiffness(150)
+    .reduceMotion(RM);
 
 /** Desliza da direita (efeito "esteira") */
 export const enterRight = (delay = 0) =>
-  SlideInRight.delay(delay).springify().damping(15).stiffness(150).reduceMotion(RM);
+  SlideInRight.delay(delay)
+    .springify()
+    .damping(15)
+    .stiffness(150)
+    .reduceMotion(RM);
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 type LoopProps = {
@@ -298,6 +310,8 @@ export const GrowBar = ({
   return <Animated.View style={[style, a]} />;
 };
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 /** 🫳 PressBounce — Pressable com mola no toque (substitui o BouncyCard) */
 export const PressBounce = ({
   children,
@@ -319,7 +333,7 @@ export const PressBounce = ({
     transform: [{ scale: scale.value }],
   }));
   return (
-    <Pressable
+    <AnimatedPressable
       disabled={disabled}
       onPressIn={() => {
         scale.value = withSpring(scaleTo, { damping: 15, stiffness: 300 });
@@ -328,10 +342,10 @@ export const PressBounce = ({
         scale.value = withSpring(1, { damping: 9, stiffness: 220 });
       }}
       onPress={onPress}
+      entering={entering}
+      style={[style, a]}
     >
-      <Animated.View entering={entering} style={[style, a]}>
-        {children}
-      </Animated.View>
-    </Pressable>
+      {children}
+    </AnimatedPressable>
   );
 };

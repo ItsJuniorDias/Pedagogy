@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
+  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -92,21 +93,18 @@ const Bouncy = ({
       layout={layout}
       style={[wrapperStyle, aStyle]}
     >
-      <Animated.View
+      <Pressable
         style={style}
-        onTouchStart={() => {
+        onPressIn={() => {
           scale.value = withSpring(scaleTo, SPRING);
         }}
-        onTouchEnd={() => {
-          scale.value = withSpring(1, SPRING);
-          onPress?.();
-        }}
-        onTouchCancel={() => {
+        onPressOut={() => {
           scale.value = withSpring(1, SPRING);
         }}
+        onPress={onPress}
       >
         {children}
-      </Animated.View>
+      </Pressable>
     </Animated.View>
   );
 };
@@ -660,7 +658,9 @@ export default function HomeScreen() {
         {/* ── HEADER ── */}
         <Animated.View entering={enterUp(0)} style={s.header}>
           <View>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+            >
               <Text style={fredoka(26, "#2D2D2D")}>
                 Hi, <Text style={fredoka(26, "#FF5B8D")}>Everyone</Text>
               </Text>
