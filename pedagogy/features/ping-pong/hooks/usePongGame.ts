@@ -406,7 +406,7 @@ export function usePongGame(options: UsePongGameOptions = {}) {
         const errFloor = diffCfg.aiError + fatigue * FATIGUE.errorAdd;
         if (!r.tiredShown && fatigue >= FATIGUE.tiredAt) {
           r.tiredShown = true;
-          spawnLabel("😮‍💨 CPU CANSANDO", NEON.amber);
+          spawnLabel("😮‍💨 CPU GETTING TIRED", NEON.amber);
         }
 
         // Nova aproximação à CPU (a bola passou a vir na direção dela) → rola um
@@ -493,7 +493,10 @@ export function usePongGame(options: UsePongGameOptions = {}) {
           if (!crossed) return false;
           const tFrac = (plane - prevZ) / (nz - prevZ || 1e-6);
           const hitX = ball.position.x + v.x * dt * tFrac;
-          if (Math.abs(hitX - paddle.position.x) > PADDLE.halfW + BALL_R + catchAssist)
+          if (
+            Math.abs(hitX - paddle.position.x) >
+            PADDLE.halfW + BALL_R + catchAssist
+          )
             return false;
 
           // Velocidade lateral da raquete no impacto → corte/efeito
