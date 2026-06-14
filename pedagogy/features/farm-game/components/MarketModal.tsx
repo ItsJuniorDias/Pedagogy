@@ -1,5 +1,5 @@
 // features/farm-game/components/MarketModal.tsx
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Modal,
@@ -10,11 +10,17 @@ import {
 } from "react-native";
 
 import { type StorePack } from "../../../hooks/UseCoinStore";
+// 🔒 Portão parental (Kids Category — Guideline 1.3)
+import { ParentalGate } from "../../../shared/ParentalGate";
 import { s } from "../styles";
 
 // ─── Coin Market Modal ────────────────────────────────────────────────────────
 // Localized prices come from the store (pack.displayPrice). The real
 // purchase is triggered by onBuy(sku) → useCoinStore → native store sheet.
+//
+// 🔒 Como o app está na Kids Category, TODA compra precisa passar por um portão
+// parental antes (Guideline 1.3). Ao tocar num pacote guardamos o sku em
+// `gateSku`; só depois que um adulto resolve a conta é que onBuy(sku) roda.
 
 export const MarketModal: React.FC<{
   visible: boolean;
@@ -37,12 +43,20 @@ export const MarketModal: React.FC<{
 }) => {
   const slide = useRef(new Animated.Value(600)).current;
 
+  // 🔒 sku aguardando liberação pelo portão parental (null = portão fechado)
+  const [gateSku, setGateSku] = useState<string | null>(null);
+
   useEffect(() => {
     Animated.spring(slide, {
       toValue: visible ? 0 : 600,
       useNativeDriver: true,
       friction: 7,
     }).start();
+  }, [visible]);
+
+  // Se o mercado fechar, garante que o portão também fecha
+  useEffect(() => {
+    if (!visible) setGateSku(null);
   }, [visible]);
 
   const anySimulated = packs.some((p) => p.simulated && p.available);
@@ -87,7 +101,8 @@ export const MarketModal: React.FC<{
                     pack.tag && s.packRowHot,
                     !pack.available && s.packRowDim,
                   ]}
-                  onPress={() => onBuy(pack.sku)}
+                  // 🔒 Em vez de comprar direto, abre o portão parental
+                  onPress={() => setGateSku(pack.sku)}
                   activeOpacity={0.8}
                   disabled={disabled}
                 >
@@ -129,6 +144,20 @@ export const MarketModal: React.FC<{
             </TouchableOpacity>
           </Pressable>
         </Animated.View>
+
+        {/* 🔒 Portão parental — overlay DENTRO deste Modal (modo embedded,
+            evita bug de modal-sobre-modal no iOS). Só libera a compra do
+            sku selecionado depois que um adulto resolve a conta. */}
+        <ParentalGate
+          embedded
+          visible={!!gateSku}
+          onSuccess={() => {
+            const sku = gateSku;
+            setGateSku(null);
+            if (sku) onBuy(sku);
+          }}
+          onCancel={() => setGateSku(null)}
+        />
       </Pressable>
     </Modal>
   );

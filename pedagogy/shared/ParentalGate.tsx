@@ -18,11 +18,19 @@ interface ParentalGateProps {
   visible: boolean;
   onSuccess: () => void;
   onCancel: () => void;
+  /**
+   * Quando `true`, renderiza como overlay absoluto (sem <Modal>), para uso
+   * DENTRO de outro Modal — ex.: o Coin Market do jogo. Isso evita o bug de
+   * "modal sobre modal" no iOS. Quando `false` (padrão), usa <Modal>, ideal
+   * em telas normais como a paywall.
+   */
+  embedded?: boolean;
 }
 
 /**
  * Portão parental exigido pela Kids Category da App Store (Guideline 1.3).
- * Precisa ser exibido ANTES de qualquer link que saia do app.
+ * Precisa ser exibido ANTES de qualquer link externo, compra ou interação
+ * com anúncio.
  *
  * Usa uma multiplicação de dois dígitos baixos: trivial para um adulto,
  * mas fora do alcance típico de uma criança de 6-8 anos. A conta é
@@ -32,6 +40,7 @@ export function ParentalGate({
   visible,
   onSuccess,
   onCancel,
+  embedded = false,
 }: ParentalGateProps) {
   const [a, setA] = useState(0);
   const [b, setB] = useState(0);
@@ -39,14 +48,12 @@ export function ParentalGate({
   const [wrong, setWrong] = useState(false);
 
   const generate = () => {
-    // números de 4 a 9 -> produtos exigem multiplicação "de verdade"
     setA(Math.floor(Math.random() * 6) + 4);
     setB(Math.floor(Math.random() * 6) + 4);
     setAnswer("");
     setWrong(false);
   };
 
-  // gera uma nova conta sempre que o modal abre
   useEffect(() => {
     if (visible) generate();
   }, [visible]);
@@ -60,6 +67,58 @@ export function ParentalGate({
     }
   };
 
+  const card = (
+    <View style={s.card}>
+      <Text style={{ fontSize: 44, marginBottom: 4 }}>🔒</Text>
+
+      <Text style={[fredoka(22, "#2D2D2D"), { textAlign: "center" }]}>
+        Ask a grown-up
+      </Text>
+
+      <Text style={s.subtitle}>
+        To continue, please solve this so we know an adult is here:
+      </Text>
+
+      <Text style={[fredoka(34, "#FF5B8D"), { marginVertical: 8 }]}>
+        {a} × {b} = ?
+      </Text>
+
+      <TextInput
+        value={answer}
+        onChangeText={(t) => setAnswer(t.replace(/[^0-9]/g, ""))}
+        keyboardType="number-pad"
+        placeholder="Type the answer"
+        placeholderTextColor="#CCC"
+        style={[s.input, wrong && { borderColor: "#FF5B8D" }]}
+        maxLength={4}
+        autoFocus
+      />
+
+      {wrong && (
+        <Text style={s.error}>That's not right — try the new one.</Text>
+      )}
+
+      <TouchableOpacity
+        onPress={handleCheck}
+        disabled={answer.length === 0}
+        style={[s.primaryBtn, { opacity: answer.length === 0 ? 0.5 : 1 }]}
+      >
+        <Text style={fredoka(18, "#fff")}>Continue</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={onCancel} style={s.cancelBtn}>
+        <Text style={s.cancelText}>Cancel</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  // Modo overlay: para ser renderizado DENTRO de outro Modal (ex.: o jogo).
+  if (embedded) {
+    if (!visible) return null;
+    return <View style={[StyleSheet.absoluteFill, s.overlay]}>{card}</View>;
+  }
+
+  // Modo padrão: Modal próprio (telas normais, como a paywall).
   return (
     <Modal
       visible={visible}
@@ -67,50 +126,7 @@ export function ParentalGate({
       animationType="fade"
       onRequestClose={onCancel}
     >
-      <View style={s.overlay}>
-        <View style={s.card}>
-          <Text style={{ fontSize: 44, marginBottom: 4 }}>🔒</Text>
-
-          <Text style={[fredoka(22, "#2D2D2D"), { textAlign: "center" }]}>
-            Ask a grown-up
-          </Text>
-
-          <Text style={s.subtitle}>
-            To continue, please solve this so we know an adult is here:
-          </Text>
-
-          <Text style={[fredoka(34, "#FF5B8D"), { marginVertical: 8 }]}>
-            {a} × {b} = ?
-          </Text>
-
-          <TextInput
-            value={answer}
-            onChangeText={(t) => setAnswer(t.replace(/[^0-9]/g, ""))}
-            keyboardType="number-pad"
-            placeholder="Type the answer"
-            placeholderTextColor="#CCC"
-            style={[s.input, wrong && { borderColor: "#FF5B8D" }]}
-            maxLength={4}
-            autoFocus
-          />
-
-          {wrong && (
-            <Text style={s.error}>That's not right — try the new one.</Text>
-          )}
-
-          <TouchableOpacity
-            onPress={handleCheck}
-            disabled={answer.length === 0}
-            style={[s.primaryBtn, { opacity: answer.length === 0 ? 0.5 : 1 }]}
-          >
-            <Text style={fredoka(18, "#fff")}>Continue</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={onCancel} style={s.cancelBtn}>
-            <Text style={s.cancelText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <View style={s.overlay}>{card}</View>
     </Modal>
   );
 }
