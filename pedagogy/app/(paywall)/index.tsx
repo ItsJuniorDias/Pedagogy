@@ -43,6 +43,10 @@ import { usePurchases } from "../../hooks/usePurchases";
 
 const { width } = Dimensions.get("window");
 
+// ⚠️ ATENÇÃO: estes são links do EDITOR do Notion (app.notion.com) e podem
+// exigir login — o revisor da Apple provavelmente NÃO conseguirá abrir.
+// Troque pelos links PUBLICADOS (formato "...notion.site/...", via Share →
+// Publish) e teste numa aba anônima, sem estar logado, antes de enviar.
 const TERMS_URL =
   "https://app.notion.com/p/Terms-of-Use-EULA-Pedagogy-3790df0a2e798017b3d2d9d60a5d8308";
 const PRIVACY_URL =
@@ -99,21 +103,24 @@ const FEATURES = [
   { emoji: "🧩", text: "Educational activities and mini-games" },
 ];
 
-const REVIEWS = [
+// ⚠️ Não use depoimentos inventados — a Apple rejeita conteúdo enganoso
+// (Guideline 2.3). Estes são selos de confiança factuais. Se quiser exibir
+// avaliações, use SOMENTE reviews reais da App Store.
+const TRUST = [
   {
-    name: "Ana Paula",
-    stars: 5,
-    text: "My 4-year-old loves it! Sleeps listening to the stories every night.",
+    icon: "🔒",
+    title: "Safe for kids",
+    text: "Purchases and links are protected by a parental gate.",
   },
   {
-    name: "Rodrigo M.",
-    stars: 5,
-    text: "Worth every penny. The quality of the content is amazing.",
+    icon: "🚫",
+    title: "No third-party ads",
+    text: "A calm, distraction-free space to read and learn.",
   },
   {
-    name: "Carla F.",
-    stars: 5,
-    text: "My daughter learned to read faster with the interactive stories!",
+    icon: "↩️",
+    title: "Cancel anytime",
+    text: "Manage your plan anytime in your account settings.",
   },
 ];
 
@@ -291,12 +298,11 @@ export default function PaywallScreen() {
 
     const success = await purchase(selectedPkg);
 
-    await AsyncStorage.setItem("@subscription_status", "active");
-
-    console.log(success, "PURCHASE RESULT");
+    console.log(success, "SUCCESSSS");
 
     if (success) {
-      // ✅ FIX: volta para a história após assinar com sucesso
+      // ✅ FIX: só marca como ativo SE a compra realmente deu certo
+      await AsyncStorage.setItem("@subscription_status", "active");
 
       Alert.alert(
         "🎉 Subscription Active!",
@@ -424,10 +430,10 @@ export default function PaywallScreen() {
 
         <View style={s.urgency}>
           <Wiggle angle={14} pause={1200}>
-            <Text style={{ fontSize: 18 }}>⏰</Text>
+            <Text style={{ fontSize: 18 }}>🔒</Text>
           </Wiggle>
           <Text style={[fredoka(13, "#C0305A"), { flex: 1 }]}>
-            20% off for the first 100 subscribers!
+            Every purchase is protected by a parental gate.
           </Text>
         </View>
 
@@ -462,7 +468,7 @@ export default function PaywallScreen() {
 
         <View style={s.sectionHdr}>
           <Text style={fredoka(20, "#2D2D2D")}>
-            What families are saying ⭐
+            Why families choose Pedagogy
           </Text>
         </View>
         <ScrollView
@@ -470,18 +476,17 @@ export default function PaywallScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={s.reviewsRow}
         >
-          {REVIEWS.map((r, i) => (
+          {TRUST.map((t, i) => (
             <Animated.View
-              key={r.name}
+              key={t.title}
               entering={enterRight(200 + i * 140)}
               style={s.reviewCard}
             >
               <View style={s.reviewAvatar}>
-                <Text style={fredoka(16, "#FF5B8D")}>{r.name[0]}</Text>
+                <Text style={{ fontSize: 20 }}>{t.icon}</Text>
               </View>
-              <Text style={fredoka(14, "#2D2D2D")}>{r.name}</Text>
-              <Text style={s.reviewStars}>{"⭐".repeat(r.stars)}</Text>
-              <Text style={s.reviewText}>{r.text}</Text>
+              <Text style={fredoka(15, "#2D2D2D")}>{t.title}</Text>
+              <Text style={s.reviewText}>{t.text}</Text>
             </Animated.View>
           ))}
         </ScrollView>

@@ -34,7 +34,7 @@ const API_KEYS = {
  * Identificador do entitlement configurado no RevenueCat.
  * Ex.: "pro", "premium", "all_access"
  */
-export const ENTITLEMENT_ID = "premium";
+export const ENTITLEMENT_ID = "Pedagogy - Books Pro";
 
 // ─── Inicialização ─────────────────────────────────────────────────────────────
 
