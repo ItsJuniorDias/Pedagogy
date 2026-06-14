@@ -219,6 +219,7 @@ export function usePongGame(options: UsePongGameOptions = {}) {
         // ── Marcação de ponto depois da partida ──
         // Fecha o resultado e avisa quem estiver ouvindo (ranking persistente).
         onMatchEndRef.current?.({
+          mode: "solo",
           result: ns.p >= WIN_SCORE ? "win" : "loss",
           playerScore: ns.p,
           cpuScore: ns.c,

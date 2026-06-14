@@ -62,28 +62,45 @@ ping-pong/
     ├── Scoreboard.tsx       placar flutuante (topo)
     ├── StartOverlay.tsx     overlay "TAP TO PLAY"
     ├── ControlBar.tsx       ⏸ / dificuldade / ↺
-    ├── GameOverModal.tsx    modal de fim de partida (+ pontos ganhos)
-    ├── RankButton.tsx       pílula com a patente + pontos (abre o ranking)
-    └── RankingModal.tsx     painel do ranking (tiers, stats, leaderboard)
+    ├── GameOverModal.tsx    modal de fim (pontos ganhos + ±MMR no ranked)
+    ├── RankButton.tsx       pílula: patente+pontos (solo) ou divisão+MMR (ranked)
+    └── RankingModal.tsx     painel do ranking (patente, divisão ranked, leaderboard)
 ```
 
 ## 🏆 Ranking & acúmulos
 
-Ao fim de cada partida o motor (`usePongGame`) emite o resultado via
-`onMatchEnd`. O `PingPongGame` passa esse gancho para `useRanking.recordMatch`,
-que **registra a partida** e persiste tudo em `AsyncStorage`.
+Ao fim de cada partida o motor (`usePongGame` no solo, `useNetPong` no
+multiplayer) emite o resultado via `onMatchEnd`. O shell passa esse gancho para
+`useRanking.recordMatch`, que **registra a partida** e persiste tudo em
+`AsyncStorage`.
+
+Existem **duas trilhas de progressão independentes**, ambas no mesmo perfil
+salvo (uma chave só):
+
+1. **Pontos vitalícios (patente)** — alimentados por **solo E ranked**. É a
+   `tierForPoints` de sempre (Rookie → … → Neon Master). Partidas ranked rendem
+   pontos com multiplicador fixo (`RANKED_MULT = 2`).
+2. **MMR / Elo (divisão)** — **só do ranked**. Cada jogador começa em
+   `DEFAULT_MMR = 1000` e troca rating partida a partida pela fórmula de Elo
+   (`MMR_K = 32`). As divisões (`RANKED_TIERS`: Wood → … → Champion) saem do MMR.
 
 A lógica de acúmulo vive em `storage/ranking.ts` (funções puras, testáveis):
 
 - **`scoreMatch(m)`** → pontos da partida:
-  `(base + saldo·5 + bestRally·3) × multiplicador da dificuldade`
-  (`base` = 100 vitória / 20 derrota; mult. easy 1 · normal 1.5 · hard 2; piso em 0).
-- **`accumulate(profile, record)`** → reduz a partida no perfil: totais,
-  placar somado, **sequência de vitórias** (zera ao perder), recorde de rally,
-  tabela por dificuldade e **leaderboard** (top 10 por pontos).
-- **`tierForPoints(total)`** → patente (Rookie → … → Neon Master) + progresso.
+  `(base + saldo·5 + bestRally·3) × multiplicador`
+  (`base` = 100 vitória / 20 derrota; mult.: solo easy 1 · normal 1.5 · hard 2,
+  ranked fixo 2; piso em 0).
+- **`applyElo(self, opp, won)`** → variação de MMR (ganhar de quem é mais forte
+  rende mais; perder pra quem é mais fraco custa mais). Piso do rating em 0.
+- **`accumulate(profile, record, newMMR)`** → reduz a partida no perfil: totais
+  (solo+ranked), placar somado, **sequências** (geral e ranked), recorde de
+  rally, tabela por dificuldade (**só solo**), MMR/pico/W-L ranked (**só ranked**)
+  e **leaderboard** (top 10 por pontos, com solo e ranked juntos).
+- **`tierForPoints(total)`** → patente vitalícia + progresso.
+- **`rankedDivisionForMMR(mmr)`** → divisão competitiva + progresso.
 
-Chave do storage: `@neon_pong/ranking_v1` (suba o sufixo se mudar o formato).
+Chave do storage: `@neon_pong/ranking_v1` (mantida — a migração é
+retrocompatível: perfis e partidas antigas viram `mode: "solo"` ao carregar).
 
 ## 🌐 Multiplayer online (saguão + partida automática)
 
@@ -116,6 +133,29 @@ components/ModeSelect.tsx  Menu inicial (Multiplayer / Solo)
 MultiplayerPongGame.tsx    Shell da partida online (placar com os 2 nicks)
 PongHub.tsx                Roteia menu ↔ solo ↔ multiplayer
 ```
+
+### 🥇 Ranked no multiplayer (MMR/Elo + pontos)
+
+Toda partida online é **ranked** — conta para a patente (pontos) **e** para o
+MMR (Elo). O detalhe: o Elo precisa do rating dos **dois** jogadores, mas o
+servidor é só um relay e **não guarda nada**. A solução é uma troca direta de
+MMR entre os clientes, por cima do mesmo relay:
+
+- Ao montar a partida (e a cada revanche), cada lado dispara um evento novo
+  **`{ kind: "hello", mmr }`** anunciando o próprio rating. O outro guarda esse
+  valor e responde uma vez (a troca fecha nos dois sentidos, independente de
+  quem chega primeiro).
+- Quando a partida termina (`phase === "over"`), **cada cliente registra o
+  próprio resultado localmente**: calcula seu Elo contra o MMR recebido, soma os
+  pontos da patente e salva no AsyncStorage. Host e guest gravam cada um o seu —
+  é persistência local, então isso é o esperado.
+- O servidor **não muda**: ele já repassa qualquer `event` ao oponente sem
+  validar, então o `hello` viaja sem nenhuma alteração no back-end.
+
+> **Partidas incompletas não contam.** Se o oponente cai no meio (a tela vira
+> "OPPONENT LEFT", não "over"), nada é registrado — de propósito, pra não
+> distribuir/queimar MMR por desconexão.
+
 
 ### Rodando o servidor (saguão)
 
@@ -151,6 +191,9 @@ Detalhes do servidor em [`server/README.md`](server/README.md).
   (ajuste `DIFFS` para velocidade da CPU e da bola, `WIN_SCORE`, tamanhos).
 - **Pontuação / acúmulos / tiers** → `storage/ranking.ts`
   (fórmula em `scoreMatch`, faixas em `TIERS`, top N em `MAX_RANKING`).
+- **Ranked / MMR / divisões** → `storage/ranking.ts`
+  (`DEFAULT_MMR` rating inicial, `MMR_K` quanto cada partida move o rating,
+  `RANKED_MULT` multiplicador de pontos do ranked, `RANKED_TIERS` divisões).
 - **Visual do mundo 3D** → `scene/*` e as cores em `theme.ts` (`C3D`).
 - **Aparência da HUD** → `components/*` e a paleta `NEON` em `theme.ts`.
 

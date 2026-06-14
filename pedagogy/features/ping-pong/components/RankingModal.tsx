@@ -20,7 +20,12 @@ import {
 
 import { DIFFS, SCREEN_W } from "../constants";
 import type { RankingProfile } from "../storage";
-import { tierForPoints, winRate } from "../storage";
+import {
+  rankedDivisionForMMR,
+  rankedWinRate,
+  tierForPoints,
+  winRate,
+} from "../storage";
 import { FF, NEON } from "../theme";
 import type { DiffId } from "../types";
 
@@ -49,6 +54,10 @@ export const RankingModal: React.FC<Props> = ({
   const tier = tierForPoints(profile.totalPoints);
   const rate = Math.round(winRate(profile) * 100);
   const accent = tier.current.color;
+
+  const div = rankedDivisionForMMR(profile.mmr);
+  const divAccent = div.current.color;
+  const rankedRate = Math.round(rankedWinRate(profile) * 100);
 
   const confirmReset = () =>
     Alert.alert(
@@ -140,8 +149,64 @@ export const RankingModal: React.FC<Props> = ({
               />
             </View>
 
-            {/* By difficulty */}
-            <Text style={rk.sectionTitle}>BY DIFFICULTY</Text>
+            {/* Ranked: divisão competitiva (MMR/Elo) */}
+            <Text style={rk.sectionTitle}>⚔ RANKED (MULTIPLAYER)</Text>
+            <View style={[rk.tierBox, { borderColor: divAccent }]}>
+              <Text style={rk.tierEmoji}>{div.current.emoji}</Text>
+              <Text style={[rk.tierLabel, { color: divAccent }]}>
+                {div.current.label}
+              </Text>
+              <Text style={rk.tierPoints}>{profile.mmr} MMR</Text>
+
+              <View style={rk.track}>
+                <View
+                  style={[
+                    rk.fill,
+                    {
+                      backgroundColor: divAccent,
+                      width: `${Math.round(div.progress * 100)}%`,
+                    },
+                  ]}
+                />
+              </View>
+              <Text style={rk.tierNext}>
+                {div.next
+                  ? `${div.toNext} MMR to ${div.next.label}`
+                  : "top division 🌟"}
+              </Text>
+            </View>
+
+            <View style={rk.statGrid}>
+              <Stat label="RANKED" value={profile.rankedMatches} />
+              <Stat
+                label="W — L"
+                value={`${profile.rankedWins}—${profile.rankedLosses}`}
+                color={NEON.cyan}
+              />
+              <Stat
+                label="WIN RATE"
+                value={`${rankedRate}%`}
+                color={NEON.mint}
+              />
+              <Stat
+                label="PEAK MMR"
+                value={profile.bestMMR}
+                color={NEON.yellow}
+              />
+              <Stat
+                label="STREAK"
+                value={`🔥 ${profile.rankedStreak}`}
+                color={NEON.amber}
+              />
+              <Stat
+                label="BEST STREAK"
+                value={profile.bestRankedStreak}
+                color={NEON.rose}
+              />
+            </View>
+
+            {/* By difficulty (apenas partidas solo vs CPU) */}
+            <Text style={rk.sectionTitle}>BY DIFFICULTY (SOLO)</Text>
             <View style={rk.diffRow}>
               {DIFF_IDS.map((id) => {
                 const t = profile.byDiff[id];
@@ -171,8 +236,10 @@ export const RankingModal: React.FC<Props> = ({
               </Text>
             ) : (
               profile.top.map((m, i) => {
-                const cfg = DIFFS[m.diff];
+                const isRanked = m.mode === "ranked";
+                const cfg = m.diff ? DIFFS[m.diff] : null;
                 const won = m.result === "win";
+                const delta = m.mmrDelta ?? 0;
                 return (
                   <View key={m.id} style={rk.lbRow}>
                     <Text style={rk.lbRank}>{i + 1}</Text>
@@ -187,13 +254,33 @@ export const RankingModal: React.FC<Props> = ({
                     <Text style={rk.lbScore}>
                       {m.playerScore}–{m.cpuScore}
                     </Text>
-                    <Text style={[rk.lbDiff, { color: cfg.color }]}>
-                      {cfg.emoji}
+                    <Text
+                      style={[
+                        rk.lbDiff,
+                        { color: isRanked ? NEON.yellow : cfg!.color },
+                      ]}
+                    >
+                      {isRanked ? "⚔" : cfg!.emoji}
                     </Text>
-                    <Text style={rk.lbDate}>{fmtDate(m.date)}</Text>
-                    <Text style={[rk.lbPts, { color: accent }]}>
-                      +{m.points}
+                    <Text style={rk.lbDate} numberOfLines={1}>
+                      {isRanked && m.opponent ? m.opponent.nick : fmtDate(m.date)}
                     </Text>
+                    <View style={rk.lbPtsBox}>
+                      <Text style={[rk.lbPts, { color: accent }]}>
+                        +{m.points}
+                      </Text>
+                      {isRanked && m.mmrDelta != null && (
+                        <Text
+                          style={[
+                            rk.lbMMR,
+                            { color: delta >= 0 ? NEON.mint : NEON.rose },
+                          ]}
+                        >
+                          {delta >= 0 ? "+" : ""}
+                          {delta} MMR
+                        </Text>
+                      )}
+                    </View>
                   </View>
                 );
               })
@@ -380,7 +467,9 @@ const rk = StyleSheet.create({
     flex: 1,
     textAlign: "center",
   },
-  lbPts: { fontFamily: FF, fontSize: 13, width: 52, textAlign: "right" },
+  lbPtsBox: { width: 58, alignItems: "flex-end" },
+  lbPts: { fontFamily: FF, fontSize: 13, textAlign: "right" },
+  lbMMR: { fontFamily: FF, fontSize: 8.5, letterSpacing: 0.3, marginTop: 1 },
 
   footer: {
     flexDirection: "row",

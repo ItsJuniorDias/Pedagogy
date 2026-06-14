@@ -35,7 +35,12 @@ export type NetEvent =
   | { kind: "point"; side: "host" | "guest" }
   | { kind: "effect"; side: "host" | "guest" }
   | { kind: "hit"; side: "host" | "guest" }
-  | { kind: "over"; winner: "host" | "guest" };
+  | { kind: "over"; winner: "host" | "guest" }
+  // Aperto de mão do RANKED: cada peer anuncia seu MMR atual no início da
+  // partida (e responde ao do oponente). O servidor é só relay de "event",
+  // então isto NÃO exige nenhuma mudança no servidor. Quem recebe usa o MMR
+  // do oponente para calcular o Elo localmente ao fim da partida.
+  | { kind: "hello"; mmr: number };
 
 // ── Cliente → Servidor ───────────────────────────────────────────────────────
 

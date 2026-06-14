@@ -19,9 +19,10 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FloatLabel, GameOverModal, Glass, Scoreboard } from "./components";
+import { FloatLabel, GameOverModal, Glass, RankButton, RankingModal, Scoreboard } from "./components";
 import { WIN_SCORE } from "./constants";
 import { useNetPong } from "./hooks/useNetPong";
+import { useRanking } from "./hooks/useRanking";
 import type { Identity, NetChannel } from "./net";
 import { FF, NEON } from "./theme";
 import type { Phase } from "./types";
@@ -52,7 +53,18 @@ export const MultiplayerPongGame: React.FC<Props> = ({
   onBackToLobby,
 }) => {
   const insets = useSafeAreaInsets();
-  const g = useNetPong({ net });
+  const ranking = useRanking();
+  const [rankOpen, setRankOpen] = useState(false);
+
+  // Motor em rede + RANKED: anuncio meu MMR, informo quem é o oponente e
+  // registro a partida no ranking persistente ao terminar (mesma trilha de
+  // pontos do solo + rating de Elo próprio do multiplayer).
+  const g = useNetPong({
+    net,
+    selfMMR: ranking.profile.mmr,
+    opponent: { nick: opponent.nick, emoji: opponent.emoji },
+    onMatchEnd: ranking.recordMatch,
+  });
 
   const [splash, setSplash] = useState(true);
   useEffect(() => {
@@ -95,6 +107,15 @@ export const MultiplayerPongGame: React.FC<Props> = ({
           </Glass>
         </TouchableOpacity>
 
+        {/* divisão ranked (MMR) — abre o painel de ranking */}
+        <RankButton
+          top={insets.top + 92}
+          variant="ranked"
+          rankedMMR={ranking.profile.mmr}
+          totalPoints={ranking.profile.totalPoints}
+          onPress={() => setRankOpen(true)}
+        />
+
         {/* floating labels */}
         {g.floatLabels.map((lbl) => (
           <View
@@ -135,13 +156,20 @@ export const MultiplayerPongGame: React.FC<Props> = ({
         )}
       </View>
 
-      {/* Fim de partida → revanche */}
+      {/* Fim de partida → revanche (com pontos ganhos + variação de MMR) */}
       <GameOverModal
         visible={g.overVisible && !opponentLeft}
         playerWon={iWon}
         score={g.score}
         bestRally={g.bestRally}
         onPlayAgain={g.startGame}
+        mode="ranked"
+        opponentName={`${opponent.emoji} ${opponent.nick}`}
+        earnedPoints={ranking.lastRecord?.points}
+        totalPoints={ranking.profile.totalPoints}
+        mmrDelta={ranking.lastRecord?.mmrDelta}
+        newMMR={ranking.profile.mmr}
+        onViewRanking={() => setRankOpen(true)}
       />
 
       {/* Oponente saiu */}

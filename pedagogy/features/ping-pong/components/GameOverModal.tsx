@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import { SCREEN_W } from "../constants";
-import { tierForPoints } from "../storage";
+import { rankedDivisionForMMR, tierForPoints } from "../storage";
 import { FF, NEON } from "../theme";
 
 export const GameOverModal: React.FC<{
@@ -28,6 +28,14 @@ export const GameOverModal: React.FC<{
   totalPoints?: number;
   /** Abre o ranking completo (opcional). */
   onViewRanking?: () => void;
+  /** Modo da partida — "solo" (padrão) ou "ranked" (multiplayer). */
+  mode?: "solo" | "ranked";
+  /** Nick do oponente humano — só no ranked. */
+  opponentName?: string;
+  /** Variação de MMR nesta partida — só no ranked (pode ser negativa). */
+  mmrDelta?: number;
+  /** MMR após esta partida — só no ranked. */
+  newMMR?: number;
 }> = ({
   visible,
   playerWon,
@@ -37,6 +45,10 @@ export const GameOverModal: React.FC<{
   earnedPoints,
   totalPoints,
   onViewRanking,
+  mode = "solo",
+  opponentName,
+  mmrDelta,
+  newMMR,
 }) => {
   const sc = useRef(new Animated.Value(0.5)).current;
   const op = useRef(new Animated.Value(0)).current;
@@ -58,6 +70,9 @@ export const GameOverModal: React.FC<{
   }, [visible]);
 
   const accent = playerWon ? NEON.cyan : NEON.magenta;
+  const ranked = mode === "ranked";
+  const titleEmoji = playerWon ? "🏆" : ranked ? "😮‍💨" : "🤖";
+  const titleText = playerWon ? "YOU WIN" : ranked ? "YOU LOSE" : "CPU WINS";
 
   return (
     <Modal
@@ -73,10 +88,11 @@ export const GameOverModal: React.FC<{
             { borderColor: accent, transform: [{ scale: sc }] },
           ]}
         >
-          <Text style={gm.overEm}>{playerWon ? "🏆" : "🤖"}</Text>
-          <Text style={[gm.overTitle, { color: accent }]}>
-            {playerWon ? "YOU WIN" : "CPU WINS"}
-          </Text>
+          <Text style={gm.overEm}>{titleEmoji}</Text>
+          <Text style={[gm.overTitle, { color: accent }]}>{titleText}</Text>
+          {ranked && opponentName != null && (
+            <Text style={gm.overVs}>vs {opponentName}</Text>
+          )}
           <View style={gm.overScoreRow}>
             <Text style={[gm.overScore, { color: NEON.cyan }]}>{score.p}</Text>
             <Text style={gm.overDash}>—</Text>
@@ -99,6 +115,23 @@ export const GameOverModal: React.FC<{
                 <Text style={gm.overTier}>
                   {tier.current.emoji} {tier.current.label} ·{" "}
                   {totalPoints.toLocaleString("en-US")} pts
+                </Text>
+              );
+            })()}
+
+          {/* Ranked: variação de MMR + divisão competitiva */}
+          {ranked &&
+            mmrDelta != null &&
+            newMMR != null &&
+            (() => {
+              const up = mmrDelta >= 0;
+              const div = rankedDivisionForMMR(newMMR);
+              const mmrColor = up ? NEON.mint : NEON.rose;
+              return (
+                <Text style={[gm.overMMR, { color: mmrColor }]}>
+                  {up ? "▲" : "▼"} {up ? "+" : ""}
+                  {mmrDelta} MMR · {div.current.emoji} {div.current.label}{" "}
+                  {newMMR}
                 </Text>
               );
             })()}
@@ -161,6 +194,19 @@ const gm = StyleSheet.create({
   overScore: { fontFamily: FF, fontSize: 38 },
   overDash: { fontFamily: FF, fontSize: 22, color: NEON.dim },
   overStat: { fontFamily: FF, fontSize: 13, color: NEON.text },
+  overVs: {
+    fontFamily: FF,
+    fontSize: 12,
+    color: NEON.dim,
+    letterSpacing: 1,
+    marginTop: -2,
+  },
+  overMMR: {
+    fontFamily: FF,
+    fontSize: 13,
+    letterSpacing: 1,
+    marginTop: 1,
+  },
   overPts: { fontFamily: FF, fontSize: 18, letterSpacing: 1, marginTop: 2 },
   overTier: {
     fontFamily: FF,

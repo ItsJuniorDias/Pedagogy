@@ -7,18 +7,34 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import { shared } from "../styles";
-import { tierForPoints } from "../storage";
-import { FF, NEON } from "../theme";
+import { rankedDivisionForMMR, tierForPoints } from "../storage";
+import { FF } from "../theme";
 import { Glass } from "./Glass";
 
 interface Props {
   top: number;
   totalPoints: number;
   onPress: () => void;
+  /** "points" (padrão) mostra a patente vitalícia; "ranked" mostra a divisão/MMR. */
+  variant?: "points" | "ranked";
+  /** MMR atual — usado quando variant === "ranked". */
+  rankedMMR?: number;
 }
 
-export const RankButton: React.FC<Props> = ({ top, totalPoints, onPress }) => {
-  const tier = tierForPoints(totalPoints);
+export const RankButton: React.FC<Props> = ({
+  top,
+  totalPoints,
+  onPress,
+  variant = "points",
+  rankedMMR = 0,
+}) => {
+  const ranked = variant === "ranked";
+  const tier = ranked
+    ? rankedDivisionForMMR(rankedMMR)
+    : tierForPoints(totalPoints);
+  const value = ranked
+    ? String(rankedMMR)
+    : totalPoints.toLocaleString("en-US");
   return (
     <TouchableOpacity
       style={[rb.wrap, { top }]}
@@ -27,9 +43,7 @@ export const RankButton: React.FC<Props> = ({ top, totalPoints, onPress }) => {
     >
       <Glass style={rb.pill} intensity={55}>
         <Text style={rb.emoji}>{tier.current.emoji}</Text>
-        <Text style={[rb.pts, { color: tier.current.color }]}>
-          {totalPoints.toLocaleString("en-US")}
-        </Text>
+        <Text style={[rb.pts, { color: tier.current.color }]}>{value}</Text>
       </Glass>
     </TouchableOpacity>
   );

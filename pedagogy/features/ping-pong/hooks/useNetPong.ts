@@ -22,6 +22,8 @@ import * as THREE from "three";
 import { BALL_R, BALL_Y, CATCH_ASSIST, DIFFS, PADDLE, SPIN, TABLE, WIN_SCORE } from "../constants";
 import type { NetChannel, NetEvent, NetState } from "../net";
 import { buildArena, buildRacket, buildTable, neon } from "../scene";
+import { DEFAULT_MMR } from "../storage";
+import type { MatchResult } from "../storage";
 import { C3D, NEON } from "../theme";
 import type { FloatingLabel, Phase } from "../types";
 
@@ -53,10 +55,16 @@ interface NetRefs {
 
 export interface UseNetPongOptions {
   net: NetChannel;
+  /** Meu MMR ranked atual — anunciado ao oponente no aperto de mão. */
+  selfMMR?: number;
+  /** Identidade do oponente (para registrar a partida ranked no ranking). */
+  opponent?: { nick: string; emoji: string };
+  /** Chamado UMA vez quando a partida termina (registra a partida). */
+  onMatchEnd?: (m: MatchResult) => void;
   onExit?: () => void;
 }
 
-export function useNetPong({ net }: UseNetPongOptions) {
+export function useNetPong({ net, selfMMR, opponent, onMatchEnd }: UseNetPongOptions) {
   const isHost = net.isHost;
 
   // UI state (espelha os refs do loop)
@@ -76,6 +84,23 @@ export function useNetPong({ net }: UseNetPongOptions) {
   useEffect(() => {
     isHostRef.current = isHost;
   }, [isHost]);
+
+  // ── RANKED: opções "vivas" (refs) usadas no loop / handlers / handshake ─────
+  const selfMMRRef = useRef(selfMMR ?? DEFAULT_MMR); // meu rating (anunciado)
+  const oppMMRRef = useRef(DEFAULT_MMR); // rating do oponente (recebido)
+  const opponentRef = useRef(opponent); // nick/emoji do oponente
+  const onMatchEndRef = useRef(onMatchEnd); // callback de fim de partida
+  const recordedRef = useRef(false); // já registrei ESTA partida?
+  const helloRepliedRef = useRef(false); // já respondi o hello deste exchange?
+  useEffect(() => {
+    selfMMRRef.current = selfMMR ?? DEFAULT_MMR;
+  }, [selfMMR]);
+  useEffect(() => {
+    opponentRef.current = opponent;
+  }, [opponent]);
+  useEffect(() => {
+    onMatchEndRef.current = onMatchEnd;
+  }, [onMatchEnd]);
 
   const refs = useRef<NetRefs>({
     renderer: null,
@@ -129,6 +154,18 @@ export function useNetPong({ net }: UseNetPongOptions) {
     });
   }, []);
 
+  // ── RANKED: aperto de mão (troca de MMR pelo relay de "event") ─────────────
+  // O servidor só repassa eventos, então isto não exige mudança no servidor.
+  const sendHello = useCallback(() => {
+    net.sendEvent({ kind: "hello", mmr: Math.round(selfMMRRef.current) });
+  }, [net]);
+
+  /** (Re)inicia a troca: libera a resposta e anuncia meu rating atual. */
+  const handshake = useCallback(() => {
+    helloRepliedRef.current = false;
+    sendHello();
+  }, [sendHello]);
+
   // ── Saque / reset (só o host usa) ──────────────────────────────────────────
   const resetBall = useCallback(() => {
     const r = refs.current;
@@ -156,6 +193,7 @@ export function useNetPong({ net }: UseNetPongOptions) {
       // guest "pede" revanche; o host reinicia e o estado volta a fluir
       net.sendRematch();
       setWaitingRematch(true);
+      handshake(); // reanuncia meu MMR (pode ter mudado) para a revanche
       return;
     }
     scoreRef.current = { p: 0, c: 0 };
@@ -164,8 +202,9 @@ export function useNetPong({ net }: UseNetPongOptions) {
     setRally(0);
     setOverVisible(false);
     setWaitingRematch(false);
+    handshake(); // reanuncia meu MMR no início da partida
     scheduleServe(-1, 650); // primeiro saque vai para o oponente (longe)
-  }, [net, scheduleServe]);
+  }, [net, scheduleServe, handshake]);
 
   // ── Ponto (só o host marca; guest recebe via estado/evento) ─────────────────
   const onPoint = useCallback(
@@ -262,6 +301,16 @@ export function useNetPong({ net }: UseNetPongOptions) {
         refs.current.oppTargetX = -targetX;
       },
       onEvent: (e: NetEvent) => {
+        if (e.kind === "hello") {
+          // RANKED: oponente anunciou o MMR dele. Guarda e responde uma vez,
+          // garantindo a troca nos dois sentidos mesmo com ordem de chegada.
+          oppMMRRef.current = e.mmr;
+          if (!helloRepliedRef.current) {
+            helloRepliedRef.current = true;
+            sendHello();
+          }
+          return;
+        }
         if (e.kind === "effect") {
           // mostra "EFFECT!" só para quem deu o corte
           const mine = isHostRef.current ? e.side === "host" : e.side === "guest";
@@ -289,7 +338,43 @@ export function useNetPong({ net }: UseNetPongOptions) {
         if (isHostRef.current) startGame();
       },
     });
-  }, [net, spawnLabel, startGame]);
+  }, [net, spawnLabel, startGame, sendHello]);
+
+  // ── RANKED: troca inicial de MMR assim que a partida monta (host e guest) ───
+  useEffect(() => {
+    const id = setTimeout(() => handshake(), 250);
+    return () => clearTimeout(id);
+  }, [handshake]);
+
+  // ── RANKED: registra a partida no ranking UMA vez, quando ela termina ───────
+  // Dispara no host e no guest (cada um registra o PRÓPRIO resultado local). O
+  // placar vem do ref (já final quando a fase vira "over"); o vencedor é quem
+  // chegou ao WIN_SCORE. Partidas incompletas (oponente saiu) não viram "over",
+  // portanto não são registradas — de propósito.
+  useEffect(() => {
+    if (phase === "over") {
+      if (!recordedRef.current) {
+        recordedRef.current = true;
+        const sc = scoreRef.current;
+        const won = sc.p >= WIN_SCORE;
+        const opp = opponentRef.current;
+        onMatchEndRef.current?.({
+          mode: "ranked",
+          result: won ? "win" : "loss",
+          playerScore: sc.p,
+          cpuScore: sc.c,
+          bestRally: bestRef.current,
+          opponent: {
+            nick: opp?.nick ?? "Player",
+            emoji: opp?.emoji ?? "🎮",
+            mmr: Math.round(oppMMRRef.current),
+          },
+        });
+      }
+    } else if (phase === "serving" || phase === "play") {
+      recordedRef.current = false; // re-arma para a próxima partida (revanche)
+    }
+  }, [phase]);
 
   // ── Auto-start: o host começa a partida assim que a tela monta ──────────────
   useEffect(() => {

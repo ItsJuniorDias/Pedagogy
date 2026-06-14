@@ -34,10 +34,17 @@ export type {
 // Ranking persistente + acúmulos
 export {
   TIERS,
+  RANKED_TIERS,
   STORAGE_KEY,
+  DEFAULT_MMR,
+  MMR_K,
   tierForPoints,
+  rankedDivisionForMMR,
   winRate,
+  rankedWinRate,
   scoreMatch,
+  expectedScore,
+  applyElo,
   loadRanking,
   recordMatchResult,
   clearRanking,
@@ -45,6 +52,9 @@ export {
 export type {
   MatchResult,
   MatchRecord,
+  MatchMode,
+  MatchResultKind,
+  OpponentInfo,
   RankingProfile,
   Tier,
   TierProgress,
