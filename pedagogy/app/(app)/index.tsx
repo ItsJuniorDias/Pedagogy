@@ -1,409 +1,320 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
-import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
 import {
-  Dimensions,
-  FlatList,
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  ViewToken,
-} from "react-native";
+  FredokaOne_400Regular,
+  useFonts,
+} from "@expo-google-fonts/fredoka-one";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { Dimensions, Image, StatusBar, StyleSheet, View } from "react-native";
 import Animated, {
-  Extrapolation,
+  Easing,
   interpolate,
-  interpolateColor,
-  SharedValue,
-  useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 
-import { Breathe, enterPop, enterUp, PressBounce } from "../../shared/motion";
+import icon from "../../assets/images/pedagogy_owl_full.png";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
-// ─── Slide data ───────────────────────────────────────────────────────────────
+/* ---------- ajustes rápidos ---------- */
+const BG = "#4B3FE4"; // cor de fundo
+const TITLE = "Pedagogy"; // texto do título
+const TAGLINE = "Learning through play"; // subtítulo
+const TOTAL_MS = 3200; // tempo total antes de chamar onFinish
+/* ------------------------------------- */
 
-type Slide = {
-  id: string;
-  badge: string;
-  title: string;
-  description: string;
-  image: ReturnType<typeof require>;
-  buttonLabel: string;
+type SplashProps = {
+  /** Chamado quando a animação termina — use para navegar / esconder a splash nativa */
+  onFinish?: () => void;
 };
 
-const SLIDES: Slide[] = [
-  {
-    id: "1",
-    badge: "Welcome to Pedagogy",
-    title: "Stories that teach\nand delight",
-    description:
-      "Pedagogy is a children's story app with educational content, designed to develop kids aged 2–10 in a playful and engaging way.",
-    image: require("../../assets/images/background-onboarding.png"),
-    buttonLabel: "Next",
-  },
-  {
-    id: "2",
-    badge: "Infinite library",
-    title: "Hundreds of stories\nto explore",
-    description:
-      "Fables, adventures, science and more. New content every month, with audio narration and colourful illustrations.",
-    image: require("../../assets/images/background-onboarding.png"),
-    buttonLabel: "Next",
-  },
-  {
-    id: "3",
-    badge: "Real learning",
-    title: "Track your child's\nprogress",
-    description:
-      "Quizzes, achievements and reading reports for parents. Teaching has never been this fun and easy to follow.",
-    image: require("../../assets/images/background-onboarding.png"),
-    buttonLabel: "Let's go 👍",
-  },
-];
-
-// ─── Dot indicator ────────────────────────────────────────────────────────────
-
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
-
-// Cada dot estica e muda de cor conforme o dedo arrasta o carrossel —
-// a transição acompanha o gesto em tempo real, não o "snap" da página.
-function Dot({ i, scrollX }: { i: number; scrollX: SharedValue<number> }) {
-  const aStyle = useAnimatedStyle(() => {
-    const range = [
-      (i - 1) * SCREEN_WIDTH,
-      i * SCREEN_WIDTH,
-      (i + 1) * SCREEN_WIDTH,
-    ];
-    return {
-      width: interpolate(scrollX.value, range, [8, 24, 8], Extrapolation.CLAMP),
-      backgroundColor: interpolateColor(scrollX.value, range, [
-        "#E0E0E0",
-        "#FF5B8D",
-        "#E0E0E0",
-      ]),
-    };
-  });
-  return <Animated.View style={[styles.dot, aStyle]} />;
-}
-
-function Dots({ total, scrollX }: { total: number; scrollX: SharedValue<number> }) {
-  return (
-    <View style={styles.dots}>
-      {Array.from({ length: total }).map((_, i) => (
-        <Dot key={i} i={i} scrollX={scrollX} />
-      ))}
-    </View>
-  );
-}
-
-// ─── Single slide ─────────────────────────────────────────────────────────────
-
-// Parallax dirigido pelo gesto: a ilustração viaja mais devagar que a
-// página (meio scroll), encolhe e gira de leve ao sair; o texto entra
-// atrasado vindo de baixo e some em fade. Tudo interpolado do scrollX.
-function SlideItem({
-  item,
-  index,
-  scrollX,
-}: {
-  item: Slide;
-  index: number;
-  scrollX: SharedValue<number>;
-}) {
-  const range = [
-    (index - 1) * SCREEN_WIDTH,
-    index * SCREEN_WIDTH,
-    (index + 1) * SCREEN_WIDTH,
-  ];
-
-  const imageStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateX: interpolate(
-          scrollX.value,
-          range,
-          [SCREEN_WIDTH * 0.45, 0, -SCREEN_WIDTH * 0.45],
-          Extrapolation.CLAMP,
-        ),
-      },
-      {
-        scale: interpolate(
-          scrollX.value,
-          range,
-          [0.55, 1, 0.55],
-          Extrapolation.CLAMP,
-        ),
-      },
-      {
-        rotate: `${interpolate(
-          scrollX.value,
-          range,
-          [8, 0, -8],
-          Extrapolation.CLAMP,
-        )}deg`,
-      },
-    ],
-  }));
-
-  const textStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      scrollX.value,
-      range,
-      [0, 1, 0],
-      Extrapolation.CLAMP,
-    ),
-    transform: [
-      {
-        translateY: interpolate(
-          scrollX.value,
-          range,
-          [36, 0, 36],
-          Extrapolation.CLAMP,
-        ),
-      },
-    ],
-  }));
-
-  return (
-    <View style={styles.slideItem}>
-      <Animated.View style={[styles.imageContainer, imageStyle]}>
-        <Image
-          source={item.image}
-          style={styles.illustration}
-          resizeMode="contain"
-        />
-      </Animated.View>
-
-      <Animated.View style={[styles.textSection, textStyle]}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{item.badge}</Text>
-        </View>
-
-        <Text style={fredoka(30, "#2D2D2D")}>{item.title}</Text>
-
-        <Text style={styles.description}>{item.description}</Text>
-      </Animated.View>
-    </View>
-  );
-}
-
-// ─── Screen ───────────────────────────────────────────────────────────────────
-
-export default function AppScreen() {
-  const router = useRouter();
+export default function Splash({ onFinish }: SplashProps) {
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+  const router = useRouter();
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const flatListRef = useRef<FlatList<Slide>>(null);
+  // entrada do ícone
+  const iconScale = useSharedValue(0);
+  const iconOpacity = useSharedValue(0);
+  const iconFloat = useSharedValue(0);
+  const iconRotate = useSharedValue(-0.25); // ~ -14°, começa girado p/ o wobble
 
-  // Posição do scroll compartilhada com a UI thread (parallax + dots)
-  const scrollX = useSharedValue(0);
-  const onScroll = useAnimatedScrollHandler((e) => {
-    scrollX.value = e.contentOffset.x;
-  });
+  // tagline
+  const taglineOpacity = useSharedValue(0);
+  const taglineY = useSharedValue(16);
 
-  const onViewableItemsChanged = useRef(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      if (viewableItems.length > 0 && viewableItems[0].index !== null) {
-        setActiveIndex(viewableItems[0].index);
-      }
-    },
-  ).current;
+  useEffect(() => {
+    if (!fontsLoaded) return;
 
-  const viewabilityConfig = useRef({
-    viewAreaCoveragePercentThreshold: 50,
-  }).current;
+    // ícone: fade rápido + pop com overshoot + wobble que assenta
+    iconOpacity.value = withTiming(1, { duration: 350 });
 
-  if (!fontsLoaded) return <AppLoading />;
+    // duplo spring => "estoura" passando de 1 e volta com bounce
+    iconScale.value = withSequence(
+      withSpring(1.12, { damping: 6, stiffness: 140, mass: 0.7 }),
+      withSpring(1, { damping: 7, stiffness: 180, mass: 0.6 }),
+    );
 
-  const isLastSlide = activeIndex === SLIDES.length - 1;
+    // damping baixo => oscila um pouco antes de centralizar (wobble)
+    iconRotate.value = withDelay(
+      120,
+      withSpring(0, { damping: 5, stiffness: 110, mass: 0.8 }),
+    );
 
-  const handleButtonPress = () => {
-    if (isLastSlide) {
-      router.push("/(tabs)");
-    } else {
-      flatListRef.current?.scrollToIndex({
-        index: activeIndex + 1,
-        animated: true,
-      });
-    }
-  };
+    // idle só entra depois da entrada terminar
+    iconFloat.value = withDelay(
+      900,
+      withRepeat(
+        withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true,
+      ),
+    );
+
+    // tagline entra depois do título
+    taglineOpacity.value = withDelay(1300, withTiming(1, { duration: 500 }));
+    taglineY.value = withDelay(1300, withSpring(0, { damping: 14 }));
+
+    // ao fim da splash: dispara o callback (se houver) e vai pra onboarding
+    const t = setTimeout(() => {
+      onFinish?.();
+      router.replace("/(onboarding)"); // ajuste o path conforme sua rota
+    }, TOTAL_MS);
+
+    return () => clearTimeout(t);
+  }, [fontsLoaded]);
+
+  const iconStyle = useAnimatedStyle(() => ({
+    opacity: iconOpacity.value,
+    transform: [
+      { scale: iconScale.value },
+      { translateY: interpolate(iconFloat.value, [0, 1], [-9, 9]) },
+      {
+        rotate: `${
+          iconRotate.value + interpolate(iconFloat.value, [0, 1], [-0.04, 0.04])
+        }rad`,
+      },
+    ],
+  }));
+
+  const taglineStyle = useAnimatedStyle(() => ({
+    opacity: taglineOpacity.value,
+    transform: [{ translateY: taglineY.value }],
+  }));
+
+  if (!fontsLoaded) return <View style={styles.container} />;
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Decorative blobs */}
-      <View style={[styles.blob, styles.blob1]} />
-      <View style={[styles.blob, styles.blob2]} />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
 
-      {/* Carousel com parallax */}
-      <Animated.FlatList
-        ref={flatListRef as any}
-        data={SLIDES}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => (
-          <SlideItem item={item} index={index} scrollX={scrollX} />
-        )}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={viewabilityConfig}
-        style={styles.flatList}
+      {/* bolhas decorativas flutuando ao fundo */}
+      <Bubble size={170} top={-40} left={-50} delay={0} duration={5200} />
+      <Bubble
+        size={90}
+        top={height * 0.18}
+        left={width - 70}
+        delay={600}
+        duration={4200}
+      />
+      <Bubble
+        size={120}
+        top={height * 0.7}
+        left={-40}
+        delay={300}
+        duration={6000}
+      />
+      <Bubble
+        size={60}
+        top={height * 0.82}
+        left={width * 0.7}
+        delay={900}
+        duration={3800}
       />
 
-      {/* Dots + Button pinned at bottom */}
-      <Animated.View entering={enterUp(300)} style={styles.bottomArea}>
-        <Dots total={SLIDES.length} scrollX={scrollX} />
-
-        <Breathe scaleTo={1.03} duration={1400} style={styles.btnArea}>
-          <View style={styles.btnShadow} />
-          <PressBounce
-            onPress={handleButtonPress}
-            style={styles.btn}
-            scaleTo={0.95}
-          >
-            <Animated.Text
-              key={isLastSlide ? "go" : "next"}
-              entering={enterPop(0)}
-              style={fredoka(20, "#fff")}
-            >
-              {isLastSlide ? "Let's go 👍" : "Next"}
-            </Animated.Text>
-          </PressBounce>
-        </Breathe>
+      <Animated.View style={iconStyle}>
+        <Image source={icon} style={styles.icon} resizeMode="contain" />
       </Animated.View>
-    </SafeAreaView>
+
+      {/* título animado letra a letra */}
+      <View style={styles.titleRow}>
+        {TITLE.split("").map((char, i) => (
+          <Letter
+            key={`${char}-${i}`}
+            char={char}
+            index={i}
+            ready={fontsLoaded}
+          />
+        ))}
+      </View>
+
+      <Animated.Text style={[styles.tagline, taglineStyle]}>
+        {TAGLINE}
+      </Animated.Text>
+
+      {/* pontinhos de loading */}
+      <View style={styles.dotsRow}>
+        <Dot delay={0} />
+        <Dot delay={160} />
+        <Dot delay={320} />
+      </View>
+    </View>
   );
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+/* ---------- letra individual do título ---------- */
+function Letter({
+  char,
+  index,
+  ready,
+}: {
+  char: string;
+  index: number;
+  ready: boolean;
+}) {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(22);
+
+  useEffect(() => {
+    if (!ready) return;
+    const delay = 650 + index * 70;
+    opacity.value = withDelay(delay, withTiming(1, { duration: 350 }));
+    translateY.value = withDelay(
+      delay,
+      withSpring(0, { damping: 11, stiffness: 130 }),
+    );
+  }, [ready]);
+
+  const style = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return <Animated.Text style={[styles.title, style]}>{char}</Animated.Text>;
+}
+
+/* ---------- ponto de loading pulsante ---------- */
+function Dot({ delay }: { delay: number }) {
+  const progress = useSharedValue(0);
+
+  useEffect(() => {
+    progress.value = withDelay(
+      1600 + delay,
+      withRepeat(
+        withSequence(
+          withTiming(1, { duration: 400, easing: Easing.out(Easing.ease) }),
+          withTiming(0, { duration: 400, easing: Easing.in(Easing.ease) }),
+        ),
+        -1,
+      ),
+    );
+  }, []);
+
+  const style = useAnimatedStyle(() => ({
+    opacity: interpolate(progress.value, [0, 1], [0.3, 1]),
+    transform: [
+      { translateY: interpolate(progress.value, [0, 1], [0, -7]) },
+      { scale: interpolate(progress.value, [0, 1], [0.85, 1.15]) },
+    ],
+  }));
+
+  return <Animated.View style={[styles.dot, style]} />;
+}
+
+/* ---------- bolha decorativa de fundo ---------- */
+function Bubble({
+  size,
+  top,
+  left,
+  delay,
+  duration,
+}: {
+  size: number;
+  top: number;
+  left: number;
+  delay: number;
+  duration: number;
+}) {
+  const t = useSharedValue(0);
+
+  useEffect(() => {
+    t.value = withDelay(
+      delay,
+      withRepeat(
+        withTiming(1, { duration, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true,
+      ),
+    );
+  }, []);
+
+  const style = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: interpolate(t.value, [0, 1], [0, -28]) },
+      { translateX: interpolate(t.value, [0, 1], [0, 14]) },
+      { scale: interpolate(t.value, [0, 1], [1, 1.12]) },
+    ],
+  }));
+
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        styles.bubble,
+        { width: size, height: size, borderRadius: size / 2, top, left },
+        style,
+      ]}
+    />
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F0",
+    backgroundColor: BG,
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 40,
-  },
-
-  // Blobs
-  blob: { position: "absolute", borderRadius: 999 },
-  blob1: {
-    width: 220,
-    height: 220,
-    backgroundColor: "#FFE8F0",
-    top: -60,
-    right: -60,
-  },
-  blob2: {
-    width: 160,
-    height: 160,
-    backgroundColor: "#E8F4FF",
-    bottom: 140,
-    left: -50,
-  },
-
-  // Carousel
-  flatList: {
-    flex: 1,
-    width: SCREEN_WIDTH,
-  },
-  slideItem: {
-    width: SCREEN_WIDTH,
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingTop: 8,
-  },
-
-  // Illustration
-  imageContainer: {
-    flex: 2,
     justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
+    overflow: "hidden",
   },
-  illustration: {
-    width: "90%",
-    height: "85%",
+  icon: {
+    width: 130,
+    height: 130,
+    marginBottom: 28,
   },
-
-  // Text
-  textSection: {
-    flex: 1,
-    alignItems: "center",
-    paddingHorizontal: 32,
-    gap: 12,
+  titleRow: {
+    flexDirection: "row",
   },
-  badge: {
-    backgroundColor: "#FFE8F0",
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 5,
+  title: {
+    fontFamily: "FredokaOne_400Regular",
+    fontSize: 44,
+    color: "#FFFFFF",
+    letterSpacing: 0.5,
   },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#FF5B8D",
-  },
-  description: {
+  tagline: {
+    fontFamily: "FredokaOne_400Regular",
     fontSize: 15,
-    color: "#AAA",
-    textAlign: "center",
-    lineHeight: 24,
-    fontWeight: "600",
+    color: "rgba(255,255,255,0.8)",
+    marginTop: 10,
+    letterSpacing: 1,
   },
-
-  // Bottom area
-  bottomArea: {
-    width: "100%",
-    alignItems: "center",
-    gap: 20,
-    paddingHorizontal: 24,
-  },
-  dots: { flexDirection: "row", gap: 8 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E0E0E0" },
-  dotActive: { width: 24, backgroundColor: "#FF5B8D" },
-
-  // Button
-  btnArea: {
-    width: "85%",
-    position: "relative",
-  },
-  btnShadow: {
+  dotsRow: {
+    flexDirection: "row",
+    gap: 10,
     position: "absolute",
-    bottom: -6,
-    left: 4,
-    right: -4,
-    height: 60,
-    backgroundColor: "#C0540A",
-    borderRadius: 40,
+    bottom: 80,
   },
-  btn: {
-    width: "100%",
-    height: 60,
-    backgroundColor: "#FF7A2F",
-    borderRadius: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#FF7A2F",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35,
-    shadowRadius: 16,
-    elevation: 6,
+  dot: {
+    width: 11,
+    height: 11,
+    borderRadius: 6,
+    backgroundColor: "#FFFFFF",
+  },
+  bubble: {
+    position: "absolute",
+    backgroundColor: "rgba(255,255,255,0.08)",
   },
 });

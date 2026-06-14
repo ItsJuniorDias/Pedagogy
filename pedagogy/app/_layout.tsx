@@ -45,6 +45,11 @@ export default function RootLayout() {
 
         <Stack.Screen name="(app)/index" options={{ headerShown: false }} />
 
+        <Stack.Screen
+          name="(onboarding)/index"
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen name="(details)/index" options={{ headerShown: false }} />
 
         <Stack.Screen name="(paywall)/index" options={{ headerShown: false }} />
