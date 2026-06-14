@@ -12,11 +12,14 @@ import { Animated, Easing, LayoutChangeEvent, Vibration } from "react-native";
 import * as THREE from "three";
 
 import {
+  AI,
   BALL_R,
   BALL_Y,
   CATCH_ASSIST,
   DIFFS,
+  FATIGUE,
   PADDLE,
+  RALLY,
   SPIN,
   TABLE,
   WIN_SCORE,
@@ -78,6 +81,10 @@ export function usePongGame(options: UsePongGameOptions = {}) {
     rally: 0,
     animFrame: 0,
     t: 0,
+    playTime: 0,
+    prevVZSign: 0,
+    aiAimErr: 0,
+    tiredShown: false,
   });
 
   const setPhaseBoth = useCallback((p: Phase) => {
@@ -163,6 +170,11 @@ export function usePongGame(options: UsePongGameOptions = {}) {
     setScore({ p: 0, c: 0 });
     r.rally = 0;
     setRally(0);
+    // zera o cansaço: a CPU começa cada partida descansada
+    r.playTime = 0;
+    r.prevVZSign = 0;
+    r.aiAimErr = 0;
+    r.tiredShown = false;
     setOverVisible(false);
     scheduleServe(-1, 650); // primeiro saque vai para a CPU
   }, [scheduleServe]);
@@ -184,6 +196,10 @@ export function usePongGame(options: UsePongGameOptions = {}) {
     setRally(0);
     bestRef.current = 0;
     setBestRally(0);
+    refs.current.playTime = 0;
+    refs.current.prevVZSign = 0;
+    refs.current.aiAimErr = 0;
+    refs.current.tiredShown = false;
     resetBall();
     setOverVisible(false);
     setPhaseBoth("idle");
@@ -203,6 +219,11 @@ export function usePongGame(options: UsePongGameOptions = {}) {
       setScore(ns);
       refs.current.rally = 0;
       setRally(0);
+      // Cansaço é POR PONTO: a cada ponto a CPU volta a ficar descansada.
+      refs.current.playTime = 0;
+      refs.current.prevVZSign = 0;
+      refs.current.aiAimErr = 0;
+      refs.current.tiredShown = false;
 
       spawnLabel(
         isPlayer ? "🎉 POINT!" : "🤖 CPU POINT",
@@ -368,9 +389,37 @@ export function usePongGame(options: UsePongGameOptions = {}) {
       }
 
       if (r.phase === "play") {
-        // CPU: mira ONDE a bola vai chegar (lê a reta) p/ rebater de verdade.
-        // Como o efeito curva a bola DEPOIS que ela se posiciona, um bom corte
-        // ainda passa pela raquete dela.
+        // ── Cansaço da CPU ──────────────────────────────────────────────────
+        // Conta o tempo REAL de bola em jogo e deriva um fator 0→1. Quanto mais
+        // cansada, mais lenta, mais erra a leitura e menos alcança.
+        r.playTime += dt;
+        const fatigue = THREE.MathUtils.clamp(
+          (r.playTime - FATIGUE.graceSec) / FATIGUE.rampSec,
+          0,
+          1,
+        );
+        const effAiSpeed = diffCfg.aiSpeed * (1 - fatigue * FATIGUE.slowFrac);
+        const effAiCatch = Math.max(
+          0,
+          diffCfg.aiCatch - fatigue * FATIGUE.catchShrink,
+        );
+        const errFloor = diffCfg.aiError + fatigue * FATIGUE.errorAdd;
+        if (!r.tiredShown && fatigue >= FATIGUE.tiredAt) {
+          r.tiredShown = true;
+          spawnLabel("😮‍💨 CPU CANSANDO", NEON.amber);
+        }
+
+        // Nova aproximação à CPU (a bola passou a vir na direção dela) → rola um
+        // erro de leitura. Bola mais rápida = erro maior (mais difícil p/ ela).
+        const vzSign = Math.sign(v.z);
+        if (vzSign < 0 && r.prevVZSign >= 0) {
+          const mag = errFloor * (AI.errBase + AI.errBySpeed * r.speedMul);
+          r.aiAimErr = (Math.random() * 2 - 1) * mag;
+        }
+        r.prevVZSign = vzSign;
+
+        // CPU: mira ONDE a bola vai chegar (lê a RETA) p/ rebater de verdade.
+        // Ela ignora a curva do efeito → um corte forte a tira do lugar.
         let aiTarget = 0;
         if (v.z < 0) {
           const aiPlaneZ = -(PADDLE.z - BALL_R - PADDLE.d / 2);
@@ -381,9 +430,11 @@ export function usePongGame(options: UsePongGameOptions = {}) {
           const period = 4 * mX;
           const p = (((predX + mX) % period) + period) % period;
           aiTarget = (p <= 2 * mX ? p : period - p) - mX;
+          // erro de leitura + cegueira ao efeito: corte ativo desloca a mira dela
+          aiTarget += r.aiAimErr - r.spin * AI.spinBlind;
         }
         const dx = aiTarget - ai.position.x;
-        const maxMove = diffCfg.aiSpeed * dt;
+        const maxMove = effAiSpeed * dt; // ← velocidade já reduzida pelo cansaço
         const aiPrevX = ai.position.x;
         ai.position.x = THREE.MathUtils.clamp(
           ai.position.x + THREE.MathUtils.clamp(dx, -maxMove, maxMove),
@@ -426,10 +477,12 @@ export function usePongGame(options: UsePongGameOptions = {}) {
           r.spin *= 0.5;
         }
 
-        // Colisão com raquete (checa o cruzamento do plano p/ não atravessar)
+        // Colisão com raquete (checa o cruzamento do plano p/ não atravessar).
+        // catchAssist é a margem de alcance: generosa p/ você, menor p/ a CPU.
         const tryPaddle = (
           paddle: THREE.Object3D,
           dirSign: 1 | -1,
+          catchAssist: number,
         ): boolean => {
           if (Math.sign(v.z) !== dirSign) return false;
           const plane = dirSign * (PADDLE.z - BALL_R - PADDLE.d / 2);
@@ -440,17 +493,18 @@ export function usePongGame(options: UsePongGameOptions = {}) {
           if (!crossed) return false;
           const tFrac = (plane - prevZ) / (nz - prevZ || 1e-6);
           const hitX = ball.position.x + v.x * dt * tFrac;
-          if (
-            Math.abs(hitX - paddle.position.x) >
-            PADDLE.halfW + BALL_R + CATCH_ASSIST
-          )
+          if (Math.abs(hitX - paddle.position.x) > PADDLE.halfW + BALL_R + catchAssist)
             return false;
 
-          // Rebatida: acelera e angula conforme o ponto de impacto
-          r.speedMul = Math.min(2, r.speedMul * 1.05);
-          const base = diffCfg.ballSpeed * r.speedMul;
           // Velocidade lateral da raquete no impacto → corte/efeito
           const paddleVX = (paddle.userData.vx as number) ?? 0;
+          // Rebatida acelera a bola; um CORTE (deslize rápido) acelera MAIS,
+          // deixando a bola difícil de pegar p/ quem está do outro lado.
+          const boost =
+            RALLY.baseBoost +
+            Math.min(RALLY.cutBoostMax, Math.abs(paddleVX) * RALLY.cutBoost);
+          r.speedMul = Math.min(RALLY.maxMul, r.speedMul * boost);
+          const base = diffCfg.ballSpeed * r.speedMul;
           let vx =
             v.x +
             (hitX - paddle.position.x) * 3.1 + // ângulo pelo ponto de impacto
@@ -476,8 +530,8 @@ export function usePongGame(options: UsePongGameOptions = {}) {
           return true;
         };
 
-        tryPaddle(player, 1);
-        tryPaddle(ai, -1);
+        tryPaddle(player, 1, CATCH_ASSIST); // você: alcance generoso
+        tryPaddle(ai, -1, effAiCatch); // CPU: alcance menor e que encolhe cansada
 
         ball.position.x = nx;
         ball.position.z = nz;

@@ -16,6 +16,8 @@ export interface Diff {
   color: string;
   aiSpeed: number; // velocidade máx. da raquete da CPU (un/s)
   ballSpeed: number; // velocidade base da bola (un/s)
+  aiError: number; // erro de leitura da CPU (un. de mundo) — maior = erra mais
+  aiCatch: number; // assistência de defesa SÓ da CPU (un.) — menor = alcança menos
 }
 
 export interface FloatingLabel {
@@ -37,6 +39,7 @@ export interface SceneRefs {
   ai: THREE.Group | null;
   orbs: THREE.Mesh[];
   vel: { x: number; z: number };
+  spin: number; // efeito/corte ativo (rad/s) — curva a bola e decai no tempo
   targetX: number; // alvo da raquete do jogador (arrasto do dedo)
   phase: Phase;
   serveAt: number;
@@ -45,4 +48,9 @@ export interface SceneRefs {
   rally: number;
   animFrame: number;
   t: number; // tempo acumulado p/ animações ambientes
+  // ── Cansaço da CPU + leitura imperfeita ──────────────────────────────────
+  playTime: number; // tempo REAL de bola em jogo (não conta saque/pausa)
+  prevVZSign: number; // sinal de v.z no quadro anterior (detecta nova aproximação)
+  aiAimErr: number; // erro de mira atual da CPU (un. de mundo)
+  tiredShown: boolean; // já avisou nesta partida que a CPU cansou?
 }
