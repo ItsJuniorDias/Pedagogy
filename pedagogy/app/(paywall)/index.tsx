@@ -1,7 +1,7 @@
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -29,6 +29,9 @@ import {
   Swing,
   Wiggle,
 } from "../../shared/motion";
+
+// 🔒 Portão parental (Kids Category — Guideline 1.3)
+import { ParentalGate } from "../../shared/ParentalGate";
 
 import {
   PurchasesPackage as Package,
@@ -184,7 +187,7 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
       onPress={onSelect}
       activeOpacity={0.85}
       style={[
-      selStyle,
+        selStyle,
         s.planCard,
         {
           backgroundColor: highlight ? "#FFF0F5" : "#fff",
@@ -219,7 +222,6 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
   );
 };
 
-
 export default function PaywallScreen() {
   const router = useRouter();
   const { packages, state, error, isSubscribed, purchase, restore } =
@@ -230,6 +232,29 @@ export default function PaywallScreen() {
     packages[0] ??
     null;
   const [selectedPkg, setSelectedPkg] = useState<Package | null>(defaultPkg);
+
+  // 🔒 Estado do portão parental.
+  // Toda ação sensível (compra, restore e links externos) passa por aqui:
+  // guardamos a ação pendente e só a executamos quando um adulto acerta a conta.
+  const [gateVisible, setGateVisible] = useState(false);
+  const pendingAction = useRef<(() => void) | null>(null);
+
+  const runBehindGate = (action: () => void) => {
+    pendingAction.current = action;
+    setGateVisible(true);
+  };
+
+  const handleGateSuccess = () => {
+    const action = pendingAction.current;
+    pendingAction.current = null;
+    setGateVisible(false);
+    action?.();
+  };
+
+  const handleGateCancel = () => {
+    pendingAction.current = null;
+    setGateVisible(false);
+  };
 
   useEffect(() => {
     if (!selectedPkg && packages.length > 0) {
@@ -418,12 +443,12 @@ export default function PaywallScreen() {
               bg="#FF5B8D"
               shadowBg="#C0305A"
               isLoading={state === "purchasing"}
-              onPress={handleSubscribe}
+              onPress={() => runBehindGate(handleSubscribe)}
             />
           </Breathe>
 
           <TouchableOpacity
-            onPress={handleRestore}
+            onPress={() => runBehindGate(handleRestore)}
             disabled={isProcessing}
             style={s.restoreBtn}
           >
@@ -464,16 +489,30 @@ export default function PaywallScreen() {
         <Text style={s.finePrint}>
           Billing is done automatically. You can cancel at any time in your
           account settings. By subscribing, you agree to our{" "}
-          <Text style={s.link} onPress={() => Linking.openURL(TERMS_URL)}>
+          {/* 🔒 Links externos passam pelo portão parental antes de abrir */}
+          <Text
+            style={s.link}
+            onPress={() => runBehindGate(() => Linking.openURL(TERMS_URL))}
+          >
             Terms of Use (EULA)
           </Text>{" "}
           and{" "}
-          <Text style={s.link} onPress={() => Linking.openURL(PRIVACY_URL)}>
+          <Text
+            style={s.link}
+            onPress={() => runBehindGate(() => Linking.openURL(PRIVACY_URL))}
+          >
             Privacy Policy
           </Text>
           .
         </Text>
       </ScrollView>
+
+      {/* 🔒 Modal do portão parental — sobrepõe a tela inteira */}
+      <ParentalGate
+        visible={gateVisible}
+        onSuccess={handleGateSuccess}
+        onCancel={handleGateCancel}
+      />
     </View>
   );
 }
