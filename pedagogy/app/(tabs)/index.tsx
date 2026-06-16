@@ -1,8 +1,8 @@
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
   Pressable,
@@ -29,6 +29,16 @@ import Animated, {
   withTiming,
   ZoomIn,
 } from "react-native-reanimated";
+
+// ─── PROGRESSO REAL ───────────────────────────────────────────────────────────
+// Mesma fonte de verdade do leitor e da tela "Learning Path" (View all).
+// Não criamos storage paralelo: lemos o que o leitor já grava (chaptersRead).
+import { getProgress } from "../../lib/readingProgress";
+
+// Total REAL de capítulos por trilha (mesmo array usado em
+// markChapterCompleted(id, ch.id, chapters.length) no leitor).
+// ⚠️ Se o caminho dos mocks for diferente nesta pasta, ajuste o "../../".
+import { ASTRONAUT, LETTERS, SCHOLL, SPACE } from "../../mocks/learningMocks";
 
 const { width } = Dimensions.get("window");
 
@@ -195,6 +205,21 @@ const fredoka = (size: number, color?: string) => ({
   ...(color ? { color } : {}),
 });
 
+// Resolve o título da trilha para a MESMA chave que o leitor usa no storage.
+const resolveStoryId = (raw: string) =>
+  raw
+    .toLocaleUpperCase()
+    .replace(/[\s_\-]/g, "")
+    .replace(/Г/g, "G");
+
+// Total real de capítulos por chave resolvida (só as trilhas exibidas na Home).
+const CHAPTER_COUNTS: Record<string, number> = {
+  LETTERS: LETTERS.length,
+  SCHOOL: SCHOLL.length,
+  ASTRONAUT: ASTRONAUT.length,
+  SPACE: SPACE.length,
+};
+
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
 const NAV_ICONS = [
@@ -261,6 +286,8 @@ const INTERESTS = [
   },
 ];
 
+// progress/total aqui são apenas fallback — o valor real vem do storage
+// (progress) e do CHAPTER_COUNTS (total).
 const LEARNING_PATHS = [
   {
     id: 1,
@@ -447,8 +474,8 @@ const LearningCard = ({
   barColor,
   index,
 }: (typeof LEARNING_PATHS)[0] & { index: number }) => {
-  const pct = (progress / total) * 100;
-  const done = progress === total;
+  const pct = total > 0 ? (progress / total) * 100 : 0;
+  const done = total > 0 && progress >= total;
   const router = useRouter();
 
   return (
@@ -574,9 +601,31 @@ const Chip = ({
 
 export default function HomeScreen() {
   const [activeChip, setActiveChip] = useState(0);
+  // Mapa id_da_trilha -> nº de capítulos lidos (vindo do storage).
+  const [progressMap, setProgressMap] = useState<Record<number, number>>({});
   const router = useRouter();
 
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+
+  // Recarrega o progresso sempre que a Home ganha foco (ex.: ao voltar do
+  // leitor). Assim as barras da section Learning Path ficam sempre atuais.
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      getProgress().then((p) => {
+        if (!active) return;
+        const map: Record<number, number> = {};
+        for (const path of LEARNING_PATHS) {
+          const rid = resolveStoryId(path.title);
+          map[path.id] = (p.chaptersRead?.[rid] ?? []).length;
+        }
+        setProgressMap(map);
+      });
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
 
   // Loops ambientes do banner (sempre chamar hooks antes do early return)
   const planetRotate = useSharedValue(-10);
@@ -622,10 +671,19 @@ export default function HomeScreen() {
 
   const selectedCategory = CHIPS[activeChip].toLowerCase();
 
+  // Enriquecemos cada trilha com progresso REAL (storage) + total REAL (mocks),
+  // com clamp pra nunca passar de 100%.
+  const enrichedPaths = LEARNING_PATHS.map((p) => {
+    const rid = resolveStoryId(p.title);
+    const total = CHAPTER_COUNTS[rid] ?? p.total;
+    const progress = Math.min(progressMap[p.id] ?? 0, total);
+    return { ...p, total, progress };
+  });
+
   const filteredPaths =
     activeChip === 0
-      ? LEARNING_PATHS
-      : LEARNING_PATHS.filter((p) => p.category === selectedCategory);
+      ? enrichedPaths
+      : enrichedPaths.filter((p) => p.category === selectedCategory);
 
   const filteredGames =
     activeChip === 0

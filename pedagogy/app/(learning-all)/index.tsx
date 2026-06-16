@@ -1,17 +1,19 @@
-import Filters from "@/components/Filters";
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import Animated from "react-native-reanimated";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  Easing,
+  interpolate,
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
 
 import {
   Breathe,
@@ -22,18 +24,98 @@ import {
   PressBounce,
 } from "../../shared/motion";
 
+// ─── PROGRESSO REAL ───────────────────────────────────────────────────────────
+// Mesma fonte de verdade usada pelo leitor. NÃO criamos um storage paralelo:
+// lemos o que o leitor já grava (chaptersRead por história) via AsyncStorage.
+import { getProgress } from "../../lib/readingProgress";
+
+// Total REAL de capítulos por trilha. É o mesmo array que o leitor usa em
+// markChapterCompleted(id, ch.id, chapters.length). Importar daqui garante que
+// o "total" da barra bata exatamente com o que o leitor registra como completo.
+// ⚠️ Se o caminho dos mocks for diferente nesta pasta, ajuste o "../../".
+import {
+  ASTRONAUT,
+  COLORS_ART,
+  DINOSAURS,
+  LETTERS,
+  OCEAN_LIFE,
+  SCHOLL,
+  SCIENCE_LAB,
+  SPACE,
+} from "../../mocks/learningMocks";
+
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
   fontSize: size,
   ...(color ? { color } : {}),
 });
 
+// ─── EMOJI ANIMADO ────────────────────────────────────────────────────────────
+// Balança de leve (rotação vai-e-volta) + sobe-e-desce sutil, em loop infinito.
+// `delay` desencontra a animação entre os cards e `dir` espelha a direção entre
+// as colunas — assim os emojis "mexem" de forma orgânica, não robótica.
+const WigglyEmoji = ({
+  emoji,
+  delay = 0,
+  dir = 1,
+}: {
+  emoji: string;
+  delay?: number;
+  dir?: 1 | -1;
+}) => {
+  const t = useSharedValue(0);
+
+  useEffect(() => {
+    t.value = withDelay(
+      delay,
+      withRepeat(
+        withTiming(1, {
+          duration: 1600,
+          easing: Easing.inOut(Easing.sin),
+          reduceMotion: ReduceMotion.System,
+        }),
+        -1,
+        true, // reverse: vai e volta suave
+      ),
+    );
+  }, []);
+
+  const aStyle = useAnimatedStyle(() => {
+    const rotate = interpolate(t.value, [0, 1], [-7 * dir, 7 * dir]);
+    const translateY = interpolate(t.value, [0, 1], [3, -4]);
+    return { transform: [{ translateY }, { rotate: `${rotate}deg` }] };
+  });
+
+  return <Animated.Text style={[s.emoji, aStyle]}>{emoji}</Animated.Text>;
+};
+
+// Resolve o título da trilha para a MESMA chave que o leitor usa no storage.
+// (No leitor: raw.toLocaleUpperCase().replace(/[\s_\-]/g, "").replace(/Г/g,"G"))
+const resolveStoryId = (raw: string) =>
+  raw
+    .toLocaleUpperCase()
+    .replace(/[\s_\-]/g, "")
+    .replace(/Г/g, "G");
+
+// Total real de capítulos por chave resolvida.
+const CHAPTER_COUNTS: Record<string, number> = {
+  LETTERS: LETTERS.length,
+  SCHOOL: SCHOLL.length,
+  ASTRONAUT: ASTRONAUT.length,
+  SPACE: SPACE.length,
+  DINOSAURS: DINOSAURS.length,
+  OCEANLIFE: OCEAN_LIFE.length,
+  "COLORS&ART": COLORS_ART.length,
+  SCIENCELAB: SCIENCE_LAB.length,
+};
+
+// Apenas metadados estáticos da trilha. O "total" aqui é só fallback —
+// o número real vem de CHAPTER_COUNTS, e o "progress" vem do storage.
 const ALL_PATHS = [
   {
     id: 1,
     emoji: "🔤",
     title: "Letters",
-    progress: 6,
     total: 6,
     cardBorder: "#FFD93D",
     imgBg: "#FFFBEB",
@@ -44,7 +126,6 @@ const ALL_PATHS = [
     id: 2,
     emoji: "🏫",
     title: "School",
-    progress: 6,
     total: 6,
     cardBorder: "#A0E7A0",
     imgBg: "#F0FFF0",
@@ -55,7 +136,6 @@ const ALL_PATHS = [
     id: 3,
     emoji: "👨‍🚀",
     title: "Astronaut",
-    progress: 4,
     total: 6,
     cardBorder: "#FFA07A",
     imgBg: "#FFF5F0",
@@ -66,7 +146,6 @@ const ALL_PATHS = [
     id: 4,
     emoji: "🪐",
     title: "Space",
-    progress: 2,
     total: 6,
     cardBorder: "#B0C4FF",
     imgBg: "#F0F4FF",
@@ -77,7 +156,6 @@ const ALL_PATHS = [
     id: 5,
     emoji: "🦕",
     title: "Dinosaurs",
-    progress: 0,
     total: 8,
     cardBorder: "#A0E7A0",
     imgBg: "#F0FFF0",
@@ -88,7 +166,6 @@ const ALL_PATHS = [
     id: 6,
     emoji: "🌊",
     title: "Ocean Life",
-    progress: 1,
     total: 6,
     cardBorder: "#B0C4FF",
     imgBg: "#EBF4FF",
@@ -99,7 +176,6 @@ const ALL_PATHS = [
     id: 7,
     emoji: "🎨",
     title: "Colors & Art",
-    progress: 3,
     total: 8,
     cardBorder: "#FFA07A",
     imgBg: "#FFF5F0",
@@ -110,7 +186,6 @@ const ALL_PATHS = [
     id: 8,
     emoji: "🔬",
     title: "Science Lab",
-    progress: 0,
     total: 10,
     cardBorder: "#A0E7A0",
     imgBg: "#E8F8F0",
@@ -123,16 +198,51 @@ const FILTERS = ["All", "In Progress", "Not Started", "Completed"];
 
 export default function LearningAllScreen() {
   const [activeFilter, setActiveFilter] = useState(0);
+  // Mapa id_da_trilha -> nº de capítulos lidos (vindo do storage).
+  const [progressMap, setProgressMap] = useState<Record<number, number>>({});
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  // Recarrega o progresso TODA vez que a tela ganha foco — inclusive quando a
+  // criança volta do leitor após terminar um capítulo. Assim as barras já
+  // aparecem atualizadas sem precisar dar reload manual.
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      getProgress().then((p) => {
+        if (!active) return;
+        const map: Record<number, number> = {};
+        for (const path of ALL_PATHS) {
+          const rid = resolveStoryId(path.title);
+          map[path.id] = (p.chaptersRead?.[rid] ?? []).length;
+        }
+        setProgressMap(map);
+        setLoading(false);
+      });
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
 
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   if (!fontsLoaded) return <AppLoading />;
 
-  const filtered = ALL_PATHS.filter((p) => {
+  // Monta as trilhas já com progresso REAL (storage) + total REAL (mocks).
+  // Clampamos o progress no total pra nunca passar de 100% caso haja
+  // capítulos antigos registrados que não existam mais.
+  const paths = ALL_PATHS.map((p) => {
+    const rid = resolveStoryId(p.title);
+    const total = CHAPTER_COUNTS[rid] ?? p.total;
+    const progress = Math.min(progressMap[p.id] ?? 0, total);
+    return { ...p, total, progress };
+  });
+
+  const filtered = paths.filter((p) => {
     if (activeFilter === 0) return true;
     if (activeFilter === 1) return p.progress > 0 && p.progress < p.total;
     if (activeFilter === 2) return p.progress === 0;
-    if (activeFilter === 3) return p.progress === p.total;
+    if (activeFilter === 3) return p.total > 0 && p.progress >= p.total;
     return true;
   });
 
@@ -145,6 +255,7 @@ export default function LearningAllScreen() {
         <PressBounce style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
         </PressBounce>
+
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <Text style={fredoka(20, "#2D2D2D")}>Learning Path</Text>
           <Breathe scaleTo={1.18} duration={1800}>
@@ -154,69 +265,119 @@ export default function LearningAllScreen() {
         <View style={{ width: 40 }} />
       </Animated.View>
 
-      {/* Filter chips */}
-      <Filters filters={FILTERS} />
+      {/* Filter chips — agora ligados ao estado activeFilter (botões funcionam).
+          O wrapper externo reserva o espaço corretamente (a margem NÃO pode
+          ficar no contentContainerStyle do ScrollView horizontal, senão a
+          lista de baixo sobrepõe e corta a base dos chips). */}
+      <View style={s.filtersWrap}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={s.filtersRow}
+        >
+          {FILTERS.map((f, i) => {
+            const active = activeFilter === i;
+            return (
+              <PressBounce
+                key={f}
+                onPress={() => setActiveFilter(i)}
+                style={[s.chip, active && s.chipActive]}
+              >
+                <Text
+                  numberOfLines={1}
+                  allowFontScaling={false}
+                  style={[s.chipText, active && s.chipTextActive]}
+                >
+                  {f}
+                </Text>
+              </PressBounce>
+            );
+          })}
+        </ScrollView>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
-        {/* Jardim crescendo 🌱: cards brotam de baixo em cascata e as
-            barras de progresso crescem de 0 até o valor real */}
-        <View style={s.grid}>
-          {filtered.map((item, i) => {
-            const pct = (item.progress / item.total) * 100;
-            const done = item.progress === item.total;
-
-            return (
-              <PressBounce
-                key={item.id}
-                entering={enterRise(i * 90)}
-                style={[s.card, { borderColor: item.cardBorder }]}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(details)",
-                    params: {
-                      storyId: item.title.toLowerCase().replace(/\s/g, ""),
-                    },
-                  })
-                }
-              >
-                <View style={[s.imgBox, { backgroundColor: item.imgBg }]}>
-                  <Text style={s.emoji}>{item.emoji}</Text>
-                </View>
-                <View style={s.body}>
-                  <Text style={fredoka(15, "#2D2D2D")}>{item.title}</Text>
-                  <View style={s.progressWrap}>
-                    <GrowBar
-                      pct={pct}
-                      color={item.barColor}
-                      delay={350 + i * 90}
-                      style={s.progressFill}
-                    />
-                  </View>
-                  <View style={s.progressLabelRow}>
-                    <Text style={s.progressLabel}>
-                      {item.progress}/{item.total}{" "}
-                    </Text>
-                    {done ? (
-                      <Breathe scaleTo={1.25} duration={1400} delay={i * 200}>
-                        <Text style={s.progressLabel}>🎉</Text>
-                      </Breathe>
-                    ) : (
-                      <Text style={s.progressLabel}>⭐</Text>
-                    )}
-                  </View>
-                </View>
-              </PressBounce>
-            );
-          })}
-        </View>
-
-        {filtered.length === 0 && (
+        {loading ? (
           <Animated.Text entering={enterPop(100)} style={s.empty}>
-            Nothing here yet 🌱
+            Loading your garden… 🌱
           </Animated.Text>
+        ) : (
+          <>
+            {/* Jardim crescendo 🌱: cards brotam em cascata e as barras crescem
+                de 0 até o progresso REAL salvo no storage. */}
+            <View style={s.grid}>
+              {filtered.map((item, i) => {
+                const pct =
+                  item.total > 0 ? (item.progress / item.total) * 100 : 0;
+                const done = item.total > 0 && item.progress >= item.total;
+
+                return (
+                  <PressBounce
+                    key={item.id}
+                    entering={enterRise(i * 90)}
+                    style={[s.card, { borderColor: item.cardBorder }]}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/(details)",
+                        params: {
+                          storyId: item.title.toLowerCase().replace(/\s/g, ""),
+                        },
+                      })
+                    }
+                  >
+                    <View style={[s.imgBox, { backgroundColor: item.imgBg }]}>
+                      {/* emoji "mexendo": delay por card + direção alternada
+                          entre as colunas (par/ímpar) */}
+                      <WigglyEmoji
+                        emoji={item.emoji}
+                        delay={i * 180}
+                        dir={i % 2 === 0 ? 1 : -1}
+                      />
+                    </View>
+                    <View style={s.body}>
+                      <Text style={fredoka(15, "#2D2D2D")}>{item.title}</Text>
+                      <View style={s.progressWrap}>
+                        {/* key muda quando o progresso muda -> a barra re-anima
+                            o crescimento ao voltar do leitor com novo progresso */}
+                        <GrowBar
+                          key={`growbar-${item.id}-${item.progress}-${item.total}`}
+                          pct={pct}
+                          color={item.barColor}
+                          delay={350 + i * 90}
+                          style={s.progressFill}
+                        />
+                      </View>
+                      <View style={s.progressLabelRow}>
+                        <Text style={s.progressLabel}>
+                          {item.progress}/{item.total}{" "}
+                        </Text>
+                        {done ? (
+                          <Breathe
+                            scaleTo={1.25}
+                            duration={1400}
+                            delay={i * 200}
+                          >
+                            <Text style={s.progressLabel}>🎉</Text>
+                          </Breathe>
+                        ) : (
+                          <Text style={s.progressLabel}>⭐</Text>
+                        )}
+                      </View>
+                    </View>
+                  </PressBounce>
+                );
+              })}
+            </View>
+
+            {filtered.length === 0 && (
+              <Animated.Text entering={enterPop(100)} style={s.empty}>
+                Nothing here yet 🌱
+              </Animated.Text>
+            )}
+          </>
         )}
       </ScrollView>
     </View>
@@ -250,23 +411,26 @@ const s = StyleSheet.create({
     elevation: 3,
   },
 
+  // ── FIX DOS CHIPS ──
+  // A margem vai aqui (wrapper externo), não no contentContainerStyle.
+  filtersWrap: {
+    marginBottom: 16,
+  },
   filtersRow: {
-    paddingLeft: 20,
-    paddingRight: 10,
-    paddingVertical: 4, // ← breathing room sem espaço excessivo
+    paddingHorizontal: 20,
+    paddingVertical: 6,
     gap: 10,
-    marginBottom: 16, // ← reduzido
     alignItems: "center",
   },
-
   chip: {
+    height: 40, // altura fixa: o texto não tem como ser cortado
     paddingHorizontal: 18,
-    paddingVertical: 9,
     borderRadius: 50,
     backgroundColor: "#fff",
     borderWidth: 2,
     borderColor: "#EDEDED",
-    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
   chipActive: {
     backgroundColor: "#FF5B8D",
@@ -274,11 +438,13 @@ const s = StyleSheet.create({
   },
   chipText: {
     fontSize: 13,
+    lineHeight: 18,
     fontWeight: "800",
     color: "#999",
     textAlign: "center",
   },
   chipTextActive: { color: "#fff" },
+
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
