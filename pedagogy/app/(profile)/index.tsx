@@ -3,19 +3,11 @@ import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import Animated, { FlipInEasyX } from "react-native-reanimated";
 
 import {
   Breathe,
-  enterLeft,
   enterPop,
   enterUp,
   PressBounce,
@@ -35,14 +27,6 @@ const fredoka = (size: number, color?: string) => ({
   fontSize: size,
   ...(color ? { color } : {}),
 });
-
-const MENU_ITEMS = [
-  { emoji: "🔔", label: "Notifications", route: "/(notifications)" },
-  { emoji: "🌍", label: "Language", route: "/(language)" },
-  { emoji: "🎵", label: "Sound & Music", route: "/(settings)" },
-  { emoji: "🔒", label: "Parental Controls", route: "/(parental)" },
-  { emoji: "❓", label: "Help & Support", route: "/(help)" },
-];
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -109,10 +93,7 @@ export default function ProfileScreen() {
             </Swing>
           </Animated.View>
           <Text style={fredoka(22, "#2D2D2D")}>Little Explorer</Text>
-          <Text style={s.avatarSub}>Age 6 · Level {level} ⭐</Text>
-          <PressBounce style={s.editBtn} scaleTo={0.9}>
-            <Text style={fredoka(13, "#6C5CE7")}>✏️ Edit profile</Text>
-          </PressBounce>
+          <Text style={s.avatarSub}>Level {level} ⭐</Text>
         </Animated.View>
 
         {/* Stats row — cards viram como medalhas (flip 3D em cascata) */}
@@ -120,7 +101,9 @@ export default function ProfileScreen() {
           {stats.map((stat, i) => (
             <Animated.View
               key={stat.label}
-              entering={FlipInEasyX.delay(300 + i * 120).springify().damping(14)}
+              entering={FlipInEasyX.delay(300 + i * 120)
+                .springify()
+                .damping(14)}
               style={s.statCard}
             >
               <Text style={{ fontSize: 22 }}>{stat.emoji}</Text>
@@ -158,29 +141,6 @@ export default function ProfileScreen() {
                 {badge.label}
               </Text>
               {!badge.earned && <Text style={s.lockIcon}>🔒</Text>}
-            </Animated.View>
-          ))}
-        </View>
-
-        {/* Settings menu */}
-        <Text
-          style={[fredoka(18, "#2D2D2D"), { marginBottom: 12, marginTop: 20 }]}
-        >
-          Settings ⚙️
-        </Text>
-        <View style={s.menuList}>
-          {/* Itens do menu deslizam da esquerda, um por vez */}
-          {MENU_ITEMS.map((item, i) => (
-            <Animated.View key={item.label} entering={enterLeft(500 + i * 90)}>
-              <TouchableOpacity
-                style={s.menuItem}
-                activeOpacity={0.75}
-                // onPress={() => router.push(item.route as any)}
-              >
-                <Text style={{ fontSize: 22 }}>{item.emoji}</Text>
-                <Text style={s.menuLabel}>{item.label}</Text>
-                <Text style={s.menuArrow}>›</Text>
-              </TouchableOpacity>
             </Animated.View>
           ))}
         </View>
@@ -256,14 +216,6 @@ const s = StyleSheet.create({
     color: "#888",
     fontWeight: "600",
     marginTop: 4,
-    marginBottom: 12,
-  },
-  editBtn: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderColor: "#6C5CE7",
   },
 
   statsRow: {
@@ -314,25 +266,4 @@ const s = StyleSheet.create({
   badgeLabelLocked: { color: "#BBB" },
   emojiLocked: { opacity: 0.35 },
   lockIcon: { position: "absolute", top: 8, right: 8, fontSize: 12 },
-
-  menuList: {
-    backgroundColor: "#fff",
-    borderRadius: 24,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F5F5F5",
-  },
-  menuLabel: { flex: 1, fontSize: 15, fontWeight: "700", color: "#2D2D2D" },
-  menuArrow: { fontSize: 22, color: "#CCC" },
 });

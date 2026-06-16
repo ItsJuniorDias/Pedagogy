@@ -13,15 +13,6 @@ import {
 } from "react-native";
 import Animated from "react-native-reanimated";
 
-import {
-  Breathe,
-  enterPop,
-  enterRight,
-  enterUp,
-  FloatY,
-  PressBounce,
-  Swing,
-} from "../../shared/motion";
 import Svg, {
   Circle,
   Defs,
@@ -33,6 +24,15 @@ import Svg, {
   Rect,
   Stop,
 } from "react-native-svg";
+import {
+  Breathe,
+  enterPop,
+  enterRight,
+  enterUp,
+  FloatY,
+  PressBounce,
+  Swing,
+} from "../../shared/motion";
 
 const { width } = Dimensions.get("window");
 
@@ -931,9 +931,6 @@ const SectionHeader = ({
     <Text style={fredoka(20, "#2D2D2D")}>
       {emoji} {title}
     </Text>
-    <TouchableOpacity hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-      <Text style={[s.secLink, { color: linkColor }]}>View all</Text>
-    </TouchableOpacity>
   </Animated.View>
 );
 
