@@ -37,6 +37,7 @@ import { Breathe, enterPop, enterRise, enterUp } from "../../shared/motion";
 // ─── INTEGRAÇÃO PROGRESSO ─────────────────────────────────────────────────────
 // Ajuste o caminho conforme onde você salvou o readingProgress.ts
 import { getProgress, markChapterCompleted } from "../../lib/readingProgress";
+import { useReadingTimer } from "../../hooks/useReadingTimer";
 
 // ─── IMPORTS: Mocks Originais ─────────────────────────────────────────────────
 import {
@@ -1030,6 +1031,11 @@ export default function ReadStoryScreen() {
   // ── INTEGRAÇÃO PROGRESSO ────────────────────────────────────────────────────
   // IDs dos capítulos desta história que já foram lidos (para o ✓ nas tabs)
   const [readChapters, setReadChapters] = useState<(string | number)[]>([]);
+
+  // ── Cronômetro de leitura ───────────────────────────────────────────────────
+  // Mede o tempo em foco nesta tela e grava no progresso diário, alimentando o
+  // gráfico "This week" do Profile. (Pausa sozinho quando o app vai pro background.)
+  useReadingTimer();
 
   // ── Estado do highlight ─────────────────────────────────────────────────────
   // charIndex: offset no texto da palavra atual sendo lida

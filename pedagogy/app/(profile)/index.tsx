@@ -22,6 +22,8 @@ import {
   ReadingProgress,
 } from "../../lib/readingProgress"; // ← ajuste o caminho conforme sua pasta
 
+import WeeklyReadingCard from "../../components/WeeklyReadingCard";
+
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
   fontSize: size,
@@ -112,6 +114,9 @@ export default function ProfileScreen() {
             </Animated.View>
           ))}
         </View>
+
+        {/* This week — tempo de leitura por dia da semana atual */}
+        <WeeklyReadingCard progress={progress} delay={420} />
 
         {/* Badges */}
         <Text

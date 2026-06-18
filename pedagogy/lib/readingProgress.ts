@@ -29,6 +29,12 @@ export type ReadingProgress = {
   streak: number;
   /** Sessões de leitura depois das 20h — usado pelo badge Night Owl */
   nightReads: number;
+  /**
+   * Tempo de leitura acumulado por dia, em SEGUNDOS: { "YYYY-MM-DD": 87 }.
+   * Alimentado por addReadingTime() (o leitor cronometra o foco na tela).
+   * É a fonte do gráfico "This week" no Profile.
+   */
+  dailyReadingSec: Record<string, number>;
 };
 
 export type Badge = {
@@ -50,11 +56,14 @@ const EMPTY: ReadingProgress = {
   lastReadDate: null,
   streak: 0,
   nightReads: 0,
+  dailyReadingSec: {},
 };
 
 export const STARS_PER_CHAPTER = 5;
 export const STARS_PER_STORY_BONUS = 20;
 export const STARS_PER_LEVEL = 100;
+/** Teto por flush (30 min) — evita que uma sessão "esquecida aberta" infle o dia. */
+export const MAX_READING_FLUSH_SEC = 30 * 60;
 
 // ─── HELPERS DE DATA ──────────────────────────────────────────────────────────
 
@@ -146,6 +155,103 @@ export async function markChapterCompleted(
 
   await saveProgress(p);
   return p;
+}
+
+// ─── TEMPO DE LEITURA (gráfico "This week") ───────────────────────────────────
+/**
+ * Soma `seconds` ao tempo de leitura de HOJE.
+ * Chamado pelo leitor (via useReadingTimer) sempre que a criança sai da tela
+ * ou o app vai pro background. É acumulativo e seguro: clampa em
+ * MAX_READING_FLUSH_SEC pra um flush nunca inflar o dia de forma absurda.
+ *
+ * NÃO mexe em estrelas/streak — isso continua sendo responsabilidade do
+ * markChapterCompleted. Aqui só registramos minutos no calendário.
+ */
+export async function addReadingTime(
+  seconds: number,
+): Promise<ReadingProgress> {
+  const sec = Math.min(Math.round(seconds || 0), MAX_READING_FLUSH_SEC);
+  if (sec <= 0) return getProgress();
+
+  const p = await getProgress();
+  // Cópia rasa do mapa — evita mutar o objeto EMPTY compartilhado quando o
+  // storage ainda está vazio (mesma pegadinha de chaptersRead).
+  const daily = { ...(p.dailyReadingSec ?? {}) };
+  const today = todayStr();
+  daily[today] = (daily[today] ?? 0) + sec;
+  p.dailyReadingSec = daily;
+
+  await saveProgress(p);
+  return p;
+}
+
+export type WeekDay = {
+  /** "YYYY-MM-DD" daquele dia */
+  dateStr: string;
+  /** Rótulo curto: M T W T F S S (semana começa na segunda) */
+  label: string;
+  /** Segundos lidos nesse dia */
+  seconds: number;
+  /** É o dia de hoje? (destaca no gráfico) */
+  isToday: boolean;
+  /** Dia ainda não chegou nesta semana? (não anima barra) */
+  isFuture: boolean;
+};
+
+const WEEK_LABELS = ["M", "T", "W", "T", "F", "S", "S"]; // Mon → Sun
+
+/** Segunda-feira 00:00 da semana que contém `d` (local). */
+function startOfWeekMonday(d: Date): Date {
+  const x = new Date(d);
+  const dow = x.getDay(); // 0=Dom … 6=Sáb
+  const sinceMon = (dow + 6) % 7; // Seg=0, Dom=6
+  x.setDate(x.getDate() - sinceMon);
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
+
+/**
+ * Retorna os 7 dias da semana ATUAL (segunda → domingo) com o tempo lido.
+ * É o que o WeeklyReadingCard renderiza.
+ */
+export function getWeeklyReading(p: ReadingProgress): WeekDay[] {
+  const today = new Date();
+  const todayKey = toDateStr(today);
+  const monday = startOfWeekMonday(today);
+
+  return WEEK_LABELS.map((label, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const dateStr = toDateStr(d);
+    return {
+      dateStr,
+      label,
+      seconds: p.dailyReadingSec?.[dateStr] ?? 0,
+      isToday: dateStr === todayKey,
+      isFuture: d.getTime() > today.getTime() && dateStr !== todayKey,
+    };
+  });
+}
+
+/** Total de segundos lidos na semana atual. */
+export function weeklyTotalSeconds(p: ReadingProgress): number {
+  return getWeeklyReading(p).reduce((sum, d) => sum + d.seconds, 0);
+}
+
+/** Segundos lidos HOJE. */
+export function todayReadingSeconds(p: ReadingProgress): number {
+  return p.dailyReadingSec?.[todayStr()] ?? 0;
+}
+
+/** "45 sec read" · "1 min read" · "1h 12m read" — pro cabeçalho do card. */
+export function formatReadTime(seconds: number): string {
+  if (seconds <= 0) return "0 min read";
+  if (seconds < 60) return `${seconds} sec read`;
+  const mins = Math.round(seconds / 60);
+  if (mins < 60) return `${mins} min read`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m === 0 ? `${h}h read` : `${h}h ${m}m read`;
 }
 
 // ─── BADGES (ACHIEVEMENTS) ────────────────────────────────────────────────────
