@@ -26,6 +26,7 @@ import { DEFAULT_MMR } from "../storage";
 import type { MatchResult } from "../storage";
 import { C3D, NEON } from "../theme";
 import type { FloatingLabel, Phase } from "../types";
+import { sfx } from "../audio/sfx";
 
 const BALL_SPEED = DIFFS.normal.ballSpeed; // velocidade base fixa no multiplayer
 
@@ -219,6 +220,8 @@ export function useNetPong({ net, selfMMR, opponent, onMatchEnd }: UseNetPongOpt
       setRally(0);
 
       spawnLabel(meScored ? "🎉 POINT!" : "😤 -1", meScored ? NEON.cyan : NEON.magenta);
+      if (meScored) sfx.scorePlayer();
+      else sfx.scoreCpu();
       Vibration.vibrate(meScored ? [0, 30, 50, 30] : 60);
       net.sendEvent({ kind: "point", side: who });
 
@@ -226,6 +229,8 @@ export function useNetPong({ net, selfMMR, opponent, onMatchEnd }: UseNetPongOpt
         setPhaseBoth("over");
         resetBall();
         setOverVisible(true);
+        if (ns.p >= WIN_SCORE) sfx.win();
+        else sfx.lose();
         Vibration.vibrate([0, 60, 80, 60, 80, 120]);
         net.sendEvent({ kind: "over", winner: ns.p >= WIN_SCORE ? "host" : "guest" });
       } else {
@@ -252,8 +257,11 @@ export function useNetPong({ net, selfMMR, opponent, onMatchEnd }: UseNetPongOpt
       }
       setSpeedMul(r.speedMul);
       net.sendEvent({ kind: "hit", side });
+      // Host simula tudo → toca a rebatida dos dois lados (timbre por lado).
+      sfx.paddle(side === "host", Math.min(1, spinMag / Math.max(SPIN.max, 1e-6)));
       if (side === "host") Vibration.vibrate(10);
       if (spinMag >= SPIN.labelAt) {
+        sfx.spin();
         net.sendEvent({ kind: "effect", side });
         if (side === "host") {
           spawnLabel("🌀 EFFECT!", NEON.cyan);
@@ -314,20 +322,28 @@ export function useNetPong({ net, selfMMR, opponent, onMatchEnd }: UseNetPongOpt
         if (e.kind === "effect") {
           // mostra "EFFECT!" só para quem deu o corte
           const mine = isHostRef.current ? e.side === "host" : e.side === "guest";
+          if (!isHostRef.current) sfx.spin();
           if (mine && isHostRef.current) return; // host já mostrou localmente
           if (mine) spawnLabel("🌀 EFFECT!", NEON.cyan);
         } else if (e.kind === "hit") {
           const mine = isHostRef.current ? e.side === "host" : e.side === "guest";
-          if (mine && !isHostRef.current) Vibration.vibrate(10);
+          if (!isHostRef.current) {
+            sfx.paddle(e.side === "guest", 0);
+            if (mine) Vibration.vibrate(10);
+          }
         } else if (e.kind === "point") {
           if (!isHostRef.current) {
             // guest: side "guest" = eu marquei
             const meScored = e.side === "guest";
+            if (meScored) sfx.scorePlayer();
+            else sfx.scoreCpu();
             spawnLabel(meScored ? "🎉 POINT!" : "😤 -1", meScored ? NEON.cyan : NEON.magenta);
             Vibration.vibrate(meScored ? [0, 30, 50, 30] : 60);
           }
         } else if (e.kind === "over") {
           if (!isHostRef.current) {
+            if (e.winner === "guest") sfx.win();
+            else sfx.lose();
             setOverVisible(true);
             Vibration.vibrate([0, 60, 80, 60, 80, 120]);
           }

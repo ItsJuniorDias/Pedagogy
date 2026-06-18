@@ -28,6 +28,7 @@ import { buildArena, buildRacket, buildTable, neon } from "../scene";
 import type { MatchResult } from "../storage";
 import { C3D, NEON } from "../theme";
 import type { DiffId, FloatingLabel, Phase, SceneRefs } from "../types";
+import { sfx } from "../audio/sfx";
 
 export interface UsePongGameOptions {
   /**
@@ -229,12 +230,16 @@ export function usePongGame(options: UsePongGameOptions = {}) {
         isPlayer ? "🎉 POINT!" : "🤖 CPU POINT",
         isPlayer ? NEON.cyan : NEON.magenta,
       );
+      if (isPlayer) sfx.scorePlayer();
+      else sfx.scoreCpu();
       Vibration.vibrate(isPlayer ? [0, 30, 50, 30] : 60);
 
       if (ns.p >= WIN_SCORE || ns.c >= WIN_SCORE) {
         setPhaseBoth("over");
         resetBall();
         setOverVisible(true);
+        if (ns.p >= WIN_SCORE) sfx.win();
+        else sfx.lose();
         Vibration.vibrate([0, 60, 80, 60, 80, 120]);
 
         // ── Marcação de ponto depois da partida ──
@@ -271,8 +276,11 @@ export function usePongGame(options: UsePongGameOptions = {}) {
         setBestRally(r.rally);
       }
       setSpeedMul(r.speedMul);
+      // Som da rebatida: timbre muda por quem bateu e pela força do corte.
+      sfx.paddle(isPlayer, Math.min(1, spinMag / Math.max(SPIN.max, 1e-6)));
       // Corte forte do jogador: aviso + vibração diferenciada
       if (isPlayer && spinMag >= SPIN.labelAt) {
+        sfx.spin();
         spawnLabel("🌀 EFFECT!", NEON.cyan);
         Vibration.vibrate([0, 14, 22, 14]);
       } else {
@@ -386,6 +394,7 @@ export function usePongGame(options: UsePongGameOptions = {}) {
         v.x = (Math.random() * 2 - 1) * base * 0.32;
         r.phase = "play";
         setPhase("play");
+        sfx.serve();
       }
 
       if (r.phase === "play") {
@@ -471,10 +480,12 @@ export function usePongGame(options: UsePongGameOptions = {}) {
           nx = maxX - (nx - maxX);
           v.x = -Math.abs(v.x);
           r.spin *= 0.5;
+          sfx.wall();
         } else if (nx < -maxX) {
           nx = -maxX + (-maxX - nx);
           v.x = Math.abs(v.x);
           r.spin *= 0.5;
+          sfx.wall();
         }
 
         // Colisão com raquete (checa o cruzamento do plano p/ não atravessar).
