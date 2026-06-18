@@ -46,7 +46,8 @@
       "expo-audio",
       "expo-iap",
       "expo-build-properties",
-      "expo-asset"
+      "expo-asset",
+      "react-native-audio-api"
     ],
     "experiments": {
       "typedRoutes": true,

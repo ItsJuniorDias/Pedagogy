@@ -773,7 +773,7 @@ export default function GameScreen() {
                           ),
                         ]}
                       >
-                        {musicOn ? "🔊  MÚSICA ON" : "🔇  MÚSICA OFF"}
+                        {musicOn ? "🔊  MUSIC ON" : "🔇  MUSIC OFF"}
                       </Text>
                     </View>
                   </TouchableWithoutFeedback>

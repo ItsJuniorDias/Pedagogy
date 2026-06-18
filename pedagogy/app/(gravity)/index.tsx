@@ -732,7 +732,7 @@ export default function GravityFlip() {
                   fredoka(13, musicEnabled ? C.accent : C.textDim),
                 ]}
               >
-                {musicEnabled ? "🔊 MÚSICA ON" : "🔇 MÚSICA OFF"}
+                {musicEnabled ? "🔊 MUSIC ON" : "🔇 MUSIC OFF"}
               </Text>
             </View>
           </TouchableWithoutFeedback>
