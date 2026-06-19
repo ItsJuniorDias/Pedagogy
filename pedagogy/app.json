@@ -27,18 +27,17 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "splash": null,
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/pedagogy_owl_full.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#6C5CE7",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#6C5CE7"
           }
         }
       ],
