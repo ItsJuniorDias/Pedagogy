@@ -40,6 +40,7 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePurchases } from "../../hooks/usePurchases";
+import { trackPaywallView, trackCheckoutInitiated } from "../../lib/analytics";
 
 const { width } = Dimensions.get("window");
 
@@ -251,6 +252,11 @@ export default function PaywallScreen() {
     setGateVisible(true);
   };
 
+  // ── TRACKING: paywall exibido (1× ao abrir a tela) ──
+  useEffect(() => {
+    trackPaywallView({ source: "reader" });
+  }, []);
+
   const handleGateSuccess = () => {
     const action = pendingAction.current;
     pendingAction.current = null;
@@ -295,6 +301,13 @@ export default function PaywallScreen() {
 
   const handleSubscribe = async () => {
     if (!selectedPkg) return;
+
+    // ── TRACKING: checkout iniciado (usuário tocou em "assinar") ──
+    trackCheckoutInitiated({
+      productId: selectedPkg.product.identifier,
+      price: selectedPkg.product.price,
+      currency: selectedPkg.product.currencyCode,
+    });
 
     const success = await purchase(selectedPkg);
 

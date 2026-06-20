@@ -17,6 +17,8 @@ import * as SplashScreen from "expo-splash-screen";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
+import { initAnalytics } from "@/lib/analytics";
+
 // Impede que a splash screen suma antes das fontes carregarem
 SplashScreen.preventAutoHideAsync();
 
@@ -27,6 +29,13 @@ export const unstable_settings = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+
+  // Inicializa o tracking da Meta (Facebook) uma única vez.
+  // No iOS, dispara o pedido de App Tracking Transparency. Seguro na web/Expo Go
+  // (vira no-op). As instalações/aberturas do app são logadas automaticamente.
+  useEffect(() => {
+    void initAnalytics();
+  }, []);
 
   // Esconde a splash screen somente depois que as fontes carregaram
   useEffect(() => {

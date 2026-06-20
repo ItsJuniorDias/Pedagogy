@@ -25,6 +25,8 @@ import Animated, {
 
 import { Breathe, enterPop, enterUp, PressBounce } from "../../shared/motion";
 
+import { trackOnboardingCompleted } from "../../lib/analytics";
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // ─── Slide data ───────────────────────────────────────────────────────────────
@@ -232,6 +234,8 @@ export default function AppScreen() {
 
   const handleButtonPress = () => {
     if (isLastSlide) {
+      // ── TRACKING: onboarding concluído ──
+      trackOnboardingCompleted();
       router.push("/(tabs)");
     } else {
       flatListRef.current?.scrollToIndex({

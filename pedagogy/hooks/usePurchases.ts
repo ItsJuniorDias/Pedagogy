@@ -22,6 +22,7 @@ import {
   purchasePackage,
   restorePurchases,
 } from "../service/purchasesService";
+import { trackSubscriptionStarted } from "../lib/analytics";
 
 // ─── Tipos públicos ───────────────────────────────────────────────────────────
 
@@ -127,6 +128,23 @@ export function usePurchases(): UsePurchasesReturn {
         applyCustomerInfo(result.customerInfo);
 
         const success = isEntitlementActive(result.customerInfo);
+
+        // ── TRACKING: assinatura/compra concluída com sucesso ──
+        // Loga o evento Subscribe + Purchase (valor/moeda) da Meta. É o ponto
+        // central: dispara venha de onde vier o fluxo de compra.
+        if (success) {
+          try {
+            trackSubscriptionStarted({
+              productId: pkg.product.identifier,
+              price: pkg.product.price,
+              currency: pkg.product.currencyCode,
+              period: pkg.packageType,
+            });
+          } catch {
+            /* nunca deixa o tracking quebrar a compra */
+          }
+        }
+
         setState(success ? "success" : "error");
         return success;
       } catch (err: any) {

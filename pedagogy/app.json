@@ -46,7 +46,25 @@
       "expo-iap",
       "expo-build-properties",
       "expo-asset",
-      "react-native-audio-api"
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "YOUR_FACEBOOK_APP_ID",
+          "clientToken": "YOUR_FACEBOOK_CLIENT_TOKEN",
+          "displayName": "Pedagogy",
+          "scheme": "fbYOUR_FACEBOOK_APP_ID",
+          "isAutoInitEnabled": true,
+          "autoLogAppEventsEnabled": true,
+          "advertiserIDCollectionEnabled": true,
+          "iosUserTrackingPermission": "Usamos seus dados para medir a performance dos anúncios e melhorar a experiência no Pedagogy."
+        }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Usamos seus dados para medir a performance dos anúncios e melhorar a experiência no Pedagogy."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

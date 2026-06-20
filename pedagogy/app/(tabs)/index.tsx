@@ -40,6 +40,8 @@ import { getProgress } from "../../lib/readingProgress";
 // ⚠️ Se o caminho dos mocks for diferente nesta pasta, ajuste o "../../".
 import { ASTRONAUT, LETTERS, SCHOLL, SPACE } from "../../mocks/learningMocks";
 
+import { trackGameOpen, trackContentOpen } from "../../lib/analytics";
+
 const { width } = Dimensions.get("window");
 
 // ─── ANIMATION HELPERS ───────────────────────────────────────────────────────
@@ -485,12 +487,20 @@ const LearningCard = ({
       scaleTo={0.95}
       wrapperStyle={s.learnCardWrap}
       style={[s.learnCard, { borderColor: cardBorder }]}
-      onPress={() =>
+      onPress={() => {
+        const slug = title.toLowerCase().replace(/\s/g, "");
+        // ── TRACKING: história aberta a partir da home ──
+        trackContentOpen({
+          contentId: slug,
+          contentName: title,
+          contentType: "story",
+          source: "home",
+        });
         router.push({
           pathname: "/(details)",
-          params: { storyId: title.toLowerCase().replace(/\s/g, "") },
-        })
-      }
+          params: { storyId: slug },
+        });
+      }}
     >
       <View style={[s.learnImgBox, { backgroundColor: imgBg }]}>
         <Text style={s.learnEmoji}>{emoji}</Text>
@@ -524,6 +534,8 @@ const PopularCard = ({
   const router = useRouter();
 
   const redirectGameScreen = () => {
+    // ── TRACKING: abertura de jogo a partir da home ──
+    trackGameOpen({ gameId: String(id), gameName: title });
     if (id === "pixel-run") router.push("/(pixel-run)");
     else if (id === "gravity") router.push("/(gravity)");
     else if (id === "farm-game") router.push("/(farm-game)");

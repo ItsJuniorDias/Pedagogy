@@ -38,6 +38,11 @@ import { Breathe, enterPop, enterRise, enterUp } from "../../shared/motion";
 // Ajuste o caminho conforme onde você salvou o readingProgress.ts
 import { getProgress, markChapterCompleted } from "../../lib/readingProgress";
 import { useReadingTimer } from "../../hooks/useReadingTimer";
+import {
+  trackContentView,
+  trackChapterCompleted,
+  trackStoryCompleted,
+} from "../../lib/analytics";
 
 // ─── IMPORTS: Mocks Originais ─────────────────────────────────────────────────
 import {
@@ -1037,6 +1042,24 @@ export default function ReadStoryScreen() {
   // gráfico "This week" do Profile. (Pausa sozinho quando o app vai pro background.)
   useReadingTimer();
 
+  // ── TRACKING (Facebook) ─────────────────────────────────────────────────────
+  // Evita disparar o mesmo evento várias vezes nesta sessão de tela
+  // (ex.: ao reler um capítulo ou voltar página).
+  const trackedViewRef = useRef(false);
+  const firedChaptersRef = useRef<Set<string>>(new Set());
+  const firedStoryRef = useRef(false);
+
+  // VIEW de conteúdo: dispara uma vez quando o leitor abre esta história.
+  useEffect(() => {
+    if (trackedViewRef.current) return;
+    trackedViewRef.current = true;
+    trackContentView({
+      contentId: id,
+      contentName: id,
+      contentType: "story",
+    });
+  }, [id]);
+
   // ── Estado do highlight ─────────────────────────────────────────────────────
   // charIndex: offset no texto da palavra atual sendo lida
   // charLength: comprimento da palavra atual
@@ -1073,6 +1096,28 @@ export default function ReadStoryScreen() {
     if (currentPage === ch.pages.length - 1) {
       markChapterCompleted(id, ch.id, chapters.length).then((p) => {
         setReadChapters(p.chaptersRead[id] ?? []);
+
+        // ── TRACKING: capítulo concluído (1× por capítulo nesta sessão) ──
+        const chKey = String(ch.id);
+        if (!firedChaptersRef.current.has(chKey)) {
+          firedChaptersRef.current.add(chKey);
+          trackChapterCompleted({
+            storyId: id,
+            chapterId: ch.id,
+            chapterIndex: activeChapter,
+            totalChapters: chapters.length,
+          });
+        }
+
+        // ── TRACKING: história 100% concluída (1× nesta sessão) ──
+        if (!firedStoryRef.current && p.storiesCompleted.includes(id)) {
+          firedStoryRef.current = true;
+          trackStoryCompleted({
+            storyId: id,
+            storyName: id,
+            totalChapters: chapters.length,
+          });
+        }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
