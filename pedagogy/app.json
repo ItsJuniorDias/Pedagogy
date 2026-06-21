@@ -49,10 +49,10 @@
       [
         "react-native-fbsdk-next",
         {
-          "appID": "YOUR_FACEBOOK_APP_ID",
-          "clientToken": "YOUR_FACEBOOK_CLIENT_TOKEN",
+          "appID": "933286406435568",
+          "clientToken": "c83cf958ee1cde9599fc375641c76ad6",
           "displayName": "Pedagogy",
-          "scheme": "fbYOUR_FACEBOOK_APP_ID",
+          "scheme": "fb933286406435568",
           "isAutoInitEnabled": true,
           "autoLogAppEventsEnabled": true,
           "advertiserIDCollectionEnabled": true,

@@ -14,6 +14,7 @@ import Purchases, {
   PurchasesPackage as Package,
 } from "react-native-purchases";
 
+import { trackSubscriptionStarted } from "../lib/analytics";
 import {
   getAvailablePackages,
   getCustomerInfo,
@@ -22,7 +23,6 @@ import {
   purchasePackage,
   restorePurchases,
 } from "../service/purchasesService";
-import { trackSubscriptionStarted } from "../lib/analytics";
 
 // ─── Tipos públicos ───────────────────────────────────────────────────────────
 
