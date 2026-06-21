@@ -32,34 +32,60 @@ import { Platform } from "react-native";
 // ─── CARREGAMENTO PREGUIÇOSO E SEGURO DO SDK ──────────────────────────────────
 // Em vez de `import { AppEventsLogger } from "react-native-fbsdk-next"` no topo
 // (que pode falhar ao empacotar para web), exigimos o módulo dentro de um
-// try/catch e só em plataformas nativas. Se algo der errado, `nativeReady`
-// fica false e o app segue normalmente.
+// try/catch e só em plataformas nativas. Se algo der errado, `FBSDK` fica null
+// e toda chamada de tracking degrada para no-op — o app segue normalmente.
 
 type FBSDKModule = typeof import("react-native-fbsdk-next");
 
 let FBSDK: FBSDKModule | null = null;
-let nativeReady = false;
 
 const isNativePlatform = Platform.OS === "ios" || Platform.OS === "android";
 
+// Carrega o wrapper JS do SDK apenas no nativo. Em Expo Go o require resolve,
+// mas o módulo NATIVO por trás (NativeModules.FBSettings) não existe — por isso
+// TODA chamada abaixo é protegida por try/catch e degrada para no-op sozinha.
+// IMPORTANTе: NÃO decidimos "enviar ou não" com base em NativeModules aqui no
+// topo. Com a New Architecture (bridgeless), NativeModules.FBSettings pode vir
+// `undefined` neste instante (boot) mesmo o módulo existindo depois — o que
+// desligaria o tracking pra sempre. Em vez disso, sempre tentamos chamar.
 if (isNativePlatform) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { NativeModules } = require("react-native");
-    // O native module só existe num build com o SDK linkado (não no Expo Go).
-    const hasNativeBinding = !!NativeModules?.FBSettings;
-    if (hasNativeBinding) {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      FBSDK = require("react-native-fbsdk-next");
-      nativeReady = !!FBSDK?.AppEventsLogger && !!FBSDK?.Settings;
-    }
+    FBSDK = require("react-native-fbsdk-next");
   } catch {
     FBSDK = null;
-    nativeReady = false;
   }
 }
 
 const __DEV_LOG__ = typeof __DEV__ !== "undefined" && __DEV__;
+
+/**
+ * Probe LAZY (em tempo de chamada, não no import) do módulo nativo — usado só
+ * para diagnóstico/console. Quando isto roda (app já em execução), o registro
+ * de módulos nativos já está pronto, então é confiável.
+ */
+let _probed = false;
+let _nativeBinding = false;
+function hasNativeBinding(): boolean {
+  if (_probed) return _nativeBinding;
+  _probed = true;
+  if (!isNativePlatform || !FBSDK) {
+    _nativeBinding = false;
+    return false;
+  }
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { NativeModules } = require("react-native");
+    _nativeBinding =
+      !!NativeModules?.FBSettings || !!NativeModules?.FBAppEventsLogger;
+  } catch {
+    _nativeBinding = false;
+  }
+  return _nativeBinding;
+}
+
+/** True quando vamos de fato TENTAR enviar (plataforma nativa + wrapper carregado). */
+const willSend = isNativePlatform && !!FBSDK;
 
 /** Loga no console (apenas em dev) quando o tracking está em modo no-op. */
 function devNoop(event: string, params?: Record<string, unknown>): void {
@@ -71,7 +97,7 @@ function devNoop(event: string, params?: Record<string, unknown>): void {
 
 /** Indica se os eventos estão de fato sendo enviados à Meta neste ambiente. */
 export function isAnalyticsActive(): boolean {
-  return nativeReady;
+  return willSend && hasNativeBinding();
 }
 
 // ─── REGISTRO CENTRAL DE NOMES DE EVENTOS ─────────────────────────────────────
@@ -136,12 +162,12 @@ export function trackEvent(
   valueToSum?: number,
 ): void {
   const clean = cleanParams(params);
-  if (!nativeReady || !FBSDK) {
+  if (!willSend) {
     devNoop(eventName, { ...clean, ...(valueToSum != null ? { _value: valueToSum } : {}) });
     return;
   }
   try {
-    const { AppEventsLogger } = FBSDK;
+    const { AppEventsLogger } = FBSDK!;
     if (typeof valueToSum === "number" && Object.keys(clean).length > 0) {
       AppEventsLogger.logEvent(eventName, valueToSum, clean);
     } else if (typeof valueToSum === "number") {
@@ -150,6 +176,10 @@ export function trackEvent(
       AppEventsLogger.logEvent(eventName, clean);
     } else {
       AppEventsLogger.logEvent(eventName);
+    }
+    if (__DEV_LOG__) {
+      // eslint-disable-next-line no-console
+      console.log(`[analytics] → ${eventName}`, clean);
     }
   } catch (err) {
     if (__DEV_LOG__) {
@@ -173,12 +203,12 @@ export function trackPurchase(
   params?: Record<string, ParamValue | boolean | null | undefined>,
 ): void {
   const clean = cleanParams(params);
-  if (!nativeReady || !FBSDK) {
+  if (!willSend) {
     devNoop("Purchased", { amount, currencyCode, ...clean });
     return;
   }
   try {
-    FBSDK.AppEventsLogger.logPurchase(amount, currencyCode, clean);
+    FBSDK!.AppEventsLogger.logPurchase(amount, currencyCode, clean);
   } catch (err) {
     if (__DEV_LOG__) {
       // eslint-disable-next-line no-console
@@ -205,7 +235,17 @@ export async function initAnalytics(): Promise<void> {
   if (initialized) return;
   initialized = true;
 
-  if (!nativeReady || !FBSDK) {
+  // Diagnóstico SEMPRE visível no console (dev) — diz se o tracking está ativo.
+  if (__DEV_LOG__) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `[analytics] init — platform=${Platform.OS} · SDK nativo=${
+        hasNativeBinding() ? "DETECTADO ✅" : "AUSENTE ❌ (Expo Go/web? rebuild nativo necessário)"
+      }`,
+    );
+  }
+
+  if (!willSend || !FBSDK) {
     devNoop("initAnalytics (sem SDK nativo neste ambiente)");
     return;
   }
@@ -222,6 +262,10 @@ export async function initAnalytics(): Promise<void> {
         const ATT = require("expo-tracking-transparency");
         const { status } = await ATT.requestTrackingPermissionsAsync();
         trackingGranted = status === "granted";
+        if (__DEV_LOG__) {
+          // eslint-disable-next-line no-console
+          console.log(`[analytics] ATT status = ${status}`);
+        }
       } catch {
         // expo-tracking-transparency ausente: segue sem IDFA.
         trackingGranted = false;
@@ -238,6 +282,11 @@ export async function initAnalytics(): Promise<void> {
     Settings.setAutoLogAppEventsEnabled(true);
     Settings.setAdvertiserIDCollectionEnabled(true);
     Settings.initializeSDK();
+
+    if (__DEV_LOG__) {
+      // eslint-disable-next-line no-console
+      console.log("[analytics] SDK inicializado. Eventos serão enviados em lote.");
+    }
   } catch (err) {
     if (__DEV_LOG__) {
       // eslint-disable-next-line no-console
@@ -250,7 +299,7 @@ export async function initAnalytics(): Promise<void> {
 
 /** Associa eventos a um id de usuário (ex.: o appUserID do RevenueCat). */
 export function setAnalyticsUserId(userId: string | null): void {
-  if (!nativeReady || !FBSDK) {
+  if (!willSend || !FBSDK) {
     devNoop("setUserID", { userId: userId ?? "(null)" });
     return;
   }
@@ -261,11 +310,15 @@ export function setAnalyticsUserId(userId: string | null): void {
   }
 }
 
-/** Força o envio imediato dos eventos em buffer (normalmente não é preciso). */
+/** Força o envio imediato dos eventos em buffer. Útil para testar/depurar. */
 export function flushAnalytics(): void {
-  if (!nativeReady || !FBSDK) return;
+  if (!willSend || !FBSDK) return;
   try {
     FBSDK.AppEventsLogger.flush();
+    if (__DEV_LOG__) {
+      // eslint-disable-next-line no-console
+      console.log("[analytics] flush() — enviando eventos em buffer agora");
+    }
   } catch {
     /* silencioso */
   }

@@ -62,18 +62,18 @@ visualizações de conteúdo, conclusões, compras e mais.
    `com.alexandrejunior.pedagogy`). Para Android, gere e cadastre os
    **key hashes** das suas keystores (debug e release).
 
-### 2.2. Preencha as credenciais em `app.json`
+### 2.2. Credenciais (✅ já preenchidas)
 
-No bloco do plugin `react-native-fbsdk-next`, substitua os placeholders:
+As credenciais do app **Pedagogy** já estão configuradas no `app.json`:
 
 ```jsonc
 [
   "react-native-fbsdk-next",
   {
-    "appID": "SEU_APP_ID",                 // ← troque
-    "clientToken": "SEU_CLIENT_TOKEN",     // ← troque
+    "appID": "933286406435568",                        // ✅ configurado
+    "clientToken": "c83cf958ee1cde9599fc375641c76ad6", // ✅ configurado
     "displayName": "Pedagogy",
-    "scheme": "fbSEU_APP_ID",              // ← "fb" + App ID, ex.: "fb1234567890"
+    "scheme": "fb933286406435568",                     // "fb" + App ID
     "isAutoInitEnabled": true,
     "autoLogAppEventsEnabled": true,
     "advertiserIDCollectionEnabled": true,
@@ -82,9 +82,13 @@ No bloco do plugin `react-native-fbsdk-next`, substitua os placeholders:
 ]
 ```
 
+> Se um dia precisar trocar (ex.: novo app ou token redefinido), basta editar
+> esses três campos. O **Client Token** é feito para ficar embarcado no app —
+> não confunda com a **chave secreta do app** (App Secret), que NUNCA deve ir
+> no código do cliente.
+>
 > Os IDs ficam **só** no `app.json`. Com `isAutoInitEnabled: true`, o SDK lê
-> esses valores da config nativa e se inicializa sozinho — você não precisa
-> colar App ID/Client Token em nenhum lugar do código.
+> esses valores da config nativa e se inicializa sozinho.
 
 ---
 
