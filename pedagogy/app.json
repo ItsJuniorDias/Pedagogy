@@ -45,26 +45,7 @@
       "expo-audio",
       "expo-iap",
       "expo-build-properties",
-      "expo-asset",
-      [
-        "react-native-fbsdk-next",
-        {
-          "appID": "933286406435568",
-          "clientToken": "c83cf958ee1cde9599fc375641c76ad6",
-          "displayName": "Pedagogy",
-          "scheme": "fb933286406435568",
-          "isAutoInitEnabled": true,
-          "autoLogAppEventsEnabled": true,
-          "advertiserIDCollectionEnabled": true,
-          "iosUserTrackingPermission": "Usamos seus dados para medir a performance dos anúncios e melhorar a experiência no Pedagogy."
-        }
-      ],
-      [
-        "expo-tracking-transparency",
-        {
-          "userTrackingPermission": "Usamos seus dados para medir a performance dos anúncios e melhorar a experiência no Pedagogy."
-        }
-      ]
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,

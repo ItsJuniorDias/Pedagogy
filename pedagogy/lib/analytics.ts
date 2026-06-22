@@ -1,121 +1,58 @@
 // lib/analytics.ts
 // ─────────────────────────────────────────────────────────────────────────────
-// CAMADA ÚNICA DE TRACKING (Facebook / Meta App Events).
+// CAMADA ÚNICA DE TRACKING (stub local — SEM SDKs de terceiros).
 //
-// Encapsula o `react-native-fbsdk-next` (SDK oficial da Meta para React Native)
-// e expõe funções de alto nível e tipadas para os eventos do app:
-//   • instalação / abertura do app  → AUTOMÁTICO pelo SDK (ver app.json)
-//   • visualização de conteúdo (view)
-//   • capítulo / história concluídos
-//   • abertura de jogos
-//   • paywall visto, assinatura iniciada e compra concluída
-//   • onboarding concluído, busca, conquistas...
+// ⚠️ CATEGORIA KIDS DA APP STORE (App Review Guideline 1.3 / 5.1.4):
+// Apps da categoria infantil NÃO podem incluir SDKs de analytics ou publicidade
+// de terceiros, nem transmitir informação pessoal ou de dispositivo (incluindo o
+// IDFA) para terceiros — basta o app ter a *capacidade* de fazê-lo para ser
+// rejeitado. Por isso foram REMOVIDOS deste projeto:
+//   • react-native-fbsdk-next  (SDK de App Events da Meta/Facebook)
+//   • expo-tracking-transparency (prompt de ATT / IDFA — também barrado em Kids)
 //
-// POR QUE UM WRAPPER?
-//   1. SEGURANÇA MULTIPLATAFORMA: o módulo nativo do Facebook NÃO existe na
-//      web nem no Expo Go. Aqui detectamos isso uma única vez e, quando o
-//      nativo não está disponível, TODA chamada vira um no-op silencioso
-//      (com log no modo dev). Assim o app nunca quebra ao rodar no navegador
-//      ou no Expo Go — os eventos reais só são enviados num development/
-//      production build (EAS Build / `expo run:ios` / `expo run:android`).
-//   2. FONTE ÚNICA DE VERDADE: os nomes de eventos e parâmetros ficam num só
-//      lugar, então o resto do app só chama `trackContentView(...)` etc.
-//   3. PRIVACIDADE iOS (ATT): centraliza o pedido de App Tracking Transparency.
+// Este arquivo mantém EXATAMENTE a mesma API pública de antes (mesmos nomes de
+// função e assinaturas), mas agora cada função é um NO-OP local: nada sai do
+// app. Assim nenhuma tela precisou ser alterada — todas continuam chamando
+// `trackContentView(...)`, `trackSubscriptionStarted(...)`, etc.; essas chamadas
+// apenas não fazem nada externamente (e, em modo dev, imprimem no console para
+// você continuar acompanhando os eventos durante o desenvolvimento).
 //
-// CREDENCIAIS: o App ID e o Client Token do Facebook ficam em `app.json`
-// (plugin "react-native-fbsdk-next"), NÃO aqui. Com `isAutoInitEnabled: true`
-// o SDK se inicializa sozinho a partir da config nativa.
+// Quiser métricas de produto de forma COMPATÍVEL com Kids no futuro? Troque o
+// corpo destas funções por uma solução de PRIMEIRA PARTE (seu próprio backend)
+// ou uma analytics self-hosted que comprovadamente não colete IDFA nem
+// informação de dispositivo — sem reintroduzir SDKs de terceiros.
 // ─────────────────────────────────────────────────────────────────────────────
-
-import { Platform } from "react-native";
-
-// ─── CARREGAMENTO PREGUIÇOSO E SEGURO DO SDK ──────────────────────────────────
-// Em vez de `import { AppEventsLogger } from "react-native-fbsdk-next"` no topo
-// (que pode falhar ao empacotar para web), exigimos o módulo dentro de um
-// try/catch e só em plataformas nativas. Se algo der errado, `FBSDK` fica null
-// e toda chamada de tracking degrada para no-op — o app segue normalmente.
-
-type FBSDKModule = typeof import("react-native-fbsdk-next");
-
-let FBSDK: FBSDKModule | null = null;
-
-const isNativePlatform = Platform.OS === "ios" || Platform.OS === "android";
-
-// Carrega o wrapper JS do SDK apenas no nativo. Em Expo Go o require resolve,
-// mas o módulo NATIVO por trás (NativeModules.FBSettings) não existe — por isso
-// TODA chamada abaixo é protegida por try/catch e degrada para no-op sozinha.
-// IMPORTANTе: NÃO decidimos "enviar ou não" com base em NativeModules aqui no
-// topo. Com a New Architecture (bridgeless), NativeModules.FBSettings pode vir
-// `undefined` neste instante (boot) mesmo o módulo existindo depois — o que
-// desligaria o tracking pra sempre. Em vez disso, sempre tentamos chamar.
-if (isNativePlatform) {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    FBSDK = require("react-native-fbsdk-next");
-  } catch {
-    FBSDK = null;
-  }
-}
 
 const __DEV_LOG__ = typeof __DEV__ !== "undefined" && __DEV__;
 
-/**
- * Probe LAZY (em tempo de chamada, não no import) do módulo nativo — usado só
- * para diagnóstico/console. Quando isto roda (app já em execução), o registro
- * de módulos nativos já está pronto, então é confiável.
- */
-let _probed = false;
-let _nativeBinding = false;
-function hasNativeBinding(): boolean {
-  if (_probed) return _nativeBinding;
-  _probed = true;
-  if (!isNativePlatform || !FBSDK) {
-    _nativeBinding = false;
-    return false;
-  }
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { NativeModules } = require("react-native");
-    _nativeBinding =
-      !!NativeModules?.FBSettings || !!NativeModules?.FBAppEventsLogger;
-  } catch {
-    _nativeBinding = false;
-  }
-  return _nativeBinding;
-}
-
-/** True quando vamos de fato TENTAR enviar (plataforma nativa + wrapper carregado). */
-const willSend = isNativePlatform && !!FBSDK;
-
-/** Loga no console (apenas em dev) quando o tracking está em modo no-op. */
-function devNoop(event: string, params?: Record<string, unknown>): void {
+/** Loga no console apenas em dev, para acompanhar os eventos durante o dev. */
+function devLog(event: string, params?: Record<string, unknown>): void {
   if (__DEV_LOG__) {
     // eslint-disable-next-line no-console
     console.log(`[analytics:noop] ${event}`, params ?? "");
   }
 }
 
-/** Indica se os eventos estão de fato sendo enviados à Meta neste ambiente. */
+/**
+ * Nenhum analytics de terceiros está ativo (exigência da categoria Kids).
+ * Mantida por compatibilidade — sempre retorna false.
+ */
 export function isAnalyticsActive(): boolean {
-  return willSend && hasNativeBinding();
+  return false;
 }
 
-// ─── REGISTRO CENTRAL DE NOMES DE EVENTOS ─────────────────────────────────────
-// Eventos PADRÃO da Meta (strings canônicas e estáveis — usadas como fallback
-// caso as constantes nativas não estejam disponíveis) + eventos CUSTOMIZADOS
-// específicos do Pedagogy. Centralizar evita typos espalhados pelo código.
-
+// ─── REGISTRO CENTRAL DE NOMES DE EVENTOS (apenas rótulos LOCAIS) ─────────────
+// Mantido para compatibilidade de import. São apenas strings locais usadas no
+// log de dev — sem qualquer vínculo com a Meta/Facebook.
 export const AnalyticsEvent = {
-  // Padrão Meta
-  VIEWED_CONTENT: "fb_mobile_content_view",
-  SEARCHED: "fb_mobile_search",
-  COMPLETED_TUTORIAL: "fb_mobile_tutorial_completion",
-  ACHIEVED_LEVEL: "fb_mobile_level_achieved",
-  UNLOCKED_ACHIEVEMENT: "fb_mobile_achievement_unlocked",
-  INITIATED_CHECKOUT: "fb_mobile_initiated_checkout",
-  SUBSCRIBE: "Subscribe",
-  START_TRIAL: "StartTrial",
-  // Customizados do Pedagogy
+  VIEWED_CONTENT: "content_view",
+  SEARCHED: "search",
+  COMPLETED_TUTORIAL: "tutorial_completed",
+  ACHIEVED_LEVEL: "level_achieved",
+  UNLOCKED_ACHIEVEMENT: "achievement_unlocked",
+  INITIATED_CHECKOUT: "checkout_initiated",
+  SUBSCRIBE: "subscribe",
+  START_TRIAL: "start_trial",
   CONTENT_OPEN: "content_open",
   CHAPTER_COMPLETED: "chapter_completed",
   STORY_COMPLETED: "story_completed",
@@ -125,232 +62,73 @@ export const AnalyticsEvent = {
   READING_SESSION: "reading_session",
 } as const;
 
-// Chaves de parâmetro padrão da Meta (também usadas como fallback).
-const FBParam = {
-  CONTENT_TYPE: "fb_content_type",
-  CONTENT_ID: "fb_content_id",
-  CONTENT: "fb_content",
-  SEARCH_STRING: "fb_search_string",
-  NUM_ITEMS: "fb_num_items",
-  CURRENCY: "fb_currency",
-  SUCCESS: "fb_success",
-} as const;
-
 type ParamValue = string | number;
-type Params = Record<string, ParamValue>;
 
-/** Remove chaves com valor null/undefined e converte boolean → 0/1. */
-function cleanParams(input?: Record<string, ParamValue | boolean | null | undefined>): Params {
-  const out: Params = {};
-  if (!input) return out;
-  for (const [k, v] of Object.entries(input)) {
-    if (v === null || v === undefined) continue;
-    out[k] = typeof v === "boolean" ? (v ? 1 : 0) : v;
-  }
-  return out;
-}
+// ─── NÚCLEO ───────────────────────────────────────────────────────────────────
 
-// ─── NÚCLEO: logEvent / logPurchase ───────────────────────────────────────────
-
-/**
- * Loga um evento genérico. Use as funções específicas abaixo sempre que possível
- * — esta é a base de baixo nível (e a "escotilha de escape" para eventos novos).
- */
+/** Base de baixo nível. No-op: apenas loga em dev. */
 export function trackEvent(
   eventName: string,
   params?: Record<string, ParamValue | boolean | null | undefined>,
   valueToSum?: number,
 ): void {
-  const clean = cleanParams(params);
-  if (!willSend) {
-    devNoop(eventName, { ...clean, ...(valueToSum != null ? { _value: valueToSum } : {}) });
-    return;
-  }
-  try {
-    const { AppEventsLogger } = FBSDK!;
-    if (typeof valueToSum === "number" && Object.keys(clean).length > 0) {
-      AppEventsLogger.logEvent(eventName, valueToSum, clean);
-    } else if (typeof valueToSum === "number") {
-      AppEventsLogger.logEvent(eventName, valueToSum);
-    } else if (Object.keys(clean).length > 0) {
-      AppEventsLogger.logEvent(eventName, clean);
-    } else {
-      AppEventsLogger.logEvent(eventName);
-    }
-    if (__DEV_LOG__) {
-      // eslint-disable-next-line no-console
-      console.log(`[analytics] → ${eventName}`, clean);
-    }
-  } catch (err) {
-    if (__DEV_LOG__) {
-      // eslint-disable-next-line no-console
-      console.warn("[analytics] falha ao logar evento:", eventName, err);
-    }
-  }
+  devLog(eventName, {
+    ...(params ?? {}),
+    ...(valueToSum != null ? { _value: valueToSum } : {}),
+  });
 }
 
-/**
- * Loga uma compra (evento "Purchased" da Meta, ideal para otimização de
- * campanhas de conversão/valor). Para assinaturas, chame também
- * `trackSubscriptionStarted`.
- *
- * @param amount       valor numérico (ex.: 9.99)
- * @param currencyCode ISO 4217 (ex.: "USD", "BRL")
- */
+/** Compra. No-op: apenas loga em dev. */
 export function trackPurchase(
   amount: number,
   currencyCode: string,
   params?: Record<string, ParamValue | boolean | null | undefined>,
 ): void {
-  const clean = cleanParams(params);
-  if (!willSend) {
-    devNoop("Purchased", { amount, currencyCode, ...clean });
-    return;
-  }
-  try {
-    FBSDK!.AppEventsLogger.logPurchase(amount, currencyCode, clean);
-  } catch (err) {
-    if (__DEV_LOG__) {
-      // eslint-disable-next-line no-console
-      console.warn("[analytics] falha ao logar compra:", err);
-    }
-  }
+  devLog("purchase", { amount, currencyCode, ...(params ?? {}) });
 }
 
-// ─── INICIALIZAÇÃO + APP TRACKING TRANSPARENCY (iOS) ──────────────────────────
-
-let initialized = false;
+// ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────────
 
 /**
- * Chame UMA vez no início do app (em app/_layout.tsx).
- *
- * - iOS 14.5+: pede a permissão de App Tracking Transparency (ATT) e, conforme
- *   a resposta, habilita/desabilita o uso do IDFA para atribuição. Sem isso o
- *   Facebook não consegue atribuir instalações/conversões a anúncios no iOS.
- * - Garante a inicialização do SDK (idempotente — seguro mesmo com autoinit on).
- *
- * É 100% seguro chamar na web / Expo Go: simplesmente não faz nada.
+ * Mantida por compatibilidade (chamada em app/_layout.tsx). NÃO inicializa
+ * nenhum SDK e NÃO pede App Tracking Transparency. 100% segura em qualquer
+ * plataforma — não faz nada além de, opcionalmente, logar em dev.
  */
 export async function initAnalytics(): Promise<void> {
-  if (initialized) return;
-  initialized = true;
-
-  // Diagnóstico SEMPRE visível no console (dev) — diz se o tracking está ativo.
-  if (__DEV_LOG__) {
-    // eslint-disable-next-line no-console
-    console.log(
-      `[analytics] init — platform=${Platform.OS} · SDK nativo=${
-        hasNativeBinding() ? "DETECTADO ✅" : "AUSENTE ❌ (Expo Go/web? rebuild nativo necessário)"
-      }`,
-    );
-  }
-
-  if (!willSend || !FBSDK) {
-    devNoop("initAnalytics (sem SDK nativo neste ambiente)");
-    return;
-  }
-
-  const { Settings } = FBSDK;
-
-  try {
-    // 1) iOS: App Tracking Transparency. Exigimos o módulo de forma preguiçosa
-    //    para não quebrar caso ele não esteja instalado.
-    if (Platform.OS === "ios") {
-      let trackingGranted = false;
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const ATT = require("expo-tracking-transparency");
-        const { status } = await ATT.requestTrackingPermissionsAsync();
-        trackingGranted = status === "granted";
-        if (__DEV_LOG__) {
-          // eslint-disable-next-line no-console
-          console.log(`[analytics] ATT status = ${status}`);
-        }
-      } catch {
-        // expo-tracking-transparency ausente: segue sem IDFA.
-        trackingGranted = false;
-      }
-      try {
-        await Settings.setAdvertiserTrackingEnabled(trackingGranted);
-      } catch {
-        /* iOS < 14 ou indisponível: ignora */
-      }
-    }
-
-    // 2) Inicializa o SDK explicitamente (defensivo: cobre o caso de
-    //    isAutoInitEnabled estar desligado em app.json).
-    Settings.setAutoLogAppEventsEnabled(true);
-    Settings.setAdvertiserIDCollectionEnabled(true);
-    Settings.initializeSDK();
-
-    if (__DEV_LOG__) {
-      // eslint-disable-next-line no-console
-      console.log("[analytics] SDK inicializado. Eventos serão enviados em lote.");
-    }
-  } catch (err) {
-    if (__DEV_LOG__) {
-      // eslint-disable-next-line no-console
-      console.warn("[analytics] initAnalytics falhou:", err);
-    }
-  }
+  devLog("initAnalytics (no-op — sem SDK de terceiros; compatível com Kids)");
 }
 
-// ─── IDENTIFICAÇÃO DO USUÁRIO (opcional) ──────────────────────────────────────
-
-/** Associa eventos a um id de usuário (ex.: o appUserID do RevenueCat). */
+/** Compat: não há serviço externo ao qual associar um usuário. */
 export function setAnalyticsUserId(userId: string | null): void {
-  if (!willSend || !FBSDK) {
-    devNoop("setUserID", { userId: userId ?? "(null)" });
-    return;
-  }
-  try {
-    FBSDK.AppEventsLogger.setUserID(userId);
-  } catch {
-    /* silencioso */
-  }
+  devLog("setUserId", { userId: userId ?? "(null)" });
 }
 
-/** Força o envio imediato dos eventos em buffer. Útil para testar/depurar. */
+/** Compat: não há buffer externo para esvaziar. */
 export function flushAnalytics(): void {
-  if (!willSend || !FBSDK) return;
-  try {
-    FBSDK.AppEventsLogger.flush();
-    if (__DEV_LOG__) {
-      // eslint-disable-next-line no-console
-      console.log("[analytics] flush() — enviando eventos em buffer agora");
-    }
-  } catch {
-    /* silencioso */
-  }
+  /* no-op */
 }
 
-// ─── EVENTOS DE ALTO NÍVEL (a API que o app deve usar) ────────────────────────
+// ─── EVENTOS DE ALTO NÍVEL (mesma API de antes; agora no-ops locais) ──────────
 
-/**
- * VISUALIZAÇÃO de conteúdo — a "view" pedida. Dispare quando o leitor abre uma
- * história/capítulo. Mapeia para o evento padrão ViewedContent da Meta.
- */
 export function trackContentView(args: {
   contentId: string;
   contentName?: string;
-  contentType?: string; // "story" | "chapter" | "lesson"...
+  contentType?: string;
   category?: string;
 }): void {
   trackEvent(AnalyticsEvent.VIEWED_CONTENT, {
-    [FBParam.CONTENT_ID]: args.contentId,
-    [FBParam.CONTENT_TYPE]: args.contentType ?? "story",
-    [FBParam.CONTENT]: args.contentName ?? args.contentId,
+    content_id: args.contentId,
+    content_type: args.contentType ?? "story",
     content_name: args.contentName ?? args.contentId,
     ...(args.category ? { category: args.category } : {}),
   });
 }
 
-/** Conteúdo aberto/iniciado (evento custom complementar ao ViewedContent). */
 export function trackContentOpen(args: {
   contentId: string;
   contentName?: string;
   contentType?: string;
-  source?: string; // "home" | "library" | "stories" | "category"...
+  source?: string;
 }): void {
   trackEvent(AnalyticsEvent.CONTENT_OPEN, {
     content_id: args.contentId,
@@ -360,7 +138,6 @@ export function trackContentOpen(args: {
   });
 }
 
-/** Capítulo concluído (criança chegou na última página). */
 export function trackChapterCompleted(args: {
   storyId: string;
   chapterId: string | number;
@@ -375,10 +152,6 @@ export function trackChapterCompleted(args: {
   });
 }
 
-/**
- * História 100% concluída. Loga tanto o evento custom quanto o padrão da Meta
- * (AchievedLevel), útil para campanhas de engajamento/retenção.
- */
 export function trackStoryCompleted(args: {
   storyId: string;
   storyName?: string;
@@ -390,12 +163,11 @@ export function trackStoryCompleted(args: {
     ...(args.totalChapters != null ? { total_chapters: args.totalChapters } : {}),
   });
   trackEvent(AnalyticsEvent.ACHIEVED_LEVEL, {
-    [FBParam.CONTENT_ID]: args.storyId,
+    content_id: args.storyId,
     level: args.storyName ?? args.storyId,
   });
 }
 
-/** Abertura de um mini-game (Farm, Ping Pong, Pixel Run, Gravity...). */
 export function trackGameOpen(args: { gameId: string; gameName?: string }): void {
   trackEvent(AnalyticsEvent.GAME_OPEN, {
     game_id: args.gameId,
@@ -403,43 +175,37 @@ export function trackGameOpen(args: { gameId: string; gameName?: string }): void
   });
 }
 
-/** Paywall exibido para o usuário. */
 export function trackPaywallView(args?: { source?: string }): void {
   trackEvent(AnalyticsEvent.PAYWALL_VIEW, {
     ...(args?.source ? { source: args.source } : {}),
   });
 }
 
-/** Usuário tocou em "assinar" e o fluxo de compra começou (checkout). */
 export function trackCheckoutInitiated(args?: {
   productId?: string;
   price?: number;
   currency?: string;
 }): void {
   trackEvent(AnalyticsEvent.INITIATED_CHECKOUT, {
-    ...(args?.productId ? { [FBParam.CONTENT_ID]: args.productId } : {}),
-    ...(args?.currency ? { [FBParam.CURRENCY]: args.currency } : {}),
+    ...(args?.productId ? { content_id: args.productId } : {}),
+    ...(args?.currency ? { currency: args.currency } : {}),
     ...(args?.price != null ? { value: args.price } : {}),
   });
 }
 
-/**
- * Assinatura iniciada com sucesso. Loga o evento Subscribe (ou StartTrial) da
- * Meta com valor/moeda, e — quando houver preço — também registra a compra.
- */
 export function trackSubscriptionStarted(args: {
   productId: string;
   price?: number;
   currency?: string;
   isTrial?: boolean;
-  period?: string; // "monthly" | "annual"...
+  period?: string;
 }): void {
   const eventName = args.isTrial ? AnalyticsEvent.START_TRIAL : AnalyticsEvent.SUBSCRIBE;
   trackEvent(
     eventName,
     {
-      [FBParam.CONTENT_ID]: args.productId,
-      ...(args.currency ? { [FBParam.CURRENCY]: args.currency } : {}),
+      content_id: args.productId,
+      ...(args.currency ? { currency: args.currency } : {}),
       ...(args.period ? { period: args.period } : {}),
     },
     args.price ?? 0,
@@ -447,7 +213,7 @@ export function trackSubscriptionStarted(args: {
 
   if (args.price != null && args.currency) {
     trackPurchase(args.price, args.currency, {
-      [FBParam.CONTENT_ID]: args.productId,
+      content_id: args.productId,
       product_id: args.productId,
       ...(args.period ? { period: args.period } : {}),
       is_subscription: true,
@@ -455,33 +221,24 @@ export function trackSubscriptionStarted(args: {
   }
 }
 
-/** Onboarding concluído (último slide → entrar no app). */
 export function trackOnboardingCompleted(): void {
-  trackEvent(AnalyticsEvent.COMPLETED_TUTORIAL, { [FBParam.SUCCESS]: true });
+  trackEvent(AnalyticsEvent.COMPLETED_TUTORIAL, { success: true });
 }
 
-/** Busca dentro do app. */
 export function trackSearch(args: { query: string; resultCount?: number }): void {
   trackEvent(AnalyticsEvent.SEARCHED, {
-    [FBParam.SEARCH_STRING]: args.query,
-    ...(args.resultCount != null ? { [FBParam.NUM_ITEMS]: args.resultCount } : {}),
+    search_string: args.query,
+    ...(args.resultCount != null ? { num_items: args.resultCount } : {}),
   });
 }
 
-/** Conquista/badge desbloqueada. */
 export function trackAchievementUnlocked(args: { achievementId: string }): void {
   trackEvent(AnalyticsEvent.UNLOCKED_ACHIEVEMENT, {
-    [FBParam.CONTENT_ID]: args.achievementId,
+    content_id: args.achievementId,
     achievement: args.achievementId,
   });
 }
 
-/**
- * "DOWNLOAD" de conteúdo. O Pedagogy hoje não baixa arquivos — as INSTALAÇÕES
- * do app já são contadas automaticamente pela Meta (ver app.json). Esta função
- * fica pronta para o dia em que você adicionar "salvar/baixar para offline":
- * basta chamá-la no handler de download.
- */
 export function trackContentDownload(args: {
   contentId: string;
   contentName?: string;

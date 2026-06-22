@@ -30,9 +30,9 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
-  // Inicializa o tracking da Meta (Facebook) uma única vez.
-  // No iOS, dispara o pedido de App Tracking Transparency. Seguro na web/Expo Go
-  // (vira no-op). As instalações/aberturas do app são logadas automaticamente.
+  // Inicialização de analytics (no-op — sem SDK de terceiros, para cumprir a
+  // categoria Kids da App Store). Mantido por compatibilidade; não pede ATT
+  // nem envia dados para fora do app.
   useEffect(() => {
     void initAnalytics();
   }, []);

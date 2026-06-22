@@ -1042,7 +1042,7 @@ export default function ReadStoryScreen() {
   // gráfico "This week" do Profile. (Pausa sozinho quando o app vai pro background.)
   useReadingTimer();
 
-  // ── TRACKING (Facebook) ─────────────────────────────────────────────────────
+  // ── TRACKING (analytics local — no-op, sem terceiros) ───────────────────────
   // Evita disparar o mesmo evento várias vezes nesta sessão de tela
   // (ex.: ao reler um capítulo ou voltar página).
   const trackedViewRef = useRef(false);
