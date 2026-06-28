@@ -21,12 +21,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { validateChapter } from "./lib/validate";
+import type { ChapterExerciseSet, Exercise } from "../features/exercises/types";
 import { resolveStoryId } from "../features/exercises/types";
-import type {
-  ChapterExerciseSet,
-  Exercise,
-} from "../features/exercises/types";
+import { validateChapter } from "./lib/validate";
 
 // ─── Fontes de histórias (dados puros, sem imports de react-native) ──────────
 // Adicione aqui qualquer história nova; a chave é o id JÁ normalizado.
@@ -39,6 +36,7 @@ import {
   TAIRBRTY,
 } from "../mocks/chapterMocks";
 import {
+  STORIES_GRID,
   THE_ANIMAL_WHISPERER,
   THE_ART_OF_BEING_WRONG,
   THE_CHRONONAUTS,
@@ -73,7 +71,6 @@ import {
   THE_WIND_MAPPER,
   THE_WORD_COLLECTOR,
   THE_YOUNG_VOLCANOLOGIST,
-  STORIES_GRID,
 } from "../mocks/historyMock";
 import {
   ASTRONAUT,
@@ -209,7 +206,10 @@ Do NOT include id/storyId/chapterId/machineChecked/reviewed — the pipeline fil
 
 class OpenRouterProvider implements Provider {
   name: string;
-  constructor(private apiKey: string, private model: string) {
+  constructor(
+    private apiKey: string,
+    private model: string,
+  ) {
     this.name = `openrouter:${model}`;
   }
 
@@ -245,7 +245,12 @@ Return ONLY the JSON array.`;
 
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      throw new Error(`OpenRouter ${res.status}: ${body.slice(0, 300)}`);
+      const err: any = new Error(
+        `OpenRouter HTTP ${res.status}: ${body.slice(0, 400)}`,
+      );
+      // 401/403 = key inválida/revogada/sem permissão → erro fatal, aborta tudo
+      if (res.status === 401 || res.status === 403) err.fatal = true;
+      throw err;
     }
     const data: any = await res.json();
     const content: string = data?.choices?.[0]?.message?.content ?? "";
@@ -255,7 +260,11 @@ Return ONLY the JSON array.`;
 
 /** Extrai um array JSON mesmo se vier com ``` ou texto em volta. */
 function parseJsonArray(raw: string): unknown[] {
-  let s = raw.trim().replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+  let s = raw
+    .trim()
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/i, "")
+    .trim();
   const start = s.indexOf("[");
   const end = s.lastIndexOf("]");
   if (start !== -1 && end !== -1) s = s.slice(start, end + 1);
@@ -268,16 +277,26 @@ function parseJsonArray(raw: string): unknown[] {
 
 const STOPWORDS = new Set(
   "the and a an of to in on at for with his her its their they them was were is are be been as he she it you i we but so then than that this these those into out up down over under had have has did do does not no yes from by".split(
-    " "
-  )
+    " ",
+  ),
 );
 
 const VOCAB_DICT: Record<string, string[]> = {
   gripped: ["held very tightly", "let go of", "looked at", "forgot about"],
-  roared: ["made a loud sound", "went very quiet", "fell asleep", "smelled nice"],
+  roared: [
+    "made a loud sound",
+    "went very quiet",
+    "fell asleep",
+    "smelled nice",
+  ],
   shuddered: ["shook hard", "smiled wide", "stood still", "floated up"],
   shrank: ["got smaller", "got bigger", "turned red", "ran away"],
-  whispered: ["spoke very softly", "shouted loudly", "wrote a note", "sang a song"],
+  whispered: [
+    "spoke very softly",
+    "shouted loudly",
+    "wrote a note",
+    "sang a song",
+  ],
   ancient: ["very old", "brand new", "very small", "very loud"],
   enormous: ["very big", "very tiny", "very fast", "very soft"],
   glowed: ["shined softly", "went dark", "broke apart", "melted"],
@@ -288,8 +307,18 @@ const VOCAB_DICT: Record<string, string[]> = {
     "a type of cloud",
     "a musical drum",
   ],
-  mossy: ["covered in soft green plants", "made of metal", "full of water", "very hot"],
-  porthole: ["a small round window", "a wooden door", "a deep cave", "a long road"],
+  mossy: [
+    "covered in soft green plants",
+    "made of metal",
+    "full of water",
+    "very hot",
+  ],
+  porthole: [
+    "a small round window",
+    "a wooden door",
+    "a deep cave",
+    "a long road",
+  ],
 };
 
 function splitSentences(text: string): string[] {
@@ -333,7 +362,7 @@ class MockProvider implements Provider {
     if (sentences.length === 0) return out;
 
     const allWords = Array.from(
-      new Set(sentences.flatMap((s) => contentWords(s)))
+      new Set(sentences.flatMap((s) => contentWords(s))),
     );
 
     // 1) fill-blank ×2
@@ -344,9 +373,9 @@ class MockProvider implements Provider {
       const answer = words[0];
       const distractors = shuffle(
         allWords.filter(
-          (w) => w !== answer && Math.abs(w.length - answer.length) <= 2
+          (w) => w !== answer && Math.abs(w.length - answer.length) <= 2,
         ),
-        i + 1
+        i + 1,
       ).slice(0, 3);
       const pool = ["happy", "little", "bright", "quiet"];
       while (distractors.length < 3) {
@@ -367,9 +396,7 @@ class MockProvider implements Provider {
     }
 
     // 2) vocabulary ×1 — só se uma palavra do mini-dicionário aparecer no texto
-    const vocabWord = Object.keys(VOCAB_DICT).find((w) =>
-      allWords.includes(w)
-    );
+    const vocabWord = Object.keys(VOCAB_DICT).find((w) => allWords.includes(w));
     if (vocabWord) {
       const opts = VOCAB_DICT[vocabWord];
       out.push({
@@ -410,16 +437,14 @@ class MockProvider implements Provider {
       const order = [0, 1, 2];
       const scrambled = shuffle(
         pageOpeners.map((text, idx) => ({ text, idx })),
-        4
+        4,
       );
       out.push({
         type: "sequence",
         skill: "sequence",
         prompt: "Put the events in the order they happened.",
         items: scrambled.map((x) => x.text),
-        correctOrder: order.map((o) =>
-          scrambled.findIndex((x) => x.idx === o)
-        ),
+        correctOrder: order.map((o) => scrambled.findIndex((x) => x.idx === o)),
         difficulty: "medium",
       });
     }
@@ -449,7 +474,7 @@ function chapterTextOf(ch: ChapterLike): string {
 async function generateStory(
   storyKey: string,
   provider: Provider,
-  ageRange: string
+  ageRange: string,
 ): Promise<ChapterExerciseSet[]> {
   const chapters = STORY_SOURCES[storyKey];
   if (!chapters) throw new Error(`história desconhecida: ${storyKey}`);
@@ -473,8 +498,13 @@ async function generateStory(
         ageRange,
         chapterText,
       });
-    } catch (err) {
-      console.error(`  ✗ ${storyId}/${chapterId}: provider falhou — ${String(err)}`);
+    } catch (err: any) {
+      if (err?.fatal) throw err; // erro de auth → propaga e aborta a run inteira
+      console.error(
+        `  ✗ ${storyId}/${chapterId}: provider falhou — ${String(
+          err?.message ?? err,
+        )}`,
+      );
       continue;
     }
 
@@ -487,18 +517,21 @@ async function generateStory(
     const counters: Record<string, number> = {};
     const exercises: Exercise[] = valid.map((ex) => {
       counters[ex.type] = (counters[ex.type] ?? 0) + 1;
-      return { ...ex, id: `${storyId}__${chapterId}__${ex.type}__${counters[ex.type]}` };
+      return {
+        ...ex,
+        id: `${storyId}__${chapterId}__${ex.type}__${counters[ex.type]}`,
+      };
     });
 
     const verified = exercises.filter((e) => e.machineChecked).length;
     console.log(
       `  ✓ ${storyId}/${chapterId}: ${exercises.length} ok ` +
         `(${verified} verificados p/ máquina, ${exercises.length - verified} p/ revisão), ` +
-        `${rejected.length} descartados`
+        `${rejected.length} descartados`,
     );
     if (rejected.length)
       rejected.forEach((r) =>
-        console.log(`      ↳ descartado: ${r.errors.join("; ")}`)
+        console.log(`      ↳ descartado: ${r.errors.join("; ")}`),
       );
     if (warnings.length && process.env.VERBOSE)
       warnings.forEach((w) => console.log(`      ⚠ ${w}`));
@@ -520,7 +553,7 @@ const AGE_BY_ID: Record<string, string> = STORIES_GRID.reduce(
     acc[resolveStoryId(g.id)] = g.ageRange;
     return acc;
   },
-  {}
+  {},
 );
 
 /** nome de arquivo seguro (sem & e afins); o id real fica DENTRO do JSON */
@@ -553,19 +586,21 @@ function writeRegistry(dir: string) {
     entries
       .map(
         (e) =>
-          `  ${JSON.stringify(e.id)}: ${e.ident} as unknown as ChapterExerciseSet[],`
+          `  ${JSON.stringify(e.id)}: ${e.ident} as unknown as ChapterExerciseSet[],`,
       )
       .join("\n") +
     "\n};\n";
   fs.writeFileSync(path.join(dir, "registry.ts"), out);
-  console.log(`  → content/registry.ts (${entries.length} histórias no registry)`);
+  console.log(
+    `  → content/registry.ts (${entries.length} histórias no registry)`,
+  );
 }
 
 async function main() {
   const args = process.argv.slice(2);
   const flagIdx = args.findIndex((a) => a.startsWith("--"));
   const stories = (flagIdx === -1 ? args : args.slice(0, flagIdx)).map((s) =>
-    resolveStoryId(s)
+    resolveStoryId(s),
   );
   const getFlag = (name: string) => {
     const i = args.indexOf(`--${name}`);
@@ -574,17 +609,15 @@ async function main() {
   const all = args.includes("--all");
   const apiKey =
     process.env.OPENROUTER_API_KEY || process.env.VITE_OPENROUTER_API_KEY;
-  const model =
-    getFlag("model") || "meta-llama/llama-3.3-70b-instruct:free";
-  const providerName =
-    getFlag("provider") || (apiKey ? "openrouter" : "mock");
+  const model = getFlag("model") || "meta-llama/llama-3.3-70b-instruct:free";
+  const providerName = getFlag("provider") || (apiKey ? "openrouter" : "mock");
 
   const provider: Provider =
     providerName === "openrouter"
       ? (() => {
           if (!apiKey)
             throw new Error(
-              "provider=openrouter mas faltou OPENROUTER_API_KEY no ambiente"
+              "provider=openrouter mas faltou OPENROUTER_API_KEY no ambiente",
             );
           return new OpenRouterProvider(apiKey, model);
         })()
@@ -593,7 +626,7 @@ async function main() {
   const targets = all ? Object.keys(STORY_SOURCES) : stories;
   if (targets.length === 0) {
     console.error(
-      "uso: npx tsx scripts/generateExercises.ts <STORY_ID...> [--all] [--provider mock|openrouter] [--model <slug>]"
+      "uso: npx tsx scripts/generateExercises.ts <STORY_ID...> [--all] [--provider mock|openrouter] [--model <slug>]",
     );
     process.exit(1);
   }
@@ -603,15 +636,41 @@ async function main() {
 
   for (const storyKey of targets) {
     console.log(`▶ ${storyKey}`);
-    const sets = await generateStory(
-      storyKey,
-      provider,
-      AGE_BY_ID[storyKey] ?? "5–8"
-    );
-    const file = path.join(OUT_DIR, `${safeName(storyKey)}.json`);
-    fs.writeFileSync(file, JSON.stringify(sets, null, 2) + "\n");
+    let sets;
+    try {
+      sets = await generateStory(
+        storyKey,
+        provider,
+        AGE_BY_ID[storyKey] ?? "5–8",
+      );
+    } catch (err: any) {
+      if (err?.fatal) {
+        console.error(
+          `\n✗ ABORTADO — ${err.message}\n` +
+            `  → A OPENROUTER_API_KEY parece inválida ou revogada. Gere uma nova\n` +
+            `    no painel da OpenRouter e exporte de novo. Nada foi sobrescrito.`,
+        );
+        process.exit(1);
+      }
+      throw err;
+    }
+
     const total = sets.reduce((n, s) => n + s.exercises.length, 0);
-    console.log(`  → ${path.relative(process.cwd(), file)} (${total} exercícios)\n`);
+    const file = path.join(OUT_DIR, `${safeName(storyKey)}.json`);
+
+    // SALVAGUARDA: nunca apaga conteúdo bom com vazio.
+    if (total === 0) {
+      console.log(
+        `  ⚠ 0 exercícios — preservando ${path.basename(file)} ` +
+          `(não sobrescrevo com vazio)\n`,
+      );
+      continue;
+    }
+
+    fs.writeFileSync(file, JSON.stringify(sets, null, 2) + "\n");
+    console.log(
+      `  → ${path.relative(process.cwd(), file)} (${total} exercícios)\n`,
+    );
   }
 
   // regenera o índice que o app importa (content/registry.ts)

@@ -36,13 +36,20 @@ import { Breathe, enterPop, enterRise, enterUp } from "../../shared/motion";
 
 // ─── INTEGRAÇÃO PROGRESSO ─────────────────────────────────────────────────────
 // Ajuste o caminho conforme onde você salvou o readingProgress.ts
-import { getProgress, markChapterCompleted } from "../../lib/readingProgress";
 import { useReadingTimer } from "../../hooks/useReadingTimer";
 import {
-  trackContentView,
   trackChapterCompleted,
+  trackContentView,
   trackStoryCompleted,
 } from "../../lib/analytics";
+import { getProgress, markChapterCompleted } from "../../lib/readingProgress";
+
+// ─── INTEGRAÇÃO EXERCÍCIOS ────────────────────────────────────────────────────
+import ExerciseSession from "../../features/exercises/components/ExerciseSession";
+import {
+  getStoryExercises,
+  hasStoryExercises,
+} from "../../features/exercises/data";
 
 // ─── IMPORTS: Mocks Originais ─────────────────────────────────────────────────
 import {
@@ -1049,6 +1056,10 @@ export default function ReadStoryScreen() {
   const firedChaptersRef = useRef<Set<string>>(new Set());
   const firedStoryRef = useRef(false);
 
+  // ── EXERCÍCIOS: overlay de fim de capítulo (abre 1× por capítulo na sessão) ──
+  const [showExercises, setShowExercises] = useState(false);
+  const exercisesShownRef = useRef<Set<string>>(new Set());
+
   // VIEW de conteúdo: dispara uma vez quando o leitor abre esta história.
   useEffect(() => {
     if (trackedViewRef.current) return;
@@ -1119,6 +1130,21 @@ export default function ReadStoryScreen() {
           });
         }
       });
+
+      // ── EXERCÍCIOS: só no FIM DA HISTÓRIA (após o último capítulo acessível) ──
+      // "último acessível" = não existe próximo capítulo desbloqueado depois deste.
+      // Capítulos locked não têm conteúdo, então o quiz cobre o que a criança leu.
+      const hasNextUnlocked = chapters
+        .slice(activeChapter + 1)
+        .some((c) => !c.locked);
+      if (
+        !hasNextUnlocked &&
+        !exercisesShownRef.current.has(id) &&
+        hasStoryExercises(id)
+      ) {
+        exercisesShownRef.current.add(id);
+        setShowExercises(true);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, activeChapter]);
@@ -1423,6 +1449,25 @@ export default function ReadStoryScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* ── EXERCÍCIOS DE FIM DE CAPÍTULO (overlay sobre a leitura) ── */}
+      {showExercises && (
+        <ExerciseSession
+          storyId={id}
+          exercises={getStoryExercises(id, {
+            shuffle: true,
+            limit: 8,
+            // onlyTrusted: true,  // ← ligue em produção (só conteúdo verificado/curado)
+          })}
+          theme={{
+            accent: theme.accent,
+            accentSoft: theme.accentSoft,
+            bg: theme.bg,
+            cardBg: theme.cardBg,
+          }}
+          onClose={() => setShowExercises(false)}
+        />
+      )}
     </View>
   );
 }

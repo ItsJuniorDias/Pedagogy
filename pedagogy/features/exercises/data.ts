@@ -38,7 +38,7 @@ function shuffleArr<T>(arr: T[]): T[] {
 export function getChapterExercises(
   storyIdRaw: string,
   chapterIdRaw: string | number,
-  opts: GetOptions = {}
+  opts: GetOptions = {},
 ): Exercise[] {
   const storyId = resolveStoryId(storyIdRaw);
   const chapterId = String(chapterIdRaw);
@@ -60,7 +60,36 @@ export function getChapterExercises(
 export function hasChapterExercises(
   storyIdRaw: string,
   chapterIdRaw: string | number,
-  opts: GetOptions = {}
+  opts: GetOptions = {},
 ): boolean {
   return getChapterExercises(storyIdRaw, chapterIdRaw, opts).length > 0;
+}
+
+/**
+ * Exercícios da HISTÓRIA INTEIRA (todos os capítulos juntos) — pro quiz de
+ * fechamento que aparece após o último capítulo. Capítulos locked não têm
+ * conteúdo gerado, então naturalmente só entram os que a criança leu.
+ */
+export function getStoryExercises(
+  storyIdRaw: string,
+  opts: GetOptions = {},
+): Exercise[] {
+  const storyId = resolveStoryId(storyIdRaw);
+  const sets = REGISTRY[storyId];
+  if (!sets) return [];
+
+  let list = sets.flatMap((s) => s.exercises);
+  if (opts.onlyTrusted)
+    list = list.filter((e) => e.machineChecked || e.reviewed);
+  if (opts.shuffle) list = shuffleArr(list);
+  if (opts.limit != null) list = list.slice(0, opts.limit);
+  return list;
+}
+
+/** Tem exercício em qualquer capítulo desta história? */
+export function hasStoryExercises(
+  storyIdRaw: string,
+  opts: GetOptions = {},
+): boolean {
+  return getStoryExercises(storyIdRaw, opts).length > 0;
 }

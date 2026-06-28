@@ -12,7 +12,7 @@ import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import { useFonts } from "expo-font";
 import * as Haptics from "expo-haptics";
 import * as Speech from "expo-speech";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   AccessibilityInfo,
   Pressable,
@@ -41,8 +41,10 @@ export interface ExerciseSessionTheme {
 
 export interface ExerciseSessionProps {
   storyId: string;
-  chapterId: string | number;
+  chapterId?: string | number;
   chapterTitle?: string;
+  /** se passado, usa esta lista direto (ex.: quiz da história inteira) */
+  exercises?: Exercise[];
   theme: ExerciseSessionTheme;
   onClose: () => void;
   onComplete?: (result: { correct: number; total: number }) => void;
@@ -78,7 +80,7 @@ function correctIndexOf(ex: Exercise): number {
 function blankedSentence(sentence: string, word: string): string {
   const re = new RegExp(
     `\\b${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
-    "i"
+    "i",
   );
   return sentence.replace(re, "  ______  ");
 }
@@ -89,6 +91,7 @@ export default function ExerciseSession({
   storyId,
   chapterId,
   chapterTitle,
+  exercises: providedExercises,
   theme,
   onClose,
   onComplete,
@@ -99,14 +102,16 @@ export default function ExerciseSession({
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  const exercises = useMemo(
+  // Congela a lista no mount — não re-embaralha no meio da sessão. Como o
+  // overlay desmonta ao fechar, reabrir gera um novo embaralhamento.
+  const [exercises] = useState<Exercise[]>(
     () =>
-      getChapterExercises(storyId, chapterId, {
+      providedExercises ??
+      getChapterExercises(storyId, chapterId ?? "", {
         onlyTrusted,
         shuffle: true,
         limit,
       }),
-    [storyId, chapterId, onlyTrusted, limit]
   );
 
   const [index, setIndex] = useState(0);
@@ -151,7 +156,10 @@ export default function ExerciseSession({
       enter.value = 1;
     } else {
       enter.value = 0;
-      enter.value = withTiming(1, { duration: 320, easing: Easing.out(Easing.cubic) });
+      enter.value = withTiming(1, {
+        duration: 320,
+        easing: Easing.out(Easing.cubic),
+      });
     }
     if (speak) {
       const toRead =
@@ -173,7 +181,10 @@ export default function ExerciseSession({
 
   const enterStyle = useAnimatedStyle(() => ({
     opacity: enter.value,
-    transform: [{ translateY: (1 - enter.value) * 16 }, { translateX: shake.value }],
+    transform: [
+      { translateY: (1 - enter.value) * 16 },
+      { translateX: shake.value },
+    ],
   }));
 
   const triggerShake = useCallback(() => {
@@ -182,7 +193,7 @@ export default function ExerciseSession({
       withTiming(-8, { duration: 50 }),
       withTiming(8, { duration: 50 }),
       withTiming(-6, { duration: 50 }),
-      withTiming(0, { duration: 50 })
+      withTiming(0, { duration: 50 }),
     );
   }, [reduceMotion, shake]);
 
@@ -208,12 +219,12 @@ export default function ExerciseSession({
         Haptics.notificationAsync(
           correct
             ? Haptics.NotificationFeedbackType.Success
-            : Haptics.NotificationFeedbackType.Error
+            : Haptics.NotificationFeedbackType.Error,
         );
       } catch {}
       if (!correct) triggerShake();
     },
-    [triggerShake]
+    [triggerShake],
   );
 
   const pickOption = useCallback(
@@ -226,7 +237,7 @@ export default function ExerciseSession({
       const correctIdx = correctIndexOf(current);
       commitResult(i === correctIdx);
     },
-    [answered, current, commitResult]
+    [answered, current, commitResult],
   );
 
   const pickTrueFalse = useCallback(
@@ -238,7 +249,7 @@ export default function ExerciseSession({
       setPicked(value ? 0 : 1);
       commitResult(value === current.answer);
     },
-    [answered, current, commitResult]
+    [answered, current, commitResult],
   );
 
   const toggleSeq = useCallback(
@@ -250,10 +261,10 @@ export default function ExerciseSession({
       setOrder((prev) =>
         prev.includes(itemIdx)
           ? prev.filter((x) => x !== itemIdx)
-          : [...prev, itemIdx]
+          : [...prev, itemIdx],
       );
     },
-    [answered]
+    [answered],
   );
 
   const checkSeq = useCallback(() => {
@@ -307,7 +318,10 @@ export default function ExerciseSession({
           </Text>
           <Pressable
             onPress={onClose}
-            style={[s.primaryBtn, { backgroundColor: theme.accent, marginTop: 24 }]}
+            style={[
+              s.primaryBtn,
+              { backgroundColor: theme.accent, marginTop: 24 },
+            ]}
           >
             <Text style={fredoka(16, "#fff")}>Back to the story</Text>
           </Pressable>
@@ -322,25 +336,39 @@ export default function ExerciseSession({
     const ratio = total > 0 ? correctCount / total : 0;
     const stars = ratio >= 0.9 ? 3 : ratio >= 0.6 ? 2 : ratio > 0 ? 1 : 0;
     const headline =
-      stars === 3 ? "Amazing!" : stars === 2 ? "Great job!" : stars === 1 ? "Nice try!" : "Let’s practice!";
+      stars === 3
+        ? "Amazing!"
+        : stars === 2
+          ? "Great job!"
+          : stars === 1
+            ? "Nice try!"
+            : "Let’s practice!";
     return (
       <View style={[s.fill, { backgroundColor: theme.bg }]}>
         <View style={s.center}>
           <View style={s.starsRow}>
             {[0, 1, 2].map((i) => (
-              <Text key={i} style={{ fontSize: 44, opacity: i < stars ? 1 : 0.22 }}>
+              <Text
+                key={i}
+                style={{ fontSize: 44, opacity: i < stars ? 1 : 0.22 }}
+              >
                 ⭐
               </Text>
             ))}
           </View>
-          <Text style={[fredoka(28, "#2D2D2D"), { marginTop: 8 }]}>{headline}</Text>
+          <Text style={[fredoka(28, "#2D2D2D"), { marginTop: 8 }]}>
+            {headline}
+          </Text>
           <Text style={[fredoka(18, theme.accent), { marginTop: 4 }]}>
             {correctCount} / {total} correct
           </Text>
 
           <Pressable
             onPress={restart}
-            style={[s.primaryBtn, { backgroundColor: theme.accent, marginTop: 28 }]}
+            style={[
+              s.primaryBtn,
+              { backgroundColor: theme.accent, marginTop: 28 },
+            ]}
           >
             <Text style={fredoka(16, "#fff")}>Play again</Text>
           </Pressable>
@@ -368,7 +396,11 @@ export default function ExerciseSession({
                 s.dot,
                 {
                   backgroundColor:
-                    i < index ? theme.accent : i === index ? theme.accent : "#00000018",
+                    i < index
+                      ? theme.accent
+                      : i === index
+                        ? theme.accent
+                        : "#00000018",
                   opacity: i === index ? 1 : i < index ? 0.55 : 1,
                   width: i === index ? 22 : 8,
                 },
@@ -393,11 +425,15 @@ export default function ExerciseSession({
               <Text style={{ fontSize: 18 }}>🔊</Text>
             </Pressable>
           </View>
-          <Text style={[fredoka(22, "#2D2D2D"), s.prompt]}>{current.prompt}</Text>
+          <Text style={[fredoka(22, "#2D2D2D"), s.prompt]}>
+            {current.prompt}
+          </Text>
 
           {/* corpo por tipo */}
           {current.type === "fill-blank" && (
-            <View style={[s.sentenceCard, { backgroundColor: theme.accentSoft }]}>
+            <View
+              style={[s.sentenceCard, { backgroundColor: theme.accentSoft }]}
+            >
               <Text style={[fredoka(18, "#2D2D2D"), { lineHeight: 28 }]}>
                 {blankedSentence(current.sourceSentence, current.blankWord)}
               </Text>
@@ -411,7 +447,9 @@ export default function ExerciseSession({
           )}
 
           {current.type === "true-false" && (
-            <View style={[s.sentenceCard, { backgroundColor: theme.accentSoft }]}>
+            <View
+              style={[s.sentenceCard, { backgroundColor: theme.accentSoft }]}
+            >
               <Text style={[fredoka(18, "#2D2D2D"), { lineHeight: 28 }]}>
                 “{current.statement}”
               </Text>
@@ -497,7 +535,9 @@ export default function ExerciseSession({
               s.primaryBtn,
               {
                 backgroundColor:
-                  order.length === current.items.length ? theme.accent : "#00000020",
+                  order.length === current.items.length
+                    ? theme.accent
+                    : "#00000020",
               },
             ]}
           >
@@ -526,7 +566,7 @@ function optionState(
   answered: boolean,
   picked: number | null,
   i: number,
-  correctIdx: number
+  correctIdx: number,
 ): OptState {
   if (!answered) return "idle";
   if (i === correctIdx) return "correct";
@@ -550,19 +590,15 @@ function OptionButton({
   onPress: () => void;
 }) {
   const bg =
-    state === "correct"
-      ? "#E7F8EE"
-      : state === "wrong"
-      ? "#FDECE5"
-      : cardBg;
+    state === "correct" ? "#E7F8EE" : state === "wrong" ? "#FDECE5" : cardBg;
   const border =
     state === "correct"
       ? "#1F9D55"
       : state === "wrong"
-      ? "#E0552B"
-      : state === "dim"
-      ? "#00000010"
-      : accent + "55";
+        ? "#E0552B"
+        : state === "dim"
+          ? "#00000010"
+          : accent + "55";
   const opacity = state === "dim" ? 0.5 : 1;
   return (
     <Pressable
@@ -673,8 +709,17 @@ function labelForSkill(ex: Exercise): string {
 
 const s = StyleSheet.create({
   fill: { ...StyleSheet.absoluteFillObject, zIndex: 50 },
-  center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 28 },
-  muted: { fontFamily: "FredokaOne_400Regular", fontSize: 13, color: "#9A9A9A" },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 28,
+  },
+  muted: {
+    fontFamily: "FredokaOne_400Regular",
+    fontSize: 13,
+    color: "#9A9A9A",
+  },
 
   topBar: {
     flexDirection: "row",
@@ -691,7 +736,13 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  dots: { flexDirection: "row", alignItems: "center", gap: 6, flex: 1, justifyContent: "center" },
+  dots: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    flex: 1,
+    justifyContent: "center",
+  },
   dot: { height: 8, borderRadius: 4 },
 
   scroll: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 28 },
