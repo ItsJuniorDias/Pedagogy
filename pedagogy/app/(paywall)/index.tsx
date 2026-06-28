@@ -40,7 +40,7 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePurchases } from "../../hooks/usePurchases";
-import { trackPaywallView, trackCheckoutInitiated } from "../../lib/analytics";
+import { trackCheckoutInitiated, trackPaywallView } from "../../lib/analytics";
 
 const { width } = Dimensions.get("window");
 

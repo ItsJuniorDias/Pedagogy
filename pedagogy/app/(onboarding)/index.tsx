@@ -2,7 +2,7 @@ import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -25,6 +25,7 @@ import Animated, {
 
 import { Breathe, enterPop, enterUp, PressBounce } from "../../shared/motion";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { trackOnboardingCompleted } from "../../lib/analytics";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -232,11 +233,20 @@ export default function AppScreen() {
 
   const isLastSlide = activeIndex === SLIDES.length - 1;
 
-  const handleButtonPress = () => {
+  const handleButtonPress = async () => {
     if (isLastSlide) {
       // ── TRACKING: onboarding concluído ──
       trackOnboardingCompleted();
-      router.push("/(tabs)");
+
+      const status = await AsyncStorage.getItem("@subscription_status");
+
+      console.log(status, "STATUSSSSS");
+
+      if (status === "active") {
+        router.push("/(tabs)");
+      } else {
+        router.replace("/(paywall)");
+      }
     } else {
       flatListRef.current?.scrollToIndex({
         index: activeIndex + 1,
