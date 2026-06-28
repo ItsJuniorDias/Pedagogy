@@ -1,0 +1,221 @@
+[
+  {
+    "storyId": "DINOWORLD",
+    "chapterId": "dw-1",
+    "generatedAt": "2026-06-28T12:17:18.571Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The egg had been the size of a boulder.",
+        "blankWord": "boulder",
+        "options": [
+          "seriously",
+          "boulder",
+          "cracked",
+          "enormous"
+        ],
+        "answer": "boulder",
+        "id": "DINOWORLD__dw-1__fill-blank__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "When it finally cracked, the whole valley shook — at least, that's what Rex always told his younger siblings.",
+        "blankWord": "siblings",
+        "options": [
+          "thread",
+          "siblings",
+          "finally",
+          "simple"
+        ],
+        "answer": "siblings",
+        "id": "DINOWORLD__dw-1__fill-blank__2",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "In the story, what does \"enormous\" mean?",
+        "difficulty": "medium",
+        "type": "vocabulary",
+        "skill": "vocabulary",
+        "word": "enormous",
+        "options": [
+          "very tiny",
+          "very soft",
+          "very fast",
+          "very big"
+        ],
+        "answerIndex": 3,
+        "id": "DINOWORLD__dw-1__vocabulary__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Rex was a young T-Rex, but he hadn't figured that out yet.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "DINOWORLD__dw-1__comprehension__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Rex was a young T-Rex, but he hadn't figured that out yet.",
+          "The egg had been the size of a boulder.",
+          "\"The rule,\" she said, \"is simple: respect the valley."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "DINOWORLD__dw-1__sequence__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The egg had been the size of a boulder.",
+        "answer": true,
+        "id": "DINOWORLD__dw-1__true-false__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "DINOWORLD",
+    "chapterId": "dw-2",
+    "generatedAt": "2026-06-28T12:17:18.573Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The valley had more rules than Rex expected.",
+        "blankWord": "expected",
+        "options": [
+          "favourite",
+          "expected",
+          "mistakes",
+          "valued"
+        ],
+        "answer": "expected",
+        "id": "DINOWORLD__dw-2__fill-blank__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Don't drink from the red mud pools.",
+        "blankWord": "drink",
+        "options": [
+          "know",
+          "drink",
+          "make",
+          "steam"
+        ],
+        "answer": "drink",
+        "id": "DINOWORLD__dw-2__fill-blank__2",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Don't cross the fern meadow during the big rains.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "DINOWORLD__dw-2__comprehension__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "He learned by making exactly the mistakes he'd been told not to make.",
+          "The valley had more rules than Rex expected.",
+          "He did not argue with the triceratops, to his credit."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "DINOWORLD__dw-2__sequence__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The valley had more rules than Rex expected.",
+        "answer": true,
+        "id": "DINOWORLD__dw-2__true-false__1",
+        "storyId": "DINOWORLD",
+        "chapterId": "dw-2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

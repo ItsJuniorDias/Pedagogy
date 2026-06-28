@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THEWORDCOLLECTOR",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.604Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Maren had been collecting words since she was six years old — not real words, though she collected those too.",
+        "blankWord": "collecting",
+        "options": [
+          "feelings",
+          "collecting",
+          "sentence",
+          "experience"
+        ],
+        "answer": "collecting",
+        "id": "THEWORDCOLLECTOR__1__fill-blank__1",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She collected the words that didn't exist yet.",
+        "blankWord": "collected",
+        "options": [
+          "sentence",
+          "collected",
+          "teacher",
+          "because"
+        ],
+        "answer": "collected",
+        "id": "THEWORDCOLLECTOR__1__fill-blank__2",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The feelings and moments and qualities of experience that had clearly been happening to people for centuries but for which nobody had invented a name.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEWORDCOLLECTOR__1__comprehension__1",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The feelings and moments and qualities of experience that had clearly been happening to people for centuries but for which nobody had invented a name.",
+          "Maren had been collecting words since she was six years old — not real words, though she collected those too.",
+          "She kept them in a red notebook, each one with its definition and a single example sentence."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEWORDCOLLECTOR__1__sequence__1",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Maren had been collecting words since she was six years old — not real words, though she collected those too.",
+        "answer": true,
+        "id": "THEWORDCOLLECTOR__1__true-false__1",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEWORDCOLLECTOR",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.606Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Maren had been ospirak-ing her whole life without knowing the name for it.",
+        "blankWord": "ospirak",
+        "options": [
+          "whole",
+          "ospirak",
+          "added",
+          "slide"
+        ],
+        "answer": "ospirak",
+        "id": "THEWORDCOLLECTOR__2__fill-blank__1",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "It wasn't refusing to enjoy the moment.",
+        "blankWord": "refusing",
+        "options": [
+          "notebook",
+          "refusing",
+          "memory",
+          "recognized"
+        ],
+        "answer": "refusing",
+        "id": "THEWORDCOLLECTOR__2__fill-blank__2",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "It was more like holding the moment very carefully because you could already feel its weight as a memory.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEWORDCOLLECTOR__2__comprehension__1",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "It wasn't refusing to enjoy the moment.",
+          "Maren had been ospirak-ing her whole life without knowing the name for it.",
+          "She added the word to the notebook while still on a train, watching the city she'd spent a week visiting slide past the window."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEWORDCOLLECTOR__2__sequence__1",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Maren had been ospirak-ing her whole life without knowing the name for it.",
+        "answer": true,
+        "id": "THEWORDCOLLECTOR__2__true-false__1",
+        "storyId": "THEWORDCOLLECTOR",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

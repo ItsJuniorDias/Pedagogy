@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THEARTOFBEING",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.642Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The system was: never raise your hand unless you were completely certain.",
+        "blankWord": "completely",
+        "options": [
+          "practiced",
+          "completely",
+          "genuinely",
+          "sketchbook"
+        ],
+        "answer": "completely",
+        "id": "THEARTOFBEING__1__fill-blank__1",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She had not raised her hand incorrectly since.",
+        "blankWord": "incorrectly",
+        "options": [
+          "sketchbook",
+          "incorrectly",
+          "practiced",
+          "paradoxical"
+        ],
+        "answer": "incorrectly",
+        "id": "THEARTOFBEING__1__fill-blank__2",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Now she was twelve, and her system was so well practiced that she sometimes didn't raise her hand even when she was certain.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEARTOFBEING__1__comprehension__1",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "She had not raised her hand incorrectly since.",
+          "The system was: never raise your hand unless you were completely certain.",
+          "Now she was twelve, and her system was so well practiced that she sometimes didn't raise her hand even when she was certain."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEARTOFBEING__1__sequence__1",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The system was: never raise your hand unless you were completely certain.",
+        "answer": true,
+        "id": "THEARTOFBEING__1__true-false__1",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEARTOFBEING",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.644Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Adeyemi brought in a book the next week.",
+        "blankWord": "adeyemi",
+        "options": [
+          "imperfect",
+          "adeyemi",
+          "wanted",
+          "called"
+        ],
+        "answer": "adeyemi",
+        "id": "THEARTOFBEING__2__fill-blank__1",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "It was full of early drawings by famous artists — work from when they were students, still learning, still getting things wrong.",
+        "blankWord": "drawings",
+        "options": [
+          "artists",
+          "drawings",
+          "thought",
+          "brought"
+        ],
+        "answer": "drawings",
+        "id": "THEARTOFBEING__2__fill-blank__2",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Perspectives that didn't quite hold.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEARTOFBEING__2__comprehension__1",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "It was full of early drawings by famous artists — work from when they were students, still learning, still getting things wrong.",
+          "Adeyemi brought in a book the next week.",
+          "Why are you showing us bad drawings?"
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEARTOFBEING__2__sequence__1",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Adeyemi brought in a book the next week.",
+        "answer": true,
+        "id": "THEARTOFBEING__2__true-false__1",
+        "storyId": "THEARTOFBEING",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

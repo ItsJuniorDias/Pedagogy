@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THEVOLCANOLOGIST",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.652Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Pita had been watching the mountain her whole life.",
+        "blankWord": "watching",
+        "options": [
+          "amusement",
+          "watching",
+          "between",
+          "noticing"
+        ],
+        "answer": "watching",
+        "id": "THEVOLCANOLOGIST__1__fill-blank__1",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Most people in Kalea stopped noticing the mountain the way you stop noticing a wall you've lived next to for years.",
+        "blankWord": "noticing",
+        "options": [
+          "people",
+          "noticing",
+          "enough",
+          "stopped"
+        ],
+        "answer": "noticing",
+        "id": "THEVOLCANOLOGIST__1__fill-blank__2",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Pita never stopped noticing it.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEVOLCANOLOGIST__1__comprehension__1",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Most people in Kalea stopped noticing the mountain the way you stop noticing a wall you've lived next to for years.",
+          "Pita had been watching the mountain her whole life.",
+          "Pita never stopped noticing it."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEVOLCANOLOGIST__1__sequence__1",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Pita had been watching the mountain her whole life.",
+        "answer": true,
+        "id": "THEVOLCANOLOGIST__1__true-false__1",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEVOLCANOLOGIST",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.655Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She learned to read four instruments.",
+        "blankWord": "instruments",
+        "options": [
+          "imagination",
+          "instruments",
+          "everything",
+          "uncertainty"
+        ],
+        "answer": "instruments",
+        "id": "THEVOLCANOLOGIST__2__fill-blank__1",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Vega showed her how to read the paper tape, the wavy lines that translated invisible movement into something visible.",
+        "blankWord": "translated",
+        "options": [
+          "tiltmeter",
+          "translated",
+          "shifting",
+          "invisible"
+        ],
+        "answer": "translated",
+        "id": "THEVOLCANOLOGIST__2__fill-blank__2",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Everything shakes a little — Dr.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEVOLCANOLOGIST__2__comprehension__1",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Vega showed her how to read the paper tape, the wavy lines that translated invisible movement into something visible.",
+          "She learned to read four instruments.",
+          "Everything shakes a little — Dr."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEVOLCANOLOGIST__2__sequence__1",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "She learned to read four instruments.",
+        "answer": true,
+        "id": "THEVOLCANOLOGIST__2__true-false__1",
+        "storyId": "THEVOLCANOLOGIST",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

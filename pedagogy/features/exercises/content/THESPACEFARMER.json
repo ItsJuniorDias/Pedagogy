@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THESPACEFARMER",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.701Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The first thing Jora grew on the station was basil.",
+        "blankWord": "station",
+        "options": [
+          "cycle",
+          "station",
+          "space",
+          "basil"
+        ],
+        "answer": "station",
+        "id": "THESPACEFARMER__1__fill-blank__1",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "This was not in the mission plan.",
+        "blankWord": "mission",
+        "options": [
+          "plants",
+          "mission",
+          "watched",
+          "about"
+        ],
+        "answer": "mission",
+        "id": "THESPACEFARMER__1__fill-blank__2",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The station biologist's name was Dr.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THESPACEFARMER__1__comprehension__1",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "This was not in the mission plan.",
+          "The first thing Jora grew on the station was basil.",
+          "The station biologist's name was Dr."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THESPACEFARMER__1__sequence__1",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The first thing Jora grew on the station was basil.",
+        "answer": true,
+        "id": "THESPACEFARMER__1__true-false__1",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THESPACEFARMER",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.703Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The first generation of space crops were selected for yield and reliability.",
+        "blankWord": "reliability",
+        "options": [
+          "identical",
+          "reliability",
+          "experiment",
+          "compounds"
+        ],
+        "answer": "reliability",
+        "id": "THESPACEFARMER__2__fill-blank__1",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "They were correct choices for the time.",
+        "blankWord": "correct",
+        "options": [
+          "closer",
+          "correct",
+          "grown",
+          "fewer"
+        ],
+        "answer": "correct",
+        "id": "THESPACEFARMER__2__fill-blank__2",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "But humans need to eat something that tastes like food, not just something that provides nutrients.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THESPACEFARMER__2__comprehension__1",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "I traded surplus yield for quality.",
+          "The first generation of space crops were selected for yield and reliability.",
+          "She started her own sub-experiment."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THESPACEFARMER__2__sequence__1",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The first generation of space crops were selected for yield and reliability.",
+        "answer": true,
+        "id": "THESPACEFARMER__2__true-false__1",
+        "storyId": "THESPACEFARMER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

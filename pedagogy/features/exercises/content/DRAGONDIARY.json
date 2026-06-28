@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "DRAGONDIARY",
+    "chapterId": "dd-1",
+    "generatedAt": "2026-06-28T12:17:18.567Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Dear Diary, today I woke up as a dragon.",
+        "blankWord": "dragon",
+        "options": [
+          "fine",
+          "dragon",
+          "again",
+          "which"
+        ],
+        "answer": "dragon",
+        "id": "DRAGONDIARY__dd-1__fill-blank__1",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "I am not sure how this happened.",
+        "blankWord": "happened",
+        "options": [
+          "eleven",
+          "happened",
+          "yesterday",
+          "normally"
+        ],
+        "answer": "happened",
+        "id": "DRAGONDIARY__dd-1__fill-blank__2",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Yesterday I was eleven years old and went to sleep normally.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "DRAGONDIARY__dd-1__comprehension__1",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The scales are purple, which is actually my favourite colour, so that part is fine.",
+          "Dear Diary, today I woke up as a dragon.",
+          "Mum came to wake me up and screamed."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "DRAGONDIARY__dd-1__sequence__1",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Dear Diary, today I woke up as a dragon.",
+        "answer": true,
+        "id": "DRAGONDIARY__dd-1__true-false__1",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "DRAGONDIARY",
+    "chapterId": "dd-2",
+    "generatedAt": "2026-06-28T12:17:18.569Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Dear Diary, Mum rang the school to explain.",
+        "blankWord": "explain",
+        "options": [
+          "school",
+          "explain",
+          "faster",
+          "saved"
+        ],
+        "answer": "explain",
+        "id": "DRAGONDIARY__dd-2__fill-blank__1",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Then the headmistress said, \"We have a policy for this.\" I did not know there was a policy for this.",
+        "blankWord": "headmistress",
+        "options": [
+          "significantly",
+          "headmistress",
+          "fascinating",
+          "advantages"
+        ],
+        "answer": "headmistress",
+        "id": "DRAGONDIARY__dd-2__fill-blank__2",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "I had to use the double doors and sit at the back where there was more room.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "DRAGONDIARY__dd-2__comprehension__1",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "I had to use the double doors and sit at the back where there was more room.",
+          "Dear Diary, Mum rang the school to explain.",
+          "In science we learned about cold-blooded animals."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "DRAGONDIARY__dd-2__sequence__1",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Dear Diary, Mum rang the school to explain.",
+        "answer": true,
+        "id": "DRAGONDIARY__dd-2__true-false__1",
+        "storyId": "DRAGONDIARY",
+        "chapterId": "dd-2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

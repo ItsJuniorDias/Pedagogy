@@ -31,9 +31,67 @@ import type {
 // ─── Fontes de histórias (dados puros, sem imports de react-native) ──────────
 // Adicione aqui qualquer história nova; a chave é o id JÁ normalizado.
 import {
-  ROCKET_ADVENTURE,
+  KATUION,
+  KEKKIHY,
+  SPACEADVENTURE,
+  STHM_STHAP,
+  STRUCKBALL,
+  TAIRBRTY,
+} from "../mocks/chapterMocks";
+import {
+  THE_ANIMAL_WHISPERER,
+  THE_ART_OF_BEING_WRONG,
+  THE_CHRONONAUTS,
+  THE_CITY_OF_CLOCKS,
+  THE_CLOCKWORK_DETECTIVE,
+  THE_CLOUD_READER,
+  THE_COLOUR_THIEF,
+  THE_CORAL_QUEEN,
+  THE_DREAM_ARCHITECT,
+  THE_FEELINGS_GARDEN,
+  THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
+  THE_FORGOTTEN_ALPHABET,
+  THE_GIANT_WHO_WEPT_MOUNTAINS,
+  THE_GLASS_COMPOSER,
+  THE_GRANDMOTHERS_RECIPE_BOX,
+  THE_INSECT_ORCHESTRA,
+  THE_ISLAND_OF_MISTS,
+  THE_LAST_BEEKEEPER,
+  THE_LIGHTHOUSE_KEEPERS_SON,
+  THE_MAPMAKERS_DAUGHTER,
+  THE_NIGHT_GARDEN,
+  THE_PAPER_GARDEN,
+  THE_ROBOTS_JOURNAL,
+  THE_SANDCASTLE_ARCHITECT,
+  THE_SCIENCE_OF_SMALL_WONDERS,
+  THE_SLOW_TRAIN_EXPRESS,
+  THE_SPACE_FARMER,
+  THE_SPELL_CHECKER,
+  THE_TIME_LIBRARY,
+  THE_UNDERWATER_EXPLORERS,
+  THE_VOWEL_VILLAGE,
+  THE_WIND_MAPPER,
+  THE_WORD_COLLECTOR,
+  THE_YOUNG_VOLCANOLOGIST,
+  STORIES_GRID,
+} from "../mocks/historyMock";
+import {
+  ASTRONAUT,
+  COLORS_ART,
+  DINOSAURS,
+  LETTERS,
+  OCEAN_LIFE,
+  SCHOLL,
+  SCIENCE_LAB,
+  SPACE,
+} from "../mocks/learningMocks";
+import {
+  DINO_WORLD,
+  DRAGON_DIARY,
   MAGIC_FOREST,
   OCEANFRIENDS,
+  ROCKET_ADVENTURE,
+  TINY_SCIENTIST,
 } from "../mocks/storyMocks";
 
 type ChapterLike = {
@@ -44,9 +102,60 @@ type ChapterLike = {
 };
 
 const STORY_SOURCES: Record<string, ChapterLike[]> = {
+  TAIRBRTY,
+  STHMSTHAP: STHM_STHAP,
+  KATUION,
+  STRUCKBALL,
+  KEKKIHY,
+  SPACEADVENTURE,
+  LETTERS,
+  SCHOOL: SCHOLL,
+  ASTRONAUT,
+  SPACE,
+  DINOSAURS,
+  OCEANLIFE: OCEAN_LIFE,
+  "COLORS&ART": COLORS_ART,
+  SCIENCELAB: SCIENCE_LAB,
   ROCKETADVENTURE: ROCKET_ADVENTURE,
   MAGICFOREST: MAGIC_FOREST,
-  OCEANFRIENDS: OCEANFRIENDS,
+  OCEANFRIENDS,
+  TINYSICENTIST: TINY_SCIENTIST,
+  DRAGONDIARY: DRAGON_DIARY,
+  DINOWORLD: DINO_WORLD,
+  THEVOWELVILLAGE: THE_VOWEL_VILLAGE,
+  THECLOCKWORKDETECTIVE: THE_CLOCKWORK_DETECTIVE,
+  THEUNDERWATEREXPLORERS: THE_UNDERWATER_EXPLORERS,
+  THEFEELINGSGARDEN: THE_FEELINGS_GARDEN,
+  THEROBOTSJOURNAL: THE_ROBOTS_JOURNAL,
+  THEMAPMAKERSDAUGHTER: THE_MAPMAKERS_DAUGHTER,
+  THEWORDCOLLECTOR: THE_WORD_COLLECTOR,
+  THELIGHTHOUSEKEEPERSSON: THE_LIGHTHOUSE_KEEPERS_SON,
+  THEGRANDMOTHERSRECIPEBOX: THE_GRANDMOTHERS_RECIPE_BOX,
+  THEFIELDGUIDE: THE_FIELD_GUIDE_TO_IMPOSSIBLE_CREATURES,
+  THECLOUDREADER: THE_CLOUD_READER,
+  THECOLOURTHIEF: THE_COLOUR_THIEF,
+  THEGIANTWHOWEPT: THE_GIANT_WHO_WEPT_MOUNTAINS,
+  THEINSECTORCHESTRA: THE_INSECT_ORCHESTRA,
+  THENIGHTGARDEN: THE_NIGHT_GARDEN,
+  THESCIENCEOFSMALLWONDERS: THE_SCIENCE_OF_SMALL_WONDERS,
+  THESLOWTRAINEXPRESS: THE_SLOW_TRAIN_EXPRESS,
+  THETIMELIBRARY: THE_TIME_LIBRARY,
+  THEARTOFBEING: THE_ART_OF_BEING_WRONG,
+  THESANDCASTLEARCHITECT: THE_SANDCASTLE_ARCHITECT,
+  THESPELLCHECKER: THE_SPELL_CHECKER,
+  THEVOLCANOLOGIST: THE_YOUNG_VOLCANOLOGIST,
+  THEFORGOTTENALPHABET: THE_FORGOTTEN_ALPHABET,
+  THEBEEKEEPER: THE_LAST_BEEKEEPER,
+  THEISLANDOFMISTS: THE_ISLAND_OF_MISTS,
+  THECITYOFCLOCKS: THE_CITY_OF_CLOCKS,
+  THECORALQUEEN: THE_CORAL_QUEEN,
+  THEGLASSCOMPOSER: THE_GLASS_COMPOSER,
+  THEWINDMAPPER: THE_WIND_MAPPER,
+  THEANIMALWHISPERER: THE_ANIMAL_WHISPERER,
+  THEDREAMARCHITECT: THE_DREAM_ARCHITECT,
+  THECHRONONAUTS: THE_CHRONONAUTS,
+  THEPAPERGARDEN: THE_PAPER_GARDEN,
+  THESPACEFARMER: THE_SPACE_FARMER,
 };
 
 // ─── Config de quantos exercícios por capítulo ───────────────────────────────
@@ -405,12 +514,52 @@ async function generateStory(
   return sets;
 }
 
-// ─── ageRange por história (do STORIES_GRID; default 5–8) ────────────────────
-const AGE: Record<string, string> = {
-  ROCKETADVENTURE: "5–8",
-  MAGICFOREST: "5–8",
-  OCEANFRIENDS: "4–7",
-};
+// ─── ageRange (do STORIES_GRID quando disponível; senão 5–8) ─────────────────
+const AGE_BY_ID: Record<string, string> = STORIES_GRID.reduce(
+  (acc: Record<string, string>, g: { id: string; ageRange: string }) => {
+    acc[resolveStoryId(g.id)] = g.ageRange;
+    return acc;
+  },
+  {}
+);
+
+/** nome de arquivo seguro (sem & e afins); o id real fica DENTRO do JSON */
+function safeName(id: string): string {
+  return id.replace(/[^A-Za-z0-9]/g, "");
+}
+
+/**
+ * (Re)escreve content/registry.ts varrendo TODOS os JSON existentes na pasta.
+ * O id real é lido de dentro de cada arquivo (set.storyId), então rodar uma
+ * história só não derruba as outras do registry.
+ */
+function writeRegistry(dir: string) {
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".json"))
+    .sort();
+  const entries: { ident: string; file: string; id: string }[] = [];
+  for (const f of files) {
+    const sets = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
+    const id = Array.isArray(sets) && sets[0]?.storyId;
+    if (!id) continue; // arquivo vazio (história sem capítulo desbloqueado)
+    entries.push({ ident: f.replace(/\.json$/, ""), file: f, id });
+  }
+  const out =
+    "// GERADO por scripts/generateExercises.ts — não edite à mão.\n" +
+    'import type { ChapterExerciseSet } from "../types";\n\n' +
+    entries.map((e) => `import ${e.ident} from "./${e.file}";`).join("\n") +
+    "\n\nexport const REGISTRY: Record<string, ChapterExerciseSet[]> = {\n" +
+    entries
+      .map(
+        (e) =>
+          `  ${JSON.stringify(e.id)}: ${e.ident} as unknown as ChapterExerciseSet[],`
+      )
+      .join("\n") +
+    "\n};\n";
+  fs.writeFileSync(path.join(dir, "registry.ts"), out);
+  console.log(`  → content/registry.ts (${entries.length} histórias no registry)`);
+}
 
 async function main() {
   const args = process.argv.slice(2);
@@ -454,12 +603,19 @@ async function main() {
 
   for (const storyKey of targets) {
     console.log(`▶ ${storyKey}`);
-    const sets = await generateStory(storyKey, provider, AGE[storyKey] ?? "5–8");
-    const file = path.join(OUT_DIR, `${storyKey}.json`);
+    const sets = await generateStory(
+      storyKey,
+      provider,
+      AGE_BY_ID[storyKey] ?? "5–8"
+    );
+    const file = path.join(OUT_DIR, `${safeName(storyKey)}.json`);
     fs.writeFileSync(file, JSON.stringify(sets, null, 2) + "\n");
     const total = sets.reduce((n, s) => n + s.exercises.length, 0);
     console.log(`  → ${path.relative(process.cwd(), file)} (${total} exercícios)\n`);
   }
+
+  // regenera o índice que o app importa (content/registry.ts)
+  writeRegistry(OUT_DIR);
 }
 
 main().catch((e) => {

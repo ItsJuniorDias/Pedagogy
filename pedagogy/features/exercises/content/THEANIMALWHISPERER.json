@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THEANIMALWHISPERER",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.685Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Nia could always tell what animals were about to do.",
+        "blankWord": "animals",
+        "options": [
+          "retreats",
+          "animals",
+          "damaris",
+          "about"
+        ],
+        "answer": "animals",
+        "id": "THEANIMALWHISPERER__1__fill-blank__1",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Not because she had a special power — she was very clear on this point, even at age ten, even when her classmates said she was magic.",
+        "blankWord": "classmates",
+        "options": [
+          "properly",
+          "classmates",
+          "constantly",
+          "physically"
+        ],
+        "answer": "classmates",
+        "id": "THEANIMALWHISPERER__1__fill-blank__2",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Animals communicated constantly.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEANIMALWHISPERER__1__comprehension__1",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Not because she had a special power — she was very clear on this point, even at age ten, even when her classmates said she was magic.",
+          "Nia could always tell what animals were about to do.",
+          "Animals communicated constantly."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEANIMALWHISPERER__1__sequence__1",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Nia could always tell what animals were about to do.",
+        "answer": true,
+        "id": "THEANIMALWHISPERER__1__true-false__1",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEANIMALWHISPERER",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.687Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The outside-the-textbook approach was: do less.",
+        "blankWord": "textbook",
+        "options": [
+          "sequence",
+          "textbook",
+          "approach",
+          "keepers"
+        ],
+        "answer": "textbook",
+        "id": "THEANIMALWHISPERER__2__fill-blank__1",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Every technique the keepers had tried involved doing something — a specific approach, a particular tool, a trained behaviour sequence.",
+        "blankWord": "particular",
+        "options": [
+          "specific",
+          "particular",
+          "notebook",
+          "literature"
+        ],
+        "answer": "particular",
+        "id": "THEANIMALWHISPERER__2__fill-blank__2",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "They were all doing things at Mira.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEANIMALWHISPERER__2__comprehension__1",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Every technique the keepers had tried involved doing something — a specific approach, a particular tool, a trained behaviour sequence.",
+          "The outside-the-textbook approach was: do less.",
+          "Nia's instinct was that Mira needed things to stop being done at her."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEANIMALWHISPERER__2__sequence__1",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The outside-the-textbook approach was: do less.",
+        "answer": true,
+        "id": "THEANIMALWHISPERER__2__true-false__1",
+        "storyId": "THEANIMALWHISPERER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

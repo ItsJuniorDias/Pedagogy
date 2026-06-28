@@ -21,6 +21,7 @@ features/exercises/
   types.ts                 Tipos PUROS (sem zod). App e script compartilham.
   data.ts                  getChapterExercises() / hasChapterExercises() — o app usa isto.
   content/<STORY>.json      Conteúdo gerado (1 arquivo por história).
+  content/registry.ts       Índice GERADO pelo script (id real → JSON). Não edite.
   components/
     ExerciseSession.tsx     A sessão de atividades (overlay no fim do capítulo).
 
@@ -81,7 +82,7 @@ No demo, deixe `onlyTrusted: false` (default) pra ver todos os tipos.
    # uma ou mais histórias (id como no STORY_CHAPTERS do app)
    npx tsx scripts/generateExercises.ts ROCKETADVENTURE MAGICFOREST
 
-   # todas as cadastradas no STORY_SOURCES do script
+   # todas as cadastradas no STORY_SOURCES do script (as 54 do app)
    npx tsx scripts/generateExercises.ts --all
 
    # sem key / sem rede → modo mock (gera a partir do próprio texto)
@@ -97,6 +98,13 @@ se o modelo sair, use `--model openrouter/free` (roteador que escolhe um free
 disponível) ou outro `:free` da vez. Limites do free hoje: ~20 req/min e 50/dia
 (1000/dia com US$10 em créditos) — de sobra pra gerar um catálogo finito aos poucos.
 
+> **`--all` com OpenRouter:** 54 histórias × 1–2 capítulos desbloqueados ≈ 100+
+> chamadas (1 por capítulo) — passa do teto de 50/dia do free. Pro catálogo
+> inteiro: gere **em lotes por dia** (passe ids específicos), carregue US$10
+> (vira 1000/dia), ou use `--provider mock` no resto. O `registry.ts` é
+> reescrito varrendo a pasta `content/`, então gerar em lotes vai **acumulando**
+> — não apaga o que já foi gerado.
+
 **O modo mock** já vem rodado: o conteúdo em `content/` foi gerado por ele,
 validado, **0 descartes**, com 2 `fill-blank` verificados por capítulo. Trocando
 pro provider OpenRouter você ganha as perguntas mais ricas (inferência,
@@ -104,9 +112,11 @@ compreensão, vocabulário com significado) — que aí passam pela curadoria.
 
 ### Cadastrar uma história nova
 
-No `scripts/generateExercises.ts`, importe os capítulos e adicione ao
-`STORY_SOURCES` (chave = id normalizado). Depois de gerar, importe o novo
-`content/<STORY>.json` e some ao `REGISTRY` em `features/exercises/data.ts`.
+As **54 histórias** do app já estão no `STORY_SOURCES` do script (espelha o
+`STORY_CHAPTERS` da `ReadStoryScreen`). Pra uma história **nova**, só importe os
+capítulos no `scripts/generateExercises.ts` e adicione a linha no `STORY_SOURCES`
+(chave = id normalizado, igual ao `STORY_CHAPTERS`). O `content/registry.ts` e o
+`data.ts` se viram sozinhos — o registry é reescrito a cada `generate`.
 
 ## Integração no app (ReadStoryScreen)
 

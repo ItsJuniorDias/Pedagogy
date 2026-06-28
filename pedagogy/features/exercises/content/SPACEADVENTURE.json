@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "SPACEADVENTURE",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.506Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "TWENTY SECONDS — boomed the loudspeaker.",
+        "blankWord": "loudspeaker",
+        "options": [
+          "crewmates",
+          "loudspeaker",
+          "processed",
+          "expressions"
+        ],
+        "answer": "loudspeaker",
+        "id": "SPACEADVENTURE__1__fill-blank__1",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "I'M HERE, I'M HERE — Leo yelled at no one in particular.",
+        "blankWord": "particular",
+        "options": [
+          "feelings",
+          "particular",
+          "important",
+          "different"
+        ],
+        "answer": "particular",
+        "id": "SPACEADVENTURE__1__fill-blank__2",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "He made it through the airlock with eleven seconds to spare.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "SPACEADVENTURE__1__comprehension__1",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "I'M HERE, I'M HERE — Leo yelled at no one in particular.",
+          "TWENTY SECONDS — boomed the loudspeaker.",
+          "He made it through the airlock with eleven seconds to spare."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "SPACEADVENTURE__1__sequence__1",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "TWENTY SECONDS — boomed the loudspeaker.",
+        "answer": true,
+        "id": "SPACEADVENTURE__1__true-false__1",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "SPACEADVENTURE",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.509Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Three days into the journey, Zos said something that made everyone look up from their breakfast.",
+        "blankWord": "something",
+        "options": [
+          "everyone",
+          "something",
+          "beautiful",
+          "breakfast"
+        ],
+        "answer": "something",
+        "id": "SPACEADVENTURE__2__fill-blank__1",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Zos's display flickered briefly, which was the closest he came to looking puzzled.",
+        "blankWord": "flickered",
+        "options": [
+          "serenely",
+          "flickered",
+          "immediately",
+          "speaker"
+        ],
+        "answer": "flickered",
+        "id": "SPACEADVENTURE__2__fill-blank__2",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "It is coming from Sector Nine.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "SPACEADVENTURE__2__comprehension__1",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Zos's display flickered briefly, which was the closest he came to looking puzzled.",
+          "Three days into the journey, Zos said something that made everyone look up from their breakfast.",
+          "Leo and Mira both turned to stare at him."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "SPACEADVENTURE__2__sequence__1",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Three days into the journey, Zos said something that made everyone look up from their breakfast.",
+        "answer": true,
+        "id": "SPACEADVENTURE__2__true-false__1",
+        "storyId": "SPACEADVENTURE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

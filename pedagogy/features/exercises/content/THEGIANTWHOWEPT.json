@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THEGIANTWHOWEPT",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.625Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "G  g  G  g  G  g This is the letter G.",
+        "blankWord": "letter",
+        "options": [
+          "soft",
+          "letter",
+          "because",
+          "smile"
+        ],
+        "answer": "letter",
+        "id": "THEGIANTWHOWEPT__1__fill-blank__1",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "It curves like a smile that changed its mind halfway and decided to add a little wall, to keep the good feeling in.",
+        "blankWord": "changed",
+        "options": [
+          "loves",
+          "changed",
+          "smile",
+          "carefully"
+        ],
+        "answer": "changed",
+        "id": "THEGIANTWHOWEPT__1__fill-blank__2",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Guh like the beginning of something great.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEGIANTWHOWEPT__1__comprehension__1",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Guh like the beginning of something great.",
+          "It curves like a smile that changed its mind halfway and decided to add a little wall, to keep the good feeling in.",
+          "Gulliver is a giant who is very, very gentle."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEGIANTWHOWEPT__1__sequence__1",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "G  g  G  g  G  g This is the letter G.",
+        "answer": true,
+        "id": "THEGIANTWHOWEPT__1__true-false__1",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEGIANTWHOWEPT",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.625Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "M  m  M  m  M  m This is the letter M.",
+        "blankWord": "letter",
+        "options": [
+          "hear",
+          "letter",
+          "every",
+          "kind"
+        ],
+        "answer": "letter",
+        "id": "THEGIANTWHOWEPT__2__fill-blank__1",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Mmm like the start of magic.",
+        "blankWord": "start",
+        "options": [
+          "middle",
+          "start",
+          "warm",
+          "like"
+        ],
+        "answer": "start",
+        "id": "THEGIANTWHOWEPT__2__fill-blank__2",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Mmm like the middle of morning.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEGIANTWHOWEPT__2__comprehension__1",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Mina has been to the very top of the mountain and the very bottom.",
+          "Mmm like the start of magic.",
+          "And Mina's favourite thing — midnight, when the mountain is quiet and she can hear everything — starts with M too."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEGIANTWHOWEPT__2__sequence__1",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "M  m  M  m  M  m This is the letter M.",
+        "answer": true,
+        "id": "THEGIANTWHOWEPT__2__true-false__1",
+        "storyId": "THEGIANTWHOWEPT",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

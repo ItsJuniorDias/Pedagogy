@@ -4,21 +4,13 @@
 // script + os tipos. Zero zod, zero chamada de rede em runtime.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import type { ChapterExerciseSet, Exercise } from "./types";
+import type { Exercise } from "./types";
 import { resolveStoryId } from "./types";
 
-// Conteúdo gerado por scripts/generateExercises.ts (um arquivo por história).
-import ROCKETADVENTURE from "./content/ROCKETADVENTURE.json";
-import MAGICFOREST from "./content/MAGICFOREST.json";
-import OCEANFRIENDS from "./content/OCEANFRIENDS.json";
-
-// Registry: id-da-história-normalizado → capítulos.
-// Ao gerar uma história nova, adicione o import + a linha aqui.
-const REGISTRY: Record<string, ChapterExerciseSet[]> = {
-  ROCKETADVENTURE: ROCKETADVENTURE as unknown as ChapterExerciseSet[],
-  MAGICFOREST: MAGICFOREST as unknown as ChapterExerciseSet[],
-  OCEANFRIENDS: OCEANFRIENDS as unknown as ChapterExerciseSet[],
-};
+// Índice gerado automaticamente pelo script (content/registry.ts).
+// Cada história vira 1 JSON em content/ e o registry é reescrito a cada run —
+// você nunca edita isto à mão.
+import { REGISTRY } from "./content/registry";
 
 export interface GetOptions {
   /**

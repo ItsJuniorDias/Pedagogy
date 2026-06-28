@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THECOLOURTHIEF",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.622Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The first colour to disappear was orange.",
+        "blankWord": "disappear",
+        "options": [
+          "invented",
+          "disappear",
+          "looking",
+          "intensity"
+        ],
+        "answer": "disappear",
+        "id": "THECOLOURTHIEF__1__fill-blank__1",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She was eleven and had the particular kind of attention that latched onto things others' eyes slid past.",
+        "blankWord": "particular",
+        "options": [
+          "understood",
+          "particular",
+          "attention",
+          "expected"
+        ],
+        "answer": "particular",
+        "id": "THECOLOURTHIEF__1__fill-blank__2",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "\"Something is wrong with the sky,\" she said at dinner.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECOLOURTHIEF__1__comprehension__1",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "She was eleven and had the particular kind of attention that latched onto things others' eyes slid past.",
+          "The first colour to disappear was orange.",
+          "\"Something is wrong with the sky,\" she said at dinner."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECOLOURTHIEF__1__sequence__1",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The first colour to disappear was orange.",
+        "answer": true,
+        "id": "THECOLOURTHIEF__1__true-false__1",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THECOLOURTHIEF",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.623Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The room behind the door was made of light.",
+        "blankWord": "behind",
+        "options": [
+          "exactly",
+          "behind",
+          "adults",
+          "light"
+        ],
+        "answer": "behind",
+        "id": "THECOLOURTHIEF__2__fill-blank__1",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Not exactly — it was physically a room, with walls and a floor and a ceiling.",
+        "blankWord": "physically",
+        "options": [
+          "fourteen",
+          "physically",
+          "carefully",
+          "everything"
+        ],
+        "answer": "physically",
+        "id": "THECOLOURTHIEF__2__fill-blank__2",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "But every surface was covered in colour in a way that made the structure seem almost beside the point.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECOLOURTHIEF__2__comprehension__1",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Not exactly — it was physically a room, with walls and a floor and a ceiling.",
+          "The room behind the door was made of light.",
+          "And in the middle of it all, sorting carefully through what appeared to be a collection of blues, was a figure made entirely of reflected light."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECOLOURTHIEF__2__sequence__1",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The room behind the door was made of light.",
+        "answer": true,
+        "id": "THECOLOURTHIEF__2__true-false__1",
+        "storyId": "THECOLOURTHIEF",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THEFIELDGUIDE",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.615Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The Worry Bird was the first entry in Sam's field guide because it was the most commonly observed.",
+        "blankWord": "commonly",
+        "options": [
+          "concerned",
+          "commonly",
+          "observed",
+          "second"
+        ],
+        "answer": "commonly",
+        "id": "THEFIELDGUIDE__1__fill-blank__1",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "It just flew in slow, concerned loops, trailing the specific scent of unresolved problems.",
+        "blankWord": "unresolved",
+        "options": [
+          "something",
+          "unresolved",
+          "observed",
+          "slightly"
+        ],
+        "answer": "unresolved",
+        "id": "THEFIELDGUIDE__1__fill-blank__2",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "His older cousin — who had shown him how to make field guides — confirmed: everyone had one.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEFIELDGUIDE__1__comprehension__1",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "It just flew in slow, concerned loops, trailing the specific scent of unresolved problems.",
+          "The Worry Bird was the first entry in Sam's field guide because it was the most commonly observed.",
+          "His older cousin — who had shown him how to make field guides — confirmed: everyone had one."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEFIELDGUIDE__1__sequence__1",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The Worry Bird was the first entry in Sam's field guide because it was the most commonly observed.",
+        "answer": true,
+        "id": "THEFIELDGUIDE__1__true-false__1",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEFIELDGUIDE",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.617Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The Memory Elephant was harder to document.",
+        "blankWord": "elephant",
+        "options": [
+          "harder",
+          "elephant",
+          "anymore",
+          "cousin"
+        ],
+        "answer": "elephant",
+        "id": "THEFIELDGUIDE__2__fill-blank__1",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Unlike the Worry Bird, which appeared whether you wanted it or not, the Memory Elephant came only when summoned — and only if you asked correctly.",
+        "blankWord": "correctly",
+        "options": [
+          "appeared",
+          "correctly",
+          "document",
+          "whether"
+        ],
+        "answer": "correctly",
+        "id": "THEFIELDGUIDE__2__fill-blank__2",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "His cousin had explained: \"You can't ask for the whole thing at once.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEFIELDGUIDE__2__comprehension__1",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Unlike the Worry Bird, which appeared whether you wanted it or not, the Memory Elephant came only when summoned — and only if you asked correctly.",
+          "The Memory Elephant was harder to document.",
+          "His cousin had explained: \"You can't ask for the whole thing at once."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEFIELDGUIDE__2__sequence__1",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The Memory Elephant was harder to document.",
+        "answer": true,
+        "id": "THEFIELDGUIDE__2__true-false__1",
+        "storyId": "THEFIELDGUIDE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

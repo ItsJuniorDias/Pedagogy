@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "ASTRONAUT",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.520Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Here is the first thing to understand about space: It is very, very big.",
+        "blankWord": "understand",
+        "options": [
+          "spacecraft",
+          "understand",
+          "estimated",
+          "kilometres"
+        ],
+        "answer": "understand",
+        "id": "ASTRONAUT__1__fill-blank__1",
+        "storyId": "ASTRONAUT",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Not big the way a football stadium is big, or big the way an ocean is big.",
+        "blankWord": "football",
+        "options": [
+          "floated",
+          "football",
+          "people",
+          "stadium"
+        ],
+        "answer": "football",
+        "id": "ASTRONAUT__1__fill-blank__2",
+        "storyId": "ASTRONAUT",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "And yet: people have been there.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "ASTRONAUT__1__comprehension__1",
+        "storyId": "ASTRONAUT",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Not big the way a football stadium is big, or big the way an ocean is big.",
+          "Here is the first thing to understand about space:",
+          "And yet: people have been there."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "ASTRONAUT__1__sequence__1",
+        "storyId": "ASTRONAUT",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Here is the first thing to understand about space: It is very, very big.",
+        "answer": true,
+        "id": "ASTRONAUT__1__true-false__1",
+        "storyId": "ASTRONAUT",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "ASTRONAUT",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.523Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Becoming an astronaut is one of the most competitive things a person can attempt.",
+        "blankWord": "competitive",
+        "options": [
+          "adaptability",
+          "competitive",
+          "superheroes",
+          "something"
+        ],
+        "answer": "competitive",
+        "id": "ASTRONAUT__2__fill-blank__1",
+        "storyId": "ASTRONAUT",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "In a recent NASA selection, over 18,000 people applied.",
+        "blankWord": "selection",
+        "options": [
+          "candidate",
+          "selection",
+          "competitive",
+          "spacewalks"
+        ],
+        "answer": "selection",
+        "id": "ASTRONAUT__2__fill-blank__2",
+        "storyId": "ASTRONAUT",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "But here is the encouraging part: the people who were chosen were not superheroes.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "ASTRONAUT__2__comprehension__1",
+        "storyId": "ASTRONAUT",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "In a recent NASA selection, over 18,000 people applied.",
+          "Becoming an astronaut is one of the most competitive things a person can attempt.",
+          "But here is the encouraging part: the people who were chosen were not superheroes."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "ASTRONAUT__2__sequence__1",
+        "storyId": "ASTRONAUT",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Becoming an astronaut is one of the most competitive things a person can attempt.",
+        "answer": true,
+        "id": "ASTRONAUT__2__true-false__1",
+        "storyId": "ASTRONAUT",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THEWINDMAPPER",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.682Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Theo had always known that wind wasn't one thing.",
+        "blankWord": "always",
+        "options": [
+          "known",
+          "always",
+          "changed",
+          "thing"
+        ],
+        "answer": "always",
+        "id": "THEWINDMAPPER__1__fill-blank__1",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Other people talked about the wind as though it were a single object — windy today, the wind is from the north, the wind changed.",
+        "blankWord": "changed",
+        "options": [
+          "other",
+          "changed",
+          "reading",
+          "problem"
+        ],
+        "answer": "changed",
+        "id": "THEWINDMAPPER__1__fill-blank__2",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "He was eleven years old and had been trying to draw these rivers for three years.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEWINDMAPPER__1__comprehension__1",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Other people talked about the wind as though it were a single object — windy today, the wind is from the north, the wind changed.",
+          "Theo had always known that wind wasn't one thing.",
+          "He was eleven years old and had been trying to draw these rivers for three years."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEWINDMAPPER__1__sequence__1",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Theo had always known that wind wasn't one thing.",
+        "answer": true,
+        "id": "THEWINDMAPPER__1__true-false__1",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEWINDMAPPER",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.683Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Learning meteorological notation was like learning a language that was also a map.",
+        "blankWord": "meteorological",
+        "options": [
+          "observations",
+          "meteorological",
+          "happy",
+          "simultaneously"
+        ],
+        "answer": "meteorological",
+        "id": "THEWINDMAPPER__2__fill-blank__1",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Between two isobars: a pressure gradient.",
+        "blankWord": "pressure",
+        "options": [
+          "keeping",
+          "pressure",
+          "careful",
+          "between"
+        ],
+        "answer": "pressure",
+        "id": "THEWINDMAPPER__2__fill-blank__2",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The pressure gradient: the force that moved air from high to low.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEWINDMAPPER__2__comprehension__1",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Between two isobars: a pressure gradient.",
+          "Learning meteorological notation was like learning a language that was also a map.",
+          "The pressure gradient: the force that moved air from high to low."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEWINDMAPPER__2__sequence__1",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Learning meteorological notation was like learning a language that was also a map.",
+        "answer": true,
+        "id": "THEWINDMAPPER__2__true-false__1",
+        "storyId": "THEWINDMAPPER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "storyId": "THECLOUDREADER",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.618Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Not literally — she was twelve, not credulous.",
+        "blankWord": "literally",
+        "options": [
+          "learned",
+          "literally",
+          "stratus",
+          "thinking"
+        ],
+        "answer": "literally",
+        "id": "THECLOUDREADER__1__fill-blank__1",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The cloud log was volume four of an ongoing series.",
+        "blankWord": "ongoing",
+        "options": [
+          "getting",
+          "ongoing",
+          "wanted",
+          "cumulus"
+        ],
+        "answer": "ongoing",
+        "id": "THECLOUDREADER__1__fill-blank__2",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Cumulus, stratus, cirrus, nimbus — the vocabulary she needed to say anything meaningful.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECLOUDREADER__1__comprehension__1",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Not literally — she was twelve, not credulous.",
+          "The clouds said things, if you knew how to listen.",
+          "The cloud log was volume four of an ongoing series."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECLOUDREADER__1__sequence__1",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Not literally — she was twelve, not credulous.",
+        "answer": true,
+        "id": "THECLOUDREADER__1__true-false__1",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THECLOUDREADER",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:17:18.620Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She had called clear all day, partly cloudy by evening, no significant weather.",
+        "blankWord": "significant",
+        "options": [
+          "predictions",
+          "significant",
+          "something",
+          "correctly"
+        ],
+        "answer": "significant",
+        "id": "THECLOUDREADER__2__fill-blank__1",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The morning had agreed with her.",
+        "blankWord": "morning",
+        "options": [
+          "missed",
+          "morning",
+          "exactly",
+          "track"
+        ],
+        "answer": "morning",
+        "id": "THECLOUDREADER__2__fill-blank__2",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The afternoon had not, forming the kind of rapid cumulonimbus development that she should have seen coming and had not.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECLOUDREADER__2__comprehension__1",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The storm was over in an hour.",
+          "She had called clear all day, partly cloudy by evening, no significant weather.",
+          "\"Missed the convective trigger,\" she wrote."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECLOUDREADER__2__sequence__1",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "She had called clear all day, partly cloudy by evening, no significant weather.",
+        "answer": true,
+        "id": "THECLOUDREADER__2__true-false__1",
+        "storyId": "THECLOUDREADER",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

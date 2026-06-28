@@ -1,0 +1,121 @@
+[
+  {
+    "storyId": "STHMSTHAP",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.485Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The sea had been whispering secrets all morning.",
+        "blankWord": "whispering",
+        "options": [
+          "whatever",
+          "whispering",
+          "trembling",
+          "unrolled"
+        ],
+        "answer": "whispering",
+        "id": "STHMSTHAP__1__fill-blank__1",
+        "storyId": "STHMSTHAP",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "And it always did — ever since her grandfather had given her the Starmap.",
+        "blankWord": "grandfather",
+        "options": [
+          "whispering",
+          "grandfather",
+          "handwriting",
+          "trembling"
+        ],
+        "answer": "grandfather",
+        "id": "STHMSTHAP__1__fill-blank__2",
+        "storyId": "STHMSTHAP",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "In the story, what does \"compass\" mean?",
+        "difficulty": "medium",
+        "type": "vocabulary",
+        "skill": "vocabulary",
+        "word": "compass",
+        "options": [
+          "a kind of food",
+          "a musical drum",
+          "a type of cloud",
+          "a tool that shows direction"
+        ],
+        "answerIndex": 3,
+        "id": "STHMSTHAP__1__vocabulary__1",
+        "storyId": "STHMSTHAP",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The Starmap was an old brass compass that didn't point north.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "STHMSTHAP__1__comprehension__1",
+        "storyId": "STHMSTHAP",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "And it always did — ever since her grandfather had given her the Starmap.",
+          "The sea had been whispering secrets all morning.",
+          "The Starmap was an old brass compass that didn't point north."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "STHMSTHAP__1__sequence__1",
+        "storyId": "STHMSTHAP",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The sea had been whispering secrets all morning.",
+        "answer": true,
+        "id": "STHMSTHAP__1__true-false__1",
+        "storyId": "STHMSTHAP",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

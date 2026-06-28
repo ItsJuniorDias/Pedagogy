@@ -1,0 +1,121 @@
+[
+  {
+    "storyId": "TAIRBRTY",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:17:18.481Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "He stretched his furry arms, yawned loudly — startling the birds outside — and smiled at the day dawning outside.",
+        "blankWord": "stretched",
+        "options": [
+          "important",
+          "stretched",
+          "special",
+          "together"
+        ],
+        "answer": "stretched",
+        "id": "TAIRBRTY__1__fill-blank__1",
+        "storyId": "TAIRBRTY",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Today is going to be a special day — he whispered to himself, not yet knowing how true that was.",
+        "blankWord": "whispered",
+        "options": [
+          "important",
+          "whispered",
+          "knowing",
+          "startling"
+        ],
+        "answer": "whispered",
+        "id": "TAIRBRTY__1__fill-blank__2",
+        "storyId": "TAIRBRTY",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "In the story, what does \"whispered\" mean?",
+        "difficulty": "medium",
+        "type": "vocabulary",
+        "skill": "vocabulary",
+        "word": "whispered",
+        "options": [
+          "shouted loudly",
+          "sang a song",
+          "wrote a note",
+          "spoke very softly"
+        ],
+        "answerIndex": 3,
+        "id": "TAIRBRTY__1__vocabulary__1",
+        "storyId": "TAIRBRTY",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "I'm so glad I found you — she said, ears perked up.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "TAIRBRTY__1__comprehension__1",
+        "storyId": "TAIRBRTY",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Today is going to be a special day — he whispered to himself, not yet knowing how true that was.",
+          "He stretched his furry arms, yawned loudly — startling the birds outside — and smiled at the day dawning outside.",
+          "I'm so glad I found you — she said, ears perked up."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "TAIRBRTY__1__sequence__1",
+        "storyId": "TAIRBRTY",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "He stretched his furry arms, yawned loudly — startling the birds outside — and smiled at the day dawning outside.",
+        "answer": true,
+        "id": "TAIRBRTY__1__true-false__1",
+        "storyId": "TAIRBRTY",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]
