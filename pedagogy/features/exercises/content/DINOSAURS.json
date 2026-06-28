@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "DINOSAURS",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.041Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Dinosaurs lived during a time called the Mesozoic Era, which lasted from about 252 to 66 million years ago.",
+        "blankWord": "dinosaurs",
+        "options": [
+          "insulation",
+          "dinosaurs",
+          "considered",
+          "periods"
+        ],
+        "answer": "dinosaurs",
+        "id": "DINOSAURS__1__fill-blank__1",
+        "storyId": "DINOSAURS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "This era is divided into three periods: the Triassic, Jurassic, and Cretaceous.",
+        "blankWord": "cretaceous",
+        "options": [
+          "feathers",
+          "cretaceous",
+          "relative",
+          "jurassic"
+        ],
+        "answer": "cretaceous",
+        "id": "DINOSAURS__1__fill-blank__2",
+        "storyId": "DINOSAURS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Dinosaurs were incredibly diverse, ranging from small bird-like creatures to massive sauropods that could reach lengths of over 100 feet.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "DINOSAURS__1__comprehension__1",
+        "storyId": "DINOSAURS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The Mesozoic Era was a time of great change.",
+          "Dinosaurs lived during a time called the Mesozoic Era, which lasted from about 252 to 66 million years ago.",
+          "However, their legacy lives on in the form of birds, which are considered modern-day dinosaurs."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "DINOSAURS__1__sequence__1",
+        "storyId": "DINOSAURS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Dinosaurs lived during a time called the Mesozoic Era, which lasted from about 252 to 66 million years ago.",
+        "answer": true,
+        "id": "DINOSAURS__1__true-false__1",
+        "storyId": "DINOSAURS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "DINOSAURS",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.044Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "There are many famous dinosaurs that have captured our imagination.",
+        "blankWord": "imagination",
+        "options": [
+          "tyrannosaurus",
+          "imagination",
+          "environments",
+          "triceratops"
+        ],
+        "answer": "imagination",
+        "id": "DINOSAURS__2__fill-blank__1",
+        "storyId": "DINOSAURS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The Tyrannosaurus rex, often called T.",
+        "blankWord": "tyrannosaurus",
+        "options": [
+          "fascinating",
+          "tyrannosaurus",
+          "triceratops",
+          "environments"
+        ],
+        "answer": "tyrannosaurus",
+        "id": "DINOSAURS__2__fill-blank__2",
+        "storyId": "DINOSAURS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "rex, was a massive carnivore with powerful jaws and tiny arms.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "DINOSAURS__2__comprehension__1",
+        "storyId": "DINOSAURS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Each of these dinosaurs had unique adaptations that helped them survive in their environments.",
+          "There are many famous dinosaurs that have captured our imagination.",
+          "These famous dinosaurs are just a few examples of the incredible diversity that existed during the Mesozoic Era."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "DINOSAURS__2__sequence__1",
+        "storyId": "DINOSAURS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "There are many famous dinosaurs that have captured our imagination.",
+        "answer": true,
+        "id": "DINOSAURS__2__true-false__1",
+        "storyId": "DINOSAURS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THEINSECTORCHESTRA",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.106Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Petra discovered the orchestra on a summer evening when she was supposed to be inside doing homework.",
+        "blankWord": "discovered",
+        "options": [
+          "structured",
+          "discovered",
+          "organized",
+          "listened"
+        ],
+        "answer": "discovered",
+        "id": "THEINSECTORCHESTRA__1__fill-blank__1",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The crickets began at exactly half-past eight, as they always did, and she had heard them a thousand times before.",
+        "blankWord": "crickets",
+        "options": [
+          "minutes",
+          "crickets",
+          "structured",
+          "undone"
+        ],
+        "answer": "crickets",
+        "id": "THEINSECTORCHESTRA__1__fill-blank__2",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "But tonight she sat still and really listened, and in the listening she understood what she'd been hearing all along: music.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEINSECTORCHESTRA__1__comprehension__1",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The crickets began at exactly half-past eight, as they always did, and she had heard them a thousand times before.",
+          "Petra discovered the orchestra on a summer evening when she was supposed to be inside doing homework.",
+          "The crickets in the tall grass near the fence formed one section — always the same rhythm, the base line, the pulse."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEINSECTORCHESTRA__1__sequence__1",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Petra discovered the orchestra on a summer evening when she was supposed to be inside doing homework.",
+        "answer": true,
+        "id": "THEINSECTORCHESTRA__1__true-false__1",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEINSECTORCHESTRA",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.107Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Bass line — her sister confirmed, her own ear against the log two minutes later.",
+        "blankWord": "confirmed",
+        "options": [
+          "beetles",
+          "confirmed",
+          "signatures",
+          "between"
+        ],
+        "answer": "confirmed",
+        "id": "THEINSECTORCHESTRA__2__fill-blank__1",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "It's slower than the crickets.",
+        "blankWord": "crickets",
+        "options": [
+          "against",
+          "crickets",
+          "soloist",
+          "orchestra"
+        ],
+        "answer": "crickets",
+        "id": "THEINSECTORCHESTRA__2__fill-blank__2",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "I think that's what's happening.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEINSECTORCHESTRA__2__comprehension__1",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "I think that's what's happening.",
+          "Bass line — her sister confirmed, her own ear against the log two minutes later.",
+          "She started writing it down properly."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEINSECTORCHESTRA__2__sequence__1",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Bass line — her sister confirmed, her own ear against the log two minutes later.",
+        "answer": true,
+        "id": "THEINSECTORCHESTRA__2__true-false__1",
+        "storyId": "THEINSECTORCHESTRA",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

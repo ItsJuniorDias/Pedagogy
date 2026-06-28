@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "KATUION",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.008Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "velúmio (veh-LOO-mee-oh) noun The strange comfort of watching rain from inside a warm room.",
+        "blankWord": "watching",
+        "options": [
+          "comfort",
+          "watching",
+          "family",
+          "retrieving"
+        ],
+        "answer": "watching",
+        "id": "KATUION__1__fill-blank__1",
+        "storyId": "KATUION",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "───────────────────── Katu was seven years old the first time she found a word that didn't exist.",
+        "blankWord": "seven",
+        "options": [
+          "comfort",
+          "seven",
+          "filling",
+          "rain"
+        ],
+        "answer": "seven",
+        "id": "KATUION__1__fill-blank__2",
+        "storyId": "KATUION",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Grandma — she said — what's the word for feeling happy AND sad at the same time, when it rains?",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "KATUION__1__comprehension__1",
+        "storyId": "KATUION",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The strange comfort of watching rain from inside a warm room.",
+          "velúmio (veh-LOO-mee-oh) noun",
+          "Katu was seven years old the first time she found a word that didn't exist."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "KATUION__1__sequence__1",
+        "storyId": "KATUION",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "velúmio (veh-LOO-mee-oh) noun The strange comfort of watching rain from inside a warm room.",
+        "answer": true,
+        "id": "KATUION__1__true-false__1",
+        "storyId": "KATUION",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "KATUION",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.010Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "frínquele (FREEN-keh-leh) noun The feeling that a song is being played specifically for you, even in a crowd.",
+        "blankWord": "specifically",
+        "options": [
+          "personally",
+          "specifically",
+          "happy",
+          "completely"
+        ],
+        "answer": "specifically",
+        "id": "KATUION__2__fill-blank__1",
+        "storyId": "KATUION",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "───────────────────── The school fair was loud and full of color — popcorn smoke, spinning lights, a carousel wheezing through a cheerful tune.",
+        "blankWord": "spinning",
+        "options": [
+          "played",
+          "spinning",
+          "feeling",
+          "placed"
+        ],
+        "answer": "spinning",
+        "id": "KATUION__2__fill-blank__2",
+        "storyId": "KATUION",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Katu walked through it holding the little book pressed to her chest, scanning every face for a feeling she didn't have a name for yet.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "KATUION__2__comprehension__1",
+        "storyId": "KATUION",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The feeling that a song is being played specifically for you, even in a crowd.",
+          "frínquele (FREEN-keh-leh) noun",
+          "The school fair was loud and full of color — popcorn smoke, spinning lights, a carousel wheezing through a cheerful tune."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "KATUION__2__sequence__1",
+        "storyId": "KATUION",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "frínquele (FREEN-keh-leh) noun The feeling that a song is being played specifically for you, even in a crowd.",
+        "answer": true,
+        "id": "KATUION__2__true-false__1",
+        "storyId": "KATUION",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

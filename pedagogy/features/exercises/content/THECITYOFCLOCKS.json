@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THECITYOFCLOCKS",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.132Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "In the City of Clocks, time was not merely measured — it was maintained.",
+        "blankWord": "maintained",
+        "options": [
+          "particular",
+          "maintained",
+          "suspended",
+          "stubborn"
+        ],
+        "answer": "maintained",
+        "id": "THECITYOFCLOCKS__1__fill-blank__1",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "But in the City of Clocks, probably was not a comfortable word.",
+        "blankWord": "comfortable",
+        "options": [
+          "announced",
+          "comfortable",
+          "suspended",
+          "everything"
+        ],
+        "answer": "comfortable",
+        "id": "THECITYOFCLOCKS__1__fill-blank__2",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Then the Great Central Clock stopped.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECITYOFCLOCKS__1__comprehension__1",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "But in the City of Clocks, probably was not a comfortable word.",
+          "In the City of Clocks, time was not merely measured — it was maintained.",
+          "Then the Great Central Clock stopped."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECITYOFCLOCKS__1__sequence__1",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "In the City of Clocks, time was not merely measured — it was maintained.",
+        "answer": true,
+        "id": "THECITYOFCLOCKS__1__true-false__1",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THECITYOFCLOCKS",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.134Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She got in through the maintenance hatch on the east side, which the Timekeepers had sealed with a simple padlock.",
+        "blankWord": "maintenance",
+        "options": [
+          "intentionally",
+          "maintenance",
+          "metronomes",
+          "precision"
+        ],
+        "answer": "maintenance",
+        "id": "THECITYOFCLOCKS__2__fill-blank__1",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Cog had opinions about simple padlocks.",
+        "blankWord": "opinions",
+        "options": [
+          "shifts",
+          "opinions",
+          "figured",
+          "metronomes"
+        ],
+        "answer": "opinions",
+        "id": "THECITYOFCLOCKS__2__fill-blank__2",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The interior of the Great Central Clock was one of the most beautiful things she had ever seen.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECITYOFCLOCKS__2__comprehension__1",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Cog had opinions about simple padlocks.",
+          "She got in through the maintenance hatch on the east side, which the Timekeepers had sealed with a simple padlock.",
+          "The interior of the Great Central Clock was one of the most beautiful things she had ever seen."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECITYOFCLOCKS__2__sequence__1",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "She got in through the maintenance hatch on the east side, which the Timekeepers had sealed with a simple padlock.",
+        "answer": true,
+        "id": "THECITYOFCLOCKS__2__true-false__1",
+        "storyId": "THECITYOFCLOCKS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

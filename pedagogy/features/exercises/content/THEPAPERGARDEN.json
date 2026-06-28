@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THEPAPERGARDEN",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.150Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Her grandmother's hands made impossible things.",
+        "blankWord": "impossible",
+        "options": [
+          "creature",
+          "impossible",
+          "supervise",
+          "distance"
+        ],
+        "answer": "impossible",
+        "id": "THEPAPERGARDEN__1__fill-blank__1",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Teach me — Amy said, when she was seven.",
+        "blankWord": "teach",
+        "options": [
+          "said",
+          "teach",
+          "taken",
+          "made"
+        ],
+        "answer": "teach",
+        "id": "THEPAPERGARDEN__1__fill-blank__2",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Her grandmother had taught her a crane.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEPAPERGARDEN__1__comprehension__1",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Teach me — Amy said, when she was seven.",
+          "Her grandmother's hands made impossible things.",
+          "Her grandmother had taught her a crane."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEPAPERGARDEN__1__sequence__1",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Her grandmother's hands made impossible things.",
+        "answer": true,
+        "id": "THEPAPERGARDEN__1__true-false__1",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEPAPERGARDEN",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.151Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The language of folds had two words.",
+        "blankWord": "language",
+        "options": [
+          "community",
+          "language",
+          "somehow",
+          "listening"
+        ],
+        "answer": "language",
+        "id": "THEPAPERGARDEN__2__fill-blank__1",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Valley fold: fold toward you, making a valley.",
+        "blankWord": "valley",
+        "options": [
+          "acquired",
+          "valley",
+          "units",
+          "lessons"
+        ],
+        "answer": "valley",
+        "id": "THEPAPERGARDEN__2__fill-blank__2",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Mountain fold: fold away from you, making a ridge.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEPAPERGARDEN__2__comprehension__1",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Valley fold: fold toward you, making a valley.",
+          "The language of folds had two words.",
+          "Mountain fold: fold away from you, making a ridge."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEPAPERGARDEN__2__sequence__1",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The language of folds had two words.",
+        "answer": true,
+        "id": "THEPAPERGARDEN__2__true-false__1",
+        "storyId": "THEPAPERGARDEN",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

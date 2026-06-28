@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "SCIENCELAB",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.054Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "A scientist is someone who asks: what if I'm wrong?",
+        "blankWord": "scientist",
+        "options": [
+          "strange",
+          "scientist",
+          "hypothesis",
+          "question"
+        ],
+        "answer": "scientist",
+        "id": "SCIENCELAB__1__fill-blank__1",
+        "storyId": "SCIENCELAB",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "That sounds like a strange thing to want to be.",
+        "blankWord": "strange",
+        "options": [
+          "happen",
+          "strange",
+          "method",
+          "closely"
+        ],
+        "answer": "strange",
+        "id": "SCIENCELAB__1__fill-blank__2",
+        "storyId": "SCIENCELAB",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Most of us prefer to be right.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "SCIENCELAB__1__comprehension__1",
+        "storyId": "SCIENCELAB",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "That sounds like a strange thing to want to be.",
+          "A scientist is someone who asks: what if I'm wrong?",
+          "Science is not a collection of facts."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "SCIENCELAB__1__sequence__1",
+        "storyId": "SCIENCELAB",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "A scientist is someone who asks: what if I'm wrong?",
+        "answer": true,
+        "id": "SCIENCELAB__1__true-false__1",
+        "storyId": "SCIENCELAB",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "SCIENCELAB",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.056Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Everything you can touch, see, smell, or taste is made of matter.",
+        "blankWord": "everything",
+        "options": [
+          "everywhere",
+          "everything",
+          "molecules",
+          "directions"
+        ],
+        "answer": "everything",
+        "id": "SCIENCELAB__2__fill-blank__1",
+        "storyId": "SCIENCELAB",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The chair you're sitting on.",
+        "blankWord": "sitting",
+        "options": [
+          "people",
+          "sitting",
+          "water",
+          "small"
+        ],
+        "answer": "sitting",
+        "id": "SCIENCELAB__2__fill-blank__2",
+        "storyId": "SCIENCELAB",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The water you drink, the light of a candle, the warmth of a sunbeam — all matter, all made of tiny particles that we call atoms.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "SCIENCELAB__2__comprehension__1",
+        "storyId": "SCIENCELAB",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The chair you're sitting on.",
+          "Everything you can touch, see, smell, or taste is made of matter.",
+          "Atoms join together to form molecules."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "SCIENCELAB__2__sequence__1",
+        "storyId": "SCIENCELAB",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Everything you can touch, see, smell, or taste is made of matter.",
+        "answer": true,
+        "id": "SCIENCELAB__2__true-false__1",
+        "storyId": "SCIENCELAB",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

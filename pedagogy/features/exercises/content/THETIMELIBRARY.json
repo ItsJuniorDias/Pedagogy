@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THETIMELIBRARY",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.115Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Its catalogue was unusual: books filed not by subject or author but by the year in which they would be most useful to the reader.",
+        "blankWord": "catalogue",
+        "options": [
+          "subject",
+          "catalogue",
+          "something",
+          "directed"
+        ],
+        "answer": "catalogue",
+        "id": "THETIMELIBRARY__1__fill-blank__1",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Shelves marked 1997 for people who needed something from that particular year.",
+        "blankWord": "particular",
+        "options": [
+          "librarian",
+          "particular",
+          "something",
+          "unremarkable"
+        ],
+        "answer": "particular",
+        "id": "THETIMELIBRARY__1__fill-blank__2",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "A whole section for 2031, carefully sealed.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THETIMELIBRARY__1__comprehension__1",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The librarian, a tall woman named Ms.",
+          "Its catalogue was unusual: books filed not by subject or author but by the year in which they would be most useful to the reader.",
+          "Juno discovered the library on a Tuesday when she was eleven and had been sent to get her mother's book on hold."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THETIMELIBRARY__1__sequence__1",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Its catalogue was unusual: books filed not by subject or author but by the year in which they would be most useful to the reader.",
+        "answer": true,
+        "id": "THETIMELIBRARY__1__true-false__1",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THETIMELIBRARY",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.115Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The Overdue Section was not, as Juno had assumed, a place for books with past-due dates.",
+        "blankWord": "overdue",
+        "options": [
+          "sitting",
+          "overdue",
+          "carefully",
+          "letter"
+        ],
+        "answer": "overdue",
+        "id": "THETIMELIBRARY__2__fill-blank__1",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "It was a place for stories that had been borrowed — by people, by history, by circumstance — and not returned.",
+        "blankWord": "circumstance",
+        "options": [
+          "catalogued",
+          "circumstance",
+          "explaining",
+          "intentionally"
+        ],
+        "answer": "circumstance",
+        "id": "THETIMELIBRARY__2__fill-blank__2",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "They came in all shapes and hadn't been catalogued for decades.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THETIMELIBRARY__2__comprehension__1",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "It was a place for stories that had been borrowed — by people, by history, by circumstance — and not returned.",
+          "The Overdue Section was not, as Juno had assumed, a place for books with past-due dates.",
+          "They came in all shapes and hadn't been catalogued for decades."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THETIMELIBRARY__2__sequence__1",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The Overdue Section was not, as Juno had assumed, a place for books with past-due dates.",
+        "answer": true,
+        "id": "THETIMELIBRARY__2__true-false__1",
+        "storyId": "THETIMELIBRARY",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

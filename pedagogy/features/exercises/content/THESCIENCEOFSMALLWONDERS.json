@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THESCIENCEOFSMALLWONDERS",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.111Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Nadia had a theory: that every ordinary experience, investigated closely enough, turned out to be extraordinary.",
+        "blankWord": "extraordinary",
+        "options": [
+          "investigated",
+          "extraordinary",
+          "little",
+          "happy"
+        ],
+        "answer": "extraordinary",
+        "id": "THESCIENCEOFSMALLWONDERS__1__fill-blank__1",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She had tested this theory for three years and had not yet found a counter-example.",
+        "blankWord": "counter",
+        "options": [
+          "earth",
+          "counter",
+          "enough",
+          "delighted"
+        ],
+        "answer": "counter",
+        "id": "THESCIENCEOFSMALLWONDERS__1__fill-blank__2",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The answer, when she found it, had delighted her completely.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THESCIENCEOFSMALLWONDERS__1__comprehension__1",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "She had tested this theory for three years and had not yet found a counter-example.",
+          "Nadia had a theory: that every ordinary experience, investigated closely enough, turned out to be extraordinary.",
+          "The answer, when she found it, had delighted her completely."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THESCIENCEOFSMALLWONDERS__1__sequence__1",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Nadia had a theory: that every ordinary experience, investigated closely enough, turned out to be extraordinary.",
+        "answer": true,
+        "id": "THESCIENCEOFSMALLWONDERS__1__true-false__1",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THESCIENCEOFSMALLWONDERS",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.112Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "\"Rayleigh scattering,\" Nadia said.",
+        "blankWord": "scattering",
+        "options": [
+          "personal",
+          "scattering",
+          "scatters",
+          "annoying"
+        ],
+        "answer": "scattering",
+        "id": "THESCIENCEOFSMALLWONDERS__2__fill-blank__1",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "\"What?\" \"Blue light scatters more than other light when it hits air molecules.",
+        "blankWord": "molecules",
+        "options": [
+          "sunlight",
+          "molecules",
+          "scatters",
+          "scattering"
+        ],
+        "answer": "molecules",
+        "id": "THESCIENCEOFSMALLWONDERS__2__fill-blank__2",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "So when sunlight comes through the whole atmosphere, there's more blue scattered toward your eyes than any other colour.\" She paused.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THESCIENCEOFSMALLWONDERS__2__comprehension__1",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "\"Blue light scatters more than other light when it hits air molecules.",
+          "\"Rayleigh scattering,\" Nadia said.",
+          "Her brother considered this."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THESCIENCEOFSMALLWONDERS__2__sequence__1",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "\"Rayleigh scattering,\" Nadia said.",
+        "answer": true,
+        "id": "THESCIENCEOFSMALLWONDERS__2__true-false__1",
+        "storyId": "THESCIENCEOFSMALLWONDERS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

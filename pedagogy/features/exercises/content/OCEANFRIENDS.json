@@ -1,1 +1,221 @@
-[]
+[
+  {
+    "storyId": "OCEANFRIENDS",
+    "chapterId": "ol-1",
+    "generatedAt": "2026-06-28T12:45:29.064Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "At sunrise, the coral reef was already awake.",
+        "blankWord": "sunrise",
+        "options": [
+          "already",
+          "sunrise",
+          "quiet",
+          "through"
+        ],
+        "answer": "sunrise",
+        "id": "OCEANFRIENDS__ol-1__fill-blank__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "A thousand fish darted through tunnels of pink and orange coral like living confetti.",
+        "blankWord": "thousand",
+        "options": [
+          "unhappy",
+          "thousand",
+          "morning",
+          "replied"
+        ],
+        "answer": "thousand",
+        "id": "OCEANFRIENDS__ol-1__fill-blank__2",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Finn the clownfish was doing his morning rounds — checking that every anemone was in order, every neighbor accounted for.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "OCEANFRIENDS__ol-1__comprehension__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Finn the clownfish was doing his morning rounds — checking that every anemone was in order, every neighbor accounted for.",
+          "At sunrise, the coral reef was already awake.",
+          "Octopus, who was rearranging her rock collection for the seventeenth time that week."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "OCEANFRIENDS__ol-1__sequence__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "At sunrise, the coral reef was already awake.",
+        "answer": true,
+        "id": "OCEANFRIENDS__ol-1__true-false__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "OCEANFRIENDS",
+    "chapterId": "ol-2",
+    "generatedAt": "2026-06-28T12:45:29.065Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Finn asked the oldest creature on the reef — Gran Turtle, who had been swimming since before anyone could remember — what the grey meant.",
+        "blankWord": "creature",
+        "options": [
+          "recovers",
+          "creature",
+          "remember",
+          "before"
+        ],
+        "answer": "creature",
+        "id": "OCEANFRIENDS__ol-2__fill-blank__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "\"The water is too warm in that patch,\" Gran Turtle said, blinking her ancient eyes.",
+        "blankWord": "blinking",
+        "options": [
+          "everyone",
+          "blinking",
+          "creature",
+          "happen"
+        ],
+        "answer": "blinking",
+        "id": "OCEANFRIENDS__ol-2__fill-blank__2",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "In the story, what does \"ancient\" mean?",
+        "difficulty": "medium",
+        "type": "vocabulary",
+        "skill": "vocabulary",
+        "word": "ancient",
+        "options": [
+          "brand new",
+          "very loud",
+          "very small",
+          "very old"
+        ],
+        "answerIndex": 3,
+        "id": "OCEANFRIENDS__ol-2__vocabulary__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "It has sent the fish away until it recovers.\" Finn had heard of this happening far away, in reefs he'd never seen.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "OCEANFRIENDS__ol-2__comprehension__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "\"The water is too warm in that patch,\" Gran Turtle said, blinking her ancient eyes.",
+          "Finn asked the oldest creature on the reef — Gran Turtle, who had been swimming since before anyone could remember — what the grey meant.",
+          "Finn had heard of this happening far away, in reefs he'd never seen."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "OCEANFRIENDS__ol-2__sequence__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Finn asked the oldest creature on the reef — Gran Turtle, who had been swimming since before anyone could remember — what the grey meant.",
+        "answer": true,
+        "id": "OCEANFRIENDS__ol-2__true-false__1",
+        "storyId": "OCEANFRIENDS",
+        "chapterId": "ol-2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

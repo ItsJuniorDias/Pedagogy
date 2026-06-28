@@ -1,1 +1,240 @@
-[]
+[
+  {
+    "storyId": "ROCKETADVENTURE",
+    "chapterId": "sa-1",
+    "generatedAt": "2026-06-28T12:45:29.059Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The countdown echoed through the launch pad.",
+        "blankWord": "countdown",
+        "options": [
+          "pressed",
+          "countdown",
+          "vibrating",
+          "seconds"
+        ],
+        "answer": "countdown",
+        "id": "ROCKETADVENTURE__sa-1__fill-blank__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Ten… nine… eight… Young astronaut Leo gripped his seat as the engines roared to life beneath him.",
+        "blankWord": "astronaut",
+        "options": [
+          "gripped",
+          "astronaut",
+          "through",
+          "engines"
+        ],
+        "answer": "astronaut",
+        "id": "ROCKETADVENTURE__sa-1__fill-blank__2",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "In the story, what does \"gripped\" mean?",
+        "difficulty": "medium",
+        "type": "vocabulary",
+        "skill": "vocabulary",
+        "word": "gripped",
+        "options": [
+          "let go of",
+          "forgot about",
+          "looked at",
+          "held very tightly"
+        ],
+        "answerIndex": 3,
+        "id": "ROCKETADVENTURE__sa-1__vocabulary__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Seven… six… five… The rocket shuddered like a giant waking from a deep sleep.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "ROCKETADVENTURE__sa-1__comprehension__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Seven… six… five… The rocket shuddered like a giant waking from a deep sleep.",
+          "The countdown echoed through the launch pad.",
+          "Four… three… two… one… IGNITION!"
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "ROCKETADVENTURE__sa-1__sequence__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The countdown echoed through the launch pad.",
+        "answer": true,
+        "id": "ROCKETADVENTURE__sa-1__true-false__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "ROCKETADVENTURE",
+    "chapterId": "sa-2",
+    "generatedAt": "2026-06-28T12:45:29.060Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The Moon grew from a marble to a mountain as Leo guided the shuttle into lunar orbit.",
+        "blankWord": "mountain",
+        "options": [
+          "sandwich",
+          "mountain",
+          "carved",
+          "craters"
+        ],
+        "answer": "mountain",
+        "id": "ROCKETADVENTURE__sa-2__fill-blank__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Gray craters stretched in every direction like frozen ripples.",
+        "blankWord": "stretched",
+        "options": [
+          "direction",
+          "stretched",
+          "bounced",
+          "laughing"
+        ],
+        "answer": "stretched",
+        "id": "ROCKETADVENTURE__sa-2__fill-blank__2",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "In the story, what does \"whispered\" mean?",
+        "difficulty": "medium",
+        "type": "vocabulary",
+        "skill": "vocabulary",
+        "word": "whispered",
+        "options": [
+          "shouted loudly",
+          "sang a song",
+          "wrote a note",
+          "spoke very softly"
+        ],
+        "answerIndex": 3,
+        "id": "ROCKETADVENTURE__sa-2__vocabulary__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "He landed with a gentle thud in the Sea of Tranquility.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "ROCKETADVENTURE__sa-2__comprehension__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "He landed with a gentle thud in the Sea of Tranquility.",
+          "The Moon grew from a marble to a mountain as Leo guided the shuttle into lunar orbit.",
+          "\"One small step,\" Leo whispered to Cosmo, then burst out laughing as he bounced three metres into the air on his very first stride."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "ROCKETADVENTURE__sa-2__sequence__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The Moon grew from a marble to a mountain as Leo guided the shuttle into lunar orbit.",
+        "answer": true,
+        "id": "ROCKETADVENTURE__sa-2__true-false__1",
+        "storyId": "ROCKETADVENTURE",
+        "chapterId": "sa-2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

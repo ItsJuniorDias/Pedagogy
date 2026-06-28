@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THECHRONONAUTS",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.148Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The Chrononauts were not time travellers.",
+        "blankWord": "chrononauts",
+        "options": [
+          "distinction",
+          "chrononauts",
+          "resilient",
+          "different"
+        ],
+        "answer": "chrononauts",
+        "id": "THECHRONONAUTS__1__fill-blank__1",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "This distinction mattered to all three of them.",
+        "blankWord": "distinction",
+        "options": [
+          "methodology",
+          "distinction",
+          "replacement",
+          "resilient"
+        ],
+        "answer": "distinction",
+        "id": "THECHRONONAUTS__1__fill-blank__2",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The Chrononauts did something different.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECHRONONAUTS__1__comprehension__1",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "This distinction mattered to all three of them.",
+          "The Chrononauts were not time travellers.",
+          "The Chrononauts did something different."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECHRONONAUTS__1__sequence__1",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The Chrononauts were not time travellers.",
+        "answer": true,
+        "id": "THECHRONONAUTS__1__true-false__1",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THECHRONONAUTS",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.149Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Ghost signs were Bea's favourite.",
+        "blankWord": "favourite",
+        "options": [
+          "developed",
+          "favourite",
+          "external",
+          "strange"
+        ],
+        "answer": "favourite",
+        "id": "THECHRONONAUTS__2__fill-blank__1",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The ghost signs in their neighbourhood were fragments.",
+        "blankWord": "neighbourhood",
+        "options": [
+          "happy",
+          "neighbourhood",
+          "photographed",
+          "little"
+        ],
+        "answer": "neighbourhood",
+        "id": "THECHRONONAUTS__2__fill-blank__2",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "__SON'S COAL AND on the side of the hardware shop — coal delivery, probably pre-1970 when coal heating became uncommon.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECHRONONAUTS__2__comprehension__1",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The ghost signs in their neighbourhood were fragments.",
+          "Ghost signs were Bea's favourite.",
+          "__SON'S COAL AND on the side of the hardware shop — coal delivery, probably pre-1970 when coal heating became uncommon."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECHRONONAUTS__2__sequence__1",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Ghost signs were Bea's favourite.",
+        "answer": true,
+        "id": "THECHRONONAUTS__2__true-false__1",
+        "storyId": "THECHRONONAUTS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

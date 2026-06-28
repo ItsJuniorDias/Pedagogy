@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THEGRANDMOTHERSRECIPEBOX",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.095Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The recipe box was made of tin and covered in small dents that were really a map of all the times it had been dropped.",
+        "blankWord": "covered",
+        "options": [
+          "weeks",
+          "covered",
+          "languages",
+          "really"
+        ],
+        "answer": "covered",
+        "id": "THEGRANDMOTHERSRECIPEBOX__1__fill-blank__1",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Lena had found it at the back of her grandmother's cupboard, three weeks after the funeral, when she'd been given the job of deciding what to keep.",
+        "blankWord": "cupboard",
+        "options": [
+          "different",
+          "cupboard",
+          "guessed",
+          "present"
+        ],
+        "answer": "cupboard",
+        "id": "THEGRANDMOTHERSRECIPEBOX__1__fill-blank__2",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "She had intended to keep everything.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEGRANDMOTHERSRECIPEBOX__1__comprehension__1",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Lena had found it at the back of her grandmother's cupboard, three weeks after the funeral, when she'd been given the job of deciding what to keep.",
+          "The recipe box was made of tin and covered in small dents that were really a map of all the times it had been dropped.",
+          "She had intended to keep everything."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEGRANDMOTHERSRECIPEBOX__1__sequence__1",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The recipe box was made of tin and covered in small dents that were really a map of all the times it had been dropped.",
+        "answer": true,
+        "id": "THEGRANDMOTHERSRECIPEBOX__1__true-false__1",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEGRANDMOTHERSRECIPEBOX",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.096Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The second recipe she found was called, in her grandmother's handwriting, \"The cake for a regular Tuesday.\" Not a birthday cake.",
+        "blankWord": "handwriting",
+        "options": [
+          "wednesdays",
+          "handwriting",
+          "reconsider",
+          "wednesday"
+        ],
+        "answer": "handwriting",
+        "id": "THEGRANDMOTHERSRECIPEBOX__2__fill-blank__1",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Lena had never thought of regular Tuesdays as occasions.",
+        "blankWord": "occasions",
+        "options": [
+          "furthest",
+          "occasions",
+          "counter",
+          "birthday"
+        ],
+        "answer": "occasions",
+        "id": "THEGRANDMOTHERSRECIPEBOX__2__fill-blank__2",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "She was beginning to reconsider.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEGRANDMOTHERSRECIPEBOX__2__comprehension__1",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Lena had never thought of regular Tuesdays as occasions.",
+          "The second recipe she found was called, in her grandmother's handwriting, \"The cake for a regular Tuesday.\"",
+          "She was beginning to reconsider."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEGRANDMOTHERSRECIPEBOX__2__sequence__1",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The second recipe she found was called, in her grandmother's handwriting, \"The cake for a regular Tuesday.\" Not a birthday cake.",
+        "answer": true,
+        "id": "THEGRANDMOTHERSRECIPEBOX__2__true-false__1",
+        "storyId": "THEGRANDMOTHERSRECIPEBOX",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

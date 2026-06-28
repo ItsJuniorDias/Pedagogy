@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "SCHOOL",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.027Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Maya couldn't say exactly how — the cereal tasted the same, the kitchen smelled the same, her shoes were the same shoes.",
+        "blankWord": "exactly",
+        "options": [
+          "school",
+          "exactly",
+          "slightly",
+          "pulled"
+        ],
+        "answer": "exactly",
+        "id": "SCHOOL__1__fill-blank__1",
+        "storyId": "SCHOOL",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "But something in the air was stretched tight, like a rubber band pulled just a little too far.",
+        "blankWord": "something",
+        "options": [
+          "stretched",
+          "something",
+          "thought",
+          "nervous"
+        ],
+        "answer": "something",
+        "id": "SCHOOL__1__fill-blank__2",
+        "storyId": "SCHOOL",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Today was the first day of school.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "SCHOOL__1__comprehension__1",
+        "storyId": "SCHOOL",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Today was the first day of school.",
+          "Maya couldn't say exactly how — the cereal tasted the same, the kitchen smelled the same, her shoes were the same shoes.",
+          "Eat your breakfast — said her mom."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "SCHOOL__1__sequence__1",
+        "storyId": "SCHOOL",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Maya couldn't say exactly how — the cereal tasted the same, the kitchen smelled the same, her shoes were the same shoes.",
+        "answer": true,
+        "id": "SCHOOL__1__true-false__1",
+        "storyId": "SCHOOL",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "SCHOOL",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.029Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Maya's classroom had twenty-two chairs.",
+        "blankWord": "classroom",
+        "options": [
+          "immediately",
+          "classroom",
+          "without",
+          "walking"
+        ],
+        "answer": "classroom",
+        "id": "SCHOOL__2__fill-blank__1",
+        "storyId": "SCHOOL",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She counted them immediately upon walking in, because counting was something to do with her eyes when she wasn't sure where to put them.",
+        "blankWord": "immediately",
+        "options": [
+          "important",
+          "immediately",
+          "established",
+          "something"
+        ],
+        "answer": "immediately",
+        "id": "SCHOOL__2__fill-blank__2",
+        "storyId": "SCHOOL",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Most chairs already had people in them.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "SCHOOL__2__comprehension__1",
+        "storyId": "SCHOOL",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "She counted them immediately upon walking in, because counting was something to do with her eyes when she wasn't sure where to put them.",
+          "Maya's classroom had twenty-two chairs.",
+          "Most chairs already had people in them."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "SCHOOL__2__sequence__1",
+        "storyId": "SCHOOL",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Maya's classroom had twenty-two chairs.",
+        "answer": true,
+        "id": "SCHOOL__2__true-false__1",
+        "storyId": "SCHOOL",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

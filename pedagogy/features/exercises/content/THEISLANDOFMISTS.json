@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THEISLANDOFMISTS",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.130Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The island appeared on the map on a Thursday.",
+        "blankWord": "appeared",
+        "options": [
+          "person",
+          "appeared",
+          "wondering",
+          "happen"
+        ],
+        "answer": "appeared",
+        "id": "THEISLANDOFMISTS__1__fill-blank__1",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "This was surprising because the map was two hundred years old and the island had definitely not been there on Wednesday.",
+        "blankWord": "surprising",
+        "options": [
+          "touching",
+          "surprising",
+          "wondering",
+          "explanation"
+        ],
+        "answer": "surprising",
+        "id": "THEISLANDOFMISTS__1__fill-blank__2",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "But this island had appeared overnight in the middle of a sea she'd looked at a hundred times.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEISLANDOFMISTS__1__comprehension__1",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "This was surprising because the map was two hundred years old and the island had definitely not been there on Wednesday.",
+          "The island appeared on the map on a Thursday.",
+          "But this island had appeared overnight in the middle of a sea she'd looked at a hundred times."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEISLANDOFMISTS__1__sequence__1",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The island appeared on the map on a Thursday.",
+        "answer": true,
+        "id": "THEISLANDOFMISTS__1__true-false__1",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEISLANDOFMISTS",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.131Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The island appeared when the mist was thickest.",
+        "blankWord": "appeared",
+        "options": [
+          "beginning",
+          "appeared",
+          "specific",
+          "knowing"
+        ],
+        "answer": "appeared",
+        "id": "THEISLANDOFMISTS__2__fill-blank__1",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The mist rolled in around noon and she couldn't see more than three metres in any direction.",
+        "blankWord": "direction",
+        "options": [
+          "turning",
+          "direction",
+          "thought",
+          "thickest"
+        ],
+        "answer": "direction",
+        "id": "THEISLANDOFMISTS__2__fill-blank__2",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "She stopped paddling and floated.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEISLANDOFMISTS__2__comprehension__1",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The mist rolled in around noon and she couldn't see more than three metres in any direction.",
+          "The island appeared when the mist was thickest.",
+          "She stopped paddling and floated."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEISLANDOFMISTS__2__sequence__1",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The island appeared when the mist was thickest.",
+        "answer": true,
+        "id": "THEISLANDOFMISTS__2__true-false__1",
+        "storyId": "THEISLANDOFMISTS",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

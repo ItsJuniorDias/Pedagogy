@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "TINYSICENTIST",
+    "chapterId": "sl-1",
+    "generatedAt": "2026-06-28T12:45:29.067Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Zara's bedroom had officially become a laboratory.",
+        "blankWord": "officially",
+        "options": [
+          "colouring",
+          "officially",
+          "experiment",
+          "handwriting"
+        ],
+        "answer": "officially",
+        "id": "TINYSICENTIST__sl-1__fill-blank__1",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Her desk was covered in test tubes, baking soda, food colouring, and a list of experiments she'd written in her neatest handwriting.",
+        "blankWord": "experiments",
+        "options": [
+          "handwriting",
+          "experiments",
+          "laboratory",
+          "notebooks"
+        ],
+        "answer": "experiments",
+        "id": "TINYSICENTIST__sl-1__fill-blank__2",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "She poured vinegar into a mound of baking soda.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "TINYSICENTIST__sl-1__comprehension__1",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "She poured vinegar into a mound of baking soda.",
+          "Zara's bedroom had officially become a laboratory.",
+          "She wiped everything down and wrote in her lab journal: \"Note — use smaller amounts."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "TINYSICENTIST__sl-1__sequence__1",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Zara's bedroom had officially become a laboratory.",
+        "answer": true,
+        "id": "TINYSICENTIST__sl-1__true-false__1",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "TINYSICENTIST",
+    "chapterId": "sl-2",
+    "generatedAt": "2026-06-28T12:45:29.068Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Zara's dad looked at the rainbow jar and asked, \"But do you know WHY the layers stay separate?\" She opened her mouth — and then closed it.",
+        "blankWord": "separate",
+        "options": [
+          "passengers",
+          "separate",
+          "rainbow",
+          "opened"
+        ],
+        "answer": "separate",
+        "id": "TINYSICENTIST__sl-2__fill-blank__1",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She hadn't thought about the why.",
+        "blankWord": "thought",
+        "options": [
+          "presenter",
+          "thought",
+          "views",
+          "rainbow"
+        ],
+        "answer": "thought",
+        "id": "TINYSICENTIST__sl-2__fill-blank__2",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "That bothered her more than she expected.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "TINYSICENTIST__sl-2__comprehension__1",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "She hadn't thought about the why.",
+          "Zara's dad looked at the rainbow jar and asked, \"But do you know WHY the layers stay separate?\" She opened her mouth — and then closed it.",
+          "The honey was the heaviest, the oil the lightest."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "TINYSICENTIST__sl-2__sequence__1",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Zara's dad looked at the rainbow jar and asked, \"But do you know WHY the layers stay separate?\" She opened her mouth — and then closed it.",
+        "answer": true,
+        "id": "TINYSICENTIST__sl-2__true-false__1",
+        "storyId": "TINYSICENTIST",
+        "chapterId": "sl-2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

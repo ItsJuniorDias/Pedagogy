@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THECORALQUEEN",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.135Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The reef had a queen, and she was older than the boats.",
+        "blankWord": "queen",
+        "options": [
+          "strands",
+          "queen",
+          "centre",
+          "kind"
+        ],
+        "answer": "queen",
+        "id": "THECORALQUEEN__1__fill-blank__1",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The reef at Pante Island was the kind of reef that made you slow down.",
+        "blankWord": "island",
+        "options": [
+          "living",
+          "island",
+          "meant",
+          "trailing"
+        ],
+        "answer": "island",
+        "id": "THECORALQUEEN__1__fill-blank__2",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The sense that you were in a place that had its own intentions, its own purposes, and that you were a guest.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECORALQUEEN__1__comprehension__1",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "The reef at Pante Island was the kind of reef that made you slow down.",
+          "The reef had a queen, and she was older than the boats.",
+          "Mari had learned to pay attention to feelings like that."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECORALQUEEN__1__sequence__1",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The reef had a queen, and she was older than the boats.",
+        "answer": true,
+        "id": "THECORALQUEEN__1__true-false__1",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THECORALQUEEN",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.136Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She put the book down and looked at the water.",
+        "blankWord": "looked",
+        "options": [
+          "corals",
+          "looked",
+          "other",
+          "currents"
+        ],
+        "answer": "looked",
+        "id": "THECORALQUEEN__2__fill-blank__1",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "She thought: the old coral has survived for hundreds of years.",
+        "blankWord": "survived",
+        "options": [
+          "answer",
+          "survived",
+          "carefully",
+          "centre"
+        ],
+        "answer": "survived",
+        "id": "THECORALQUEEN__2__fill-blank__2",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "It has survived things that killed other reefs.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECORALQUEEN__2__comprehension__1",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "She thought: the old coral has survived for hundreds of years.",
+          "She put the book down and looked at the water.",
+          "The answer, she eventually understood, was relationships."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECORALQUEEN__2__sequence__1",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "She put the book down and looked at the water.",
+        "answer": true,
+        "id": "THECORALQUEEN__2__true-false__1",
+        "storyId": "THECORALQUEEN",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

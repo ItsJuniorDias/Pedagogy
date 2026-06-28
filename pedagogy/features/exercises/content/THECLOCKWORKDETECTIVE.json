@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THECLOCKWORKDETECTIVE",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.077Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The afternoon of Tuesday the 14th was stolen between 2 and 4 o'clock, and nobody noticed until it was already gone.",
+        "blankWord": "afternoon",
+        "options": [
+          "between",
+          "afternoon",
+          "already",
+          "magnifying"
+        ],
+        "answer": "afternoon",
+        "id": "THECLOCKWORKDETECTIVE__1__fill-blank__1",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Cog's notebook entry for that Tuesday read: \"2:03pm — quality diminished.",
+        "blankWord": "diminished",
+        "options": [
+          "specific",
+          "diminished",
+          "notebook",
+          "borrowed"
+        ],
+        "answer": "diminished",
+        "id": "THECLOCKWORKDETECTIVE__1__fill-blank__2",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The tower's head clockmaker, old Mr.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECLOCKWORKDETECTIVE__1__comprehension__1",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Cog's notebook entry for that Tuesday read: \"2:03pm — quality diminished.",
+          "The afternoon of Tuesday the 14th was stolen between 2 and 4 o'clock, and nobody noticed until it was already gone.",
+          "The tower's head clockmaker, old Mr."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECLOCKWORKDETECTIVE__1__sequence__1",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The afternoon of Tuesday the 14th was stolen between 2 and 4 o'clock, and nobody noticed until it was already gone.",
+        "answer": true,
+        "id": "THECLOCKWORKDETECTIVE__1__true-false__1",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THECLOCKWORKDETECTIVE",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.079Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "The curator, a woman named Dr.",
+        "blankWord": "curator",
+        "options": [
+          "trouble",
+          "curator",
+          "stolen",
+          "always"
+        ],
+        "answer": "curator",
+        "id": "THECLOCKWORKDETECTIVE__2__fill-blank__1",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Spring who always wore at least two watches, met Cog at the entrance with the expression of someone expecting to be in trouble.",
+        "blankWord": "expression",
+        "options": [
+          "precious",
+          "expression",
+          "notebook",
+          "magnifying"
+        ],
+        "answer": "expression",
+        "id": "THECLOCKWORKDETECTIVE__2__fill-blank__2",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "I haven't asked anything yet — Cog pointed out.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THECLOCKWORKDETECTIVE__2__comprehension__1",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "I haven't asked anything yet — Cog pointed out.",
+          "The curator, a woman named Dr.",
+          "You have a magnifying glass and a notebook."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THECLOCKWORKDETECTIVE__2__sequence__1",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "The curator, a woman named Dr.",
+        "answer": true,
+        "id": "THECLOCKWORKDETECTIVE__2__true-false__1",
+        "storyId": "THECLOCKWORKDETECTIVE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]

@@ -1,1 +1,202 @@
-[]
+[
+  {
+    "storyId": "THEVOWELVILLAGE",
+    "chapterId": "1",
+    "generatedAt": "2026-06-28T12:45:29.075Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Ava spent every night on the roof of her house, looking at the stars through a telescope made of cardboard and wish.",
+        "blankWord": "telescope",
+        "options": [
+          "through",
+          "telescope",
+          "herself",
+          "official"
+        ],
+        "answer": "telescope",
+        "id": "THEVOWELVILLAGE__1__fill-blank__1",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Her neighbours thought she was odd.",
+        "blankWord": "neighbours",
+        "options": [
+          "catalogue",
+          "neighbours",
+          "cardboard",
+          "numerical"
+        ],
+        "answer": "neighbours",
+        "id": "THEVOWELVILLAGE__1__fill-blank__2",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "1",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "The stars thought she was exactly right.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEVOWELVILLAGE__1__comprehension__1",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Her neighbours thought she was odd.",
+          "Ava spent every night on the roof of her house, looking at the stars through a telescope made of cardboard and wish.",
+          "Ava knew all of them by name."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEVOWELVILLAGE__1__sequence__1",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Ava spent every night on the roof of her house, looking at the stars through a telescope made of cardboard and wish.",
+        "answer": true,
+        "id": "THEVOWELVILLAGE__1__true-false__1",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "1",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  },
+  {
+    "storyId": "THEVOWELVILLAGE",
+    "chapterId": "2",
+    "generatedAt": "2026-06-28T12:45:29.075Z",
+    "model": "mock",
+    "exercises": [
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Eli lived in the tunnel under the old bridge and collected echoes the way other people collect stamps.",
+        "blankWord": "collected",
+        "options": [
+          "thought",
+          "collected",
+          "crossed",
+          "learned"
+        ],
+        "answer": "collected",
+        "id": "THEVOWELVILLAGE__2__fill-blank__1",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Pick the word that fits the gap.",
+        "difficulty": "easy",
+        "type": "fill-blank",
+        "skill": "phonics",
+        "sourceSentence": "Eli thought it was the most important job in the world.",
+        "blankWord": "important",
+        "options": [
+          "evidence",
+          "important",
+          "somewhere",
+          "crossed"
+        ],
+        "answer": "important",
+        "id": "THEVOWELVILLAGE__2__fill-blank__2",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "2",
+        "machineChecked": true,
+        "reviewed": false
+      },
+      {
+        "prompt": "Which sentence is from this chapter?",
+        "difficulty": "medium",
+        "type": "comprehension",
+        "skill": "comprehension",
+        "options": [
+          "The robot learned to paint with its left hand.",
+          "Echoes, he had learned, never truly disappeared.",
+          "The dragon counted his gold coins twice before bed.",
+          "Maya planted three carrots in the school garden."
+        ],
+        "answerIndex": 1,
+        "id": "THEVOWELVILLAGE__2__comprehension__1",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "Put the events in the order they happened.",
+        "difficulty": "medium",
+        "type": "sequence",
+        "skill": "sequence",
+        "items": [
+          "Everyone in Vowel Village thought it was a peculiar hobby.",
+          "Eli lived in the tunnel under the old bridge and collected echoes the way other people collect stamps.",
+          "Echoes, he had learned, never truly disappeared."
+        ],
+        "correctOrder": [
+          1,
+          0,
+          2
+        ],
+        "id": "THEVOWELVILLAGE__2__sequence__1",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      },
+      {
+        "prompt": "True or false?",
+        "difficulty": "easy",
+        "type": "true-false",
+        "skill": "comprehension",
+        "statement": "Eli lived in the tunnel under the old bridge and collected echoes the way other people collect stamps.",
+        "answer": true,
+        "id": "THEVOWELVILLAGE__2__true-false__1",
+        "storyId": "THEVOWELVILLAGE",
+        "chapterId": "2",
+        "machineChecked": false,
+        "reviewed": false
+      }
+    ]
+  }
+]
