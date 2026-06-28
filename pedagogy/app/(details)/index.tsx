@@ -1130,24 +1130,34 @@ export default function ReadStoryScreen() {
           });
         }
       });
-
-      // ── EXERCÍCIOS: só no FIM DA HISTÓRIA (após o último capítulo acessível) ──
-      // "último acessível" = não existe próximo capítulo desbloqueado depois deste.
-      // Capítulos locked não têm conteúdo, então o quiz cobre o que a criança leu.
-      const hasNextUnlocked = chapters
-        .slice(activeChapter + 1)
-        .some((c) => !c.locked);
-      if (
-        !hasNextUnlocked &&
-        !exercisesShownRef.current.has(id) &&
-        hasStoryExercises(id)
-      ) {
-        exercisesShownRef.current.add(id);
-        setShowExercises(true);
-      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, activeChapter]);
+
+  // ── EXERCÍCIOS (premium): quiz no fim do ÚLTIMO capítulo de cada história ──
+  // Aparece só pra ASSINANTE (@subscription_status === "active") — que é quem
+  // consegue abrir o último capítulo (locked). Effect próprio: NÃO tem o guard
+  // `ch.locked` do effect de conclusão, então dispara mesmo no capítulo premium.
+  useEffect(() => {
+    const ch = chapters[activeChapter];
+    if (!ch) return;
+    const isLastChapter = activeChapter === chapters.length - 1;
+    const atLastPage = currentPage === ch.pages.length - 1;
+    if (!isLastChapter || !atLastPage) return;
+    if (exercisesShownRef.current.has(id) || !hasStoryExercises(id)) return;
+
+    let alive = true;
+    AsyncStorage.getItem("@subscription_status").then((s) => {
+      if (alive && s === "active") {
+        exercisesShownRef.current.add(id);
+        setShowExercises(true);
+      }
+    });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, activeChapter, id]);
 
   // ─── Para tudo ao trocar página ou capítulo ──────────────────────────────
   useEffect(() => {
