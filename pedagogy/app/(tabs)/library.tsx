@@ -3,6 +3,7 @@ import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   ScrollView,
@@ -35,6 +36,10 @@ import {
 } from "../../shared/motion";
 
 const { width } = Dimensions.get("window");
+
+// Chaves i18n das categorias de navegação (batem com library.categories.* nos locales).
+// O `type` da CATEGORIES é reaproveitado como chave — a rota usa o mesmo valor estável.
+type CatKey = "nature" | "fantasy" | "science" | "fruit";
 
 // Mantém a splash visível enquanto a fonte carrega (substitui o expo-app-loading, descontinuado)
 SplashScreen.preventAutoHideAsync();
@@ -936,7 +941,6 @@ const SectionHeader = ({
 
 // ─── CATEGORY ITEM ───────────────────────────────────────────────────────────
 const CategoryItem = ({
-  title,
   bg,
   emoji,
   Illustration,
@@ -944,6 +948,8 @@ const CategoryItem = ({
   delay = 0,
 }: (typeof CATEGORIES)[0] & { delay?: number }) => {
   const router = useRouter();
+  const { t } = useTranslation();
+  const label = t(`library.categories.${type as CatKey}`);
 
   return (
     <BouncyCard
@@ -952,7 +958,8 @@ const CategoryItem = ({
       onPress={() =>
         router.push({
           pathname: "/(category)",
-          params: { type: type.toLowerCase(), label: title },
+          // rota estável (EN); rótulo traduzido só pra exibição na tela de categoria
+          params: { type: type.toLowerCase(), label },
         })
       }
     >
@@ -965,7 +972,7 @@ const CategoryItem = ({
           <Text style={{ fontSize: 14 }}>{emoji}</Text>
         </View>
       </View>
-      <Text style={[fredoka(13, "#2D2D2D"), { marginTop: 6 }]}>{title}</Text>
+      <Text style={[fredoka(13, "#2D2D2D"), { marginTop: 6 }]}>{label}</Text>
     </BouncyCard>
   );
 };
@@ -1085,6 +1092,7 @@ const ReadingCard = ({
 // ─── MAIN SCREEN ─────────────────────────────────────────────────────────────
 export default function LibraryScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
@@ -1106,9 +1114,13 @@ export default function LibraryScreen() {
         {/* ── HEADER ── */}
         <Animated.View entering={enterUp(0)} style={s.header}>
           <Text style={fredoka(26, "#2D2D2D")}>
-            Hi, <Text style={fredoka(26, "#FF5B8D")}>Everyone</Text> 👋
+            {t("library.greetingHi")}{" "}
+            <Text style={fredoka(26, "#FF5B8D")}>
+              {t("library.greetingName")}
+            </Text>{" "}
+            👋
           </Text>
-          <Text style={s.headerSub}>Let's learn something new today!</Text>
+          <Text style={s.headerSub}>{t("library.greetingSub")}</Text>
         </Animated.View>
 
         {/* ── HERO BANNER ── */}
@@ -1116,10 +1128,11 @@ export default function LibraryScreen() {
           {/* Balãozinho pulsando para chamar atenção */}
           <Breathe style={s.bubble} scaleTo={1.08} duration={1600}>
             <Text style={[fredoka(12, "#3E2723"), { textAlign: "center" }]}>
-              {"Hi\nFriend!"}
+              {t("library.bannerBubble")}
             </Text>
           </Breathe>
           <View style={s.bannerBody}>
+            {/* Nomes fictícios do livro em destaque = conteúdo, não traduzir */}
             <Text style={fredoka(22, "#fff")}>Noyse Roise</Text>
             <Text style={s.bannerSub}>Burt Cross</Text>
             <TouchableOpacity
@@ -1127,7 +1140,7 @@ export default function LibraryScreen() {
               activeOpacity={0.8}
               onPress={() => router.push("/(stories)")}
             >
-              <Text style={fredoka(14, "#fff")}>Explore now</Text>
+              <Text style={fredoka(14, "#fff")}>{t("library.bannerCta")}</Text>
             </TouchableOpacity>
           </View>
           <View style={s.bannerImg}>
@@ -1139,7 +1152,11 @@ export default function LibraryScreen() {
         </BouncyCard>
 
         {/* ── CATEGORIES ── */}
-        <SectionHeader title="Category" emoji="✨" delay={180} />
+        <SectionHeader
+          title={t("library.secCategory")}
+          emoji="✨"
+          delay={180}
+        />
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -1151,7 +1168,11 @@ export default function LibraryScreen() {
         </ScrollView>
 
         {/* ── POPULAR NOW ── */}
-        <SectionHeader title="Popular now" emoji="🔥" delay={240} />
+        <SectionHeader
+          title={t("library.secPopular")}
+          emoji="🔥"
+          delay={240}
+        />
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -1163,7 +1184,11 @@ export default function LibraryScreen() {
         </ScrollView>
 
         {/* ── CONTINUE READING ── */}
-        <SectionHeader title="Continue reading" emoji="📚" delay={300} />
+        <SectionHeader
+          title={t("library.secContinue")}
+          emoji="📚"
+          delay={300}
+        />
 
         <View style={s.readList}>
           {READING_LIST.map((item, i) => (

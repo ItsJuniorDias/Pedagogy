@@ -13,6 +13,7 @@ import { useFonts } from "expo-font";
 import * as Haptics from "expo-haptics";
 import * as Speech from "expo-speech";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   AccessibilityInfo,
   Pressable,
@@ -99,6 +100,7 @@ export default function ExerciseSession({
   speak = true,
   limit = 6,
 }: ExerciseSessionProps) {
+  const { t } = useTranslation();
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   const [reduceMotion, setReduceMotion] = useState(false);
 
@@ -337,12 +339,12 @@ export default function ExerciseSession({
     const stars = ratio >= 0.9 ? 3 : ratio >= 0.6 ? 2 : ratio > 0 ? 1 : 0;
     const headline =
       stars === 3
-        ? "Amazing!"
+        ? t("exercises.resultAmazing")
         : stars === 2
-          ? "Great job!"
+          ? t("exercises.resultGreat")
           : stars === 1
-            ? "Nice try!"
-            : "Let’s practice!";
+            ? t("exercises.resultNice")
+            : t("exercises.resultPractice");
     return (
       <View style={[s.fill, { backgroundColor: theme.bg }]}>
         <View style={s.center}>
@@ -360,7 +362,7 @@ export default function ExerciseSession({
             {headline}
           </Text>
           <Text style={[fredoka(18, theme.accent), { marginTop: 4 }]}>
-            {correctCount} / {total} correct
+            {t("exercises.score", { correct: correctCount, total })}
           </Text>
 
           <Pressable
@@ -370,10 +372,10 @@ export default function ExerciseSession({
               { backgroundColor: theme.accent, marginTop: 28 },
             ]}
           >
-            <Text style={fredoka(16, "#fff")}>Play again</Text>
+            <Text style={fredoka(16, "#fff")}>{t("exercises.playAgain")}</Text>
           </Pressable>
           <Pressable onPress={onClose} style={[s.ghostBtn, { marginTop: 12 }]}>
-            <Text style={fredoka(16, theme.accent)}>Done</Text>
+            <Text style={fredoka(16, theme.accent)}>{t("exercises.done")}</Text>
           </Pressable>
         </View>
       </View>
@@ -419,7 +421,7 @@ export default function ExerciseSession({
           {/* enunciado + botão de ouvir */}
           <View style={s.promptRow}>
             <Text style={[fredoka(13, theme.accent), s.skillTag]}>
-              {labelForSkill(current)}
+              {t(`exercises.${labelForSkill(current)}`)}
             </Text>
             <Pressable onPress={replayPrompt} hitSlop={10} style={s.speakBtn}>
               <Text style={{ fontSize: 18 }}>🔊</Text>
@@ -478,13 +480,13 @@ export default function ExerciseSession({
           {current.type === "true-false" && (
             <View style={s.tfRow}>
               {[
-                { label: "True", value: true, idx: 0 },
-                { label: "False", value: false, idx: 1 },
+                { label: t("exercises.tfTrue"), value: true, idx: 0 },
+                { label: t("exercises.tfFalse"), value: false, idx: 1 },
               ].map(({ label, value, idx }) => {
                 const correctIdx = current.answer ? 0 : 1;
                 const state = optionState(answered, picked, idx, correctIdx);
                 return (
-                  <View key={label} style={{ flex: 1 }}>
+                  <View key={idx} style={{ flex: 1 }}>
                     <OptionButton
                       label={label}
                       state={state}
@@ -523,7 +525,9 @@ export default function ExerciseSession({
               { marginBottom: 10 },
             ]}
           >
-            {wasCorrect ? "Correct! 🎉" : "Not quite — see the answer above"}
+            {wasCorrect
+              ? t("exercises.correct")
+              : t("exercises.incorrect")}
           </Text>
         )}
 
@@ -541,7 +545,7 @@ export default function ExerciseSession({
               },
             ]}
           >
-            <Text style={fredoka(17, "#fff")}>Check</Text>
+            <Text style={fredoka(17, "#fff")}>{t("exercises.check")}</Text>
           </Pressable>
         ) : answered ? (
           <Pressable
@@ -549,7 +553,9 @@ export default function ExerciseSession({
             style={[s.primaryBtn, { backgroundColor: theme.accent }]}
           >
             <Text style={fredoka(17, "#fff")}>
-              {index + 1 < exercises.length ? "Next" : "See your stars"}
+              {index + 1 < exercises.length
+                ? t("exercises.next")
+                : t("exercises.seeStars")}
             </Text>
           </Pressable>
         ) : null}
@@ -690,18 +696,25 @@ function SequenceBody({
   );
 }
 
-function labelForSkill(ex: Exercise): string {
+// Retorna o sufixo da chave i18n (exercises.<sufixo>) — traduzido no call site.
+type SkillKey =
+  | "skillSounds"
+  | "skillWords"
+  | "skillOrder"
+  | "skillThink"
+  | "skillReading";
+function labelForSkill(ex: Exercise): SkillKey {
   switch (ex.skill) {
     case "phonics":
-      return "SOUNDS";
+      return "skillSounds";
     case "vocabulary":
-      return "WORDS";
+      return "skillWords";
     case "sequence":
-      return "ORDER";
+      return "skillOrder";
     case "inference":
-      return "THINK";
+      return "skillThink";
     default:
-      return "READING";
+      return "skillReading";
   }
 }
 

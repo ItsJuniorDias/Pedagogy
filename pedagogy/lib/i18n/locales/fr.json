@@ -231,5 +231,84 @@
     "tagsAll": "Tout",
     "chapters": "{{count}} chapitres",
     "ages": "{{range}} ans"
+  },
+  "category": {
+    "defaultLabel": "Explorer",
+    "activities": "{{count}} activités pour toi"
+  },
+  "library": {
+    "greetingHi": "Salut,",
+    "greetingName": "tout le monde",
+    "greetingSub": "Apprenons quelque chose de nouveau aujourd'hui !",
+    "bannerBubble": "Salut\nl'ami !",
+    "bannerCta": "Explorer",
+    "secCategory": "Catégories",
+    "secPopular": "Populaires en ce moment",
+    "secContinue": "Continuer la lecture",
+    "categories": {
+      "nature": "Nature",
+      "fantasy": "Fantaisie",
+      "science": "Science",
+      "fruit": "Fruits"
+    }
+  },
+  "details": {
+    "back": "Retour",
+    "next": "Suivant",
+    "nextChapter": "Chap. suiv.",
+    "riddle": "Énigme",
+    "revealAnswer": "Voir la réponse",
+    "matchReport": "Rapport du match",
+    "word": "Mot",
+    "ingredients": "Ingrédients",
+    "instructions": "Préparation",
+    "classification": "Classification",
+    "size": "Taille",
+    "habitat": "Habitat",
+    "diet": "Régime",
+    "notes": "Notes"
+  },
+  "exercises": {
+    "resultAmazing": "Génial !",
+    "resultGreat": "Bravo !",
+    "resultNice": "Bien essayé !",
+    "resultPractice": "Entraînons-nous !",
+    "score": "{{correct}} / {{total}} correctes",
+    "playAgain": "Rejouer",
+    "done": "Terminé",
+    "tfTrue": "Vrai",
+    "tfFalse": "Faux",
+    "correct": "Correct ! 🎉",
+    "incorrect": "Presque — regarde la réponse ci-dessus",
+    "check": "Vérifier",
+    "next": "Suivant",
+    "seeStars": "Voir tes étoiles",
+    "skillSounds": "SONS",
+    "skillWords": "MOTS",
+    "skillOrder": "ORDRE",
+    "skillThink": "RÉFLÉCHIS",
+    "skillReading": "LECTURE"
+  },
+  "gameHud": {
+    "musicOn": "MUSIQUE ON",
+    "musicOff": "MUSIQUE OFF",
+    "gameOver": "PARTIE TERMINÉE",
+    "score": "SCORE",
+    "best": "MEILLEUR",
+    "newRecord": "NOUVEAU RECORD !",
+    "tryAgain": "RÉESSAYER",
+    "menu": "MENU",
+    "play": "JOUER",
+    "bestScore": "Meilleur : {{score}}",
+    "pressStart": "appuie pour commencer",
+    "pressPlayAgain": "appuie pour rejouer",
+    "points": "{{score}} pts"
+  },
+  "gravity": {
+    "tapToFlip": "APPUIE POUR INVERSER LA GRAVITÉ",
+    "rowFlip": "Appuie pour inverser la gravité",
+    "rowDodge": "Esquive les obstacles",
+    "rowChain": "Enchaîne les obstacles pour un combo",
+    "rowSpeed": "La vitesse augmente avec ton score"
   }
 }

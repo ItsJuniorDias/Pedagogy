@@ -4,6 +4,7 @@ import {
 } from "@expo-google-fonts/fredoka-one";
 import { Audio } from "expo-av";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Animated,
   Dimensions,
@@ -321,6 +322,7 @@ function useGameAudio() {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function GameScreen() {
+  const { t } = useTranslation();
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
   const [phase, setPhase] = useState<"idle" | "playing" | "dead">("idle");
@@ -756,7 +758,7 @@ export default function GameScreen() {
                       fredoka(13, "rgba(255,255,255,0.4)"),
                     ]}
                   >
-                    press to start
+                    {t("gameHud.pressStart")}
                   </Text>
                   <TouchableWithoutFeedback
                     onPress={(e) => {
@@ -773,7 +775,9 @@ export default function GameScreen() {
                           ),
                         ]}
                       >
-                        {musicOn ? "🔊  MUSIC ON" : "🔇  MUSIC OFF"}
+                        {musicOn
+                          ? `🔊  ${t("gameHud.musicOn")}`
+                          : `🔇  ${t("gameHud.musicOff")}`}
                       </Text>
                     </View>
                   </TouchableWithoutFeedback>
@@ -783,10 +787,10 @@ export default function GameScreen() {
                   <Text
                     style={[styles.overlayTitle, fredoka(32, PALETTE.obstacle)]}
                   >
-                    GAME OVER
+                    {t("gameHud.gameOver")}
                   </Text>
                   <Text style={[styles.overlayScore, fredoka(20, "#FFF")]}>
-                    {score} pts
+                    {t("gameHud.points", { score })}
                   </Text>
                   <Text
                     style={[
@@ -794,7 +798,7 @@ export default function GameScreen() {
                       fredoka(13, "rgba(255,255,255,0.4)"),
                     ]}
                   >
-                    press to play again
+                    {t("gameHud.pressPlayAgain")}
                   </Text>
                 </>
               )}

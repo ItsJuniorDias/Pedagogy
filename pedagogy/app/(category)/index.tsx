@@ -3,6 +3,7 @@ import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ScrollView,
   StatusBar,
@@ -205,11 +206,15 @@ const CATEGORY_COLORS: Record<string, { bg: string; accent: string }> = {
 };
 
 export default function CategoryScreen() {
-  const { type = "all", label = "Explore" } = useLocalSearchParams<{
+  const { type = "all", label } = useLocalSearchParams<{
     type: string;
     label: string;
   }>();
   const router = useRouter();
+  const { t } = useTranslation();
+
+  // Título vindo da navegação (já traduzido pela tela de origem). Sem param → padrão.
+  const heading = label ?? t("category.defaultLabel");
 
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
   if (!fontsLoaded) return <AppLoading />;
@@ -233,7 +238,7 @@ export default function CategoryScreen() {
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
         </TouchableOpacity>
-        <Text style={fredoka(22, "#2D2D2D")}>{label}</Text>
+        <Text style={fredoka(22, "#2D2D2D")}>{heading}</Text>
         <View style={{ width: 40 }} />
       </Animated.View>
 
@@ -247,12 +252,14 @@ export default function CategoryScreen() {
           style={[s.hero, { backgroundColor: colors.bg }]}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <Text style={fredoka(28, colors.accent)}>{label}</Text>
+            <Text style={fredoka(28, colors.accent)}>{heading}</Text>
             <Twinkle duration={1100}>
               <Text style={{ fontSize: 24 }}>✨</Text>
             </Twinkle>
           </View>
-          <Text style={s.heroSub}>{items.length} activities for you</Text>
+          <Text style={s.heroSub}>
+            {t("category.activities", { count: items.length })}
+          </Text>
         </Animated.View>
 
         {/* Grid de cards — "cartas dadas na mesa": cada uma cai girando

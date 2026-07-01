@@ -231,5 +231,84 @@
     "tagsAll": "सभी",
     "chapters": "{{count}} अध्याय",
     "ages": "उम्र {{range}}"
+  },
+  "category": {
+    "defaultLabel": "एक्सप्लोर करें",
+    "activities": "तुम्हारे लिए {{count}} गतिविधियाँ"
+  },
+  "library": {
+    "greetingHi": "नमस्ते,",
+    "greetingName": "सब लोग",
+    "greetingSub": "आज कुछ नया सीखते हैं!",
+    "bannerBubble": "नमस्ते\nदोस्त!",
+    "bannerCta": "अभी एक्सप्लोर करें",
+    "secCategory": "श्रेणियाँ",
+    "secPopular": "अभी लोकप्रिय",
+    "secContinue": "पढ़ना जारी रखें",
+    "categories": {
+      "nature": "प्रकृति",
+      "fantasy": "फंतासी",
+      "science": "विज्ञान",
+      "fruit": "फल"
+    }
+  },
+  "details": {
+    "back": "पीछे",
+    "next": "अगला",
+    "nextChapter": "अगला अध्याय",
+    "riddle": "पहेली",
+    "revealAnswer": "उत्तर देखें",
+    "matchReport": "मैच रिपोर्ट",
+    "word": "शब्द",
+    "ingredients": "सामग्री",
+    "instructions": "विधि",
+    "classification": "वर्गीकरण",
+    "size": "आकार",
+    "habitat": "आवास",
+    "diet": "आहार",
+    "notes": "टिप्पणियाँ"
+  },
+  "exercises": {
+    "resultAmazing": "कमाल!",
+    "resultGreat": "बहुत बढ़िया!",
+    "resultNice": "अच्छी कोशिश!",
+    "resultPractice": "चलो अभ्यास करें!",
+    "score": "{{correct}} / {{total}} सही",
+    "playAgain": "फिर से खेलें",
+    "done": "हो गया",
+    "tfTrue": "सही",
+    "tfFalse": "गलत",
+    "correct": "सही! 🎉",
+    "incorrect": "लगभग — ऊपर उत्तर देखें",
+    "check": "जांचें",
+    "next": "अगला",
+    "seeStars": "अपने सितारे देखें",
+    "skillSounds": "ध्वनि",
+    "skillWords": "शब्द",
+    "skillOrder": "क्रम",
+    "skillThink": "सोचो",
+    "skillReading": "पढ़ना"
+  },
+  "gameHud": {
+    "musicOn": "संगीत चालू",
+    "musicOff": "संगीत बंद",
+    "gameOver": "गेम ओवर",
+    "score": "स्कोर",
+    "best": "सर्वश्रेष्ठ",
+    "newRecord": "नया रिकॉर्ड!",
+    "tryAgain": "फिर कोशिश करें",
+    "menu": "मेनू",
+    "play": "खेलें",
+    "bestScore": "सर्वश्रेष्ठ: {{score}}",
+    "pressStart": "शुरू करने के लिए दबाएँ",
+    "pressPlayAgain": "फिर खेलने के लिए दबाएँ",
+    "points": "{{score}} अंक"
+  },
+  "gravity": {
+    "tapToFlip": "गुरुत्व पलटने के लिए टैप करें",
+    "rowFlip": "गुरुत्व पलटने के लिए टैप करें",
+    "rowDodge": "बाधाओं से बचें",
+    "rowChain": "कॉम्बो बनाने के लिए बाधाएँ जोड़ें",
+    "rowSpeed": "स्कोर के साथ गति बढ़ती है"
   }
 }

@@ -3,6 +3,7 @@ import AppLoading from "expo-app-loading";
 import { Audio } from "expo-av";
 import { useFonts } from "expo-font";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Animated,
   Dimensions,
@@ -355,6 +356,7 @@ function useSounds() {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function GravityFlip() {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>("MENU");
   const [, forceUpdate] = useState(0);
   const [musicEnabled, setMusicEnabled] = useState(true);
@@ -701,7 +703,7 @@ export default function GravityFlip() {
 
         <View style={s.menuContent}>
           <Text style={[s.menuSub, fredoka(11, C.textDim)]}>
-            TAP TO FLIP GRAVITY
+            {t("gravity.tapToFlip")}
           </Text>
           <Text style={[s.menuTitle, fredoka(62, C.accent)]}>GRAVITY</Text>
           <Text
@@ -711,15 +713,17 @@ export default function GravityFlip() {
           </Text>
 
           <View style={s.menuCard}>
-            <MenuRow icon="▲▼" text="Tap to flip gravity" />
-            <MenuRow icon="⬛" text="Dodge procedural obstacles" />
-            <MenuRow icon="✦" text="Chain obstacles to build combo" />
-            <MenuRow icon="⚡" text="Speed increases with your score" />
+            <MenuRow icon="▲▼" text={t("gravity.rowFlip")} />
+            <MenuRow icon="⬛" text={t("gravity.rowDodge")} />
+            <MenuRow icon="✦" text={t("gravity.rowChain")} />
+            <MenuRow icon="⚡" text={t("gravity.rowSpeed")} />
           </View>
 
           <TouchableWithoutFeedback onPress={startGame}>
             <View style={s.btnPlay}>
-              <Text style={[s.btnPlayText, fredoka(16, "#000")]}>PLAY</Text>
+              <Text style={[s.btnPlayText, fredoka(16, "#000")]}>
+                {t("gameHud.play")}
+              </Text>
             </View>
           </TouchableWithoutFeedback>
 
@@ -732,14 +736,16 @@ export default function GravityFlip() {
                   fredoka(13, musicEnabled ? C.accent : C.textDim),
                 ]}
               >
-                {musicEnabled ? "🔊 MUSIC ON" : "🔇 MUSIC OFF"}
+                {musicEnabled
+                  ? `🔊 ${t("gameHud.musicOn")}`
+                  : `🔇 ${t("gameHud.musicOff")}`}
               </Text>
             </View>
           </TouchableWithoutFeedback>
 
           {best.current > 0 && (
             <Text style={[s.menuBest, fredoka(13, C.textDim)]}>
-              Best: {best.current}
+              {t("gameHud.bestScore", { score: best.current })}
             </Text>
           )}
         </View>
@@ -790,25 +796,26 @@ export default function GravityFlip() {
         ))}
 
         <View style={s.menuContent}>
-          <Text style={[s.menuTitle, fredoka(52, C.danger)]}>GAME</Text>
-          <Text
-            style={[s.menuTitle, fredoka(52, C.danger), { marginTop: -14 }]}
-          >
-            OVER
+          <Text style={[s.menuTitle, fredoka(52, C.danger)]}>
+            {t("gameHud.gameOver")}
           </Text>
 
           <View style={s.scoreBox}>
-            <Text style={[s.scoreLabel, fredoka(10, C.textDim)]}>SCORE</Text>
+            <Text style={[s.scoreLabel, fredoka(10, C.textDim)]}>
+              {t("gameHud.score")}
+            </Text>
             <Text style={[s.scoreValue, fredoka(52, C.text)]}>
               {score.current}
             </Text>
             {isRecord && (
               <Text style={[s.recordBadge, fredoka(12, C.score)]}>
-                NEW RECORD!
+                {t("gameHud.newRecord")}
               </Text>
             )}
             <View style={s.scoreDivider} />
-            <Text style={[s.scoreLabel, fredoka(10, C.textDim)]}>BEST</Text>
+            <Text style={[s.scoreLabel, fredoka(10, C.textDim)]}>
+              {t("gameHud.best")}
+            </Text>
             <Text style={[s.scoreValue, fredoka(28, C.score)]}>
               {best.current}
             </Text>
@@ -817,7 +824,7 @@ export default function GravityFlip() {
           <TouchableWithoutFeedback onPress={startGame}>
             <View style={s.btnPlay}>
               <Text style={[s.btnPlayText, fredoka(16, "#000")]}>
-                TRY AGAIN
+                {t("gameHud.tryAgain")}
               </Text>
             </View>
           </TouchableWithoutFeedback>
@@ -829,7 +836,9 @@ export default function GravityFlip() {
             }}
           >
             <View style={s.btnSecondary}>
-              <Text style={[s.btnSecText, fredoka(14, C.textDim)]}>MENU</Text>
+              <Text style={[s.btnSecText, fredoka(14, C.textDim)]}>
+                {t("gameHud.menu")}
+              </Text>
             </View>
           </TouchableWithoutFeedback>
         </View>

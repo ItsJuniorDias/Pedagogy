@@ -231,5 +231,84 @@
     "tagsAll": "All",
     "chapters": "{{count}} chapters",
     "ages": "Ages {{range}}"
+  },
+  "category": {
+    "defaultLabel": "Explore",
+    "activities": "{{count}} activities for you"
+  },
+  "library": {
+    "greetingHi": "Hi,",
+    "greetingName": "Everyone",
+    "greetingSub": "Let's learn something new today!",
+    "bannerBubble": "Hi\nFriend!",
+    "bannerCta": "Explore now",
+    "secCategory": "Category",
+    "secPopular": "Popular now",
+    "secContinue": "Continue reading",
+    "categories": {
+      "nature": "Nature",
+      "fantasy": "Fantasy",
+      "science": "Science",
+      "fruit": "Fruit"
+    }
+  },
+  "details": {
+    "back": "Back",
+    "next": "Next",
+    "nextChapter": "Next Cap.",
+    "riddle": "Riddle",
+    "revealAnswer": "Reveal answer",
+    "matchReport": "Match Report",
+    "word": "Word",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "classification": "Classification",
+    "size": "Size",
+    "habitat": "Habitat",
+    "diet": "Diet",
+    "notes": "Notes"
+  },
+  "exercises": {
+    "resultAmazing": "Amazing!",
+    "resultGreat": "Great job!",
+    "resultNice": "Nice try!",
+    "resultPractice": "Let's practice!",
+    "score": "{{correct}} / {{total}} correct",
+    "playAgain": "Play again",
+    "done": "Done",
+    "tfTrue": "True",
+    "tfFalse": "False",
+    "correct": "Correct! 🎉",
+    "incorrect": "Not quite — see the answer above",
+    "check": "Check",
+    "next": "Next",
+    "seeStars": "See your stars",
+    "skillSounds": "SOUNDS",
+    "skillWords": "WORDS",
+    "skillOrder": "ORDER",
+    "skillThink": "THINK",
+    "skillReading": "READING"
+  },
+  "gameHud": {
+    "musicOn": "MUSIC ON",
+    "musicOff": "MUSIC OFF",
+    "gameOver": "GAME OVER",
+    "score": "SCORE",
+    "best": "BEST",
+    "newRecord": "NEW RECORD!",
+    "tryAgain": "TRY AGAIN",
+    "menu": "MENU",
+    "play": "PLAY",
+    "bestScore": "Best: {{score}}",
+    "pressStart": "press to start",
+    "pressPlayAgain": "press to play again",
+    "points": "{{score}} pts"
+  },
+  "gravity": {
+    "tapToFlip": "TAP TO FLIP GRAVITY",
+    "rowFlip": "Tap to flip gravity",
+    "rowDodge": "Dodge procedural obstacles",
+    "rowChain": "Chain obstacles to build combo",
+    "rowSpeed": "Speed increases with your score"
   }
 }

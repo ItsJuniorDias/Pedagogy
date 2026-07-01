@@ -231,5 +231,84 @@
     "tagsAll": "الكل",
     "chapters": "{{count}} فصول",
     "ages": "الأعمار {{range}}"
+  },
+  "category": {
+    "defaultLabel": "استكشف",
+    "activities": "{{count}} أنشطة لك"
+  },
+  "library": {
+    "greetingHi": "مرحبًا",
+    "greetingName": "بالجميع",
+    "greetingSub": "لنتعلّم شيئًا جديدًا اليوم!",
+    "bannerBubble": "مرحبًا\nيا صديق!",
+    "bannerCta": "استكشف الآن",
+    "secCategory": "الفئات",
+    "secPopular": "الأكثر رواجًا",
+    "secContinue": "متابعة القراءة",
+    "categories": {
+      "nature": "الطبيعة",
+      "fantasy": "خيال",
+      "science": "العلوم",
+      "fruit": "الفواكه"
+    }
+  },
+  "details": {
+    "back": "رجوع",
+    "next": "التالي",
+    "nextChapter": "الفصل التالي",
+    "riddle": "لغز",
+    "revealAnswer": "أظهر الإجابة",
+    "matchReport": "تقرير المباراة",
+    "word": "كلمة",
+    "ingredients": "المكوّنات",
+    "instructions": "طريقة التحضير",
+    "classification": "التصنيف",
+    "size": "الحجم",
+    "habitat": "الموطن",
+    "diet": "النظام الغذائي",
+    "notes": "ملاحظات"
+  },
+  "exercises": {
+    "resultAmazing": "رائع!",
+    "resultGreat": "أحسنت!",
+    "resultNice": "محاولة جيدة!",
+    "resultPractice": "لنتدرّب!",
+    "score": "{{correct}} / {{total}} صحيحة",
+    "playAgain": "العب مرة أخرى",
+    "done": "تم",
+    "tfTrue": "صحيح",
+    "tfFalse": "خطأ",
+    "correct": "صحيح! 🎉",
+    "incorrect": "تقريبًا — انظر الإجابة بالأعلى",
+    "check": "تحقّق",
+    "next": "التالي",
+    "seeStars": "شاهد نجومك",
+    "skillSounds": "أصوات",
+    "skillWords": "كلمات",
+    "skillOrder": "ترتيب",
+    "skillThink": "فكّر",
+    "skillReading": "قراءة"
+  },
+  "gameHud": {
+    "musicOn": "الموسيقى تعمل",
+    "musicOff": "الموسيقى متوقفة",
+    "gameOver": "انتهت اللعبة",
+    "score": "النقاط",
+    "best": "الأفضل",
+    "newRecord": "رقم قياسي جديد!",
+    "tryAgain": "حاول مجدّدًا",
+    "menu": "القائمة",
+    "play": "العب",
+    "bestScore": "الأفضل: {{score}}",
+    "pressStart": "اضغط للبدء",
+    "pressPlayAgain": "اضغط للعب مجدّدًا",
+    "points": "{{score}} نقطة"
+  },
+  "gravity": {
+    "tapToFlip": "اضغط لقلب الجاذبية",
+    "rowFlip": "اضغط لقلب الجاذبية",
+    "rowDodge": "تفادَ العوائق",
+    "rowChain": "تسلسل العوائق لبناء كومبو",
+    "rowSpeed": "تزداد السرعة مع نتيجتك"
   }
 }

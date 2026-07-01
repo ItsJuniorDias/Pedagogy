@@ -87,21 +87,42 @@ Namespaces novos: `home`, `games` (compart.), `paths` (compart.), `learningAll`,
 `stories`, `common.seeAll`. Injetados por
 `scripts/i18n-add-home-games-learning-stories.mjs` (idempotente, mesmo padrão).
 
+**Cluster de leitura + jogos arcade (3ª leva — feito)** — via
+`scripts/i18n-add-library-details-games.mjs` (idempotente):
+
+- **Library** (`app/(tabs)/library.tsx`) — saudação, bolha/CTA do banner, os 3
+  headers de seção e os rótulos de categoria (Nature/Fantasy/Science/Fruit; o
+  `type` é a chave estável de rota). Cards de POPULAR_BOOKS/READING_LIST e os
+  nomes "Noyse Roise"/"Burt Cross" ficaram em inglês (conteúdo — vários viram
+  `storyId` via `title.toLowerCase()`).
+- **Category** (`app/(category)/index.tsx`) — `defaultLabel` + "{{count}} activities".
+  Os títulos dos cards são conteúdo atrelado a `storyId` (mantidos). O `label`
+  vindo da Home/Library já chega traduzido.
+- **Details** (`app/(details)/index.tsx`) — casca do leitor: botões Back/Next/"Próx.
+  cap." e os labels estruturais dos widgets de conteúdo (Riddle, Reveal answer,
+  Match Report, Word, Ingredients, Instructions, Classification, Size, Habitat,
+  Diet, Notes). O texto das histórias/enigmas vem dos mocks e fica em inglês.
+- **ExerciseSession** (`features/exercises/.../ExerciseSession.tsx`) — resultado
+  (Amazing/Great/Nice/Practice + placar), True/False, feedback, Check/Next/"See
+  your stars" e os selos de skill (SOUNDS/WORDS/ORDER/THINK/READING). Enunciados
+  dos exercícios ficam em inglês (conteúdo gerado).
+- **Jogos arcade** — HUD do `app/(gravity)` e `app/(pixel-run)` via namespace
+  **compartilhado `gameHud`** (Game Over, Score, Best, Try again, Play, música,
+  "press to start", pontuação) + `gravity.*` (subtítulo e instruções). Os nomes
+  dos jogos (GRAVITY FLIP, PIXEL RUN) ficaram como marca, sem tradução.
+
 ### Ainda em inglês (mesmo padrão pra migrar — ver seção 3)
 
-Cada uma segue **exatamente o mesmo padrão** — reaproveite qualquer um dos dois
-scripts de injeção como modelo:
+Reaproveite qualquer um dos três scripts de injeção como modelo. Faltam só os dois
+jogos "grandes" (não são HUD simples — têm telas/modais próprios):
 
-- **Library** (`app/(tabs)/library.tsx`) — a outra aba principal. ⚠️ Muito SVG inline e
-  cards cujo `title`/`subtitle` são **conteúdo** amarrado a `storyId` (alguns placeholders:
-  "Tairbrty", "Sthm sthap"…). Traduzir só a casca: saudação, banner, headers
-  (Popular now / Continue reading) e categorias.
-- **Category** (`app/(category)/index.tsx`) — grande estrutura de cards; `title` alimenta
-  `storyId`. Traduzir header, filtro, `chapters`/`Ages` e o `label` padrão. (O `label`
-  vindo da Home **já chega traduzido**.)
-- **Details** (`app/(details)/index.tsx`) — casca do leitor (~1.935 linhas), não o conteúdo.
-- **UI dos jogos** — `features/farm-game`, `features/ping-pong` e os HUDs de
-  `app/(gravity)` e `app/(pixel-run)` (overlays de "Game Over", pontuação, etc.).
+- **Ping-Pong** (`features/ping-pong/`) — multiplayer com Lobby, ModeSelect,
+  GameOverModal, RankingModal, StartOverlay, ControlBar (~10 componentes + 3 telas
+  em `PongHub`/`PingPongGame`/`MultiplayerPongGame`). Merece um namespace `pingPong`.
+- **Farm-Game** (`features/farm-game/`) — sim de economia com ShopModal, MarketModal,
+  DayModal, XPBar, GoldCounter (`FarmGameScreen.tsx`, ~562 linhas). Merece um
+  namespace `farmGame`. O HUD puro (ouro/XP) é rápido; os modais de loja/mercado é
+  que têm volume.
 
 > **Conteúdo das histórias (`mocks/`): NÃO traduzir automaticamente.** São 50 histórias
 > de *phonics* em inglês ("A is for Ava" → som "Ahhh"). A pedagogia é intrínseca ao

@@ -231,5 +231,84 @@
     "tagsAll": "全部",
     "chapters": "{{count}} 章",
     "ages": "{{range}} 岁"
+  },
+  "category": {
+    "defaultLabel": "探索",
+    "activities": "为你准备的 {{count}} 个活动"
+  },
+  "library": {
+    "greetingHi": "你好，",
+    "greetingName": "大家",
+    "greetingSub": "今天来学点新东西吧！",
+    "bannerBubble": "嗨\n朋友！",
+    "bannerCta": "立即探索",
+    "secCategory": "分类",
+    "secPopular": "热门推荐",
+    "secContinue": "继续阅读",
+    "categories": {
+      "nature": "自然",
+      "fantasy": "奇幻",
+      "science": "科学",
+      "fruit": "水果"
+    }
+  },
+  "details": {
+    "back": "返回",
+    "next": "下一页",
+    "nextChapter": "下一章",
+    "riddle": "谜语",
+    "revealAnswer": "揭晓答案",
+    "matchReport": "比赛报告",
+    "word": "单词",
+    "ingredients": "食材",
+    "instructions": "步骤",
+    "classification": "分类",
+    "size": "大小",
+    "habitat": "栖息地",
+    "diet": "食性",
+    "notes": "笔记"
+  },
+  "exercises": {
+    "resultAmazing": "太棒了！",
+    "resultGreat": "做得好！",
+    "resultNice": "不错的尝试！",
+    "resultPractice": "一起练习吧！",
+    "score": "{{correct}} / {{total}} 正确",
+    "playAgain": "再玩一次",
+    "done": "完成",
+    "tfTrue": "正确",
+    "tfFalse": "错误",
+    "correct": "答对了！🎉",
+    "incorrect": "差一点——看看上面的答案",
+    "check": "检查",
+    "next": "下一个",
+    "seeStars": "查看你的星星",
+    "skillSounds": "发音",
+    "skillWords": "单词",
+    "skillOrder": "排序",
+    "skillThink": "思考",
+    "skillReading": "阅读"
+  },
+  "gameHud": {
+    "musicOn": "音乐 开",
+    "musicOff": "音乐 关",
+    "gameOver": "游戏结束",
+    "score": "得分",
+    "best": "最佳",
+    "newRecord": "新纪录！",
+    "tryAgain": "再试一次",
+    "menu": "菜单",
+    "play": "开始",
+    "bestScore": "最佳：{{score}}",
+    "pressStart": "点击开始",
+    "pressPlayAgain": "点击再玩一次",
+    "points": "{{score}} 分"
+  },
+  "gravity": {
+    "tapToFlip": "点击翻转重力",
+    "rowFlip": "点击翻转重力",
+    "rowDodge": "躲避障碍物",
+    "rowChain": "连续躲避累积连击",
+    "rowSpeed": "分数越高速度越快"
   }
 }

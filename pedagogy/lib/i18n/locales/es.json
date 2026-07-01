@@ -231,5 +231,84 @@
     "tagsAll": "Todo",
     "chapters": "{{count}} capítulos",
     "ages": "{{range}} años"
+  },
+  "category": {
+    "defaultLabel": "Explorar",
+    "activities": "{{count}} actividades para ti"
+  },
+  "library": {
+    "greetingHi": "Hola,",
+    "greetingName": "Todos",
+    "greetingSub": "¡Aprendamos algo nuevo hoy!",
+    "bannerBubble": "¡Hola\nAmigo!",
+    "bannerCta": "Explorar ahora",
+    "secCategory": "Categorías",
+    "secPopular": "Populares ahora",
+    "secContinue": "Sigue leyendo",
+    "categories": {
+      "nature": "Naturaleza",
+      "fantasy": "Fantasía",
+      "science": "Ciencia",
+      "fruit": "Frutas"
+    }
+  },
+  "details": {
+    "back": "Atrás",
+    "next": "Siguiente",
+    "nextChapter": "Sig. cap.",
+    "riddle": "Adivinanza",
+    "revealAnswer": "Ver respuesta",
+    "matchReport": "Informe del partido",
+    "word": "Palabra",
+    "ingredients": "Ingredientes",
+    "instructions": "Instrucciones",
+    "classification": "Clasificación",
+    "size": "Tamaño",
+    "habitat": "Hábitat",
+    "diet": "Dieta",
+    "notes": "Notas"
+  },
+  "exercises": {
+    "resultAmazing": "¡Increíble!",
+    "resultGreat": "¡Muy bien!",
+    "resultNice": "¡Buen intento!",
+    "resultPractice": "¡A practicar!",
+    "score": "{{correct}} / {{total}} correctas",
+    "playAgain": "Jugar otra vez",
+    "done": "Listo",
+    "tfTrue": "Verdadero",
+    "tfFalse": "Falso",
+    "correct": "¡Correcto! 🎉",
+    "incorrect": "Casi — mira la respuesta arriba",
+    "check": "Comprobar",
+    "next": "Siguiente",
+    "seeStars": "Ver tus estrellas",
+    "skillSounds": "SONIDOS",
+    "skillWords": "PALABRAS",
+    "skillOrder": "ORDEN",
+    "skillThink": "PIENSA",
+    "skillReading": "LECTURA"
+  },
+  "gameHud": {
+    "musicOn": "MÚSICA ON",
+    "musicOff": "MÚSICA OFF",
+    "gameOver": "FIN DEL JUEGO",
+    "score": "PUNTOS",
+    "best": "MEJOR",
+    "newRecord": "¡NUEVO RÉCORD!",
+    "tryAgain": "REINTENTAR",
+    "menu": "MENÚ",
+    "play": "JUGAR",
+    "bestScore": "Mejor: {{score}}",
+    "pressStart": "toca para empezar",
+    "pressPlayAgain": "toca para jugar otra vez",
+    "points": "{{score}} pts"
+  },
+  "gravity": {
+    "tapToFlip": "TOCA PARA INVERTIR LA GRAVEDAD",
+    "rowFlip": "Toca para invertir la gravedad",
+    "rowDodge": "Esquiva los obstáculos",
+    "rowChain": "Encadena obstáculos para hacer combo",
+    "rowSpeed": "La velocidad aumenta con tu puntaje"
   }
 }

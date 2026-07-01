@@ -11,6 +11,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -648,9 +649,12 @@ const RiddleWidget = ({
   accent: string;
 }) => {
   const [revealed, setRevealed] = useState(false);
+  const { t } = useTranslation();
   return (
     <View style={[sw.riddleCard, { borderColor: accent }]}>
-      <Text style={[sw.riddleLabel, { color: accent }]}>🧩 Riddle</Text>
+      <Text style={[sw.riddleLabel, { color: accent }]}>
+        🧩 {t("details.riddle")}
+      </Text>
       <Text style={sw.riddleQuestion}>{riddle.question}</Text>
       {revealed ? (
         <View style={[sw.riddleAnswerBox, { backgroundColor: accent }]}>
@@ -663,7 +667,7 @@ const RiddleWidget = ({
           style={[sw.riddleRevealBtn, { borderColor: accent }]}
         >
           <Text style={[sw.riddleRevealText, { color: accent }]}>
-            Reveal answer
+            {t("details.revealAnswer")}
           </Text>
         </TouchableOpacity>
       )}
@@ -713,23 +717,28 @@ const MatchReportWidget = ({
 }: {
   report: NonNullable<ChapterMock["matchReport"]>;
   accent: string;
-}) => (
-  <View style={[sw.matchCard, { borderColor: accent }]}>
-    <Text style={[sw.matchLabel, { color: accent }]}>📋 Match Report</Text>
-    <View style={sw.matchScoreRow}>
-      <Text style={sw.matchTeam} numberOfLines={1}>
-        {report.teams[0]}
+}) => {
+  const { t } = useTranslation();
+  return (
+    <View style={[sw.matchCard, { borderColor: accent }]}>
+      <Text style={[sw.matchLabel, { color: accent }]}>
+        📋 {t("details.matchReport")}
       </Text>
-      <View style={[sw.matchScoreBadge, { backgroundColor: accent }]}>
-        <Text style={sw.matchScoreText}>{report.score}</Text>
+      <View style={sw.matchScoreRow}>
+        <Text style={sw.matchTeam} numberOfLines={1}>
+          {report.teams[0]}
+        </Text>
+        <View style={[sw.matchScoreBadge, { backgroundColor: accent }]}>
+          <Text style={sw.matchScoreText}>{report.score}</Text>
+        </View>
+        <Text style={sw.matchTeam} numberOfLines={1}>
+          {report.teams[1]}
+        </Text>
       </View>
-      <Text style={sw.matchTeam} numberOfLines={1}>
-        {report.teams[1]}
-      </Text>
+      <Text style={sw.matchVerdict}>{report.verdict}</Text>
     </View>
-    <Text style={sw.matchVerdict}>{report.verdict}</Text>
-  </View>
-);
+  );
+};
 
 const MissionWidget = ({
   mission,
@@ -794,22 +803,26 @@ const LetterFriendWidget = ({
 }: {
   friend: NonNullable<ChapterMock["letterFriend"]>;
   accent: string;
-}) => (
-  <View style={[sw.letterCard, { borderColor: accent }]}>
-    <View style={[sw.letterBig, { backgroundColor: accent }]}>
-      <Text style={sw.letterBigText}>{friend.letter}</Text>
+}) => {
+  const { t } = useTranslation();
+  return (
+    <View style={[sw.letterCard, { borderColor: accent }]}>
+      <View style={[sw.letterBig, { backgroundColor: accent }]}>
+        <Text style={sw.letterBigText}>{friend.letter}</Text>
+      </View>
+      <View style={sw.letterInfo}>
+        <Text style={[sw.letterCharacter, { color: accent }]}>
+          {friend.character}
+        </Text>
+        <Text style={sw.letterWord}>
+          {t("details.word")}:{" "}
+          <Text style={{ fontWeight: "700" }}>{friend.word}</Text>
+        </Text>
+        <Text style={sw.letterSound}>🔊 {friend.sound}</Text>
+      </View>
     </View>
-    <View style={sw.letterInfo}>
-      <Text style={[sw.letterCharacter, { color: accent }]}>
-        {friend.character}
-      </Text>
-      <Text style={sw.letterWord}>
-        Word: <Text style={{ fontWeight: "700" }}>{friend.word}</Text>
-      </Text>
-      <Text style={sw.letterSound}>🔊 {friend.sound}</Text>
-    </View>
-  </View>
-);
+  );
+};
 
 const DiaryDateWidget = ({
   date,
@@ -860,19 +873,22 @@ const RecipeWidget = ({
 }: {
   recipe: NonNullable<ChapterMock["recipe"]>;
   accent: string;
-}) => (
-  <View style={[sw.recipeCard, { borderColor: accent + "55" }]}>
-    <Text style={[sw.recipeName, { color: accent }]}>🍽 {recipe.name}</Text>
-    <Text style={sw.recipeSection}>Ingredients:</Text>
-    {recipe.ingredients.map((ing, i) => (
-      <Text key={i} style={sw.recipeIngredient}>
-        • {ing}
-      </Text>
-    ))}
-    <Text style={sw.recipeSection}>Instructions:</Text>
-    <Text style={sw.recipeInstructions}>{recipe.instructions}</Text>
-  </View>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <View style={[sw.recipeCard, { borderColor: accent + "55" }]}>
+      <Text style={[sw.recipeName, { color: accent }]}>🍽 {recipe.name}</Text>
+      <Text style={sw.recipeSection}>{t("details.ingredients")}:</Text>
+      {recipe.ingredients.map((ing, i) => (
+        <Text key={i} style={sw.recipeIngredient}>
+          • {ing}
+        </Text>
+      ))}
+      <Text style={sw.recipeSection}>{t("details.instructions")}:</Text>
+      <Text style={sw.recipeInstructions}>{recipe.instructions}</Text>
+    </View>
+  );
+};
 
 const CreatureCardWidget = ({
   creature,
@@ -880,31 +896,36 @@ const CreatureCardWidget = ({
 }: {
   creature: NonNullable<ChapterMock["creatureCard"]>;
   accent: string;
-}) => (
-  <View style={[sw.creatureCard, { borderColor: accent }]}>
-    <Text style={[sw.creatureName, { color: accent }]}>{creature.name}</Text>
-    <View style={sw.creatureRows}>
-      <Text style={sw.creatureLabel}>Classification:</Text>
-      <Text style={sw.creatureValue}>{creature.classification}</Text>
+}) => {
+  const { t } = useTranslation();
+  return (
+    <View style={[sw.creatureCard, { borderColor: accent }]}>
+      <Text style={[sw.creatureName, { color: accent }]}>{creature.name}</Text>
+      <View style={sw.creatureRows}>
+        <Text style={sw.creatureLabel}>{t("details.classification")}:</Text>
+        <Text style={sw.creatureValue}>{creature.classification}</Text>
+      </View>
+      <View style={sw.creatureRows}>
+        <Text style={sw.creatureLabel}>{t("details.size")}:</Text>
+        <Text style={sw.creatureValue}>{creature.size}</Text>
+      </View>
+      <View style={sw.creatureRows}>
+        <Text style={sw.creatureLabel}>{t("details.habitat")}:</Text>
+        <Text style={sw.creatureValue}>{creature.habitat}</Text>
+      </View>
+      <View style={sw.creatureRows}>
+        <Text style={sw.creatureLabel}>{t("details.diet")}:</Text>
+        <Text style={sw.creatureValue}>{creature.diet}</Text>
+      </View>
+      <View style={[sw.creatureNotes, { backgroundColor: accent + "11" }]}>
+        <Text style={[sw.creatureNotesLabel, { color: accent }]}>
+          📋 {t("details.notes")}
+        </Text>
+        <Text style={sw.creatureNotesText}>{creature.notes}</Text>
+      </View>
     </View>
-    <View style={sw.creatureRows}>
-      <Text style={sw.creatureLabel}>Size:</Text>
-      <Text style={sw.creatureValue}>{creature.size}</Text>
-    </View>
-    <View style={sw.creatureRows}>
-      <Text style={sw.creatureLabel}>Habitat:</Text>
-      <Text style={sw.creatureValue}>{creature.habitat}</Text>
-    </View>
-    <View style={sw.creatureRows}>
-      <Text style={sw.creatureLabel}>Diet:</Text>
-      <Text style={sw.creatureValue}>{creature.diet}</Text>
-    </View>
-    <View style={[sw.creatureNotes, { backgroundColor: accent + "11" }]}>
-      <Text style={[sw.creatureNotesLabel, { color: accent }]}>📋 Notes</Text>
-      <Text style={sw.creatureNotesText}>{creature.notes}</Text>
-    </View>
-  </View>
-);
+  );
+};
 
 // ─── WIDGET RENDERER ──────────────────────────────────────────────────────────
 
@@ -1029,6 +1050,7 @@ const PageView = ({
 export default function ReadStoryScreen() {
   const router = useRouter();
   const { storyId } = useLocalSearchParams<{ storyId: string }>();
+  const { t } = useTranslation();
 
   const id = resolveStoryId(storyId ?? "TAIRBRTY");
   const chapters: ChapterMock[] =
@@ -1435,7 +1457,7 @@ export default function ReadStoryScreen() {
           activeOpacity={0.8}
         >
           <Text style={fredoka(15, currentPage === 0 ? "#CCC" : theme.accent)}>
-            ← Back
+            ← {t("details.back")}
           </Text>
         </TouchableOpacity>
 
@@ -1453,9 +1475,9 @@ export default function ReadStoryScreen() {
           <Text style={fredoka(15, "#fff")}>
             {isLastPage && nextChapter
               ? nextChapter.locked
-                ? "🔒 Next Cap."
-                : `${nextChapter.emoji} Next Cap.`
-              : "Next →"}
+                ? `🔒 ${t("details.nextChapter")}`
+                : `${nextChapter.emoji} ${t("details.nextChapter")}`
+              : `${t("details.next")} →`}
           </Text>
         </TouchableOpacity>
       </View>
