@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   DarkTheme,
@@ -19,6 +19,10 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { initAnalytics } from "@/lib/analytics";
 
+// Inicializa o i18next (efeito colateral do import) e expõe o bootstrap do
+// idioma salvo/detectado.
+import { bootstrapLanguage } from "@/lib/i18n";
+
 // Impede que a splash screen suma antes das fontes carregarem
 SplashScreen.preventAutoHideAsync();
 
@@ -30,6 +34,19 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
+  // Aplica o idioma salvo pelo usuário (ou o do aparelho) antes de mostrar a UI,
+  // para não "piscar" o idioma padrão na primeira renderização.
+  const [i18nReady, setI18nReady] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    bootstrapLanguage().finally(() => {
+      if (mounted) setI18nReady(true);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   // Inicialização de analytics (no-op — sem SDK de terceiros, para cumprir a
   // categoria Kids da App Store). Mantido por compatibilidade; não pede ATT
   // nem envia dados para fora do app.
@@ -39,13 +56,13 @@ export default function RootLayout() {
 
   // Esconde a splash screen somente depois que as fontes carregaram
   useEffect(() => {
-    if (fontsLoaded) {
+    if (fontsLoaded && i18nReady) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, i18nReady]);
 
-  // Enquanto as fontes não carregam, não renderiza nada (splash ainda visível)
-  if (!fontsLoaded) return null;
+  // Enquanto fontes/idioma não carregam, não renderiza nada (splash ainda visível)
+  if (!fontsLoaded || !i18nReady) return null;
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

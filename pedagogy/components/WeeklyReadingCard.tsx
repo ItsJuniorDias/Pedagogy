@@ -19,9 +19,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { useTranslation } from "react-i18next";
+
 import { enterUp } from "../shared/motion";
+import { formatReadTimeI18n } from "../lib/i18n";
 import {
-  formatReadTime,
   getWeeklyReading,
   ReadingProgress,
   todayReadingSeconds,
@@ -54,10 +56,12 @@ const fredoka = (size: number, color?: string) => ({
 // ─── BARRA INDIVIDUAL ────────────────────────────────────────────────────────
 function Bar({
   day,
+  label,
   targetHeight,
   index,
 }: {
   day: WeekDay;
+  label: string; // rótulo do dia já traduzido (M/T/W... localizado)
   targetHeight: number;
   index: number;
 }) {
@@ -101,7 +105,7 @@ function Bar({
           day.isToday && fredoka(13, C.labelToday),
         ]}
       >
-        {day.label}
+        {label}
       </Text>
     </View>
   );
@@ -115,6 +119,12 @@ export default function WeeklyReadingCard({
   progress: ReadingProgress | null;
   delay?: number;
 }) {
+  const { t } = useTranslation();
+
+  // Ordem das barras: segunda → domingo. Cada índice mapeia pra uma chave i18n
+  // (profile.week.days.*) que traz o rótulo de UMA letra já localizado.
+  const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+
   const week: WeekDay[] = progress ? getWeeklyReading(progress) : [];
   const todaySec = progress ? todayReadingSeconds(progress) : 0;
 
@@ -131,8 +141,8 @@ export default function WeeklyReadingCard({
     <Animated.View entering={enterUp(delay)} style={s.card}>
       {/* Cabeçalho */}
       <View style={s.header}>
-        <Text style={fredoka(20, C.title)}>This week</Text>
-        <Text style={s.headerRight}>{formatReadTime(todaySec)}</Text>
+        <Text style={fredoka(20, C.title)}>{t("profile.week.title")}</Text>
+        <Text style={s.headerRight}>{formatReadTimeI18n(todaySec, t)}</Text>
       </View>
 
       {/* Barras */}
@@ -151,6 +161,7 @@ export default function WeeklyReadingCard({
               <Bar
                 key={day.dateStr}
                 day={day}
+                label={t(`profile.week.days.${DAY_KEYS[i]}`)}
                 index={i}
                 targetHeight={heightFor(day)}
               />

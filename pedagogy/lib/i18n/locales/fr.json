@@ -1,0 +1,57 @@
+{
+  "common": {
+    "new": "Nouveau",
+    "viewAll": "Voir tout",
+    "cancel": "Annuler",
+    "done": "Terminé"
+  },
+  "language": {
+    "title": "Langue",
+    "subtitle": "Choisissez la langue de l'app",
+    "sheetTitle": "Choisis ta langue 🌍"
+  },
+  "tabs": {
+    "home": "Accueil",
+    "library": "Bibliothèque"
+  },
+  "profile": {
+    "title": "Mon Profil",
+    "displayName": "Petit Explorateur",
+    "level": "Niveau {{level}} ⭐",
+    "languageRow": "Langue",
+    "stats": {
+      "stars": "Étoiles",
+      "stories": "Histoires",
+      "badges": "Badges",
+      "dayStreak": "Jours d'affilée"
+    },
+    "badgesTitle": "Mes Badges 🏆",
+    "badges": {
+      "explorer": "Explorateur",
+      "artist": "Artiste",
+      "scientist": "Scientifique",
+      "bookworm": "Rat de Bibliothèque",
+      "dinofan": "Fan de Dinos",
+      "nightowl": "Oiseau de Nuit"
+    },
+    "week": {
+      "title": "Cette semaine",
+      "days": {
+        "mon": "L",
+        "tue": "M",
+        "wed": "M",
+        "thu": "J",
+        "fri": "V",
+        "sat": "S",
+        "sun": "D"
+      },
+      "read": {
+        "zero": "0 min de lecture",
+        "seconds": "{{count}} s de lecture",
+        "minutes": "{{count}} min de lecture",
+        "hours": "{{count}} h de lecture",
+        "hoursMinutes": "{{count}} h {{minutes}} min de lecture"
+      }
+    }
+  }
+}

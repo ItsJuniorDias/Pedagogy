@@ -1,0 +1,57 @@
+{
+  "common": {
+    "new": "New",
+    "viewAll": "View all",
+    "cancel": "Cancel",
+    "done": "Done"
+  },
+  "language": {
+    "title": "Language",
+    "subtitle": "Choose the app's language",
+    "sheetTitle": "Choose your language 🌍"
+  },
+  "tabs": {
+    "home": "Home",
+    "library": "Library"
+  },
+  "profile": {
+    "title": "My Profile",
+    "displayName": "Little Explorer",
+    "level": "Level {{level}} ⭐",
+    "languageRow": "Language",
+    "stats": {
+      "stars": "Stars",
+      "stories": "Stories",
+      "badges": "Badges",
+      "dayStreak": "Day streak"
+    },
+    "badgesTitle": "My Badges 🏆",
+    "badges": {
+      "explorer": "Explorer",
+      "artist": "Artist",
+      "scientist": "Scientist",
+      "bookworm": "Bookworm",
+      "dinofan": "Dino Fan",
+      "nightowl": "Night Owl"
+    },
+    "week": {
+      "title": "This week",
+      "days": {
+        "mon": "M",
+        "tue": "T",
+        "wed": "W",
+        "thu": "T",
+        "fri": "F",
+        "sat": "S",
+        "sun": "S"
+      },
+      "read": {
+        "zero": "0 min read",
+        "seconds": "{{count}} sec read",
+        "minutes": "{{count}} min read",
+        "hours": "{{count}}h read",
+        "hoursMinutes": "{{count}}h {{minutes}}m read"
+      }
+    }
+  }
+}

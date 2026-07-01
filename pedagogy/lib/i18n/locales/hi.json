@@ -1,0 +1,57 @@
+{
+  "common": {
+    "new": "नया",
+    "viewAll": "सभी देखें",
+    "cancel": "रद्द करें",
+    "done": "हो गया"
+  },
+  "language": {
+    "title": "भाषा",
+    "subtitle": "ऐप की भाषा चुनें",
+    "sheetTitle": "अपनी भाषा चुनें 🌍"
+  },
+  "tabs": {
+    "home": "होम",
+    "library": "पुस्तकालय"
+  },
+  "profile": {
+    "title": "मेरी प्रोफ़ाइल",
+    "displayName": "नन्हा खोजी",
+    "level": "स्तर {{level}} ⭐",
+    "languageRow": "भाषा",
+    "stats": {
+      "stars": "सितारे",
+      "stories": "कहानियाँ",
+      "badges": "बैज",
+      "dayStreak": "लगातार दिन"
+    },
+    "badgesTitle": "मेरे बैज 🏆",
+    "badges": {
+      "explorer": "खोजी",
+      "artist": "कलाकार",
+      "scientist": "वैज्ञानिक",
+      "bookworm": "किताबी कीड़ा",
+      "dinofan": "डायनो फैन",
+      "nightowl": "रात का उल्लू"
+    },
+    "week": {
+      "title": "इस सप्ताह",
+      "days": {
+        "mon": "सो",
+        "tue": "मं",
+        "wed": "बु",
+        "thu": "गु",
+        "fri": "शु",
+        "sat": "श",
+        "sun": "र"
+      },
+      "read": {
+        "zero": "0 मिनट पढ़ा",
+        "seconds": "{{count}} सेकंड पढ़ा",
+        "minutes": "{{count}} मिनट पढ़ा",
+        "hours": "{{count}} घंटे पढ़ा",
+        "hoursMinutes": "{{count}} घं {{minutes}} मि पढ़ा"
+      }
+    }
+  }
+}

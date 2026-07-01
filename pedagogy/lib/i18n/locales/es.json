@@ -1,0 +1,57 @@
+{
+  "common": {
+    "new": "Nuevo",
+    "viewAll": "Ver todo",
+    "cancel": "Cancelar",
+    "done": "Listo"
+  },
+  "language": {
+    "title": "Idioma",
+    "subtitle": "Elige el idioma de la app",
+    "sheetTitle": "Elige tu idioma 🌍"
+  },
+  "tabs": {
+    "home": "Inicio",
+    "library": "Biblioteca"
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "displayName": "Pequeño Explorador",
+    "level": "Nivel {{level}} ⭐",
+    "languageRow": "Idioma",
+    "stats": {
+      "stars": "Estrellas",
+      "stories": "Cuentos",
+      "badges": "Insignias",
+      "dayStreak": "Días seguidos"
+    },
+    "badgesTitle": "Mis Insignias 🏆",
+    "badges": {
+      "explorer": "Explorador",
+      "artist": "Artista",
+      "scientist": "Científico",
+      "bookworm": "Ratón de Biblioteca",
+      "dinofan": "Fan de Dinos",
+      "nightowl": "Búho Nocturno"
+    },
+    "week": {
+      "title": "Esta semana",
+      "days": {
+        "mon": "L",
+        "tue": "M",
+        "wed": "X",
+        "thu": "J",
+        "fri": "V",
+        "sat": "S",
+        "sun": "D"
+      },
+      "read": {
+        "zero": "0 min de lectura",
+        "seconds": "{{count}} s de lectura",
+        "minutes": "{{count}} min de lectura",
+        "hours": "{{count}} h de lectura",
+        "hoursMinutes": "{{count}} h {{minutes}} min de lectura"
+      }
+    }
+  }
+}

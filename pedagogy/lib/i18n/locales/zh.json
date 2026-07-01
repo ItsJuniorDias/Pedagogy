@@ -1,0 +1,57 @@
+{
+  "common": {
+    "new": "新",
+    "viewAll": "查看全部",
+    "cancel": "取消",
+    "done": "完成"
+  },
+  "language": {
+    "title": "语言",
+    "subtitle": "选择应用语言",
+    "sheetTitle": "选择你的语言 🌍"
+  },
+  "tabs": {
+    "home": "首页",
+    "library": "书库"
+  },
+  "profile": {
+    "title": "我的资料",
+    "displayName": "小探险家",
+    "level": "等级 {{level}} ⭐",
+    "languageRow": "语言",
+    "stats": {
+      "stars": "星星",
+      "stories": "故事",
+      "badges": "徽章",
+      "dayStreak": "连续天数"
+    },
+    "badgesTitle": "我的徽章 🏆",
+    "badges": {
+      "explorer": "探险家",
+      "artist": "艺术家",
+      "scientist": "科学家",
+      "bookworm": "书虫",
+      "dinofan": "恐龙迷",
+      "nightowl": "夜猫子"
+    },
+    "week": {
+      "title": "本周",
+      "days": {
+        "mon": "一",
+        "tue": "二",
+        "wed": "三",
+        "thu": "四",
+        "fri": "五",
+        "sat": "六",
+        "sun": "日"
+      },
+      "read": {
+        "zero": "阅读 0 分钟",
+        "seconds": "阅读 {{count}} 秒",
+        "minutes": "阅读 {{count}} 分钟",
+        "hours": "阅读 {{count}} 小时",
+        "hoursMinutes": "阅读 {{count}} 小时 {{minutes}} 分钟"
+      }
+    }
+  }
+}

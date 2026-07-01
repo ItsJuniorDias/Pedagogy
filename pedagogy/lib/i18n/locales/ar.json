@@ -1,0 +1,57 @@
+{
+  "common": {
+    "new": "جديد",
+    "viewAll": "عرض الكل",
+    "cancel": "إلغاء",
+    "done": "تم"
+  },
+  "language": {
+    "title": "اللغة",
+    "subtitle": "اختر لغة التطبيق",
+    "sheetTitle": "اختر لغتك 🌍"
+  },
+  "tabs": {
+    "home": "الرئيسية",
+    "library": "المكتبة"
+  },
+  "profile": {
+    "title": "ملفي الشخصي",
+    "displayName": "المستكشف الصغير",
+    "level": "المستوى {{level}} ⭐",
+    "languageRow": "اللغة",
+    "stats": {
+      "stars": "النجوم",
+      "stories": "القصص",
+      "badges": "الأوسمة",
+      "dayStreak": "أيام متتالية"
+    },
+    "badgesTitle": "أوسمتي 🏆",
+    "badges": {
+      "explorer": "مستكشف",
+      "artist": "فنان",
+      "scientist": "عالِم",
+      "bookworm": "دودة الكتب",
+      "dinofan": "عاشق الديناصورات",
+      "nightowl": "بومة الليل"
+    },
+    "week": {
+      "title": "هذا الأسبوع",
+      "days": {
+        "mon": "ن",
+        "tue": "ث",
+        "wed": "ر",
+        "thu": "خ",
+        "fri": "ج",
+        "sat": "س",
+        "sun": "ح"
+      },
+      "read": {
+        "zero": "قراءة 0 دقيقة",
+        "seconds": "قراءة {{count}} ثانية",
+        "minutes": "قراءة {{count}} دقيقة",
+        "hours": "قراءة {{count}} ساعة",
+        "hoursMinutes": "قراءة {{count}} س {{minutes}} د"
+      }
+    }
+  }
+}

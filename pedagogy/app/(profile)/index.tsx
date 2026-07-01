@@ -6,6 +6,8 @@ import React, { useCallback, useState } from "react";
 import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import Animated, { FlipInEasyX } from "react-native-reanimated";
 
+import { useTranslation } from "react-i18next";
+
 import {
   Breathe,
   enterPop,
@@ -24,6 +26,21 @@ import {
 
 import WeeklyReadingCard from "../../components/WeeklyReadingCard";
 
+// ─── i18n: seletor de idioma ─────────────────────────────────────────────────
+import LanguageSheet from "../../components/LanguageSheet";
+import { getCurrentLanguage, getLanguageOrDefault } from "../../lib/i18n";
+
+// Ids de badge conhecidos (espelham computeBadges em lib/readingProgress e as
+// chaves em profile.badges.* dos locales). O cast para este tipo permite montar
+// a chave i18n dinamicamente mantendo a validação de chaves do TypeScript.
+type BadgeId =
+  | "explorer"
+  | "artist"
+  | "scientist"
+  | "bookworm"
+  | "dinofan"
+  | "nightowl";
+
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
   fontSize: size,
@@ -32,6 +49,16 @@ const fredoka = (size: number, color?: string) => ({
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
+
+  // Controla a abertura do bottom-sheet de idiomas.
+  const [langSheetOpen, setLangSheetOpen] = useState(false);
+
+  // Idioma atual. getCurrentLanguage() normaliza códigos com região (ex.:
+  // "en-US" → "en") e getLanguageOrDefault garante um objeto sempre válido.
+  // useTranslation() já re-renderiza esta tela quando o idioma muda, então a
+  // bandeira/nome abaixo se atualizam sozinhos.
+  const currentLang = getLanguageOrDefault(getCurrentLanguage());
 
   const [progress, setProgress] = useState<ReadingProgress | null>(null);
 
@@ -57,14 +84,22 @@ export default function ProfileScreen() {
   const level = computeLevel(progress?.stars ?? 0);
 
   const stats = [
-    { emoji: "⭐", value: String(progress?.stars ?? 0), label: "Stars" },
+    {
+      emoji: "⭐",
+      value: String(progress?.stars ?? 0),
+      label: t("profile.stats.stars"),
+    },
     {
       emoji: "📖",
       value: String(progress?.storiesCompleted.length ?? 0),
-      label: "Stories",
+      label: t("profile.stats.stories"),
     },
-    { emoji: "🏆", value: String(earnedBadges), label: "Badges" },
-    { emoji: "🔥", value: String(progress?.streak ?? 0), label: "Day streak" },
+    { emoji: "🏆", value: String(earnedBadges), label: t("profile.stats.badges") },
+    {
+      emoji: "🔥",
+      value: String(progress?.streak ?? 0),
+      label: t("profile.stats.dayStreak"),
+    },
   ];
 
   return (
@@ -78,7 +113,7 @@ export default function ProfileScreen() {
         <PressBounce style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
         </PressBounce>
-        <Text style={fredoka(20, "#2D2D2D")}>My Profile</Text>
+        <Text style={fredoka(20, "#2D2D2D")}>{t("profile.title")}</Text>
         <View style={{ width: 40 }} />
       </Animated.View>
 
@@ -94,15 +129,35 @@ export default function ProfileScreen() {
               <Text style={{ fontSize: 48 }}>🐻</Text>
             </Swing>
           </Animated.View>
-          <Text style={fredoka(22, "#2D2D2D")}>Little Explorer</Text>
-          <Text style={s.avatarSub}>Level {level} ⭐</Text>
+          <Text style={fredoka(22, "#2D2D2D")}>{t("profile.displayName")}</Text>
+          <Text style={s.avatarSub}>{t("profile.level", { level })}</Text>
+        </Animated.View>
+
+        {/* Seletor de idioma — abre o bottom-sheet de tradução do app.
+            Mostra a bandeira + nome nativo do idioma ativo. */}
+        <Animated.View entering={enterUp(120)}>
+          <PressBounce
+            style={s.langRow}
+            onPress={() => setLangSheetOpen(true)}
+          >
+            <View style={s.langFlag}>
+              <Text style={{ fontSize: 22 }}>{currentLang.flag}</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={fredoka(15, "#2D2D2D")}>
+                {t("profile.languageRow")}
+              </Text>
+              <Text style={s.langValue}>{currentLang.nativeName}</Text>
+            </View>
+            <Text style={s.langChevron}>›</Text>
+          </PressBounce>
         </Animated.View>
 
         {/* Stats row — cards viram como medalhas (flip 3D em cascata) */}
         <View style={s.statsRow}>
           {stats.map((stat, i) => (
             <Animated.View
-              key={stat.label}
+              key={stat.emoji}
               entering={FlipInEasyX.delay(300 + i * 120)
                 .springify()
                 .damping(14)}
@@ -122,7 +177,7 @@ export default function ProfileScreen() {
         <Text
           style={[fredoka(18, "#2D2D2D"), { marginBottom: 12, marginTop: 4 }]}
         >
-          My Badges 🏆
+          {t("profile.badgesTitle")}
         </Text>
         {/* Badges conquistados dão pop e "respiram" de orgulho;
             os bloqueados ficam quietinhos */}
@@ -143,13 +198,20 @@ export default function ProfileScreen() {
                 </Text>
               )}
               <Text style={[s.badgeLabel, !badge.earned && s.badgeLabelLocked]}>
-                {badge.label}
+                {t(`profile.badges.${badge.id as BadgeId}`)}
               </Text>
               {!badge.earned && <Text style={s.lockIcon}>🔒</Text>}
             </Animated.View>
           ))}
         </View>
       </ScrollView>
+
+      {/* Bottom-sheet de seleção de idioma (fica fora do ScrollView pra
+          cobrir a tela inteira quando aberto). */}
+      <LanguageSheet
+        visible={langSheetOpen}
+        onClose={() => setLangSheetOpen(false)}
+      />
     </View>
   );
 }
@@ -221,6 +283,41 @@ const s = StyleSheet.create({
     color: "#888",
     fontWeight: "600",
     marginTop: 4,
+  },
+
+  // ─── Linha do seletor de idioma ───
+  langRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 14,
+    marginBottom: 20,
+    gap: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  langFlag: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: "#FFF3F8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  langValue: {
+    fontSize: 12,
+    color: "#9A9AA6",
+    fontWeight: "700",
+    marginTop: 2,
+  },
+  langChevron: {
+    fontSize: 26,
+    color: "#C9C9D2",
+    fontWeight: "800",
+    marginRight: 4,
   },
 
   statsRow: {

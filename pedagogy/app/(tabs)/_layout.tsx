@@ -1,6 +1,9 @@
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
+import { useTranslation } from "react-i18next";
 
 export default function Layout() {
+  const { t } = useTranslation();
+
   return (
     <NativeTabs
       backgroundColor="#F4FBFF"
@@ -15,7 +18,7 @@ export default function Layout() {
           }}
         />
 
-        <Label>Home</Label>
+        <Label>{t("tabs.home")}</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="library">
@@ -27,7 +30,7 @@ export default function Layout() {
           }}
         />
 
-        <Label>Library</Label>
+        <Label>{t("tabs.library")}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
