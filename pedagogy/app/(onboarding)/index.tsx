@@ -65,6 +65,7 @@ const SLIDES: Slide[] = [
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
   fontSize: size,
+  textAlign: "center",
   ...(color ? { color } : {}),
 });
 
