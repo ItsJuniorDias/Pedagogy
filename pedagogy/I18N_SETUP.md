@@ -51,8 +51,14 @@ npx expo run:ios      # ou run:android
 
 ---
 
-## 2. O que já está traduzido
+## 2. O que já está traduzido (nos 7 idiomas)
 
+**Funil de conversão completo + perfil** — o caminho de maior valor para expansão internacional:
+
+- **Onboarding** inteiro (3 slides: badges, títulos, descrições, botões)
+- **Paywall** inteiro — hero, features, planos (rótulos e períodos), teste grátis,
+  selos de confiança, CTA, restaurar compras, letra miúda com links de Termos/Privacidade,
+  e **todos os alerts** (compra ativa, erro, restauração, etc.)
 - **Tabs** (Home / Library)
 - **Tela de Perfil inteira** — título, nome, nível, stats, badges
 - **Linha de seleção de idioma** no perfil (abre o bottom-sheet)
@@ -61,6 +67,26 @@ npx expo run:ios      # ou run:android
 O idioma escolhido é **salvo no AsyncStorage** e reaplicado no boot. Na primeira
 abertura, o app tenta detectar o idioma do aparelho (`pt-BR` → português, etc.);
 se não bater com nenhum suportado, usa o padrão.
+
+### Ainda em inglês (mesmo padrão pra migrar — ver seção 3)
+
+Estas telas de UI ainda não foram externalizadas. Cada uma segue **exatamente o
+mesmo padrão** das já feitas — dá pra reaproveitar o script de injeção de traduções
+(`scripts/i18n-add-onboarding-paywall.mjs`) como modelo:
+
+- Home (`app/(tabs)/index.tsx`) — ⚠️ atenção: arrays como `CHIPS`, `INTERESTS`,
+  `LEARNING_PATHS` misturam **texto de exibição com chave de roteamento/categoria**.
+  Traduza só o texto exibido; mantenha a chave de rota estável (padrão slug, igual
+  fiz no onboarding).
+- Library (`app/(tabs)/library.tsx`)
+- Category / Details / Stories (fluxo de leitura — a "casca", não o conteúdo)
+- Jogos (`features/farm-game`, `features/ping-pong`) — UI dos minijogos
+
+> **Conteúdo das histórias (`mocks/`): NÃO traduzir automaticamente.** São 50 histórias
+> de *phonics* em inglês ("A is for Ava" → som "Ahhh"). A pedagogia é intrínseca ao
+> inglês e não sobrevive à tradução — precisa ser **reescrita** por idioma (trabalho
+> editorial). A arquitetura de i18n não bloqueia isso: quando houver conteúdo localizado,
+> basta servir o mock por idioma (ex.: `historyMock.pt.ts`) escolhido via `getCurrentLanguage()`.
 
 ### Idioma padrão
 
@@ -169,11 +195,14 @@ components/LanguageSheet.tsx   # bottom-sheet de seleção de idioma
 
 **Modificados:**
 ```
-app/_layout.tsx               # bootstrap do idioma antes de mostrar a UI
-app/(tabs)/_layout.tsx        # labels das tabs traduzidos
-app/(profile)/index.tsx       # perfil traduzido + linha de idioma
-components/WeeklyReadingCard.tsx  # card "Esta semana" traduzido
-package.json                  # +i18next +react-i18next +expo-localization
+app/_layout.tsx                   # bootstrap do idioma antes de mostrar a UI
+app/(tabs)/_layout.tsx            # labels das tabs traduzidos
+app/(onboarding)/index.tsx        # onboarding traduzido (slides via slug)
+app/(paywall)/index.tsx           # paywall traduzido (planos, CTA, alerts, links)
+app/(profile)/index.tsx           # perfil traduzido + linha de idioma
+components/WeeklyReadingCard.tsx   # card "Esta semana" traduzido
+package.json                      # +i18next +react-i18next +expo-localization
+scripts/i18n-add-onboarding-paywall.mjs  # script que injetou as traduções (modelo p/ reuso)
 ```
 
 ---

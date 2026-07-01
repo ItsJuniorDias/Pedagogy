@@ -25,6 +25,8 @@ import Animated, {
 
 import { Breathe, enterPop, enterUp, PressBounce } from "../../shared/motion";
 
+import { useTranslation } from "react-i18next";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { trackOnboardingCompleted } from "../../lib/analytics";
 
@@ -32,42 +34,29 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // ─── Slide data ───────────────────────────────────────────────────────────────
 
+type SlideSlug = "welcome" | "library" | "learning";
+
 type Slide = {
   id: string;
-  badge: string;
-  title: string;
-  description: string;
+  slug: SlideSlug; // resolve os textos via i18n (onboarding.slides.<slug>.*)
   image: ReturnType<typeof require>;
-  buttonLabel: string;
 };
 
 const SLIDES: Slide[] = [
   {
     id: "1",
-    badge: "Welcome to Pedagogy",
-    title: "Stories that teach\nand delight",
-    description:
-      "Pedagogy is a children's story app with educational content, designed to develop kids aged 2–10 in a playful and engaging way.",
+    slug: "welcome",
     image: require("../../assets/images/background-onboarding.png"),
-    buttonLabel: "Next",
   },
   {
     id: "2",
-    badge: "Infinite library",
-    title: "Hundreds of stories\nto explore",
-    description:
-      "Fables, adventures, science and more. New content every month, with audio narration and colourful illustrations.",
+    slug: "library",
     image: require("../../assets/images/background-onboarding.png"),
-    buttonLabel: "Next",
   },
   {
     id: "3",
-    badge: "Real learning",
-    title: "Track your child's\nprogress",
-    description:
-      "Quizzes, achievements and reading reports for parents. Teaching has never been this fun and easy to follow.",
+    slug: "learning",
     image: require("../../assets/images/background-onboarding.png"),
-    buttonLabel: "Let's go 👍",
   },
 ];
 
@@ -179,6 +168,8 @@ function SlideItem({
     ],
   }));
 
+  const { t } = useTranslation();
+
   return (
     <View style={styles.slideItem}>
       <Animated.View style={[styles.imageContainer, imageStyle]}>
@@ -191,12 +182,18 @@ function SlideItem({
 
       <Animated.View style={[styles.textSection, textStyle]}>
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>{item.badge}</Text>
+          <Text style={styles.badgeText}>
+            {t(`onboarding.slides.${item.slug}.badge`)}
+          </Text>
         </View>
 
-        <Text style={fredoka(30, "#2D2D2D")}>{item.title}</Text>
+        <Text style={fredoka(30, "#2D2D2D")}>
+          {t(`onboarding.slides.${item.slug}.title`)}
+        </Text>
 
-        <Text style={styles.description}>{item.description}</Text>
+        <Text style={styles.description}>
+          {t(`onboarding.slides.${item.slug}.description`)}
+        </Text>
       </Animated.View>
     </View>
   );
@@ -206,6 +203,7 @@ function SlideItem({
 
 export default function AppScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -295,7 +293,7 @@ export default function AppScreen() {
               entering={enterPop(0)}
               style={fredoka(20, "#fff")}
             >
-              {isLastSlide ? "Let's go 👍" : "Next"}
+              {isLastSlide ? t("onboarding.start") : t("onboarding.next")}
             </Animated.Text>
           </PressBounce>
         </Breathe>

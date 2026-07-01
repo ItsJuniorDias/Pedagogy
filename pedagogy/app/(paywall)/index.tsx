@@ -42,6 +42,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePurchases } from "../../hooks/usePurchases";
 import { trackCheckoutInitiated, trackPaywallView } from "../../lib/analytics";
 
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
+
 const { width } = Dimensions.get("window");
 
 // ⚠️ ATENÇÃO: estes são links do EDITOR do Notion (app.notion.com) e podem
@@ -59,37 +62,37 @@ const fredoka = (size: number, color?: string) => ({
   ...(color ? { color } : {}),
 });
 
-function getPackageLabel(pkg: Package): string {
+function getPackageLabel(pkg: Package, t: TFunction): string {
   switch (pkg.packageType) {
     case PACKAGE_TYPE.ANNUAL:
-      return "Annual";
+      return t("paywall.period.annual");
     case PACKAGE_TYPE.SIX_MONTH:
-      return "6 Months";
+      return t("paywall.period.sixMonth");
     case PACKAGE_TYPE.THREE_MONTH:
-      return "3 Months";
+      return t("paywall.period.threeMonth");
     case PACKAGE_TYPE.TWO_MONTH:
-      return "2 Months";
+      return t("paywall.period.twoMonth");
     case PACKAGE_TYPE.MONTHLY:
-      return "Monthly";
+      return t("paywall.period.monthly");
     case PACKAGE_TYPE.WEEKLY:
-      return "Weekly";
+      return t("paywall.period.weekly");
     default:
       return pkg.identifier;
   }
 }
 
-function getPackagePeriod(pkg: Package): string {
+function getPackagePeriod(pkg: Package, t: TFunction): string {
   switch (pkg.packageType) {
     case PACKAGE_TYPE.ANNUAL:
-      return "/year";
+      return t("paywall.periodShort.year");
     case PACKAGE_TYPE.SIX_MONTH:
-      return "/6 mo";
+      return t("paywall.periodShort.sixMo");
     case PACKAGE_TYPE.THREE_MONTH:
-      return "/3 mo";
+      return t("paywall.periodShort.threeMo");
     case PACKAGE_TYPE.MONTHLY:
-      return "/month";
+      return t("paywall.periodShort.month");
     case PACKAGE_TYPE.WEEKLY:
-      return "/week";
+      return t("paywall.periodShort.week");
     default:
       return "";
   }
@@ -100,9 +103,9 @@ function isHighlightedPackage(pkg: Package): boolean {
 }
 
 const FEATURES = [
-  { emoji: "📚", text: "Access to over 50 stories" },
-  { emoji: "🧩", text: "Educational activities and mini-games" },
-];
+  { emoji: "📚", key: "paywall.features.stories" },
+  { emoji: "🧩", key: "paywall.features.activities" },
+] as const;
 
 // ⚠️ Não use depoimentos inventados — a Apple rejeita conteúdo enganoso
 // (Guideline 2.3). Estes são selos de confiança factuais. Se quiser exibir
@@ -110,20 +113,20 @@ const FEATURES = [
 const TRUST = [
   {
     icon: "🔒",
-    title: "Safe for kids",
-    text: "Purchases and links are protected by a parental gate.",
+    titleKey: "paywall.trust.safeTitle",
+    textKey: "paywall.trust.safeText",
   },
   {
     icon: "🚫",
-    title: "No third-party ads",
-    text: "A calm, distraction-free space to read and learn.",
+    titleKey: "paywall.trust.noAdsTitle",
+    textKey: "paywall.trust.noAdsText",
   },
   {
     icon: "↩️",
-    title: "Cancel anytime",
-    text: "Manage your plan anytime in your account settings.",
+    titleKey: "paywall.trust.cancelTitle",
+    textKey: "paywall.trust.cancelText",
   },
-];
+] as const;
 
 const BouncyButton = ({
   label,
@@ -170,13 +173,26 @@ interface PlanCardProps {
 }
 
 const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
+  const { t } = useTranslation();
   const highlight = isHighlightedPackage(pkg);
-  const label = getPackageLabel(pkg);
-  const period = getPackagePeriod(pkg);
+  const label = getPackageLabel(pkg, t);
+  const period = getPackagePeriod(pkg, t);
   const price = pkg.product.priceString;
-  const introText = pkg.product.introPrice?.priceString
-    ? `Try free for ${pkg.product.introPrice.periodNumberOfUnits} ${pkg.product.introPrice.periodUnit.toLowerCase()}(s)`
-    : null;
+
+  // Rótulo de teste grátis (só aparece se houver introPrice). A unidade vem do
+  // SDK em inglês (DAY/WEEK/MONTH/YEAR) → mapeamos para uma chave traduzida.
+  let introText: string | null = null;
+  const intro = pkg.product.introPrice;
+  if (intro?.priceString) {
+    const raw = intro.periodUnit.toLowerCase();
+    const unitKey = (
+      ["day", "week", "month", "year"].includes(raw) ? raw : "day"
+    ) as "day" | "week" | "month" | "year";
+    introText = t("paywall.tryFree", {
+      count: intro.periodNumberOfUnits,
+      unit: t(`paywall.units.${unitKey}`),
+    });
+  }
 
   // O card selecionado "incha" levemente com mola, como se fosse abraçado
   const scale = useSharedValue(1);
@@ -206,7 +222,7 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
     >
       {highlight && (
         <View style={[s.planTag, { backgroundColor: "#FF5B8D" }]}>
-          <Text style={fredoka(11, "#fff")}>🏆 Most popular</Text>
+          <Text style={fredoka(11, "#fff")}>{t("paywall.mostPopular")}</Text>
         </View>
       )}
       <View style={s.planRow}>
@@ -232,6 +248,7 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
 
 export default function PaywallScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { packages, state, error, isSubscribed, purchase, restore } =
     usePurchases();
 
@@ -318,14 +335,14 @@ export default function PaywallScreen() {
       await AsyncStorage.setItem("@subscription_status", "active");
 
       Alert.alert(
-        "🎉 Subscription Active!",
-        "Your stories are unlocked. Happy reading!",
-        [{ text: "Let's go!", onPress: () => router.back() }],
+        t("paywall.alerts.activeTitle"),
+        t("paywall.alerts.activeBody"),
+        [{ text: t("paywall.alerts.activeCta"), onPress: () => router.back() }],
       );
     } else if (state === "error" && error) {
       // ✅ FIX: erro só exibe alerta — não navega automaticamente,
       // permitindo o usuário tentar novamente
-      Alert.alert("Something went wrong", error);
+      Alert.alert(t("paywall.alerts.errorTitle"), error);
     }
     // state === 'cancelled': nenhuma mensagem — usuário cancelou voluntariamente
   };
@@ -336,17 +353,17 @@ export default function PaywallScreen() {
     if (found) {
       // ✅ FIX: restaurou com sucesso → volta para a história
       Alert.alert(
-        "✅ Purchase Restored",
-        "Your subscription has been restored.",
-        [{ text: "Continue", onPress: () => router.back() }],
+        t("paywall.alerts.restoredTitle"),
+        t("paywall.alerts.restoredBody"),
+        [{ text: t("paywall.alerts.restoredCta"), onPress: () => router.back() }],
       );
     } else if (state === "error" && error) {
-      Alert.alert("Restore Failed", error);
+      Alert.alert(t("paywall.alerts.restoreFailedTitle"), error);
     } else {
       // ✅ FIX: sem assinatura encontrada → apenas avisa, não navega para fora
       Alert.alert(
-        "No Active Subscription",
-        "We couldn't find a previous purchase linked to this account.",
+        t("paywall.alerts.noSubTitle"),
+        t("paywall.alerts.noSubBody"),
       );
     }
   };
@@ -385,17 +402,17 @@ export default function PaywallScreen() {
               { textAlign: "center", lineHeight: 36 },
             ]}
           >
-            Unlock a world of stories for your child
+            {t("paywall.hero.title")}
           </Animated.Text>
           <Animated.Text entering={enterUp(280)} style={s.heroSub}>
-            Over 50 adventures waiting for your little reader
+            {t("paywall.hero.subtitle")}
           </Animated.Text>
         </View>
 
         <Animated.View entering={enterUp(350)} style={s.featuresCard}>
           {FEATURES.map((f, i) => (
             <Animated.View
-              key={f.text}
+              key={f.key}
               entering={enterRight(450 + i * 120)}
               style={s.featureRow}
             >
@@ -406,25 +423,27 @@ export default function PaywallScreen() {
                 style={[fredoka(15, "#3D3D3D"), { fontWeight: "600", flex: 1 }]}
               >
                 <Text style={{ fontSize: 16 }}>{f.emoji} </Text>
-                {f.text}
+                {t(f.key)}
               </Text>
             </Animated.View>
           ))}
         </Animated.View>
 
         <View style={s.sectionHdr}>
-          <Text style={fredoka(20, "#2D2D2D")}>Choose your plan</Text>
+          <Text style={fredoka(20, "#2D2D2D")}>{t("paywall.choosePlan")}</Text>
         </View>
 
         {state === "loading" ? (
           <View style={s.loadingPlans}>
             <ActivityIndicator color="#FF5B8D" size="large" />
-            <Text style={[s.heroSub, { marginTop: 12 }]}>Loading plans...</Text>
+            <Text style={[s.heroSub, { marginTop: 12 }]}>
+              {t("paywall.loadingPlans")}
+            </Text>
           </View>
         ) : state === "error" && packages.length === 0 ? (
           <View style={s.loadingPlans}>
             <Text style={{ color: "#FF5B8D", textAlign: "center" }}>
-              {error ?? "Failed to load plans. Please try again."}
+              {error ?? t("paywall.loadError")}
             </Text>
           </View>
         ) : (
@@ -446,17 +465,19 @@ export default function PaywallScreen() {
             <Text style={{ fontSize: 18 }}>🔒</Text>
           </Wiggle>
           <Text style={[fredoka(13, "#C0305A"), { flex: 1 }]}>
-            Every purchase is protected by a parental gate.
+            {t("paywall.gateNotice")}
           </Text>
         </View>
 
         <View style={s.ctaWrap}>
           <Breathe scaleTo={1.03} duration={900}>
             <BouncyButton
-              label="🎉 Start Now!"
+              label={t("paywall.cta")}
               subLabel={
                 currentPkg
-                  ? `Then ${currentPkg.product.priceString}${getPackagePeriod(currentPkg)} · Cancel anytime`
+                  ? t("paywall.ctaSub", {
+                      price: `${currentPkg.product.priceString}${getPackagePeriod(currentPkg, t)}`,
+                    })
                   : undefined
               }
               bg="#FF5B8D"
@@ -474,52 +495,49 @@ export default function PaywallScreen() {
             {state === "restoring" ? (
               <ActivityIndicator color="#AAA" size="small" />
             ) : (
-              <Text style={s.restoreText}>Restore Purchases</Text>
+              <Text style={s.restoreText}>{t("paywall.restore")}</Text>
             )}
           </TouchableOpacity>
         </View>
 
         <View style={s.sectionHdr}>
-          <Text style={fredoka(20, "#2D2D2D")}>
-            Why families choose Pedagogy
-          </Text>
+          <Text style={fredoka(20, "#2D2D2D")}>{t("paywall.whyTitle")}</Text>
         </View>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={s.reviewsRow}
         >
-          {TRUST.map((t, i) => (
+          {TRUST.map((item, i) => (
             <Animated.View
-              key={t.title}
+              key={item.titleKey}
               entering={enterRight(200 + i * 140)}
               style={s.reviewCard}
             >
               <View style={s.reviewAvatar}>
-                <Text style={{ fontSize: 20 }}>{t.icon}</Text>
+                <Text style={{ fontSize: 20 }}>{item.icon}</Text>
               </View>
-              <Text style={fredoka(15, "#2D2D2D")}>{t.title}</Text>
-              <Text style={s.reviewText}>{t.text}</Text>
+              <Text style={fredoka(15, "#2D2D2D")}>{t(item.titleKey)}</Text>
+              <Text style={s.reviewText}>{t(item.textKey)}</Text>
             </Animated.View>
           ))}
         </ScrollView>
 
         <Text style={s.finePrint}>
-          Billing is done automatically. You can cancel at any time in your
-          account settings. By subscribing, you agree to our{" "}
+          {t("paywall.finePrint")}{" "}
           {/* 🔒 Links externos passam pelo portão parental antes de abrir */}
           <Text
             style={s.link}
             onPress={() => runBehindGate(() => Linking.openURL(TERMS_URL))}
           >
-            Terms of Use (EULA)
+            {t("paywall.terms")}
           </Text>{" "}
-          and{" "}
+          {t("paywall.finePrintAnd")}{" "}
           <Text
             style={s.link}
             onPress={() => runBehindGate(() => Linking.openURL(PRIVACY_URL))}
           >
-            Privacy Policy
+            {t("paywall.privacy")}
           </Text>
           .
         </Text>

@@ -53,5 +53,91 @@
         "hoursMinutes": "{{count}}h {{minutes}}m read"
       }
     }
+  },
+  "onboarding": {
+    "next": "Next",
+    "start": "Let's go 👍",
+    "slides": {
+      "welcome": {
+        "badge": "Welcome to Pedagogy",
+        "title": "Stories that teach\nand delight",
+        "description": "Pedagogy is a children's story app with educational content, designed to develop kids aged 2–10 in a playful and engaging way."
+      },
+      "library": {
+        "badge": "Infinite library",
+        "title": "Hundreds of stories\nto explore",
+        "description": "Fables, adventures, science and more. New content every month, with audio narration and colourful illustrations."
+      },
+      "learning": {
+        "badge": "Real learning",
+        "title": "Track your child's\nprogress",
+        "description": "Quizzes, achievements and reading reports for parents. Teaching has never been this fun and easy to follow."
+      }
+    }
+  },
+  "paywall": {
+    "period": {
+      "annual": "Annual",
+      "sixMonth": "6 Months",
+      "threeMonth": "3 Months",
+      "twoMonth": "2 Months",
+      "monthly": "Monthly",
+      "weekly": "Weekly"
+    },
+    "periodShort": {
+      "year": "/year",
+      "sixMo": "/6 mo",
+      "threeMo": "/3 mo",
+      "month": "/month",
+      "week": "/week"
+    },
+    "units": {
+      "day": "day",
+      "week": "week",
+      "month": "month",
+      "year": "year"
+    },
+    "tryFree": "{{count}} {{unit}} free trial",
+    "mostPopular": "🏆 Most popular",
+    "hero": {
+      "title": "Unlock a world of stories for your child",
+      "subtitle": "Over 50 adventures waiting for your little reader"
+    },
+    "features": {
+      "stories": "Access to over 50 stories",
+      "activities": "Educational activities and mini-games"
+    },
+    "choosePlan": "Choose your plan",
+    "loadingPlans": "Loading plans...",
+    "loadError": "Failed to load plans. Please try again.",
+    "gateNotice": "Every purchase is protected by a parental gate.",
+    "cta": "🎉 Start Now!",
+    "ctaSub": "Then {{price}} · Cancel anytime",
+    "restore": "Restore Purchases",
+    "whyTitle": "Why families choose Pedagogy",
+    "trust": {
+      "safeTitle": "Safe for kids",
+      "safeText": "Purchases and links are protected by a parental gate.",
+      "noAdsTitle": "No third-party ads",
+      "noAdsText": "A calm, distraction-free space to read and learn.",
+      "cancelTitle": "Cancel anytime",
+      "cancelText": "Manage your plan anytime in your account settings."
+    },
+    "finePrint": "Billing is done automatically. You can cancel at any time in your account settings. By subscribing, you agree to our",
+    "finePrintAnd": "and",
+    "terms": "Terms of Use (EULA)",
+    "privacy": "Privacy Policy",
+    "alerts": {
+      "activeTitle": "🎉 Subscription Active!",
+      "activeBody": "Your stories are unlocked. Happy reading!",
+      "activeCta": "Let's go!",
+      "errorTitle": "Something went wrong",
+      "restoredTitle": "✅ Purchase Restored",
+      "restoredBody": "Your subscription has been restored.",
+      "restoredCta": "Continue",
+      "restoreFailedTitle": "Restore Failed",
+      "noSubTitle": "No Active Subscription",
+      "noSubBody": "We couldn't find a previous purchase linked to this account."
+    }
   }
 }

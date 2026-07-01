@@ -53,5 +53,91 @@
         "hoursMinutes": "{{count}} h {{minutes}} min de lecture"
       }
     }
+  },
+  "onboarding": {
+    "next": "Suivant",
+    "start": "C'est parti 👍",
+    "slides": {
+      "welcome": {
+        "badge": "Bienvenue sur Pedagogy",
+        "title": "Des histoires qui\ninstruisent et enchantent",
+        "description": "Pedagogy est une app d'histoires pour enfants au contenu éducatif, conçue pour faire grandir les enfants de 2 à 10 ans de façon ludique et captivante."
+      },
+      "library": {
+        "badge": "Bibliothèque infinie",
+        "title": "Des centaines d'histoires\nà explorer",
+        "description": "Fables, aventures, sciences et plus encore. Du nouveau contenu chaque mois, avec narration audio et illustrations colorées."
+      },
+      "learning": {
+        "badge": "Un vrai apprentissage",
+        "title": "Suivez les progrès\nde votre enfant",
+        "description": "Quiz, récompenses et rapports de lecture pour les parents. Enseigner n'a jamais été aussi amusant et facile à suivre."
+      }
+    }
+  },
+  "paywall": {
+    "period": {
+      "annual": "Annuel",
+      "sixMonth": "6 mois",
+      "threeMonth": "3 mois",
+      "twoMonth": "2 mois",
+      "monthly": "Mensuel",
+      "weekly": "Hebdomadaire"
+    },
+    "periodShort": {
+      "year": "/an",
+      "sixMo": "/6 mois",
+      "threeMo": "/3 mois",
+      "month": "/mois",
+      "week": "/semaine"
+    },
+    "units": {
+      "day": "jour",
+      "week": "semaine",
+      "month": "mois",
+      "year": "an"
+    },
+    "tryFree": "{{count}} {{unit}} gratuit(s)",
+    "mostPopular": "🏆 Le plus populaire",
+    "hero": {
+      "title": "Ouvrez un monde d'histoires à votre enfant",
+      "subtitle": "Plus de 50 aventures attendent votre petit lecteur"
+    },
+    "features": {
+      "stories": "Accès à plus de 50 histoires",
+      "activities": "Activités éducatives et mini-jeux"
+    },
+    "choosePlan": "Choisissez votre formule",
+    "loadingPlans": "Chargement des formules...",
+    "loadError": "Impossible de charger les formules. Veuillez réessayer.",
+    "gateNotice": "Chaque achat est protégé par un contrôle parental.",
+    "cta": "🎉 Commencer !",
+    "ctaSub": "Puis {{price}} · Annulable à tout moment",
+    "restore": "Restaurer les achats",
+    "whyTitle": "Pourquoi les familles choisissent Pedagogy",
+    "trust": {
+      "safeTitle": "Sûr pour les enfants",
+      "safeText": "Les achats et les liens sont protégés par un contrôle parental.",
+      "noAdsTitle": "Aucune publicité tierce",
+      "noAdsText": "Un espace calme et sans distraction pour lire et apprendre.",
+      "cancelTitle": "Annulable à tout moment",
+      "cancelText": "Gérez votre formule à tout moment dans les réglages de votre compte."
+    },
+    "finePrint": "La facturation est automatique. Vous pouvez annuler à tout moment dans les réglages de votre compte. En vous abonnant, vous acceptez nos",
+    "finePrintAnd": "et notre",
+    "terms": "Conditions d'utilisation (CLUF)",
+    "privacy": "Politique de confidentialité",
+    "alerts": {
+      "activeTitle": "🎉 Abonnement actif !",
+      "activeBody": "Vos histoires sont débloquées. Bonne lecture !",
+      "activeCta": "C'est parti !",
+      "errorTitle": "Une erreur est survenue",
+      "restoredTitle": "✅ Achat restauré",
+      "restoredBody": "Votre abonnement a été restauré.",
+      "restoredCta": "Continuer",
+      "restoreFailedTitle": "Échec de la restauration",
+      "noSubTitle": "Aucun abonnement actif",
+      "noSubBody": "Nous n'avons trouvé aucun achat précédent lié à ce compte."
+    }
   }
 }

@@ -53,5 +53,91 @@
         "hoursMinutes": "{{count}}h {{minutes}}m de leitura"
       }
     }
+  },
+  "onboarding": {
+    "next": "Próximo",
+    "start": "Vamos lá 👍",
+    "slides": {
+      "welcome": {
+        "badge": "Bem-vindo ao Pedagogy",
+        "title": "Histórias que ensinam\ne encantam",
+        "description": "O Pedagogy é um app de histórias infantis com conteúdo educativo, feito para desenvolver crianças de 2 a 10 anos de um jeito lúdico e envolvente."
+      },
+      "library": {
+        "badge": "Biblioteca infinita",
+        "title": "Centenas de histórias\npara explorar",
+        "description": "Fábulas, aventuras, ciência e muito mais. Conteúdo novo todo mês, com narração em áudio e ilustrações coloridas."
+      },
+      "learning": {
+        "badge": "Aprendizado de verdade",
+        "title": "Acompanhe o progresso\ndo seu filho",
+        "description": "Quizzes, conquistas e relatórios de leitura para os pais. Ensinar nunca foi tão divertido e fácil de acompanhar."
+      }
+    }
+  },
+  "paywall": {
+    "period": {
+      "annual": "Anual",
+      "sixMonth": "6 meses",
+      "threeMonth": "3 meses",
+      "twoMonth": "2 meses",
+      "monthly": "Mensal",
+      "weekly": "Semanal"
+    },
+    "periodShort": {
+      "year": "/ano",
+      "sixMo": "/6 meses",
+      "threeMo": "/3 meses",
+      "month": "/mês",
+      "week": "/semana"
+    },
+    "units": {
+      "day": "dia",
+      "week": "semana",
+      "month": "mês",
+      "year": "ano"
+    },
+    "tryFree": "{{count}} {{unit}} grátis",
+    "mostPopular": "🏆 Mais popular",
+    "hero": {
+      "title": "Abra um mundo de histórias para o seu filho",
+      "subtitle": "Mais de 50 aventuras esperando pelo seu pequeno leitor"
+    },
+    "features": {
+      "stories": "Acesso a mais de 50 histórias",
+      "activities": "Atividades educativas e minijogos"
+    },
+    "choosePlan": "Escolha seu plano",
+    "loadingPlans": "Carregando planos...",
+    "loadError": "Não foi possível carregar os planos. Tente novamente.",
+    "gateNotice": "Toda compra é protegida por um portão parental.",
+    "cta": "🎉 Começar agora!",
+    "ctaSub": "Depois {{price}} · Cancele quando quiser",
+    "restore": "Restaurar compras",
+    "whyTitle": "Por que as famílias escolhem o Pedagogy",
+    "trust": {
+      "safeTitle": "Seguro para crianças",
+      "safeText": "Compras e links são protegidos por um portão parental.",
+      "noAdsTitle": "Sem anúncios de terceiros",
+      "noAdsText": "Um espaço calmo e sem distrações para ler e aprender.",
+      "cancelTitle": "Cancele quando quiser",
+      "cancelText": "Gerencie seu plano a qualquer momento nas configurações da sua conta."
+    },
+    "finePrint": "A cobrança é feita automaticamente. Você pode cancelar quando quiser nas configurações da sua conta. Ao assinar, você concorda com nossos",
+    "finePrintAnd": "e",
+    "terms": "Termos de Uso (EULA)",
+    "privacy": "Política de Privacidade",
+    "alerts": {
+      "activeTitle": "🎉 Assinatura ativa!",
+      "activeBody": "Suas histórias foram desbloqueadas. Boa leitura!",
+      "activeCta": "Vamos lá!",
+      "errorTitle": "Algo deu errado",
+      "restoredTitle": "✅ Compra restaurada",
+      "restoredBody": "Sua assinatura foi restaurada.",
+      "restoredCta": "Continuar",
+      "restoreFailedTitle": "Falha ao restaurar",
+      "noSubTitle": "Nenhuma assinatura ativa",
+      "noSubBody": "Não encontramos uma compra anterior vinculada a esta conta."
+    }
   }
 }
