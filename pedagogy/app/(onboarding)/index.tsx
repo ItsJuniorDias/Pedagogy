@@ -238,8 +238,6 @@ export default function AppScreen() {
 
       const status = await AsyncStorage.getItem("@subscription_status");
 
-      console.log(status, "STATUSSSSS");
-
       if (status === "active") {
         router.push("/(tabs)");
       } else {

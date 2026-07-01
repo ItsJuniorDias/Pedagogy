@@ -6,6 +6,7 @@ export default function Layout() {
 
   return (
     <NativeTabs
+      minimizeBehavior="onScrollDown"
       backgroundColor="#F4FBFF"
       tintColor="#6EC6FF" // azul claro ativo
     >
