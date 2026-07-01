@@ -15,6 +15,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { useTranslation } from "react-i18next";
+
 import {
   Breathe,
   enterPop,
@@ -23,6 +25,18 @@ import {
   GrowBar,
   PressBounce,
 } from "../../shared/motion";
+
+// Chave i18n de exibição de cada trilha. NÃO substitui `title`, que continua
+// sendo a fonte estável do slug de rota e da chave de progresso (resolveStoryId).
+type PathKey =
+  | "letters"
+  | "school"
+  | "astronaut"
+  | "space"
+  | "dinosaurs"
+  | "oceanLife"
+  | "colorsArt"
+  | "scienceLab";
 
 // ─── PROGRESSO REAL ───────────────────────────────────────────────────────────
 // Mesma fonte de verdade usada pelo leitor. NÃO criamos um storage paralelo:
@@ -116,6 +130,7 @@ const ALL_PATHS = [
     id: 1,
     emoji: "🔤",
     title: "Letters",
+    i18nKey: "letters" as PathKey,
     total: 6,
     cardBorder: "#FFD93D",
     imgBg: "#FFFBEB",
@@ -126,6 +141,7 @@ const ALL_PATHS = [
     id: 2,
     emoji: "🏫",
     title: "School",
+    i18nKey: "school" as PathKey,
     total: 6,
     cardBorder: "#A0E7A0",
     imgBg: "#F0FFF0",
@@ -136,6 +152,7 @@ const ALL_PATHS = [
     id: 3,
     emoji: "👨‍🚀",
     title: "Astronaut",
+    i18nKey: "astronaut" as PathKey,
     total: 6,
     cardBorder: "#FFA07A",
     imgBg: "#FFF5F0",
@@ -146,6 +163,7 @@ const ALL_PATHS = [
     id: 4,
     emoji: "🪐",
     title: "Space",
+    i18nKey: "space" as PathKey,
     total: 6,
     cardBorder: "#B0C4FF",
     imgBg: "#F0F4FF",
@@ -156,6 +174,7 @@ const ALL_PATHS = [
     id: 5,
     emoji: "🦕",
     title: "Dinosaurs",
+    i18nKey: "dinosaurs" as PathKey,
     total: 8,
     cardBorder: "#A0E7A0",
     imgBg: "#F0FFF0",
@@ -166,6 +185,7 @@ const ALL_PATHS = [
     id: 6,
     emoji: "🌊",
     title: "Ocean Life",
+    i18nKey: "oceanLife" as PathKey,
     total: 6,
     cardBorder: "#B0C4FF",
     imgBg: "#EBF4FF",
@@ -176,6 +196,7 @@ const ALL_PATHS = [
     id: 7,
     emoji: "🎨",
     title: "Colors & Art",
+    i18nKey: "colorsArt" as PathKey,
     total: 8,
     cardBorder: "#FFA07A",
     imgBg: "#FFF5F0",
@@ -186,6 +207,7 @@ const ALL_PATHS = [
     id: 8,
     emoji: "🔬",
     title: "Science Lab",
+    i18nKey: "scienceLab" as PathKey,
     total: 10,
     cardBorder: "#A0E7A0",
     imgBg: "#E8F8F0",
@@ -194,9 +216,12 @@ const ALL_PATHS = [
   },
 ];
 
-const FILTERS = ["All", "In Progress", "Not Started", "Completed"];
+// Só as CHAVES i18n — o filtro em si usa o índice (activeFilter), então trocar
+// o rótulo não afeta a lógica de filtragem.
+const FILTER_KEYS = ["all", "inProgress", "notStarted", "completed"] as const;
 
 export default function LearningAllScreen() {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState(0);
   // Mapa id_da_trilha -> nº de capítulos lidos (vindo do storage).
   const [progressMap, setProgressMap] = useState<Record<number, number>>({});
@@ -257,7 +282,7 @@ export default function LearningAllScreen() {
         </PressBounce>
 
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <Text style={fredoka(20, "#2D2D2D")}>Learning Path</Text>
+          <Text style={fredoka(20, "#2D2D2D")}>{t("learningAll.header")}</Text>
           <Breathe scaleTo={1.18} duration={1800}>
             <Text style={{ fontSize: 20 }}>🌱</Text>
           </Breathe>
@@ -275,7 +300,7 @@ export default function LearningAllScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={s.filtersRow}
         >
-          {FILTERS.map((f, i) => {
+          {FILTER_KEYS.map((f, i) => {
             const active = activeFilter === i;
             return (
               <PressBounce
@@ -288,7 +313,7 @@ export default function LearningAllScreen() {
                   allowFontScaling={false}
                   style={[s.chipText, active && s.chipTextActive]}
                 >
-                  {f}
+                  {t(`learningAll.filters.${f}`)}
                 </Text>
               </PressBounce>
             );
@@ -302,7 +327,7 @@ export default function LearningAllScreen() {
       >
         {loading ? (
           <Animated.Text entering={enterPop(100)} style={s.empty}>
-            Loading your garden… 🌱
+            {t("learningAll.loading")}
           </Animated.Text>
         ) : (
           <>
@@ -338,7 +363,9 @@ export default function LearningAllScreen() {
                       />
                     </View>
                     <View style={s.body}>
-                      <Text style={fredoka(15, "#2D2D2D")}>{item.title}</Text>
+                      <Text style={fredoka(15, "#2D2D2D")}>
+                        {t(`paths.${item.i18nKey}`)}
+                      </Text>
                       <View style={s.progressWrap}>
                         {/* key muda quando o progresso muda -> a barra re-anima
                             o crescimento ao voltar do leitor com novo progresso */}
@@ -374,7 +401,7 @@ export default function LearningAllScreen() {
 
             {filtered.length === 0 && (
               <Animated.Text entering={enterPop(100)} style={s.empty}>
-                Nothing here yet 🌱
+                {t("learningAll.empty")}
               </Animated.Text>
             )}
           </>

@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import Animated from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 import {
   enterPop,
@@ -40,6 +41,7 @@ const ALL_TAGS = [
 ];
 
 export default function StoriesScreen() {
+  const { t } = useTranslation();
   const [activeTag, setActiveTag] = useState(0);
   const router = useRouter();
 
@@ -63,7 +65,7 @@ export default function StoriesScreen() {
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <Text style={{ fontSize: 20 }}>←</Text>
         </TouchableOpacity>
-        <Text style={fredoka(22, "#2D2D2D")}>Magic Stories ✨</Text>
+        <Text style={fredoka(22, "#2D2D2D")}>{t("stories.header")}</Text>
         <View style={{ width: 40 }} />
       </Animated.View>
 
@@ -80,14 +82,14 @@ export default function StoriesScreen() {
             <Text style={{ fontSize: 14 }}>⭐</Text>
           </Twinkle>
           <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
-            <Text style={fredoka(26, "#fff")}>{`A world of\nadventures `}</Text>
+            <Text style={fredoka(26, "#fff")}>{t("stories.heroTitle")}</Text>
             <FloatY distance={5} duration={2200}>
               <Text style={{ fontSize: 26 }}>🌍</Text>
             </FloatY>
           </View>
-          <Text style={s.heroSub}>Pick a story and start reading!</Text>
+          <Text style={s.heroSub}>{t("stories.heroSub")}</Text>
           <Text style={s.heroCount}>
-            {STORIES_GRID.length} stories available
+            {t("stories.heroCount", { count: STORIES_GRID.length })}
           </Text>
         </Animated.View>
 
@@ -106,7 +108,7 @@ export default function StoriesScreen() {
               onPress={() => setActiveTag(i)}
             >
               <Text style={[s.tagText, activeTag === i && s.tagTextActive]}>
-                {tag}
+                {i === 0 ? t("stories.tagsAll") : tag}
               </Text>
             </PressBounce>
           ))}
@@ -139,11 +141,14 @@ export default function StoriesScreen() {
                 {story.title}
               </Text>
               <Text style={[s.storyMeta, { color: story.accent }]}>
-                📖 {"chapters" in story ? `${story.chapters} chapters` : ""}
+                📖{" "}
+                {"chapters" in story
+                  ? t("stories.chapters", { count: story.chapters })
+                  : ""}
               </Text>
               {"ageRange" in story && (
                 <Text style={[s.storyAge, { color: story.accent + "99" }]}>
-                  Ages {story.ageRange}
+                  {t("stories.ages", { range: story.ageRange })}
                 </Text>
               )}
             </PressBounce>

@@ -3,7 +3,8 @@
     "new": "新",
     "viewAll": "查看全部",
     "cancel": "取消",
-    "done": "完成"
+    "done": "完成",
+    "seeAll": "查看全部"
   },
   "language": {
     "title": "语言",
@@ -139,5 +140,96 @@
       "noSubTitle": "没有有效订阅",
       "noSubBody": "我们未找到与此账户关联的过往购买记录。"
     }
+  },
+  "home": {
+    "greetingHi": "你好，",
+    "greetingName": "大家",
+    "greetingSub": "今天来学点酷东西吧 ✨",
+    "nav": {
+      "space": "太空",
+      "art": "艺术",
+      "toys": "玩具",
+      "dinos": "恐龙"
+    },
+    "banner": {
+      "title": "神奇的\n故事世界",
+      "cta": "🔍 立即探索！"
+    },
+    "chips": {
+      "all": "全部",
+      "drawing": "绘画",
+      "space": "太空",
+      "animals": "动物",
+      "magic": "魔法",
+      "music": "音乐"
+    },
+    "interests": {
+      "explore": "探索",
+      "pets": "宠物",
+      "space": "太空",
+      "science": "科学"
+    },
+    "favoritesTitle": "你的收藏 🌟",
+    "favoritesLabel": "收藏",
+    "learningPathTitle": "学习路径",
+    "gamesTitle": "游戏 🎮",
+    "emptyPaths": "这个分类还没有学习路径 🌱",
+    "emptyGames": "这个分类还没有游戏 🎯",
+    "pathDone": "完成"
+  },
+  "games": {
+    "header": "游戏",
+    "empty": "这里还没有游戏 🎯",
+    "farmGame": {
+      "title": "农场游戏",
+      "sub": "经营你的农场，收获庄稼！"
+    },
+    "pingPong": {
+      "title": "乒乓球",
+      "sub": "经典乒乓球游戏！"
+    },
+    "pixelRun": {
+      "title": "像素跑酷",
+      "sub": "太空无尽跑酷！"
+    },
+    "gravity": {
+      "title": "重力游戏",
+      "sub": "经典重力游戏！"
+    },
+    "tags": {
+      "new": "新 ✨",
+      "top": "热门 ⭐",
+      "hot": "火爆 🔥"
+    }
+  },
+  "paths": {
+    "letters": "字母",
+    "school": "学校",
+    "astronaut": "宇航员",
+    "space": "太空",
+    "dinosaurs": "恐龙",
+    "oceanLife": "海洋生物",
+    "colorsArt": "色彩与艺术",
+    "scienceLab": "科学实验室"
+  },
+  "learningAll": {
+    "header": "学习路径",
+    "loading": "正在培育你的花园… 🌱",
+    "empty": "这里还什么都没有 🌱",
+    "filters": {
+      "all": "全部",
+      "inProgress": "进行中",
+      "notStarted": "未开始",
+      "completed": "已完成"
+    }
+  },
+  "stories": {
+    "header": "神奇故事 ✨",
+    "heroTitle": "冒险的\n世界 ",
+    "heroSub": "选一个故事，开始阅读吧！",
+    "heroCount": "{{count}} 个故事可读",
+    "tagsAll": "全部",
+    "chapters": "{{count}} 章",
+    "ages": "{{range}} 岁"
   }
 }

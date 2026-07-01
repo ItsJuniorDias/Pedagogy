@@ -3,7 +3,8 @@
     "new": "جديد",
     "viewAll": "عرض الكل",
     "cancel": "إلغاء",
-    "done": "تم"
+    "done": "تم",
+    "seeAll": "عرض الكل"
   },
   "language": {
     "title": "اللغة",
@@ -139,5 +140,96 @@
       "noSubTitle": "لا يوجد اشتراك نشط",
       "noSubBody": "لم نعثر على عملية شراء سابقة مرتبطة بهذا الحساب."
     }
+  },
+  "home": {
+    "greetingHi": "مرحبًا",
+    "greetingName": "بالجميع",
+    "greetingSub": "لنتعلّم شيئًا رائعًا اليوم ✨",
+    "nav": {
+      "space": "الفضاء",
+      "art": "الفن",
+      "toys": "الألعاب",
+      "dinos": "الديناصورات"
+    },
+    "banner": {
+      "title": "عالم القصص\nالسحري",
+      "cta": "🔍 استكشف الآن!"
+    },
+    "chips": {
+      "all": "الكل",
+      "drawing": "الرسم",
+      "space": "الفضاء",
+      "animals": "الحيوانات",
+      "magic": "السحر",
+      "music": "الموسيقى"
+    },
+    "interests": {
+      "explore": "استكشاف",
+      "pets": "الحيوانات الأليفة",
+      "space": "الفضاء",
+      "science": "العلوم"
+    },
+    "favoritesTitle": "مفضّلاتك 🌟",
+    "favoritesLabel": "المفضّلة",
+    "learningPathTitle": "مسار التعلّم",
+    "gamesTitle": "الألعاب 🎮",
+    "emptyPaths": "لا توجد مسارات في هذه الفئة بعد 🌱",
+    "emptyGames": "لا توجد ألعاب في هذه الفئة بعد 🎯",
+    "pathDone": "مكتمل"
+  },
+  "games": {
+    "header": "الألعاب",
+    "empty": "لا توجد ألعاب هنا بعد 🎯",
+    "farmGame": {
+      "title": "لعبة المزرعة",
+      "sub": "اعتنِ بمزرعتك واحصد المحاصيل!"
+    },
+    "pingPong": {
+      "title": "بينغ بونغ",
+      "sub": "لعبة بينغ بونغ الكلاسيكية!"
+    },
+    "pixelRun": {
+      "title": "بيكسل رَن",
+      "sub": "جري لا نهائي في الفضاء!"
+    },
+    "gravity": {
+      "title": "لعبة الجاذبية",
+      "sub": "لعبة الجاذبية الكلاسيكية!"
+    },
+    "tags": {
+      "new": "جديد ✨",
+      "top": "الأفضل ⭐",
+      "hot": "رائج 🔥"
+    }
+  },
+  "paths": {
+    "letters": "الحروف",
+    "school": "المدرسة",
+    "astronaut": "رائد الفضاء",
+    "space": "الفضاء",
+    "dinosaurs": "الديناصورات",
+    "oceanLife": "الحياة البحرية",
+    "colorsArt": "الألوان والفن",
+    "scienceLab": "مختبر العلوم"
+  },
+  "learningAll": {
+    "header": "مسار التعلّم",
+    "loading": "جارٍ تجهيز حديقتك… 🌱",
+    "empty": "لا شيء هنا بعد 🌱",
+    "filters": {
+      "all": "الكل",
+      "inProgress": "قيد التقدّم",
+      "notStarted": "لم يبدأ",
+      "completed": "مكتمل"
+    }
+  },
+  "stories": {
+    "header": "قصص سحرية ✨",
+    "heroTitle": "عالم من\nالمغامرات ",
+    "heroSub": "اختر قصة وابدأ القراءة!",
+    "heroCount": "{{count}} قصة متاحة",
+    "tagsAll": "الكل",
+    "chapters": "{{count}} فصول",
+    "ages": "الأعمار {{range}}"
   }
 }

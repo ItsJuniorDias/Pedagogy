@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import Animated from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 import {
   Breathe,
@@ -22,6 +23,11 @@ import {
   Wiggle,
 } from "../../shared/motion";
 
+// Chaves i18n de exibição (título/sub e selo). Não substituem `title`/`tagLabel`,
+// que seguem estáveis (analytics e lógica de filtro por índice).
+type GameKey = "farmGame" | "pingPong" | "pixelRun" | "gravity";
+type TagKey = "new" | "top" | "hot";
+
 const fredoka = (size: number, color?: string) => ({
   fontFamily: "FredokaOne_400Regular" as const,
   fontSize: size,
@@ -31,6 +37,8 @@ const fredoka = (size: number, color?: string) => ({
 const ALL_GAMES = [
   {
     id: "farm-game",
+    i18nKey: "farmGame" as GameKey,
+    tagKey: "new" as TagKey,
     title: "Farm Game",
     sub: "Manage your farm and harvest crops!",
     tagLabel: "New ✨",
@@ -45,6 +53,8 @@ const ALL_GAMES = [
   },
   {
     id: "ping-pong",
+    i18nKey: "pingPong" as GameKey,
+    tagKey: "top" as TagKey,
     title: "Ping Pong",
     sub: "Classic ping pong game!",
     tagLabel: "Top ⭐",
@@ -59,6 +69,8 @@ const ALL_GAMES = [
   },
   {
     id: "pixel-run",
+    i18nKey: "pixelRun" as GameKey,
+    tagKey: "hot" as TagKey,
     emoji: "👾",
     title: "Pixel Run",
     sub: "Endless runner in space!",
@@ -71,6 +83,8 @@ const ALL_GAMES = [
   },
   {
     id: "gravity",
+    i18nKey: "gravity" as GameKey,
+    tagKey: "new" as TagKey,
     emoji: "🧲",
     title: "Gravity Game",
     sub: "Classic gravity game!",
@@ -86,6 +100,7 @@ const ALL_GAMES = [
 const GAME_FILTERS = ["All", "Hot 🔥", "New ✨", "Top ⭐"];
 
 export default function GamesAllScreen() {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState(0);
   const router = useRouter();
 
@@ -111,7 +126,7 @@ export default function GamesAllScreen() {
           <Text style={{ fontSize: 20 }}>←</Text>
         </TouchableOpacity>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <Text style={fredoka(20, "#2D2D2D")}>Games</Text>
+          <Text style={fredoka(20, "#2D2D2D")}>{t("games.header")}</Text>
           <Wiggle angle={12} pause={1800}>
             <Text style={{ fontSize: 20 }}>🎮</Text>
           </Wiggle>
@@ -138,13 +153,15 @@ export default function GamesAllScreen() {
               </Wiggle>
             </View>
             <View style={s.body}>
-              <Text style={fredoka(16, "#2D2D2D")}>{game.title}</Text>
-              <Text style={s.sub}>{game.sub}</Text>
+              <Text style={fredoka(16, "#2D2D2D")}>
+                {t(`games.${game.i18nKey}.title`)}
+              </Text>
+              <Text style={s.sub}>{t(`games.${game.i18nKey}.sub`)}</Text>
             </View>
             <Breathe delay={i * 350} scaleTo={1.1} duration={1600}>
               <View style={[s.tag, { backgroundColor: game.tagBg }]}>
                 <Text style={[s.tagText, { color: game.tagColor }]}>
-                  {game.tagLabel}
+                  {t(`games.tags.${game.tagKey}`)}
                 </Text>
               </View>
             </Breathe>
@@ -153,7 +170,7 @@ export default function GamesAllScreen() {
 
         {filtered.length === 0 && (
           <Animated.Text entering={enterPop(100)} style={s.empty}>
-            No games here yet 🎯
+            {t("games.empty")}
           </Animated.Text>
         )}
       </ScrollView>

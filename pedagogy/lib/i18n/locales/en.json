@@ -3,7 +3,8 @@
     "new": "New",
     "viewAll": "View all",
     "cancel": "Cancel",
-    "done": "Done"
+    "done": "Done",
+    "seeAll": "See all"
   },
   "language": {
     "title": "Language",
@@ -139,5 +140,96 @@
       "noSubTitle": "No Active Subscription",
       "noSubBody": "We couldn't find a previous purchase linked to this account."
     }
+  },
+  "home": {
+    "greetingHi": "Hi,",
+    "greetingName": "Everyone",
+    "greetingSub": "Let's learn something cool today ✨",
+    "nav": {
+      "space": "Space",
+      "art": "Art",
+      "toys": "Toys",
+      "dinos": "Dinos"
+    },
+    "banner": {
+      "title": "Magic World\nof Stories",
+      "cta": "🔍 Explore Now!"
+    },
+    "chips": {
+      "all": "All",
+      "drawing": "Drawing",
+      "space": "Space",
+      "animals": "Animals",
+      "magic": "Magic",
+      "music": "Music"
+    },
+    "interests": {
+      "explore": "Explore",
+      "pets": "Pets",
+      "space": "Space",
+      "science": "Science"
+    },
+    "favoritesTitle": "Your Favorites 🌟",
+    "favoritesLabel": "Favorites",
+    "learningPathTitle": "Learning Path",
+    "gamesTitle": "Games 🎮",
+    "emptyPaths": "No paths for this category yet 🌱",
+    "emptyGames": "No games for this category yet 🎯",
+    "pathDone": "done"
+  },
+  "games": {
+    "header": "Games",
+    "empty": "No games here yet 🎯",
+    "farmGame": {
+      "title": "Farm Game",
+      "sub": "Manage your farm and harvest crops!"
+    },
+    "pingPong": {
+      "title": "Ping Pong",
+      "sub": "Classic ping pong game!"
+    },
+    "pixelRun": {
+      "title": "Pixel Run",
+      "sub": "Endless runner in space!"
+    },
+    "gravity": {
+      "title": "Gravity Game",
+      "sub": "Classic gravity game!"
+    },
+    "tags": {
+      "new": "New ✨",
+      "top": "Top ⭐",
+      "hot": "Hot 🔥"
+    }
+  },
+  "paths": {
+    "letters": "Letters",
+    "school": "School",
+    "astronaut": "Astronaut",
+    "space": "Space",
+    "dinosaurs": "Dinosaurs",
+    "oceanLife": "Ocean Life",
+    "colorsArt": "Colors & Art",
+    "scienceLab": "Science Lab"
+  },
+  "learningAll": {
+    "header": "Learning Path",
+    "loading": "Loading your garden… 🌱",
+    "empty": "Nothing here yet 🌱",
+    "filters": {
+      "all": "All",
+      "inProgress": "In Progress",
+      "notStarted": "Not Started",
+      "completed": "Completed"
+    }
+  },
+  "stories": {
+    "header": "Magic Stories ✨",
+    "heroTitle": "A world of\nadventures ",
+    "heroSub": "Pick a story and start reading!",
+    "heroCount": "{{count}} stories available",
+    "tagsAll": "All",
+    "chapters": "{{count}} chapters",
+    "ages": "Ages {{range}}"
   }
 }

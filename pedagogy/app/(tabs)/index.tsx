@@ -29,6 +29,18 @@ import Animated, {
   withTiming,
   ZoomIn,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
+
+// ─── CHAVES i18n DE EXIBIÇÃO ──────────────────────────────────────────────────
+// Só rótulos visíveis passam por aqui. As chaves de rota/categoria/storage
+// (category, title p/ slug e resolveStoryId, id/gameName p/ analytics) continuam
+// ESTÁVEIS em inglês no objeto de dados — nunca traduzidas.
+type NavKey = "space" | "art" | "toys" | "dinos";
+type ChipKey = "all" | "drawing" | "space" | "animals" | "magic" | "music";
+type InterestKey = "explore" | "pets" | "space" | "science";
+type PathKey = "letters" | "school" | "astronaut" | "space";
+type GameKey = "farmGame" | "pingPong" | "pixelRun" | "gravity";
+type TagKey = "new" | "top" | "hot";
 
 // ─── PROGRESSO REAL ───────────────────────────────────────────────────────────
 // Mesma fonte de verdade do leitor e da tela "Learning Path" (View all).
@@ -255,12 +267,22 @@ const NAV_ICONS = [
   },
 ];
 
-const CHIPS = ["All", "Drawing", "Space", "Animals", "Magic", "Music"];
+// `cat` é a chave ESTÁVEL de filtro (comparada com path.category / game.category)
+// e também a chave i18n do rótulo. O texto exibido vem de t(`home.chips.${cat}`).
+const CHIPS: { cat: ChipKey }[] = [
+  { cat: "all" },
+  { cat: "drawing" },
+  { cat: "space" },
+  { cat: "animals" },
+  { cat: "magic" },
+  { cat: "music" },
+];
 
 const INTERESTS = [
   {
     emoji: "🌿",
     label: "Explore",
+    i18nKey: "explore" as InterestKey,
     bg: "#FFF0F8",
     color: "#D63384",
     category: "all",
@@ -268,6 +290,7 @@ const INTERESTS = [
   {
     emoji: "🐶",
     label: "Pets",
+    i18nKey: "pets" as InterestKey,
     bg: "#FFF7E0",
     color: "#B45309",
     category: "animals",
@@ -275,6 +298,7 @@ const INTERESTS = [
   {
     emoji: "🌍",
     label: "Space",
+    i18nKey: "space" as InterestKey,
     bg: "#EBF4FF",
     color: "#1D4ED8",
     category: "space",
@@ -282,6 +306,7 @@ const INTERESTS = [
   {
     emoji: "🔬",
     label: "Science",
+    i18nKey: "science" as InterestKey,
     bg: "#E8F8F0",
     color: "#15803D",
     category: "science",
@@ -295,6 +320,7 @@ const LEARNING_PATHS = [
     id: 1,
     emoji: "🔤",
     title: "Letters",
+    i18nKey: "letters" as PathKey,
     progress: 6,
     total: 6,
     cardBorder: "#FFD93D",
@@ -306,6 +332,7 @@ const LEARNING_PATHS = [
     id: 2,
     emoji: "🏫",
     title: "School",
+    i18nKey: "school" as PathKey,
     progress: 6,
     total: 6,
     cardBorder: "#A0E7A0",
@@ -317,6 +344,7 @@ const LEARNING_PATHS = [
     id: 3,
     emoji: "👨‍🚀",
     title: "Astronaut",
+    i18nKey: "astronaut" as PathKey,
     progress: 4,
     total: 6,
     cardBorder: "#FFA07A",
@@ -328,6 +356,7 @@ const LEARNING_PATHS = [
     id: 4,
     emoji: "🪐",
     title: "Space",
+    i18nKey: "space" as PathKey,
     progress: 2,
     total: 6,
     cardBorder: "#B0C4FF",
@@ -341,6 +370,8 @@ const GAMES = [
   {
     id: "farm-game",
     title: "Farm Game",
+    i18nKey: "farmGame" as GameKey,
+    tagKey: "new" as TagKey,
     sub: "Manage your farm and harvest crops!",
     tagLabel: "New ✨",
     tagVariant: "emerald",
@@ -354,6 +385,8 @@ const GAMES = [
   {
     id: "ping-pong",
     title: "Ping Pong",
+    i18nKey: "pingPong" as GameKey,
+    tagKey: "top" as TagKey,
     sub: "Classic ping pong game!",
     tagLabel: "Top ⭐",
     tagVariant: "yellow",
@@ -367,6 +400,8 @@ const GAMES = [
   {
     id: "pixel-run",
     title: "Pixel Run",
+    i18nKey: "pixelRun" as GameKey,
+    tagKey: "hot" as TagKey,
     sub: "Endless runner in space!",
     tagLabel: "Hot 🔥",
     tagVariant: "amber",
@@ -380,6 +415,8 @@ const GAMES = [
   {
     id: "gravity",
     title: "Gravity Game",
+    i18nKey: "gravity" as GameKey,
+    tagKey: "new" as TagKey,
     sub: "Classic gravity game!",
     tagLabel: "New ✨",
     tagVariant: "emerald",
@@ -397,7 +434,7 @@ const GAMES = [
 const SectionHeader = ({
   title,
   badge,
-  linkLabel = "See all",
+  linkLabel,
   linkColor = "#6C5CE7",
   onLinkPress,
   delay = 0,
@@ -408,27 +445,32 @@ const SectionHeader = ({
   linkColor?: string;
   onLinkPress?: () => void;
   delay?: number;
-}) => (
-  <Animated.View entering={enterUp(delay)} style={s.secHdr}>
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Text style={[s.secTitle, fredoka(20, "#2D2D2D")]}>{title}</Text>
-      {badge && (
-        <Animated.View
-          entering={ZoomIn.delay(delay + 250)
-            .springify()
-            .damping(10)
-            .reduceMotion(ReduceMotion.System)}
-          style={s.newBadge}
-        >
-          <Text style={s.newBadgeText}>{badge.toUpperCase()}</Text>
-        </Animated.View>
-      )}
-    </View>
-    <Bouncy onPress={onLinkPress} scaleTo={0.9}>
-      <Text style={[s.secLink, { color: linkColor }]}>{linkLabel}</Text>
-    </Bouncy>
-  </Animated.View>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Animated.View entering={enterUp(delay)} style={s.secHdr}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text style={[s.secTitle, fredoka(20, "#2D2D2D")]}>{title}</Text>
+        {badge && (
+          <Animated.View
+            entering={ZoomIn.delay(delay + 250)
+              .springify()
+              .damping(10)
+              .reduceMotion(ReduceMotion.System)}
+            style={s.newBadge}
+          >
+            <Text style={s.newBadgeText}>{badge.toUpperCase()}</Text>
+          </Animated.View>
+        )}
+      </View>
+      <Bouncy onPress={onLinkPress} scaleTo={0.9}>
+        <Text style={[s.secLink, { color: linkColor }]}>
+          {linkLabel ?? t("common.seeAll")}
+        </Text>
+      </Bouncy>
+    </Animated.View>
+  );
+};
 
 /** Barra de progresso animada — preenche com spring após a entrada do card. */
 const AnimatedProgressBar = ({
@@ -469,6 +511,7 @@ const AnimatedProgressBar = ({
 const LearningCard = ({
   emoji,
   title,
+  i18nKey,
   progress,
   total,
   cardBorder,
@@ -476,6 +519,7 @@ const LearningCard = ({
   barColor,
   index,
 }: (typeof LEARNING_PATHS)[0] & { index: number }) => {
+  const { t } = useTranslation();
   const pct = total > 0 ? (progress / total) * 100 : 0;
   const done = total > 0 && progress >= total;
   const router = useRouter();
@@ -506,14 +550,16 @@ const LearningCard = ({
         <Text style={s.learnEmoji}>{emoji}</Text>
       </View>
       <View style={s.learnBody}>
-        <Text style={[s.learnTitle, fredoka(16, "#2D2D2D")]}>{title}</Text>
+        <Text style={[s.learnTitle, fredoka(16, "#2D2D2D")]}>
+          {t(`paths.${i18nKey}`)}
+        </Text>
         <AnimatedProgressBar
           pct={pct}
           barColor={barColor}
           delay={300 + 80 * index}
         />
         <Text style={s.progressLabel}>
-          {progress} / {total} done {done ? "🎉" : "⭐"}
+          {progress} / {total} {t("home.pathDone")} {done ? "🎉" : "⭐"}
         </Text>
       </View>
     </Bouncy>
@@ -524,17 +570,18 @@ const PopularCard = ({
   id,
   emoji,
   title,
-  sub,
-  tagLabel,
+  i18nKey,
+  tagKey,
   tagBg,
   tagColor,
   iconBg,
   index,
 }: (typeof GAMES)[0] & { index: number }) => {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const redirectGameScreen = () => {
-    // ── TRACKING: abertura de jogo a partir da home ──
+    // ── TRACKING: abertura de jogo a partir da home (gameName estável em EN) ──
     trackGameOpen({ gameId: String(id), gameName: title });
     if (id === "pixel-run") router.push("/(pixel-run)");
     else if (id === "gravity") router.push("/(gravity)");
@@ -555,11 +602,15 @@ const PopularCard = ({
         <Text style={s.popIconEmoji}>{emoji}</Text>
       </View>
       <View style={s.popBody}>
-        <Text style={[s.popTitle, fredoka(16, "#2D2D2D")]}>{title}</Text>
-        <Text style={s.popSub}>{sub}</Text>
+        <Text style={[s.popTitle, fredoka(16, "#2D2D2D")]}>
+          {t(`games.${i18nKey}.title`)}
+        </Text>
+        <Text style={s.popSub}>{t(`games.${i18nKey}.sub`)}</Text>
       </View>
       <View style={[s.popTag, { backgroundColor: tagBg }]}>
-        <Text style={[s.popTagText, { color: tagColor }]}>{tagLabel}</Text>
+        <Text style={[s.popTagText, { color: tagColor }]}>
+          {t(`games.tags.${tagKey}`)}
+        </Text>
       </View>
     </Bouncy>
   );
@@ -612,6 +663,7 @@ const Chip = ({
 // ─── MAIN SCREEN ─────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const [activeChip, setActiveChip] = useState(0);
   // Mapa id_da_trilha -> nº de capítulos lidos (vindo do storage).
   const [progressMap, setProgressMap] = useState<Record<number, number>>({});
@@ -681,7 +733,7 @@ export default function HomeScreen() {
 
   if (!fontsLoaded) return <AppLoading />;
 
-  const selectedCategory = CHIPS[activeChip].toLowerCase();
+  const selectedCategory = CHIPS[activeChip].cat;
 
   // Enriquecemos cada trilha com progresso REAL (storage) + total REAL (mocks),
   // com clamp pra nunca passar de 100%.
@@ -732,11 +784,14 @@ export default function HomeScreen() {
               style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
             >
               <Text style={fredoka(26, "#2D2D2D")}>
-                Hi, <Text style={fredoka(26, "#FF5B8D")}>Everyone</Text>
+                {t("home.greetingHi")}{" "}
+                <Text style={fredoka(26, "#FF5B8D")}>
+                  {t("home.greetingName")}
+                </Text>
               </Text>
               <WaveHand />
             </View>
-            <Text style={s.greetSub}>Let's learn something cool today ✨</Text>
+            <Text style={s.greetSub}>{t("home.greetingSub")}</Text>
           </View>
           <Bouncy
             entering={ZoomIn.delay(200)
@@ -762,12 +817,17 @@ export default function HomeScreen() {
               onPress={() =>
                 router.push({
                   pathname: "/(category)",
-                  params: { type: item.category, label: item.label },
+                  params: {
+                    type: item.category,
+                    label: t(`home.nav.${item.category as NavKey}`),
+                  },
                 })
               }
             >
               <Text style={s.navEmoji}>{item.emoji}</Text>
-              <Text style={[fredoka(11, item.color)]}>{item.label}</Text>
+              <Text style={[fredoka(11, item.color)]}>
+                {t(`home.nav.${item.category as NavKey}`)}
+              </Text>
             </Bouncy>
           ))}
         </View>
@@ -781,14 +841,16 @@ export default function HomeScreen() {
                 { lineHeight: 30, marginBottom: 14 },
               ]}
             >
-              {"Magic World\nof Stories"}
+              {t("home.banner.title")}
             </Text>
             <Bouncy
               scaleTo={0.92}
               style={s.bannerCta}
               onPress={() => router.push("/(stories)")}
             >
-              <Text style={[fredoka(15, "#5A3E00")]}>🔍 Explore Now!</Text>
+              <Text style={[fredoka(15, "#5A3E00")]}>
+                {t("home.banner.cta")}
+              </Text>
             </Bouncy>
           </View>
           <Animated.Text style={[s.bannerPlanet, planetStyle]}>
@@ -807,8 +869,8 @@ export default function HomeScreen() {
         >
           {CHIPS.map((chip, i) => (
             <Chip
-              key={chip}
-              label={chip}
+              key={chip.cat}
+              label={t(`home.chips.${chip.cat}`)}
               index={i}
               active={activeChip === i}
               onPress={() => setActiveChip(i)}
@@ -818,12 +880,12 @@ export default function HomeScreen() {
 
         {/* ── YOUR FAVORITES ── */}
         <SectionHeader
-          title="Your Favorites 🌟"
+          title={t("home.favoritesTitle")}
           delay={350}
           onLinkPress={() =>
             router.push({
               pathname: "/(category)",
-              params: { type: "all", label: "Favorites" },
+              params: { type: "all", label: t("home.favoritesLabel") },
             })
           }
         />
@@ -841,21 +903,26 @@ export default function HomeScreen() {
               onPress={() =>
                 router.push({
                   pathname: "/(category)",
-                  params: { type: item.category, label: item.label },
+                  params: {
+                    type: item.category,
+                    label: t(`home.interests.${item.i18nKey}`),
+                  },
                 })
               }
             >
               <Text style={s.intEmoji}>{item.emoji}</Text>
-              <Text style={[fredoka(13, item.color)]}>{item.label}</Text>
+              <Text style={[fredoka(13, item.color)]}>
+                {t(`home.interests.${item.i18nKey}`)}
+              </Text>
             </Bouncy>
           ))}
         </ScrollView>
 
         {/* ── LEARNING PATH ── filtro com layout transition ── */}
         <SectionHeader
-          title="Learning Path"
-          badge="New"
-          linkLabel="View all"
+          title={t("home.learningPathTitle")}
+          badge={t("common.new")}
+          linkLabel={t("common.viewAll")}
           linkColor="#FF5B8D"
           delay={450}
           onLinkPress={() => router.push("/(learning-all)")}
@@ -867,7 +934,7 @@ export default function HomeScreen() {
               exiting={FadeOut.duration(150)}
               style={s.emptyMsg}
             >
-              No paths for this category yet 🌱
+              {t("home.emptyPaths")}
             </Animated.Text>
           ) : (
             filteredPaths.map((item, i) => (
@@ -882,7 +949,7 @@ export default function HomeScreen() {
 
         {/* ── GAMES ── */}
         <SectionHeader
-          title="Games 🎮"
+          title={t("home.gamesTitle")}
           delay={500}
           onLinkPress={() => router.push("/(games-all)")}
         />
@@ -893,7 +960,7 @@ export default function HomeScreen() {
               exiting={FadeOut.duration(150)}
               style={[s.emptyMsg, { marginBottom: 16 }]}
             >
-              No games for this category yet 🎯
+              {t("home.emptyGames")}
             </Animated.Text>
           ) : (
             filteredGames.map((item, i) => (

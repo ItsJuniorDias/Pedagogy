@@ -68,19 +68,40 @@ O idioma escolhido é **salvo no AsyncStorage** e reaplicado no boot. Na primeir
 abertura, o app tenta detectar o idioma do aparelho (`pt-BR` → português, etc.);
 se não bater com nenhum suportado, usa o padrão.
 
+**Cluster da Home (2ª leva — feito)** — a aba Home inteira + tudo que os links
+"Ver tudo" dela alcançam:
+
+- **Home** (`app/(tabs)/index.tsx`) — saudação, banner, ícones de navegação, chips,
+  seções Favoritos / Learning Path / Games e estados vazios. As armadilhas foram
+  tratadas: `CHIPS` virou objeto com **chave de filtro estável** (`cat`) separada do
+  rótulo; `INTERESTS`, `LEARNING_PATHS` e `GAMES` ganharam `i18nKey`/`tagKey` **só de
+  exibição** — `title` (slug + storage via `resolveStoryId`), `category` (rota) e
+  `gameName` (analytics) continuam estáveis em inglês.
+- **games-all** (`app/(games-all)/index.tsx`) — namespace compartilhado `games.*`.
+- **learning-all** (`app/(learning-all)/index.tsx`) — namespace compartilhado `paths.*`;
+  filtros por índice (rótulo traduzido não afeta a lógica).
+- **stories** (`app/(stories)/index.tsx`) — header, hero, chip "All" e rótulos
+  `chapters`/`Ages` (as tags dinâmicas vêm dos mocks e **não** são traduzidas).
+
+Namespaces novos: `home`, `games` (compart.), `paths` (compart.), `learningAll`,
+`stories`, `common.seeAll`. Injetados por
+`scripts/i18n-add-home-games-learning-stories.mjs` (idempotente, mesmo padrão).
+
 ### Ainda em inglês (mesmo padrão pra migrar — ver seção 3)
 
-Estas telas de UI ainda não foram externalizadas. Cada uma segue **exatamente o
-mesmo padrão** das já feitas — dá pra reaproveitar o script de injeção de traduções
-(`scripts/i18n-add-onboarding-paywall.mjs`) como modelo:
+Cada uma segue **exatamente o mesmo padrão** — reaproveite qualquer um dos dois
+scripts de injeção como modelo:
 
-- Home (`app/(tabs)/index.tsx`) — ⚠️ atenção: arrays como `CHIPS`, `INTERESTS`,
-  `LEARNING_PATHS` misturam **texto de exibição com chave de roteamento/categoria**.
-  Traduza só o texto exibido; mantenha a chave de rota estável (padrão slug, igual
-  fiz no onboarding).
-- Library (`app/(tabs)/library.tsx`)
-- Category / Details / Stories (fluxo de leitura — a "casca", não o conteúdo)
-- Jogos (`features/farm-game`, `features/ping-pong`) — UI dos minijogos
+- **Library** (`app/(tabs)/library.tsx`) — a outra aba principal. ⚠️ Muito SVG inline e
+  cards cujo `title`/`subtitle` são **conteúdo** amarrado a `storyId` (alguns placeholders:
+  "Tairbrty", "Sthm sthap"…). Traduzir só a casca: saudação, banner, headers
+  (Popular now / Continue reading) e categorias.
+- **Category** (`app/(category)/index.tsx`) — grande estrutura de cards; `title` alimenta
+  `storyId`. Traduzir header, filtro, `chapters`/`Ages` e o `label` padrão. (O `label`
+  vindo da Home **já chega traduzido**.)
+- **Details** (`app/(details)/index.tsx`) — casca do leitor (~1.935 linhas), não o conteúdo.
+- **UI dos jogos** — `features/farm-game`, `features/ping-pong` e os HUDs de
+  `app/(gravity)` e `app/(pixel-run)` (overlays de "Game Over", pontuação, etc.).
 
 > **Conteúdo das histórias (`mocks/`): NÃO traduzir automaticamente.** São 50 histórias
 > de *phonics* em inglês ("A is for Ava" → som "Ahhh"). A pedagogia é intrínseca ao

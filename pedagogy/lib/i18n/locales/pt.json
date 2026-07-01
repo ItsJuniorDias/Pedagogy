@@ -3,7 +3,8 @@
     "new": "Novo",
     "viewAll": "Ver tudo",
     "cancel": "Cancelar",
-    "done": "Pronto"
+    "done": "Pronto",
+    "seeAll": "Ver tudo"
   },
   "language": {
     "title": "Idioma",
@@ -139,5 +140,96 @@
       "noSubTitle": "Nenhuma assinatura ativa",
       "noSubBody": "Não encontramos uma compra anterior vinculada a esta conta."
     }
+  },
+  "home": {
+    "greetingHi": "Oi,",
+    "greetingName": "Pessoal",
+    "greetingSub": "Vamos aprender algo legal hoje ✨",
+    "nav": {
+      "space": "Espaço",
+      "art": "Arte",
+      "toys": "Brinquedos",
+      "dinos": "Dinos"
+    },
+    "banner": {
+      "title": "Mundo Mágico\nde Histórias",
+      "cta": "🔍 Explorar Agora!"
+    },
+    "chips": {
+      "all": "Tudo",
+      "drawing": "Desenho",
+      "space": "Espaço",
+      "animals": "Animais",
+      "magic": "Magia",
+      "music": "Música"
+    },
+    "interests": {
+      "explore": "Explorar",
+      "pets": "Bichinhos",
+      "space": "Espaço",
+      "science": "Ciência"
+    },
+    "favoritesTitle": "Seus Favoritos 🌟",
+    "favoritesLabel": "Favoritos",
+    "learningPathTitle": "Trilha de Aprendizado",
+    "gamesTitle": "Jogos 🎮",
+    "emptyPaths": "Nenhuma trilha nesta categoria ainda 🌱",
+    "emptyGames": "Nenhum jogo nesta categoria ainda 🎯",
+    "pathDone": "concluído"
+  },
+  "games": {
+    "header": "Jogos",
+    "empty": "Nenhum jogo por aqui ainda 🎯",
+    "farmGame": {
+      "title": "Jogo da Fazenda",
+      "sub": "Cuide da sua fazenda e colha as plantações!"
+    },
+    "pingPong": {
+      "title": "Ping-Pong",
+      "sub": "Jogo clássico de ping-pong!"
+    },
+    "pixelRun": {
+      "title": "Pixel Run",
+      "sub": "Corrida sem fim no espaço!"
+    },
+    "gravity": {
+      "title": "Jogo da Gravidade",
+      "sub": "Jogo clássico de gravidade!"
+    },
+    "tags": {
+      "new": "Novo ✨",
+      "top": "Top ⭐",
+      "hot": "Bombando 🔥"
+    }
+  },
+  "paths": {
+    "letters": "Letras",
+    "school": "Escola",
+    "astronaut": "Astronauta",
+    "space": "Espaço",
+    "dinosaurs": "Dinossauros",
+    "oceanLife": "Vida no Oceano",
+    "colorsArt": "Cores e Arte",
+    "scienceLab": "Laboratório de Ciências"
+  },
+  "learningAll": {
+    "header": "Trilha de Aprendizado",
+    "loading": "Preparando seu jardim… 🌱",
+    "empty": "Nada por aqui ainda 🌱",
+    "filters": {
+      "all": "Tudo",
+      "inProgress": "Em andamento",
+      "notStarted": "Não iniciado",
+      "completed": "Concluído"
+    }
+  },
+  "stories": {
+    "header": "Histórias Mágicas ✨",
+    "heroTitle": "Um mundo de\naventuras ",
+    "heroSub": "Escolha uma história e comece a ler!",
+    "heroCount": "{{count}} histórias disponíveis",
+    "tagsAll": "Tudo",
+    "chapters": "{{count}} capítulos",
+    "ages": "{{range}} anos"
   }
 }
