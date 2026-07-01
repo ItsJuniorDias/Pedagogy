@@ -118,6 +118,10 @@ import {
   TINY_SCIENTIST,
 } from "../../mocks/storyMocks";
 
+// ─── CONTEÚDO LOCALIZADO ──────────────────────────────────────────────────────
+// Overlay de tradução das histórias por idioma (inglês = canônico + fallback).
+import { localizeChapters } from "../../mocks/i18n";
+
 const { width } = Dimensions.get("window");
 
 // ─── MÚSICA DE FUNDO ──────────────────────────────────────────────────────────
@@ -1062,11 +1066,18 @@ const PageView = ({
 export default function ReadStoryScreen() {
   const router = useRouter();
   const { storyId } = useLocalSearchParams<{ storyId: string }>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const id = resolveStoryId(storyId ?? "TAIRBRTY");
-  const chapters: ChapterMock[] =
+  // Fonte canônica (inglês) — fallback garantido para toda história/idioma.
+  const enChapters: ChapterMock[] =
     STORY_CHAPTERS[id] ?? STORY_CHAPTERS["TAIRBRTY"];
+  // Sobrepõe a tradução do idioma ativo (ou devolve o inglês, se não houver).
+  // Memoizado por [id, idioma] — não re-localiza a cada frame do highlight/TTS.
+  const chapters: ChapterMock[] = useMemo(
+    () => localizeChapters(id, enChapters) as ChapterMock[],
+    [id, enChapters, i18n.language],
+  );
   const theme = deriveTheme(id, chapters);
   const isDarkBg = parseInt(theme.bg.replace("#", ""), 16) < 0x303030_00 >> 8;
 
