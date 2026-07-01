@@ -1,74 +1,74 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: KATUION · idioma: pt · modelo: mock · 2026-07-01
+// história: KATUION · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const KATUION: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Chapter 1",
-    "subtitle": "[pt] Velúmio",
+    "title": "Capítulo 1",
+    "subtitle": "Velúmio",
     "emoji": "📖",
     "locked": false,
     "dictionaryEntry": {
       "word": "Velúmio",
       "pronunciation": "veh-LOO-mee-oh",
-      "definition": "The strange comfort of watching rain from inside a warm room."
+      "definition": "O estranho conforto de ver a chuva de dentro de um cômodo quentinho."
     },
     "pages": [
-      "[pt] velúmio (veh-LOO-mee-oh) noun\n\nThe strange comfort of watching rain from inside a warm room.\n\n─────────────────────\n\nKatu was seven years old the first time she found a word that didn't exist.\n\nShe was sitting by the big window of her grandmother's house, watching the rain fall in grey curtains across the garden, and she felt something she had no name for — warm, and safe, and a little bit sad at the same time, in a way that wasn't unpleasant at all.",
-      "[pt] — Grandma — she said — what's the word for feeling happy AND sad at the same time, when it rains?\n\nHer grandmother looked up from her knitting and smiled the long, slow smile of someone retrieving a memory from very far away.\n\n— In our family — she said — we call that velúmio.\n\nKatu turned the word over in her mouth like a smooth stone. Velúmio. It fit perfectly.",
-      "[pt] — Is it in the dictionary? — Katu asked.\n\n— No — said her grandmother. — It's in ours.\n\nShe reached beneath her chair and produced a small, worn book with a cover the color of old midnight. She placed it in Katu's lap.\n\n— Every family has feelings that no ordinary dictionary bothers to name — she said. — This one is full of the ones we found ourselves. And now — she said, pressing a tiny pencil into Katu's hand — it's yours to keep filling."
+      "velúmio (veh-LOO-mee-oh) substantivo\n\nO estranho conforto de ver a chuva de dentro de um cômodo quentinho.\n\n─────────────────────\n\nKatu tinha sete anos na primeira vez em que encontrou uma palavra que não existia.\n\nEla estava sentada perto da janela grande da casa de sua avó, observando a chuva cair em cortinas cinzas pelo jardim, e sentiu algo para o qual não tinha nome — quentinho, seguro e um pouco triste ao mesmo tempo, de um jeito que não era desagradável nem um pouco.",
+      "— Vovó — ela disse — qual é a palavra para se sentir feliz E triste ao mesmo tempo, quando chove?\n\nSua avó ergueu os olhos do tricô e sorriu aquele sorriso longo e devagar de quem resgata uma lembrança de muito longe.\n\n— Na nossa família — ela disse — chamamos isso de velúmio.\n\nKatu virou a palavra na boca como uma pedrinha lisinha. Velúmio. Caiu perfeitamente.",
+      "— Está no dicionário? — Katu perguntou.\n\n— Não — disse a avó. — Está no nosso.\n\nEla se inclinou para baixo da cadeira e tirou um livrinho gasto com uma capa da cor da meia-noite antiga. Colocou no colo de Katu.\n\n— Toda família tem sentimentos que nenhum dicionário comum se dá ao trabalho de nomear — disse ela. — Este está cheio dos que nós mesmos encontramos. E agora — disse ela, colocando um lápis minúsculo na mão de Katu — é seu para continuar preenchendo."
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Chapter 2",
-    "subtitle": "[pt] Frínquele",
+    "title": "Capítulo 2",
+    "subtitle": "Frínquele",
     "emoji": "🌙",
     "locked": false,
     "dictionaryEntry": {
       "word": "Frínquele",
       "pronunciation": "FREEN-keh-leh",
-      "definition": "The feeling that a song is being played specifically for you, even in a crowd."
+      "definition": "A sensação de que uma música está sendo tocada especificamente para você, mesmo no meio da multidão."
     },
     "pages": [
-      "[pt] frínquele (FREEN-keh-leh) noun\n\nThe feeling that a song is being played specifically for you, even in a crowd.\n\n─────────────────────\n\nThe school fair was loud and full of color — popcorn smoke, spinning lights, a carousel wheezing through a cheerful tune. Katu walked through it holding the little book pressed to her chest, scanning every face for a feeling she didn't have a name for yet.",
-      "[pt] Then the old musician in the corner began to play.\n\nHe had a battered guitar and a paper hat, and he was playing something slow and golden that didn't match the fair at all. But it stopped Katu completely. She stood in the middle of the noise, and it felt as though every note was being placed, carefully and personally, inside her chest.",
-      "[pt] — That feeling — she told her best friend Marco later, cheeks flushed — like the music was only for me. Even with everyone around.\n\nMarco scrunched his nose. — That's not a real thing.\n\n— It IS a real thing — said Katu, pulling out her pencil. — It just doesn't have a name yet.\n\nShe opened the book to the next blank page, wrote carefully, and smiled.\n\nFrínquele. Now it does."
+      "frínquele (FREEN-keh-leh) substantivo\n\nA sensação de que uma música está sendo tocada especificamente para você, mesmo no meio da multidão.\n\n─────────────────────\n\nA feira da escola era barulhenta e cheia de cores — fumaça de pipoca, luzes giratórias, um carrossel soltando uma melodia alegre. Katu andava por ali segurando o livrinho apertado contra o peito, examinando cada rosto em busca de um sentimento que ainda não tinha nome.",
+      "Então o velho músico na esquina começou a tocar.\n\nEle tinha um violão surrado e um chapéu de papel, e tocava algo lento e dourado que não combinava nada com a feira. Mas parou Katu por completo. Ela ficou parada no meio do barulho, e sentiu como se cada nota estivesse sendo colocada, cuidadosa e pessoalmente, dentro do seu peito.",
+      "— Esse sentimento — ela contou para o melhor amigo Marco depois, com as bochechas coradas — como se a música fosse só para mim. Mesmo com todo mundo por perto.\n\nMarco torceu o nariz. — Isso não é uma coisa real.\n\n— É SIM uma coisa real — disse Katu, puxando o lápis. — Só não tem nome ainda.\n\nEla abriu o livro na próxima página em branco, escreveu com cuidado e sorriu.\n\nFrínquele. Agora tem."
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Chapter 3",
-    "subtitle": "[pt] Orvântis",
+    "title": "Capítulo 3",
+    "subtitle": "Orvântis",
     "emoji": "✨",
     "locked": true,
     "dictionaryEntry": {
       "word": "Orvântis",
       "pronunciation": "or-VAN-tiss",
-      "definition": "The particular loneliness of being the only one awake in a sleeping house."
+      "definition": "A solidão particular de ser o único acordado em uma casa adormecida."
     },
     "pages": [
-      "[pt] orvântis (or-VAN-tiss) noun\n\nThe particular loneliness of being the only one awake in a sleeping house.\n\n─────────────────────\n\nKatu couldn't sleep.\n\nThe house was full of the soft sounds of night — the fridge humming, a branch tapping the window, the distant sound of her father's breathing through the wall. Everyone else was gone somewhere she couldn't follow, into their own private dreams.",
-      "[pt] She padded downstairs in socks and sat at the kitchen table with a glass of water and the little book. The words inside glowed faintly in the dark — or maybe that was just her imagination.\n\nShe was not sad, exactly. Not scared. Just — specifically, precisely, uniquely — alone in a way that only happens in sleeping houses at two in the morning, when the whole world has temporarily left you in charge.",
-      "[pt] She opened to a blank page.\n\nShe thought for a long time about the word. It needed to sound like dark hallways and ticking clocks and the particular blue of windows at night.\n\nOrvântis, she finally wrote.\n\nThen, beneath it, she drew a small girl at a table, the only lit window in a row of dark houses. It looked like her. It looked like everyone who had ever been the last one up."
+      "orvântis (or-VAN-tiss) substantivo\n\nA solidão particular de ser o único acordado em uma casa adormecida.\n\n─────────────────────\n\nKatu não conseguia dormir.\n\nA casa estava cheia dos sons suaves da noite — a geladeira zumbindo, um galho batendo na janela, o som distante da respiração do pai através da parede. Todos os outros tinham ido para algum lugar que ela não podia seguir, para seus próprios sonhos particulares.",
+      "Ela desceu as escadas de meias e sentou à mesa da cozinha com um copo d'água e o livrinho. As palavras lá dentro brilhavam fracamente no escuro — ou talvez fosse só imaginação dela.\n\nEla não estava triste, exatamente. Nem assustada. Só — especificamente, precisamente, unicamente — sozinha de um jeito que só acontece em casas adormecidas às duas da manhã, quando o mundo inteiro temporariamente deixou você no comando.",
+      "Ela abriu numa página em branco.\n\nPensou por um bom tempo sobre a palavra. Precisava soar como corredores escuros e relógios tiquetaqueando e o azul particular das janelas à noite.\n\nOrvântis, ela finalmente escreveu.\n\nEntão, abaixo dela, desenhou uma menininha numa mesa, a única janela acesa numa fileira de casas escuras. Parecia com ela. Parecia com todo mundo que já tinha sido o último a ficar acordado."
     ]
   },
   {
     "id": 4,
-    "title": "[pt] Chapter 4",
-    "subtitle": "[pt] Despálimo",
+    "title": "Capítulo 4",
+    "subtitle": "Despálimo",
     "emoji": "🌅",
     "locked": true,
     "dictionaryEntry": {
       "word": "Despálimo",
       "pronunciation": "deh-SPAH-lee-moh",
-      "definition": "The specific joy of finishing something you almost gave up on."
+      "definition": "A alegria específica de terminar algo que você quase desistiu."
     },
     "pages": [
-      "[pt] despálimo (deh-SPAH-lee-moh) noun\n\nThe specific joy of finishing something you almost gave up on.\n\n─────────────────────\n\nThe dictionary was almost full.\n\nKatu was eleven now — four years older than when her grandmother had pressed it into her hands — and there were only three blank pages left. She turned them slowly, feeling the weight of all the words that had come before: velúmio, frínquele, orvântis, and dozens more, each one a feeling she had rescued from silence.",
-      "[pt] She had almost stopped, once. When she was nine and the kids at school laughed at her for carrying an \"invisible word book.\" When she had snapped it shut and shoved it under her bed and told herself it was a baby thing.\n\nBut the feelings kept coming. And without words, they piled up like untranslated letters, rustling and restless, until she pulled the book back out and kept going.",
-      "[pt] On the last day of school, her teacher asked everyone to share one thing they had made that year.\n\nKatu stood up, cleared her throat, and read from the book — just three entries, starting with velúmio.\n\nWhen she finished, the room was quiet. Then Marco, who had once told her feelings couldn't have names, raised his hand.\n\n— I have one — he said slowly. — That feeling when you understand something you've been trying to understand for a long time. What do we call that?\n\nKatu smiled and held up her pencil.\n\n— That — she said — is going on page one hundred."
+      "despálimo (deh-SPAH-lee-moh) substantivo\n\nA alegria específica de terminar algo que você quase desistiu.\n\n─────────────────────\n\nO dicionário estava quase cheio.\n\nKatu agora tinha onze anos — quatro anos a mais do que quando a avó o colocou em suas mãos — e só restavam três páginas em branco. Ela as virou devagar, sentindo o peso de todas as palavras que vieram antes: velúmio, frínquele, orvântis e dezenas mais, cada uma um sentimento que ela havia resgatado do silêncio.",
+      "Ela quase tinha parado, uma vez. Quando tinha nove anos e as crianças da escola riram dela por carregar um \"livro de palavras invisíveis\". Quando ela o fechou com um estalo e o empurrou para baixo da cama e disse a si mesma que era coisa de bebê.\n\nMas os sentimentos continuavam vindo. E sem palavras, eles se acumulavam como cartas não traduzidas, farfalhando e inquietos, até que ela puxou o livro de volta e continuou.",
+      "No último dia de aula, a professora pediu que cada um compartilhasse algo que tinha feito naquele ano.\n\nKatu se levantou, limpou a garganta e leu do livro — apenas três entradas, começando com velúmio.\n\nQuando terminou, a sala ficou em silêncio. Então Marco, que uma vez lhe dissera que sentimentos não podiam ter nomes, levantou a mão.\n\n— Eu tenho um — disse ele devagar. — Aquele sentimento quando você entende algo que esteve tentando entender por muito tempo. Como chamamos isso?\n\nKatu sorriu e ergueu o lápis.\n\n— Isso — ela disse — vai para a página cem."
     ]
   }
 ];

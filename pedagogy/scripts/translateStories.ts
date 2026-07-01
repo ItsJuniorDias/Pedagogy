@@ -16,13 +16,36 @@
 //   # dry-run sem gastar API (gera stubs "[pt] …" só pra testar o encanamento):
 //   npx tsx scripts/translateStories.ts --all --provider mock
 //
+//   # apaga a saída gerada (inclusive stubs de mock) e zera os blocos GENERATED,
+//   # preservando as traduções feitas à mão (storyMocks.<lang>.ts):
+//   npx tsx scripts/translateStories.ts --clean
+//
+// IMPORTANTE: sem OPENROUTER_API_KEY no ambiente, o script FALHA (não usa mock
+// silenciosamente). O mock só roda com --provider mock explícito.
+//
 // Flags:
 //   --lang <code>     idioma alvo (repetível). Sem nenhum → todos (pt es fr zh hi ar).
 //   --all             traduz TODAS as histórias de STORY_SOURCES.
-//   --provider m|o    mock | openrouter (default: openrouter se houver key, senão mock).
-//   --model <slug>    default: meta-llama/llama-3.3-70b-instruct:free
+//   --clean           remove overlays gerados + zera blocos GENERATED (mantém seeds).
+//   --provider m|o    mock (dry-run) | openrouter. Default: openrouter (exige a key).
+//   --models <lista>  cadeia de fallback: um preset (free|cheap|quality) OU lista
+//                     separada por vírgula (ex.: "deepseek/deepseek-v4-flash,google/gemini-2.5-flash-lite").
+//                     Se um modelo tomar 429/erro, cai pro próximo da cadeia na hora.
+//   --model <slug>    um único modelo (atalho p/ cadeia de 1). Default: preset "free".
 //   --force           regenera mesmo se o overlay já existir.
 //   --limit <n>       processa no máx. n (história × idioma) nesta rodada.
+//   --retries <n>     passes completos sobre a cadeia em 429/5xx (default: 5).
+//   --delay <ms>      pausa entre chamadas (default: 1200ms; use 3000+ se o free 429).
+//
+// Presets de modelos (--models <nome>):
+//   free     llama-3.3-70b:free → deepseek-v3-0324:free → openrouter/free   (padrão, $0)
+//   cheap    deepseek-v4-flash → gemini-2.5-flash-lite   (~centavos; exige crédito)
+//   quality  gpt-4o-mini → gemini-2.5-flash              (mais nuance p/ o funil)
+//
+// Rate-limit (429): o modelo :free é limitado upstream. O script honra o header
+// Retry-After e faz backoff exponencial automaticamente; histórias que ainda assim
+// falharem não abortam a rodada — rode --all de novo depois (no-clobber preenche as
+// que faltam). Para limites maiores, use uma key própria/paga da OpenRouter.
 //
 // Requer (devDependencies):  npm i -D tsx
 // ─────────────────────────────────────────────────────────────────────────────
@@ -171,7 +194,38 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const I18N_DIR = path.resolve(__dirname, "../mocks/i18n");
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
+
+// ─── Modelos ──────────────────────────────────────────────────────────────────
+// Cadeias de fallback nomeadas. Selecione com --models <nome> (ex.: --models cheap)
+// ou passe uma lista literal: --models "a/b,c/d". Sem flag → preset "free".
+//
+// ⚠️ Sobre o tier FREE da OpenRouter: o limite (~20 req/min) é COMPARTILHADO entre
+//    TODOS os modelos :free da sua conta. Trocar de modelo free NÃO multiplica o
+//    limite — ajuda só contra throttle de um provider específico upstream. Para
+//    limite maior + prioridade, adicione uns trocados de crédito e use um preset pago.
+//    (Este job inteiro — ~300 traduções curtas — custa centavos num modelo flash.)
+const MODEL_PRESETS: Record<string, string[]> = {
+  // grátis (padrão). Sujeito ao teto compartilhado de req/min; use --delay maior.
+  free: [
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "deepseek/deepseek-chat-v3-0324:free",
+    "openrouter/free",
+  ],
+  // baratíssimo e confiável (exige crédito na conta; remove o teto do free).
+  // preços ~mid-2026/M tokens: v4-flash ~$0.09/$0.18 · flash-lite ~$0.10 (afinado p/ tradução).
+  cheap: ["deepseek/deepseek-v4-flash", "google/gemini-2.5-flash-lite"],
+  // qualidade/nuance p/ o funil (onboarding/paywall). Ainda barato.
+  quality: ["openai/gpt-4o-mini", "google/gemini-2.5-flash"],
+};
+const DEFAULT_CHAIN = MODEL_PRESETS.free;
+
+/** Resolve a cadeia de modelos a partir das flags (--models preset|lista | --model x | padrão). */
+function resolveChain(models: string[], model: string): string[] {
+  if (models.length === 1 && MODEL_PRESETS[models[0]]) return MODEL_PRESETS[models[0]];
+  if (models.length) return models;
+  if (model) return [model];
+  return DEFAULT_CHAIN;
+}
 
 // ─── util ─────────────────────────────────────────────────────────────────────
 
@@ -200,6 +254,7 @@ function parseJsonArray(raw: string): unknown[] {
 
 interface Provider {
   name: string;
+  lastModel?: string; // preenchido após uma tradução bem-sucedida (p/ log/registro)
   translate(chapters: Chapter[], lang: string): Promise<Chapter[]>;
 }
 
@@ -218,13 +273,80 @@ Keep UNCHANGED (copy verbatim):
 
 Register: warm, simple, age-appropriate. Preserve line breaks (\\n) inside pages exactly. Never add or drop chapters or pages.`;
 
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+/** Nome curto do modelo p/ log: "meta-llama/llama-3.3-70b-instruct:free" → "llama-3.3-70b-instruct". */
+const shortModel = (m: string) => m.split("/").pop()!.replace(/:free$/, "");
+
+/**
+ * Quanto esperar antes de repetir uma requisição que tomou 429/5xx.
+ * Prioridade: header Retry-After → retry_after_seconds no corpo → backoff exponencial.
+ */
+function retryDelayMs(
+  retryAfterHeader: string | null,
+  body: string,
+  attempt: number,
+): number {
+  const buffer = 500; // folga pra não repetir cedo demais
+  // 1) header Retry-After (em segundos)
+  if (retryAfterHeader) {
+    const s = Number(retryAfterHeader);
+    if (Number.isFinite(s) && s >= 0) return Math.max(500, s * 1000) + buffer;
+  }
+  // 2) corpo: "retry_after_seconds" ou "retry_after_seconds_raw"
+  const m = body.match(/retry_after_seconds(?:_raw)?"?\s*:\s*"?([\d.]+)/);
+  if (m) {
+    const s = parseFloat(m[1]);
+    if (Number.isFinite(s) && s >= 0) return Math.max(500, s * 1000) + buffer;
+  }
+  // 3) backoff exponencial com teto de 30s + jitter (2s, 4s, 8s, 16s, 30s…)
+  const base = Math.min(30_000, 2000 * 2 ** attempt);
+  return base + Math.floor(Math.random() * 500);
+}
+
 class OpenRouterProvider implements Provider {
   name: string;
+  lastModel?: string;
   constructor(
     private apiKey: string,
-    private model: string,
+    private models: string[], // cadeia de fallback
+    private maxPasses = 5, // passes completos sobre a cadeia (--retries)
   ) {
-    this.name = `openrouter:${model}`;
+    this.name =
+      models.length === 1
+        ? `openrouter:${models[0]}`
+        : `openrouter[cadeia: ${models.map(shortModel).join(" → ")}]`;
+  }
+
+  /** Uma tentativa contra UM modelo. Devolve resultado ou detalhes do erro HTTP. */
+  private async callOnce(model: string, userPrompt: string) {
+    const res = await fetch(OPENROUTER_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.3,
+      }),
+    });
+    if (res.ok) {
+      const data: any = await res.json();
+      const content: string = data?.choices?.[0]?.message?.content ?? "";
+      return { ok: true as const, data: parseJsonArray(content) as Chapter[] };
+    }
+    const body = await res.text().catch(() => "");
+    return {
+      ok: false as const,
+      status: res.status,
+      retryAfter: res.headers.get("retry-after"),
+      body,
+    };
   }
 
   async translate(chapters: Chapter[], lang: string): Promise<Chapter[]> {
@@ -235,34 +357,51 @@ ${JSON.stringify(chapters, null, 2)}
 
 Return ONLY the translated JSON array.`;
 
-    const res = await fetch(OPENROUTER_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: this.model,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.3,
-      }),
-    });
+    let lastStatus = 0;
+    for (let pass = 0; pass < this.maxPasses; pass++) {
+      let waitHeader: string | null = null;
+      let waitBody = "";
+      let sawTransient = false; // 429/5xx em algum modelo → vale esperar e repetir
 
-    if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      const err: any = new Error(
-        `OpenRouter HTTP ${res.status}: ${body.slice(0, 400)}`,
-      );
-      if (res.status === 401 || res.status === 403) err.fatal = true; // key ruim → aborta
-      throw err;
+      for (const model of this.models) {
+        const r = await this.callOnce(model, userPrompt);
+        if (r.ok) {
+          this.lastModel = model;
+          if (this.models.length > 1 || pass > 0)
+            process.stdout.write(`✓${shortModel(model)} `);
+          return r.data;
+        }
+        lastStatus = r.status;
+        // auth → fatal: nem adianta trocar de modelo
+        if (r.status === 401 || r.status === 403) {
+          const e: any = new Error(
+            `OpenRouter HTTP ${r.status}: ${r.body.slice(0, 200)}`,
+          );
+          e.fatal = true;
+          throw e;
+        }
+        if (r.status === 429) {
+          sawTransient = true;
+          waitHeader = r.retryAfter ?? waitHeader; // guarda o maior Retry-After
+          waitBody = r.body || waitBody;
+        } else if (r.status >= 500 && r.status < 600) {
+          sawTransient = true;
+        }
+        // 429 / 5xx / 4xx (modelo indisponível) → cai pro PRÓXIMO modelo já
+        process.stdout.write(`(${shortModel(model)}:${r.status}→próx) `);
+      }
+
+      // esgotou a cadeia neste pass
+      if (!sawTransient) break; // só erros não-recuperáveis (ex.: 404) → não repete
+      if (pass < this.maxPasses - 1) {
+        const waitMs = retryDelayMs(waitHeader, waitBody, pass);
+        process.stdout.write(
+          `(cadeia esgotada · espera ${(waitMs / 1000).toFixed(0)}s · pass ${pass + 2}/${this.maxPasses}) `,
+        );
+        await sleep(waitMs);
+      }
     }
-    const data: any = await res.json();
-    const content: string = data?.choices?.[0]?.message?.content ?? "";
-    const arr = parseJsonArray(content) as Chapter[];
-    return arr;
+    throw new Error(`todos os modelos falharam (último HTTP ${lastStatus})`);
   }
 }
 
@@ -346,27 +485,61 @@ function rebuildGeneratedBlock(lang: string) {
   fs.writeFileSync(idx, src.replace(re, `$1${block}$2`), "utf8");
 }
 
+/**
+ * Remove TODOS os overlays gerados (`<safeId>.<lang>.ts`) mantendo os seeds
+ * feitos à mão (`storyMocks.<lang>.ts`) e zera o bloco GENERATED de cada index.
+ * Útil pra apagar saída antiga/mock antes de regerar de verdade.
+ */
+function cleanGenerated(langs: string[]) {
+  let removed = 0;
+  for (const lang of langs) {
+    const dir = path.join(I18N_DIR, lang);
+    if (!fs.existsSync(dir)) continue;
+    const suffix = `.${lang}.ts`;
+    for (const f of fs.readdirSync(dir)) {
+      if (f.endsWith(suffix) && f !== `storyMocks${suffix}`) {
+        fs.unlinkSync(path.join(dir, f));
+        removed++;
+      }
+    }
+    rebuildGeneratedBlock(lang); // sem arquivos gerados → escreve bloco vazio {}
+  }
+  console.log(
+    `🧹 Limpeza: ${removed} arquivo(s) gerado(s) removido(s); blocos GENERATED zerados.`,
+  );
+  console.log("   Seeds à mão (storyMocks.<lang>.ts) foram preservados.");
+}
+
 // ─── CLI ──────────────────────────────────────────────────────────────────────
 
 function parseArgs(argv: string[]) {
   const ids: string[] = [];
   const langs: string[] = [];
   let all = false,
-    force = false;
+    force = false,
+    clean = false;
   let provider = "";
-  let model = DEFAULT_MODEL;
+  let model = "";
+  let models: string[] = [];
   let limit = Infinity;
+  let retries = 5;
+  let delay = -1; // -1 = automático (resolvido no main conforme o provider)
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--all") all = true;
     else if (a === "--force") force = true;
+    else if (a === "--clean") clean = true;
     else if (a === "--lang") langs.push(argv[++i]);
     else if (a === "--provider") provider = argv[++i];
     else if (a === "--model") model = argv[++i];
+    else if (a === "--models")
+      models = argv[++i].split(",").map((s) => s.trim()).filter(Boolean);
     else if (a === "--limit") limit = parseInt(argv[++i], 10);
+    else if (a === "--retries") retries = parseInt(argv[++i], 10);
+    else if (a === "--delay") delay = parseInt(argv[++i], 10);
     else if (!a.startsWith("--")) ids.push(a.toUpperCase());
   }
-  return { ids, langs, all, force, provider, model, limit };
+  return { ids, langs, all, force, clean, provider, model, models, limit, retries, delay };
 }
 
 async function main() {
@@ -375,6 +548,11 @@ async function main() {
   const targetLangs = opts.langs.length ? opts.langs : ALL_LANGS;
   for (const l of targetLangs)
     if (!LANG_NAMES[l]) throw new Error(`idioma não suportado: ${l}`);
+
+  if (opts.clean) {
+    cleanGenerated(targetLangs);
+    return;
+  }
 
   let storyKeys: string[];
   if (opts.all) storyKeys = Object.keys(STORY_SOURCES);
@@ -385,24 +563,48 @@ async function main() {
     });
   } else {
     console.log(
-      "Uso: npx tsx scripts/translateStories.ts [IDS…|--all] [--lang xx …] [--provider mock|openrouter] [--force]\n" +
-        "Ex.:  npx tsx scripts/translateStories.ts --all --provider mock",
+      "Uso: npx tsx scripts/translateStories.ts [IDS…|--all] [--lang xx …] [--clean] [--provider mock|openrouter] [--force]\n" +
+        "Traduzir tudo:  OPENROUTER_API_KEY=sk-or-... npx tsx scripts/translateStories.ts --all\n" +
+        "Limpar saída:   npx tsx scripts/translateStories.ts --clean\n" +
+        "Testar (mock):  npx tsx scripts/translateStories.ts --all --provider mock",
     );
     process.exit(0);
     return;
   }
 
   const key = process.env.OPENROUTER_API_KEY ?? process.env.VITE_OPENROUTER_API_KEY;
-  const useMock = opts.provider === "mock" || (!opts.provider && !key);
+  // Mock SÓ quando pedido de forma explícita. Sem chave e sem --provider mock,
+  // falha alto — nunca "finge" que traduziu.
+  const useMock = opts.provider === "mock";
   if (!useMock && !key) {
-    console.error("❌ Sem OPENROUTER_API_KEY. Use --provider mock para dry-run.");
+    console.error(
+      "❌ Sem OPENROUTER_API_KEY no ambiente — nada foi traduzido.\n" +
+        "   Rode com a sua chave da OpenRouter:\n" +
+        "     OPENROUTER_API_KEY=sk-or-... npx tsx scripts/translateStories.ts --all\n" +
+        "   (Só pra testar a fiação, sem traduzir de verdade, adicione: --provider mock)",
+    );
     process.exit(1);
   }
+  const chain = resolveChain(opts.models, opts.model);
   const provider: Provider = useMock
     ? new MockProvider()
-    : new OpenRouterProvider(key!, opts.model);
+    : new OpenRouterProvider(key!, chain, opts.retries);
 
+  // Atraso entre requisições — reduz muito o rate-limit (429) do tier free.
+  // Default: 1200ms no openrouter, 0 no mock. Ajuste com --delay <ms> (ex.: 3000).
+  const interDelayMs = opts.delay >= 0 ? opts.delay : useMock ? 0 : 1200;
+
+  if (useMock) {
+    console.log(
+      "⚠️  MODO MOCK (dry-run): só prefixa [lang], NÃO traduz de verdade.\n" +
+        "    Remova --provider mock e defina OPENROUTER_API_KEY para traduzir.",
+    );
+  }
   console.log(`\n🌍 Tradução de histórias · provider: ${provider.name}`);
+  if (!useMock)
+    console.log(
+      `   retries: ${opts.retries} · atraso entre chamadas: ${interDelayMs}ms`,
+    );
   console.log(`   idiomas: ${targetLangs.join(", ")} · histórias: ${storyKeys.length}\n`);
 
   let done = 0,
@@ -428,6 +630,8 @@ async function main() {
         continue;
       }
       processed++;
+      // pausa entre chamadas (não antes da 1ª, não depois da última)
+      if (interDelayMs > 0 && done + failed > 0) await sleep(interDelayMs);
       const en = STORY_SOURCES[storyKey];
       try {
         process.stdout.write(`  • [${lang}] ${storyKey} … `);
@@ -440,7 +644,12 @@ async function main() {
           emoji: (en[i] as any).emoji,
           locked: (en[i] as any).locked,
         }));
-        writeStoryFile(lang, storyKey, useMock ? "mock" : opts.model, safe);
+        writeStoryFile(
+          lang,
+          storyKey,
+          useMock ? "mock" : (provider.lastModel ?? "openrouter"),
+          safe,
+        );
         touched = true;
         done++;
         console.log("ok");

@@ -1,54 +1,54 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: DINOSAURS · idioma: pt · modelo: mock · 2026-07-01
+// história: DINOSAURS · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const DINOSAURS: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Lesson 1",
-    "subtitle": "[pt] The Age of Dinosaurs",
+    "title": "Lição 1",
+    "subtitle": "A Era dos Dinossauros",
     "emoji": "🦖",
     "locked": false,
     "activityCard": {
-      "title": "Try This! Create a Dinosaur Fossil",
-      "instructions": "Mix equal parts flour, salt, and water to create a dough. Press small plastic dinosaur toys into the dough to create impressions. Let the dough dry completely to create your own 'fossils' that you can display or use for imaginative play!"
+      "title": "Tente Isto! Crie um Fóssil de Dinossauro",
+      "instructions": "Misture partes iguais de farinha, sal e água para criar uma massa. Pressione pequenos brinquedos de dinossauro de plástico na massa para criar impressões. Deixe a massa secar completamente para criar seus próprios 'fósseis' que você pode exibir ou usar para brincadeiras imaginativas!"
     },
     "pages": [
-      "[pt] Dinosaurs lived during a time called the Mesozoic Era, which lasted from about 252 to 66 million years ago. This era is divided into three periods: the Triassic, Jurassic, and Cretaceous. Dinosaurs were incredibly diverse, ranging from small bird-like creatures to massive sauropods that could reach lengths of over 100 feet. They lived in various environments, from lush forests to arid deserts, and they were the dominant land animals for over 160 million years.",
-      "[pt] The Mesozoic Era was a time of great change. The continents were arranged differently than they are today, and the climate was generally warmer. Dinosaurs evolved to fill many different ecological niches — some were herbivores that grazed on plants, while others were carnivores that hunted other animals. Some dinosaurs even developed feathers, which may have been used for insulation or display.",
-      "[pt] Despite their long reign, dinosaurs went extinct about 66 million years ago, likely due to a combination of factors including a massive asteroid impact and volcanic activity. However, their legacy lives on in the form of birds, which are considered modern-day dinosaurs. So the next time you see a bird, remember that you're looking at a distant relative of the mighty dinosaurs!"
+      "Os dinossauros viveram durante um período chamado Era Mesozoica, que durou de cerca de 252 a 66 milhões de anos atrás. Esta era é dividida em três períodos: Triássico, Jurássico e Cretáceo. Os dinossauros eram incrivelmente diversos, variando de pequenas criaturas parecidas com pássaros a enormes saurópodes que podiam atingir mais de 30 metros de comprimento. Eles viviam em vários ambientes, desde florestas exuberantes até desertos áridos, e foram os animais terrestres dominantes por mais de 160 milhões de anos.",
+      "A Era Mesozoica foi um período de grandes mudanças. Os continentes estavam dispostos de forma diferente de hoje, e o clima era geralmente mais quente. Os dinossauros evoluíram para preencher muitos nichos ecológicos diferentes — alguns eram herbívoros que pastavam em plantas, enquanto outros eram carnívoros que caçavam outros animais. Alguns dinossauros até desenvolveram penas, que podem ter sido usadas para isolamento ou exibição.",
+      "Apesar de seu longo reinado, os dinossauros foram extintos há cerca de 66 milhões de anos, provavelmente devido a uma combinação de fatores, incluindo um enorme impacto de asteroide e atividade vulcânica. No entanto, seu legado vive na forma das aves, que são consideradas dinossauros modernos. Então, da próxima vez que você vir um pássaro, lembre-se de que está olhando para um parente distante dos poderosos dinossauros!"
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Lesson 2",
-    "subtitle": "[pt] Famous Dinosaurs",
+    "title": "Lição 2",
+    "subtitle": "Dinossauros Famosos",
     "emoji": "🦕",
     "locked": false,
     "activityCard": {
-      "title": "Try This! Draw Your Favorite Dinosaur",
-      "instructions": "Choose your favorite dinosaur and draw it using pencils, markers, or crayons. You can look up pictures of the dinosaur for reference or let your imagination run wild! Don't forget to include details like scales, feathers, or horns if your dinosaur had them."
+      "title": "Tente Isto! Desenhe Seu Dinossauro Favorito",
+      "instructions": "Escolha seu dinossauro favorito e desenhe-o usando lápis, marcadores ou giz de cera. Você pode pesquisar imagens do dinossauro para referência ou deixar sua imaginação voar! Não se esqueça de incluir detalhes como escamas, penas ou chifres se o seu dinossauro os tivesse."
     },
     "pages": [
-      "[pt] There are many famous dinosaurs that have captured our imagination. The Tyrannosaurus rex, often called T. rex, was a massive carnivore with powerful jaws and tiny arms. The Triceratops was a herbivore known for its three horns and large frill. The Velociraptor was a small but fast predator that likely hunted in packs. The Brachiosaurus was a giant sauropod with a long neck that allowed it to reach high vegetation.",
-      "[pt] Each of these dinosaurs had unique adaptations that helped them survive in their environments. For example, the T. rex's strong legs allowed it to run at speeds of up to 20 miles per hour, while the Triceratops' horns were likely used for defense against predators. The Velociraptor's sharp claws were perfect for catching prey, and the Brachiosaurus' long neck allowed it to access food sources that other dinosaurs couldn't reach.",
-      "[pt] These famous dinosaurs are just a few examples of the incredible diversity that existed during the Mesozoic Era. Scientists continue to discover new species of dinosaurs, each with its own fascinating story to tell. So whether you're a fan of the mighty T. rex or the gentle Brachiosaurus, there's always something new to learn about these prehistoric creatures!"
+      "Existem muitos dinossauros famosos que capturaram nossa imaginação. O Tyrannosaurus rex, muitas vezes chamado de T. rex, era um enorme carnívoro com mandíbulas poderosas e braços minúsculos. O Tricerátopo era um herbívoro conhecido por seus três chifres e grande frilo. O Velociraptor era um pequeno predador veloz que provavelmente caçava em bandos. O Braquiossauro era um gigante saurópode com um pescoço longo que permitia alcançar vegetação alta.",
+      "Cada um desses dinossauros tinha adaptações únicas que os ajudavam a sobreviver em seus ambientes. Por exemplo, as pernas fortes do T. rex permitiam que ele corresse a velocidades de até 32 quilômetros por hora, enquanto os chifres do Tricerátopo provavelmente eram usados para defesa contra predadores. As garras afiadas do Velociraptor eram perfeitas para capturar presas, e o pescoço longo do Braquiossauro permitia que ele acessasse fontes de alimento que outros dinossauros não conseguiam alcançar.",
+      "Esses dinossauros famosos são apenas alguns exemplos da incrível diversidade que existiu durante a Era Mesozoica. Os cientistas continuam descobrindo novas espécies de dinossauros, cada uma com sua própria história fascinante para contar. Então, seja você fã do poderoso T. rex ou do gentil Braquiossauro, sempre há algo novo para aprender sobre essas criaturas pré-históricas!"
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Lesson 3",
-    "subtitle": "[pt] Dinosaur Extinction",
+    "title": "Lição 3",
+    "subtitle": "Extinção dos Dinossauros",
     "emoji": "💀",
     "locked": true,
     "activityCard": {
-      "title": "Try This! Create a Timeline of Dinosaur Extinction",
-      "instructions": "Draw a timeline on a piece of paper and mark important events leading up to the extinction of dinosaurs. Include events like the asteroid impact, volcanic eruptions, and changes in climate. You can use drawings or symbols to represent each event!"
+      "title": "Tente Isto! Crie uma Linha do Tempo da Extinção dos Dinossauros",
+      "instructions": "Desenhe uma linha do tempo em um pedaço de papel e marque eventos importantes que levaram à extinção dos dinossauros. Inclua eventos como o impacto do asteroide, erupções vulcânicas e mudanças climáticas. Você pode usar desenhos ou símbolos para representar cada evento!"
     },
     "pages": [
-      "[pt] The extinction of dinosaurs is one of the most significant events in Earth's history. It occurred about 66 million years ago at the end of the Cretaceous period. The leading theory for their extinction is that a massive asteroid impact caused widespread environmental changes, including wildfires, tsunamis, and a 'nuclear winter' effect that blocked sunlight and disrupted ecosystems.",
-      "[pt] In addition to the asteroid impact, there were also massive volcanic eruptions around the same time, which may have contributed to the extinction by releasing large amounts of volcanic gases and ash into the atmosphere. These events would have led to a rapid decline in temperatures and a collapse of food chains, making it difficult for dinosaurs to survive.",
-      "[pt] While the non-avian dinosaurs went extinct, their legacy lives on through birds, which are considered their closest living relatives. The extinction event also paved the way for mammals to diversify and eventually led to the rise of humans. So while it's sad that dinosaurs are no longer with us, their story is an important part of our planet's history and continues to inspire curiosity and wonder!"
+      "A extinção dos dinossauros é um dos eventos mais significativos da história da Terra. Ocorreu há cerca de 66 milhões de anos, no final do período Cretáceo. A principal teoria para sua extinção é que um enorme impacto de asteroide causou mudanças ambientais generalizadas, incluindo incêndios florestais, tsunamis e um efeito de 'inverno nuclear' que bloqueou a luz solar e perturbou os ecossistemas.",
+      "Além do impacto do asteroide, também houve enormes erupções vulcânicas na mesma época, que podem ter contribuído para a extinção ao liberar grandes quantidades de gases vulcânicos e cinzas na atmosfera. Esses eventos teriam levado a um rápido declínio nas temperaturas e ao colapso das cadeias alimentares, dificultando a sobrevivência dos dinossauros.",
+      "Embora os dinossauros não aviários tenham sido extintos, seu legado vive através das aves, que são consideradas seus parentes vivos mais próximos. O evento de extinção também abriu caminho para a diversificação dos mamíferos e eventualmente levou ao surgimento dos humanos. Então, embora seja triste que os dinossauros não estejam mais entre nós, sua história é uma parte importante da história do nosso planeta e continua a inspirar curiosidade e admiração!"
     ]
   }
 ];

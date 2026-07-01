@@ -1,70 +1,70 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: SPACE · idioma: pt · modelo: mock · 2026-07-01
+// história: SPACE · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const SPACE: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Lesson 1",
-    "subtitle": "[pt] The Solar System",
+    "title": "Lição 1",
+    "subtitle": "O Sistema Solar",
     "emoji": "☀️",
     "locked": false,
     "activityCard": {
-      "title": "Try This! Make a Scale Model of the Solar System",
-      "instructions": "Use household objects to represent the Sun and planets. For example, a basketball for the Sun, a tennis ball for Earth, and a peppercorn for Mercury. Arrange them in order from the Sun, keeping the distances proportional (e.g., if Earth is 10 cm from the Sun, Jupiter should be about 52 cm away)."
+      "title": "Tente Isto! Faça um Modelo em Escala do Sistema Solar",
+      "instructions": "Use objetos domésticos para representar o Sol e os planetas. Por exemplo, uma bola de basquete para o Sol, uma bola de tênis para a Terra e um grão de pimenta-do-reino para Mercúrio. Organize-os em ordem a partir do Sol, mantendo as distâncias proporcionais (por exemplo, se a Terra estiver a 10 cm do Sol, Júpiter deve estar a cerca de 52 cm de distância)."
     },
     "pages": [
-      "[pt] The solar system is made up of the Sun and everything that orbits around it — including eight planets, their moons, dwarf planets like Pluto, asteroids, comets, and lots of space dust.\n\nThe Sun is a star at the center of our solar system. It's a giant ball of hot, glowing gas that gives us light and heat. The planets orbit the Sun in a flat plane called the ecliptic, and they each have their own unique characteristics — from Mercury's scorching surface to Neptune's icy winds.",
-      "[pt] The four planets closest to the Sun — Mercury, Venus, Earth, and Mars — are called terrestrial planets. They're made mostly of rock and metal.\n\nThe four outer planets — Jupiter, Saturn, Uranus, and Neptune — are called gas giants (or ice giants for Uranus and Neptune) because they're mostly made of gases like hydrogen and helium.\n\nBeyond Neptune lies the Kuiper Belt, home to dwarf planets like Pluto and countless icy objects.",
-      "[pt] The solar system is vast. If you were to drive a car at 100 km/h, it would take you about 170 years to reach Neptune!\n\nAnd yet, it's just one of billions of solar systems in our galaxy, the Milky Way. Each solar system has its own star and planets, and some of those planets might even have conditions suitable for life.\n\nThe more we learn about our solar system, the more we understand about our place in the universe."
+      "O sistema solar é composto pelo Sol e tudo o que orbita ao seu redor — incluindo oito planetas, suas luas, planetas anões como Plutão, asteroides, cometas e muita poeira espacial.\n\nO Sol é uma estrela no centro do nosso sistema solar. É uma bola gigante de gás quente e brilhante que nos dá luz e calor. Os planetas orbitam o Sol em um plano plano chamado eclíptica, e cada um tem suas próprias características únicas — desde a superfície escaldante de Mercúrio até os ventos gelados de Netuno.",
+      "Os quatro planetas mais próximos do Sol — Mercúrio, Vênus, Terra e Marte — são chamados de planetas terrestres. Eles são feitos principalmente de rocha e metal.\n\nOs quatro planetas externos — Júpiter, Saturno, Urano e Netuno — são chamados de gigantes gasosos (ou gigantes de gelo para Urano e Netuno) porque são feitos principalmente de gases como hidrogênio e hélio.\n\nAlém de Netuno fica o Cinturão de Kuiper, lar de planetas anões como Plutão e inúmeros objetos gelados.",
+      "O sistema solar é vasto. Se você dirigisse um carro a 100 km/h, levaria cerca de 170 anos para chegar a Netuno!\n\nE ainda assim, é apenas um entre bilhões de sistemas solares em nossa galáxia, a Via Láctea. Cada sistema solar tem sua própria estrela e planetas, e alguns desses planetas podem até ter condições adequadas para a vida.\n\nQuanto mais aprendemos sobre nosso sistema solar, mais entendemos sobre nosso lugar no universo."
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Lesson 2",
-    "subtitle": "[pt] Stars and Galaxies",
+    "title": "Lição 2",
+    "subtitle": "Estrelas e Galáxias",
     "emoji": "🌟",
     "locked": false,
     "activityCard": {
-      "title": "Try This! Create Your Own Constellation",
-      "instructions": "Take a piece of black paper and use a white crayon or chalk to draw your own constellation. Connect the dots to create a shape or figure that tells a story. You can name your constellation and share the story behind it with friends or family!"
+      "title": "Tente Isto! Crie Sua Própria Constelação",
+      "instructions": "Pegue um pedaço de papel preto e use um giz ou lápis de cor branco para desenhar sua própria constelação. Conecte os pontos para criar uma forma ou figura que conte uma história. Você pode dar um nome à sua constelação e compartilhar a história por trás dela com amigos ou familiares!"
     },
     "pages": [
-      "[pt] Stars are massive balls of hot gas that emit light and heat. They come in different sizes, colors, and temperatures — from small, cool red dwarfs to massive, hot blue giants. Stars are born in clouds of gas and dust called nebulae, and they go through a life cycle that can last millions or even billions of years. When a star runs out of fuel, it can explode in a supernova, leaving behind a dense core called a neutron star or black hole.",
-      "[pt] Galaxies are vast collections of stars, gas, dust, and dark matter held together by gravity. Our galaxy, the Milky Way, contains over 100 billion stars and is just one of billions of galaxies in the universe. Galaxies come in different shapes and sizes — from spiral galaxies like our own to elliptical and irregular galaxies. They can also collide and merge with each other, creating new stars and changing their structure.",
-      "[pt] The night sky is filled with stars and galaxies, and each one has its own story to tell. By studying them, we can learn about the history of the universe, the formation of planets, and even the possibility of life beyond Earth. So next time you look up at the stars, remember that you're seeing just a tiny part of a vast and wondrous cosmos!"
+      "Estrelas são bolas massivas de gás quente que emitem luz e calor. Elas vêm em diferentes tamanhos, cores e temperaturas — desde pequenas e frias anãs vermelhas até gigantes azuis massivas e quentes. As estrelas nascem em nuvens de gás e poeira chamadas nebulosas, e passam por um ciclo de vida que pode durar milhões ou até bilhões de anos. Quando uma estrela fica sem combustível, ela pode explodir em uma supernova, deixando para trás um núcleo denso chamado estrela de nêutrons ou buraco negro.",
+      "Galáxias são vastas coleções de estrelas, gás, poeira e matéria escura mantidas unidas pela gravidade. Nossa galáxia, a Via Láctea, contém mais de 100 bilhões de estrelas e é apenas uma entre bilhões de galáxias no universo. As galáxias vêm em diferentes formas e tamanhos — desde galáxias espirais como a nossa até galáxias elípticas e irregulares. Elas também podem colidir e se fundir umas com as outras, criando novas estrelas e mudando sua estrutura.",
+      "O céu noturno está repleto de estrelas e galáxias, e cada uma tem sua própria história para contar. Ao estudá-las, podemos aprender sobre a história do universo, a formação dos planetas e até mesmo a possibilidade de vida além da Terra. Então, da próxima vez que você olhar para as estrelas, lembre-se de que está vendo apenas uma pequena parte de um cosmos vasto e maravilhoso!"
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Lesson 3",
-    "subtitle": "[pt] Black Holes and Neutron Stars",
+    "title": "Lição 3",
+    "subtitle": "Buracos Negros e Estrelas de Nêutrons",
     "emoji": "🕳️",
     "locked": true,
     "activityCard": {
-      "title": "Try This! Simulate a Black Hole with a Sheet",
-      "instructions": "Stretch a large sheet or piece of fabric tightly over a round object (like a basketball) to create a 'gravity well.' Place small balls or marbles on the sheet to see how they roll towards the center, simulating how objects are drawn into a black hole. You can experiment with different weights and distances to see how they affect the movement!"
+      "title": "Tente Isto! Simule um Buraco Negro com um Lençol",
+      "instructions": "Estique um lençol grande ou um pedaço de tecido firmemente sobre um objeto redondo (como uma bola de basquete) para criar um 'poço de gravidade'. Coloque bolinhas ou bolinhas de gude no lençol para ver como elas rolam em direção ao centro, simulando como objetos são atraídos para um buraco negro. Você pode experimentar com diferentes pesos e distâncias para ver como eles afetam o movimento!"
     },
     "pages": [
-      "[pt] Black holes are regions of space where gravity is so strong that nothing, not even light, can escape. They form when massive stars collapse under their own gravity at the end of their life cycle. The boundary around a black hole is called the event horizon — once you cross it, there's no turning back. Black holes can vary in size, from small ones just a few times more massive than our Sun to supermassive black holes that reside at the centers of galaxies.",
-      "[pt] Neutron stars are the remnants of massive stars that have exploded in supernovae but aren't quite massive enough to become black holes. They're incredibly dense — a teaspoon of neutron star material would weigh about a billion tons on Earth! Neutron stars can also have strong magnetic fields and can emit beams of radiation, which we observe as pulsars when they sweep past Earth.",
-      "[pt] Both black holes and neutron stars are extreme objects that challenge our understanding of physics. They warp space and time around them, and studying them helps scientists learn about the fundamental laws of the universe. So while they might sound scary, they're also some of the most fascinating and mysterious objects in space!"
+      "Buracos negros são regiões do espaço onde a gravidade é tão forte que nada, nem mesmo a luz, pode escapar. Eles se formam quando estrelas massivas colapsam sob sua própria gravidade no final de seu ciclo de vida. O limite ao redor de um buraco negro é chamado de horizonte de eventos — uma vez que você o cruza, não há como voltar. Os buracos negros podem variar em tamanho, desde pequenos com apenas algumas vezes a massa do nosso Sol até buracos negros supermassivos que residem no centro das galáxias.",
+      "Estrelas de nêutrons são os restos de estrelas massivas que explodiram em supernovas, mas não são massivas o suficiente para se tornarem buracos negros. Elas são incrivelmente densas — uma colher de chá de material de estrela de nêutrons pesaria cerca de um bilhão de toneladas na Terra! As estrelas de nêutrons também podem ter campos magnéticos fortes e emitir feixes de radiação, que observamos como pulsares quando eles varrem a Terra.",
+      "Tanto os buracos negros quanto as estrelas de nêutrons são objetos extremos que desafiam nossa compreensão da física. Eles distorcem o espaço e o tempo ao seu redor, e estudá-los ajuda os cientistas a aprender sobre as leis fundamentais do universo. Então, embora possam parecer assustadores, eles também são alguns dos objetos mais fascinantes e misteriosos do espaço!"
     ]
   },
   {
     "id": 4,
-    "title": "[pt] Lesson 4",
-    "subtitle": "[pt] The Search for Extraterrestrial Life",
+    "title": "Lição 4",
+    "subtitle": "A Busca por Vida Extraterrestre",
     "emoji": "👽",
     "locked": true,
     "activityCard": {
-      "title": "Try This! Build a Simple Radio Telescope",
-      "instructions": "You can create a simple radio telescope using a satellite dish or a large metal bowl. Connect it to a radio receiver or a computer with software that can analyze radio signals. Point your homemade telescope towards the sky and see if you can detect any radio waves from space! You might even pick up signals from distant stars or galaxies."
+      "title": "Tente Isto! Construa um Radiotelescópio Simples",
+      "instructions": "Você pode criar um radiotelescópio simples usando uma antena parabólica ou uma tigela grande de metal. Conecte-o a um receptor de rádio ou a um computador com software que possa analisar sinais de rádio. Aponte seu telescópio caseiro para o céu e veja se consegue detectar ondas de rádio do espaço! Você pode até captar sinais de estrelas ou galáxias distantes."
     },
     "pages": [
-      "[pt] The search for extraterrestrial life is one of the most exciting areas of space science. Scientists are looking for signs of life beyond Earth by studying planets in our solar system, like Mars and Europa, as well as exoplanets orbiting other stars. They use telescopes to analyze the atmospheres of these planets for signs of water, oxygen, and other chemicals that could indicate the presence of life.",
-      "[pt] In addition to searching for microbial life, scientists are also listening for signals from intelligent civilizations. Projects like SETI (Search for Extraterrestrial Intelligence) use radio telescopes to scan the skies for patterns that might indicate communication from advanced alien civilizations.",
-      "[pt] While we haven't found definitive evidence of extraterrestrial life yet, the universe is vast and full of possibilities. With new technologies and missions planned for the future, who knows what discoveries await us? The search continues, and it invites all of us to look up at the stars with wonder and curiosity!"
+      "A busca por vida extraterrestre é uma das áreas mais empolgantes da ciência espacial. Os cientistas estão procurando sinais de vida além da Terra estudando planetas em nosso sistema solar, como Marte e Europa, bem como exoplanetas orbitando outras estrelas. Eles usam telescópios para analisar as atmosferas desses planetas em busca de sinais de água, oxigênio e outros produtos químicos que possam indicar a presença de vida.",
+      "Além de procurar por vida microbiana, os cientistas também estão ouvindo sinais de civilizações inteligentes. Projetos como o SETI (Busca por Inteligência Extraterrestre) usam radiotelescópios para escanear os céus em busca de padrões que possam indicar comunicação de civilizações alienígenas avançadas.",
+      "Embora ainda não tenhamos encontrado evidências definitivas de vida extraterrestre, o universo é vasto e cheio de possibilidades. Com novas tecnologias e missões planejadas para o futuro, quem sabe que descobertas nos aguardam? A busca continua, e ela nos convida a todos a olhar para as estrelas com admiração e curiosidade!"
     ]
   }
 ];

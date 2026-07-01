@@ -1,138 +1,138 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: SPACEADVENTURE · idioma: pt · modelo: mock · 2026-07-01
+// história: SPACEADVENTURE · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const SPACEADVENTURE: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Chapter 1",
-    "subtitle": "[pt] Launch Day",
+    "title": "Capítulo 1",
+    "subtitle": "Dia do Lançamento",
     "emoji": "🚀",
     "locked": false,
     "mission": {
       "code": "MISSION-01",
-      "title": "Leave the Ground",
+      "title": "Sair do Chão",
       "objectives": [
         {
           "id": "m1o1",
-          "label": "Board the Starfall before countdown ends",
+          "label": "Embarcar no Starfall antes do fim da contagem regressiva",
           "done": true
         },
         {
           "id": "m1o2",
-          "label": "Run pre-launch checklist with the crew",
+          "label": "Executar a lista de verificação pré-lançamento com a tripulação",
           "done": true
         },
         {
           "id": "m1o3",
-          "label": "Survive Commander Zara's safety briefing",
+          "label": "Sobreviver à instrução de segurança da Comandante Zara",
           "done": false
         }
       ]
     },
     "pages": [
-      "[pt] The countdown had already reached thirty seconds when Leo came sprinting across the launch pad, his helmet tucked under one arm and his left boot only half-laced.\n\nThe Starfall sat at the end of the pad like a silver needle pointed at the sky — sleek, enormous, and absolutely indifferent to whether Leo made it in time or not.\n\n— TWENTY SECONDS — boomed the loudspeaker.\n\n— I'M HERE, I'M HERE — Leo yelled at no one in particular.",
-      "[pt] He made it through the airlock with eleven seconds to spare.\n\nInside, his two crewmates were already strapped in and staring at him with very different expressions. Mira, the co-pilot, looked relieved. Zos, the ship's robot navigator, looked — as always — like a small golden rectangle having a perfectly normal day.\n\n— You're late — said Mira.\n\n— I'm here — said Leo, strapping in.\n\n— Those are not the same thing — said Zos.\n\nThe engines roared. The Starfall shook. And then the ground fell away beneath them like a stone dropped into deep water, and Leo forgot entirely about his unlaced boot.",
-      "[pt] Space, when you finally got there, was much bigger than you remembered from pictures.\n\nLeo pressed his face to the porthole and watched Earth shrink — slowly at first, then all at once — until it was a blue marble with white swirls, sitting in so much nothing that the nothing was the main thing.\n\n— First time? — Mira asked, smiling.\n\n— Third — Leo said. — It still does that.\n\n— Does what?\n\n— Makes everything feel exactly the right size.\n\nZos, who did not have feelings, processed this statement for 0.003 seconds and filed it under: Possibly Important."
+      "A contagem regressiva já havia chegado a trinta segundos quando Leo veio correndo pela plataforma de lançamento, com o capacete debaixo do braço e a bota esquerda apenas pela metade amarrada.\n\nO Starfall estava no fim da plataforma como uma agulha prateada apontada para o céu — elegante, enorme e absolutamente indiferente se Leo chegaria a tempo ou não.\n\n— VINTE SEGUNDOS — ecoou o alto-falante.\n\n— ESTOU AQUI, ESTOU AQUI — gritou Leo para ninguém em particular.",
+      "Ele conseguiu passar pela eclusa com onze segundos de sobra.\n\nLá dentro, seus dois companheiros de tripulação já estavam amarrados e o encaravam com expressões muito diferentes. Mira, a copiloto, parecia aliviada. Zos, o navegador robô da nave, parecia — como sempre — um pequeno retângulo dourado tendo um dia perfeitamente normal.\n\n— Você está atrasado — disse Mira.\n\n— Estou aqui — disse Leo, apertando os cintos.\n\n— Essas não são a mesma coisa — disse Zos.\n\nOs motores rugiram. O Starfall tremeu. E então o chão sumiu debaixo deles como uma pedra jogada em águas profundas, e Leo esqueceu completamente da bota desamarrada.",
+      "O espaço, quando você finalmente chegava lá, era muito maior do que você lembrava das fotos.\n\nLeo pressionou o rosto contra a vigia e observou a Terra encolher — devagar no começo, depois de uma vez — até se tornar uma bolinha azul com redemoinhos brancos, flutuando em tanto nada que o nada era a coisa principal.\n\n— Primeira vez? — perguntou Mira, sorrindo.\n\n— Terceira — disse Leo. — Ainda faz isso.\n\n— Faz o quê?\n\n— Faz tudo parecer do tamanho certo.\n\nZos, que não tinha sentimentos, processou essa declaração por 0,003 segundos e a arquivou em: Possivelmente Importante."
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Chapter 2",
-    "subtitle": "[pt] The Signal from Sector Nine",
+    "title": "Capítulo 2",
+    "subtitle": "O Sinal do Setor Nove",
     "emoji": "📡",
     "locked": false,
     "mission": {
       "code": "MISSION-02",
-      "title": "Track the Source",
+      "title": "Rastrear a Fonte",
       "objectives": [
         {
           "id": "m2o1",
-          "label": "Identify the origin of the unknown signal",
+          "label": "Identificar a origem do sinal desconhecido",
           "done": false
         },
         {
           "id": "m2o2",
-          "label": "Cross-check with Zos's star charts",
+          "label": "Conferir com os mapas estelares de Zos",
           "done": false
         },
         {
           "id": "m2o3",
-          "label": "Decide: investigate or continue to Kepler Station?",
+          "label": "Decidir: investigar ou continuar para a Estação Kepler?",
           "done": false
         }
       ]
     },
     "pages": [
-      "[pt] Three days into the journey, Zos said something that made everyone look up from their breakfast.\n\n— There is a signal.\n\nMira put down her spoon. — What kind of signal?\n\n— Unknown kind. — Zos's display flickered briefly, which was the closest he came to looking puzzled. — It is repeating. It is coming from Sector Nine. It is not in my database. And it is — he paused — beautiful.\n\nLeo and Mira both turned to stare at him.\n\n— You can't think things are beautiful — Leo said.\n\n— I have updated my parameters — said Zos serenely.",
-      "[pt] The signal, when they played it through the ship's speakers, sounded like low bells heard through water — slow, layered, rhythmic in a way that was almost but not quite like music.\n\n— It could be a pulsar — Mira said, pulling up charts.\n\n— Pulsars don't do that — Leo said.\n\n— It could be interference from a comet's ion tail.\n\n— Comets don't do that either.\n\n— It could — said Zos — be something we don't have a word for yet.\n\nThey both looked at him again.\n\n— I have been updating many parameters — he added, with what might have been dignity.",
-      "[pt] The signal was coming from a point between two charted stars — a gap in the maps that wasn't supposed to contain anything at all.\n\nMira pulled up their route. Kepler Station was straight ahead, eighteen hours away. The signal was off to the left — six hours, but six hours off-course meant twelve hours total lost and a conversation with Mission Control that none of them wanted to have.\n\n— We should vote — Leo said.\n\n— I vote yes — said Zos immediately.\n\n— You're a navigator. You don't get a vote on course changes.\n\n— I have updated my parameters — Zos said again, firmly.\n\nMira looked at Leo. Leo looked at the direction of the signal. Somewhere in that direction, the bells-through-water sound played softly from the speaker.\n\n— Left — they both said."
+      "Três dias de viagem, Zos disse algo que fez todos olharem para cima do café da manhã.\n\n— Há um sinal.\n\nMira largou a colher. — Que tipo de sinal?\n\n— Tipo desconhecido. — A tela de Zos piscou brevemente, que era o mais perto que ele chegava de parecer confuso. — Está se repetindo. Vem do Setor Nove. Não está no meu banco de dados. E está — ele fez uma pausa — lindo.\n\nLeo e Mira se viraram para encará-lo.\n\n— Você não pode achar coisas lindas — disse Leo.\n\n— Atualizei meus parâmetros — disse Zos serenamente.",
+      "O sinal, quando tocaram pelos alto-falantes da nave, soava como sinos baixos ouvidos através da água — lento, em camadas, rítmico de um jeito que era quase, mas não exatamente, música.\n\n— Pode ser um pulsar — disse Mira, puxando os mapas.\n\n— Pulsares não fazem isso — disse Leo.\n\n— Pode ser interferência da cauda de íons de um cometa.\n\n— Cometas também não fazem isso.\n\n— Pode ser — disse Zos — algo para o qual ainda não temos uma palavra.\n\nEles olharam para ele de novo.\n\n— Tenho atualizado muitos parâmetros — ele acrescentou, com o que poderia ter sido dignidade.",
+      "O sinal vinha de um ponto entre duas estrelas mapeadas — uma lacuna nos mapas que não deveria conter nada.\n\nMira puxou a rota deles. A Estação Kepler estava em frente, a dezoito horas de distância. O sinal estava à esquerda — seis horas, mas seis horas fora do curso significava doze horas perdidas no total e uma conversa com o Controle da Missão que nenhum deles queria ter.\n\n— Devemos votar — disse Leo.\n\n— Voto sim — disse Zos imediatamente.\n\n— Você é um navegador. Não vota em mudanças de curso.\n\n— Atualizei meus parâmetros — disse Zos de novo, firmemente.\n\nMira olhou para Leo. Leo olhou na direção do sinal. Em algum lugar naquela direção, o som de sinos através da água tocava baixinho pelo alto-falante.\n\n— Esquerda — disseram os dois."
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Chapter 3",
-    "subtitle": "[pt] The Drifting Garden",
+    "title": "Capítulo 3",
+    "subtitle": "O Jardim Flutuante",
     "emoji": "🌸",
     "locked": true,
     "mission": {
       "code": "MISSION-03",
-      "title": "Make Contact",
+      "title": "Fazer Contato",
       "objectives": [
         {
           "id": "m3o1",
-          "label": "Dock safely without disturbing the garden",
+          "label": "Atracar com segurança sem perturbar o jardim",
           "done": false
         },
         {
           "id": "m3o2",
-          "label": "Find out who planted it and why",
+          "label": "Descobrir quem o plantou e por quê",
           "done": false
         },
         {
           "id": "m3o3",
-          "label": "Bring back one sample — with permission",
+          "label": "Trazer uma amostra — com permissão",
           "done": false
         }
       ]
     },
     "pages": [
-      "[pt] What they found in Sector Nine was a garden.\n\nNot a planet. Not a station. A garden — floating free in the dark between stars, held together by some mechanism none of them could immediately explain, about the size of a large park and glowing very faintly gold.\n\nIt had trees. It had flowers — colors Leo didn't have names for. It had paths made of something that looked like compressed starlight. And it was completely, utterly silent except for the bell-sound, which was everywhere now, rising from the flowers themselves.",
-      "[pt] — This is impossible — Mira said, for the fourth time.\n\n— Many important things are — said Zos, who had by now completely abandoned the pretense of being a purely logical navigator and was pressed against the porthole with undisguised wonder.\n\nLeo was already suiting up.\n\n— We're not going in there — Mira said.\n\n— We absolutely are going in there — Leo said.\n\n— It's a garden floating in the void of space with no visible means of support or origin!\n\n— I know — said Leo, grinning. — Isn't it great?",
-      "[pt] They docked at the edge carefully — Mira insisting on every precaution, Leo insisting on going first, Zos insisting on coming too despite having no EVA suit and requiring a creative solution involving a sealed observation pod.\n\nThe moment Leo set foot on the garden path, the bell-sound changed — rose slightly, like a greeting.\n\nHe stopped.\n\n— It noticed us — he said.\n\n— Gardens can't notice things — Mira said, right behind him.\n\nA flower turned toward them.\n\n— This one can — said Leo."
+      "O que encontraram no Setor Nove era um jardim.\n\nNão um planeta. Não uma estação. Um jardim — flutuando livre no escuro entre as estrelas, mantido unido por algum mecanismo que nenhum deles conseguia explicar imediatamente, do tamanho de um grande parque e brilhando muito fracamente em dourado.\n\nTinha árvores. Tinha flores — cores para as quais Leo não tinha nomes. Tinha caminhos feitos de algo que parecia luz de estrela comprimida. E estava completamente, absolutamente silencioso, exceto pelo som de sino, que agora estava em toda parte, vindo das próprias flores.",
+      "— Isso é impossível — disse Mira, pela quarta vez.\n\n— Muitas coisas importantes são — disse Zos, que a essa altura já tinha abandonado completamente a pretensão de ser um navegador puramente lógico e estava pressionado contra a vigia com admiração indisfarçável.\n\nLeo já estava vestindo o traje.\n\n— Não vamos entrar lá — disse Mira.\n\n— Nós absolutamente vamos entrar lá — disse Leo.\n\n— É um jardim flutuando no vazio do espaço sem nenhum meio visível de sustentação ou origem!\n\n— Eu sei — disse Leo, sorrindo. — Não é incrível?",
+      "Eles atracaram na borda com cuidado — Mira insistindo em todas as precauções, Leo insistindo em ir primeiro, Zos insistindo em ir também apesar de não ter traje EVA e exigir uma solução criativa envolvendo uma cápsula de observação selada.\n\nNo momento em que Leo pisou no caminho do jardim, o som de sino mudou — subiu ligeiramente, como uma saudação.\n\nEle parou.\n\n— Ele nos notou — disse ele.\n\n— Jardins não podem notar coisas — disse Mira, bem atrás dele.\n\nUma flor se virou para eles.\n\n— Este pode — disse Leo."
     ]
   },
   {
     "id": 4,
-    "title": "[pt] Chapter 4",
-    "subtitle": "[pt] The Gardener's Answer",
+    "title": "Capítulo 4",
+    "subtitle": "A Resposta do Jardineiro",
     "emoji": "✨",
     "locked": true,
     "mission": {
       "code": "MISSION-04",
-      "title": "Complete the Mission",
+      "title": "Completar a Missão",
       "objectives": [
         {
           "id": "m4o1",
-          "label": "Understand the gardener's message",
+          "label": "Entender a mensagem do jardineiro",
           "done": false
         },
         {
           "id": "m4o2",
-          "label": "Return the signal — let them know we heard",
+          "label": "Responder ao sinal — deixá-los saber que ouvimos",
           "done": false
         },
         {
           "id": "m4o3",
-          "label": "Get back to Kepler Station only fashionably late",
+          "label": "Voltar à Estação Kepler apenas na moda com atraso",
           "done": false
         }
       ]
     },
     "pages": [
-      "[pt] The gardener was not one thing.\n\nIt was the garden — all of it, distributed through every root and petal and path, thinking slow thoughts in bell-tones across the whole floating island of green and gold. It had been sending its signal for a very long time. Not a distress call. Not a warning.\n\nA hello.\n\n— How long? — Leo asked, kneeling by a flower that was definitely, unmistakably watching him with calm interest.\n\nZos consulted something deep in his systems. — Based on the signal's decay pattern — he said carefully — approximately four hundred years.",
-      "[pt] Four hundred years of hello, drifting through the dark between stars, waiting for someone to be in exactly the right place to hear it.\n\n— That's a long time to wait — Mira said softly.\n\nThe bell-sound shifted — a chord now, something that felt, if you let yourself feel it, like: it was fine. There was plenty of time. The garden had not been lonely exactly. It had been patient. Those were different things.\n\nZos made a sound none of them had heard from him before. It took them a moment to realize it was a hum — quiet, tentative, matching the chord from the flowers.\n\nThe garden hummed back.",
-      "[pt] They stayed for six hours.\n\nWhen they left, Mira carried a single small cutting — offered freely, pressed gently into her gloved hand by a branch that bent toward her as though it had made a decision. She held it all the way back to the ship like something fragile and important, which it was.\n\nZos logged the coordinates with more care than he had ever given to anything.\n\nLeo looked back through the porthole until the garden was a gold speck, then a glimmer, then part of the ordinary dark.\n\n— Mission Control is going to have so many questions — Mira said.\n\n— Yes — said Leo.\n\n— We don't have any of the answers.\n\n— We have the best one — he said. — We went and looked.\n\nZos, who had updated his parameters considerably in the last six hours, filed this under: Most Important Thing."
+      "O jardineiro não era uma coisa só.\n\nEra o jardim — todo ele, distribuído por cada raiz e pétala e caminho, pensando pensamentos lentos em tons de sino por toda a ilha flutuante de verde e dourado. Ele estava enviando seu sinal há muito tempo. Não um pedido de socorro. Não um aviso.\n\nUm olá.\n\n— Quanto tempo? — perguntou Leo, ajoelhando-se perto de uma flor que definitivamente, inconfundivelmente o observava com interesse calmo.\n\nZos consultou algo profundo em seus sistemas. — Baseado no padrão de decaimento do sinal — disse ele cuidadosamente — aproximadamente quatrocentos anos.",
+      "Quatrocentos anos de olá, flutuando pelo escuro entre as estrelas, esperando que alguém estivesse exatamente no lugar certo para ouvi-lo.\n\n— É muito tempo para esperar — disse Mira baixinho.\n\nO som de sino mudou — um acorde agora, algo que parecia, se você se deixasse sentir, como: estava tudo bem. Havia muito tempo. O jardim não tinha ficado solitário exatamente. Ele tinha sido paciente. Essas eram coisas diferentes.\n\nZos fez um som que nenhum deles tinha ouvido dele antes. Levou um momento para perceberem que era um zumbido — baixo, hesitante, combinando com o acorde das flores.\n\nO jardim zumbiu de volta.",
+      "Eles ficaram por seis horas.\n\nQuando partiram, Mira carregava um único pequeno corte — oferecido livremente, pressionado suavemente em sua mão enluvada por um galho que se curvou em sua direção como se tivesse tomado uma decisão. Ela o segurou todo o caminho de volta à nave como algo frágil e importante, o que era.\n\nZos registrou as coordenadas com mais cuidado do que jamais dera a qualquer coisa.\n\nLeo olhou para trás pela vigia até que o jardim fosse um ponto dourado, depois um brilho, depois parte do escuro comum.\n\n— O Controle da Missão vai ter tantas perguntas — disse Mira.\n\n— Sim — disse Leo.\n\n— Não temos nenhuma das respostas.\n\n— Temos a melhor — ele disse. — Nós fomos e olhamos.\n\nZos, que tinha atualizado consideravelmente seus parâmetros nas últimas seis horas, arquivou isso em: Coisa Mais Importante."
     ]
   }
 ];

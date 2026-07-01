@@ -1,78 +1,78 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: SCHOOL · idioma: pt · modelo: mock · 2026-07-01
+// história: SCHOOL · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const SCHOOL: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Lesson 1",
-    "subtitle": "[pt] The Morning of Everything",
+    "title": "Lição 1",
+    "subtitle": "A Manhã de Tudo",
     "emoji": "🌤️",
     "locked": false,
     "feelingCard": {
       "emoji": "😬",
-      "emotion": "Nervous",
-      "prompt": "It's okay to feel nervous about something new. Can you think of one thing that might be fun about today?",
-      "affirmation": "Nervous feelings mean something matters to you. That's not weakness — that's caring."
+      "emotion": "Nervoso",
+      "prompt": "Tudo bem sentir nervoso com algo novo. Você consegue pensar em uma coisa que pode ser divertida hoje?",
+      "affirmation": "Sentir nervoso significa que algo é importante para você. Isso não é fraqueza — é cuidado."
     },
     "pages": [
-      "[pt] The morning felt different.\n\nMaya couldn't say exactly how — the cereal tasted the same, the kitchen smelled the same, her shoes were the same shoes. But something in the air was stretched tight, like a rubber band pulled just a little too far.\n\nToday was the first day of school.\n\n— Eat your breakfast — said her mom.\n\nMaya ate three bites and moved the rest around the bowl.",
-      "[pt] — Are you nervous? — her mom asked, sitting down across from her.\n\nMaya considered this very carefully. Nervous seemed like the wrong word. Nervous was when you thought something bad was going to happen. This wasn't that exactly. This was more like... not knowing yet. Like standing at the edge of a swimming pool that might be cold or might be perfect and not knowing which until you jumped.\n\n— I don't know what it's going to be like — Maya said.\n\n— Nobody does — said her mom. — That's the same for everyone on the first day. Even the teachers.",
-      "[pt] — Even the teachers?\n\n— Every single one of them, once.\n\nMaya thought about that. A teacher who had once been a kid standing at the edge of the same pool. It made the pool feel slightly less cold.\n\nShe ate two more bites of cereal.\n\n— Okay — she said.\n\nHer mom smiled. — Okay.\n\nThey got in the car. The school was seven minutes away. Maya counted every one of them, and when they arrived, the building was just a building — red brick and big windows and a flag out front — and somewhere inside it, something was about to begin."
+      "A manhã parecia diferente.\n\nMaya não conseguia dizer exatamente como — o cereal tinha o mesmo gosto, a cozinha cheirava igual, seus sapatos eram os mesmos sapatos. Mas algo no ar estava esticado, como um elástico puxado um pouco demais.\n\nHoje era o primeiro dia de aula.\n\n— Coma seu café da manhã — disse sua mãe.\n\nMaya comeu três colheradas e mexeu o resto no prato.",
+      "— Você está nervosa? — perguntou sua mãe, sentando-se à sua frente.\n\nMaya considerou isso com muito cuidado. Nervosa parecia a palavra errada. Nervosa era quando você achava que algo ruim ia acontecer. Não era exatamente isso. Era mais como... ainda não saber. Como estar na beira de uma piscina que poderia ser fria ou perfeita e não saber até pular.\n\n— Não sei como vai ser — disse Maya.\n\n— Ninguém sabe — disse sua mãe. — É igual para todo mundo no primeiro dia. Até para os professores.",
+      "— Até os professores?\n\n— Cada um deles, uma vez.\n\nMaya pensou nisso. Um professor que já foi uma criança na beira da mesma piscina. Isso fez a piscina parecer um pouco menos fria.\n\nEla comeu mais duas colheradas de cereal.\n\n— Tudo bem — disse ela.\n\nSua mãe sorriu. — Tudo bem.\n\nElas entraram no carro. A escola ficava a sete minutos de distância. Maya contou cada um deles, e quando chegaram, o prédio era só um prédio — tijolos vermelhos, janelas grandes e uma bandeira na frente — e em algum lugar lá dentro, algo estava prestes a começar."
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Lesson 2",
-    "subtitle": "[pt] The Person Next to You",
+    "title": "Lição 2",
+    "subtitle": "A Pessoa ao Seu Lado",
     "emoji": "🤝",
     "locked": false,
     "feelingCard": {
       "emoji": "🫣",
-      "emotion": "Shy",
-      "prompt": "Feeling shy around new people is very normal. What's one small thing you could say to someone new?",
-      "affirmation": "Being shy doesn't mean you're unfriendly. It just means you're taking your time — and that's allowed."
+      "emotion": "Tímido",
+      "prompt": "Sentir timidez perto de pessoas novas é muito normal. Qual é uma coisinha que você poderia dizer para alguém novo?",
+      "affirmation": "Ser tímido não significa que você não é amigável. Só significa que você está no seu tempo — e isso é permitido."
     },
     "pages": [
-      "[pt] Maya's classroom had twenty-two chairs.\n\nShe counted them immediately upon walking in, because counting was something to do with her eyes when she wasn't sure where to put them.\n\nMost chairs already had people in them. The people in them were doing what Maya was doing — looking around carefully, trying to figure out the rules of this new place without having to ask.\n\nThere was one empty chair next to a boy with paint on his sleeve.",
-      "[pt] Maya sat next to the boy with paint on his sleeve.\n\nFor a while, neither of them said anything. The teacher was writing her name on the board. Other kids were finding seats. The room was loud in a particular way — the loud of many people all being nervous at the same time, which somehow adds up to something almost cheerful.\n\nThen the boy said:\n\n— I painted my arm this morning by accident.\n\n— What color? — Maya asked.\n\n— Blue. — He showed her. — I was trying to paint the sky on a piece of cardboard and my arm got in the way.\n\nMaya thought that was an excellent reason for paint on your arm. — I'm Maya.\n\n— I'm Sam.",
-      "[pt] By lunch, Maya and Sam had established several important things:\n\nThey both disliked the same vegetable (broccoli, specifically when it was too soft).\nThey both liked the same kind of cloud (the tall fluffy ones that look like they have opinions).\nAnd they both felt better about the day than they had that morning, which was not something either of them said out loud but was true for both of them.\n\nMaking a friend, Maya thought, was not as hard as she had worried.\n\nIt was mostly just a matter of sitting next to someone and saying something true."
+      "A sala de aula de Maya tinha vinte e duas cadeiras.\n\nEla as contou imediatamente ao entrar, porque contar era algo para fazer com os olhos quando não sabia onde colocá-los.\n\nA maioria das cadeiras já tinha pessoas. As pessoas nelas estavam fazendo o que Maya estava fazendo — olhando ao redor com cuidado, tentando descobrir as regras daquele lugar novo sem precisar perguntar.\n\nHavia uma cadeira vazia ao lado de um menino com tinta na manga.",
+      "Maya sentou ao lado do menino com tinta na manga.\n\nPor um tempo, nenhum dos dois disse nada. A professora estava escrevendo o nome dela no quadro. Outras crianças estavam encontrando lugares. A sala estava barulhenta de um jeito particular — o barulho de muitas pessoas todas nervosas ao mesmo tempo, que de alguma forma se soma a algo quase alegre.\n\nEntão o menino disse:\n\n— Pintei meu braço esta manhã sem querer.\n\n— De que cor? — perguntou Maya.\n\n— Azul. — Ele mostrou. — Estava tentando pintar o céu num pedaço de papelão e meu braço atrapalhou.\n\nMaya achou que era uma excelente razão para ter tinta no braço. — Eu sou Maya.\n\n— Eu sou Sam.",
+      "Na hora do almoço, Maya e Sam já tinham estabelecido várias coisas importantes:\n\nOs dois não gostavam do mesmo vegetal (brócolis, especialmente quando estava muito mole).\nOs dois gostavam do mesmo tipo de nuvem (as altas e fofinhas que parecem ter opiniões).\nE os dois se sentiam melhor sobre o dia do que naquela manhã, o que não era algo que nenhum deles dissesse em voz alta, mas era verdade para ambos.\n\nFazer um amigo, pensou Maya, não era tão difícil quanto ela tinha medo.\n\nEra principalmente uma questão de sentar ao lado de alguém e dizer algo verdadeiro."
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Lesson 3",
-    "subtitle": "[pt] When Something Goes Wrong",
+    "title": "Lição 3",
+    "subtitle": "Quando Algo Dá Errado",
     "emoji": "😔",
     "locked": true,
     "feelingCard": {
       "emoji": "😢",
-      "emotion": "Upset",
-      "prompt": "Sometimes things don't go the way we hoped. What helps you feel better when you're sad or frustrated?",
-      "affirmation": "Feeling upset is not the same as failing. Everyone has hard moments. What matters is what you do next."
+      "emotion": "Chateado",
+      "prompt": "Às vezes as coisas não saem como esperávamos. O que ajuda você a se sentir melhor quando está triste ou frustrado?",
+      "affirmation": "Sentir-se chateado não é o mesmo que fracassar. Todo mundo tem momentos difíceis. O que importa é o que você faz depois."
     },
     "pages": [
-      "[pt] On Tuesday, Maya made a mistake.\n\nIt wasn't a big mistake — not the kind that breaks things or hurts anyone. It was the kind that just sits heavy in your chest: she read a word wrong in front of the whole class, and some kids laughed, and her face went hot and she stared at her book and wished very hard that the floor would open up and swallow her in a polite and temporary way.",
-      "[pt] The teacher didn't make it a big thing. She just said the word gently, and moved on, and the class moved on, and two minutes later everyone had forgotten except Maya.\n\nBut Maya didn't forget for the rest of the morning.\n\nAt lunch, Sam could tell something was wrong the way friends can tell, which is mostly just by looking.\n\n— What happened?\n\n— I said a word wrong and people laughed.\n\nSam was quiet for a moment. — I fell off my chair in math last week, he said. — The whole chair just tipped over.\n\nMaya looked at him. — What did you do?\n\n— I got back on it — he said. — What else was I going to do?",
-      "[pt] Maya thought about that for a while.\n\nGet back on the chair. Read the next word. Keep going.\n\nThe mistake had happened. It was done. She could carry it around all day or she could put it down and eat her lunch.\n\nShe put it down.\n\nIt didn't entirely disappear — mistakes don't, right away. But it got lighter. And by the time they went back inside, it was just a small thing, tucked in a corner, no longer in the way.\n\n— Thanks — she said to Sam.\n\n— I fell off a chair — he said. — I didn't do anything.\n\nBut he had, and they both knew it."
+      "Na terça-feira, Maya cometeu um erro.\n\nNão foi um erro grande — do tipo que quebra coisas ou machuca alguém. Foi do tipo que fica pesado no peito: ela leu uma palavra errada na frente da turma toda, e algumas crianças riram, e seu rosto ficou quente e ela olhou fixamente para o livro e desejou muito que o chão se abrisse e a engolisse de uma maneira educada e temporária.",
+      "A professora não fez disso uma grande coisa. Ela apenas disse a palavra com delicadeza, e seguiu em frente, e a turma seguiu em frente, e dois minutos depois todos tinham esquecido, exceto Maya.\n\nMas Maya não esqueceu pelo resto da manhã.\n\nNo almoço, Sam percebeu que algo estava errado do jeito que amigos percebem, que é principalmente só olhando.\n\n— O que aconteceu?\n\n— Eu disse uma palavra errada e as pessoas riram.\n\nSam ficou quieto por um momento. — Eu caí da cadeira na aula de matemática semana passada, ele disse. — A cadeira inteira virou.\n\nMaya olhou para ele. — O que você fez?\n\n— Eu voltei para ela — ele disse. — O que mais eu ia fazer?",
+      "Maya pensou nisso por um tempo.\n\nVoltar para a cadeira. Ler a próxima palavra. Continuar.\n\nO erro tinha acontecido. Estava feito. Ela podia carregá-lo o dia todo ou podia deixá-lo de lado e comer seu almoço.\n\nEla deixou de lado.\n\nNão desapareceu completamente — erros não desaparecem, de imediato. Mas ficou mais leve. E quando voltaram para dentro, era só uma coisinha, guardada num canto, sem atrapalhar mais.\n\n— Obrigada — ela disse a Sam.\n\n— Eu caí de uma cadeira — ele disse. — Não fiz nada.\n\nMas ele tinha feito, e os dois sabiam disso."
     ]
   },
   {
     "id": 4,
-    "title": "[pt] Lesson 4",
-    "subtitle": "[pt] The End of the First Week",
+    "title": "Lição 4",
+    "subtitle": "O Fim da Primeira Semana",
     "emoji": "⭐",
     "locked": true,
     "feelingCard": {
       "emoji": "😊",
-      "emotion": "Proud",
-      "prompt": "You made it through something new! What is one thing you did this week that you feel good about?",
-      "affirmation": "Showing up when things are hard and new is one of the bravest things a person can do. You did that."
+      "emotion": "Orgulhoso",
+      "prompt": "Você conseguiu passar por algo novo! Qual é uma coisa que você fez esta semana e que te deixa feliz?",
+      "affirmation": "Aparecer quando as coisas são difíceis e novas é uma das coisas mais corajosas que uma pessoa pode fazer. Você fez isso."
     },
     "pages": [
-      "[pt] Friday afternoon, the classroom felt different from Monday morning.\n\nNot in any way Maya could point to exactly. Same desks, same window, same teacher's name on the board. But the room had become familiar — it had edges she knew now, a rhythm she recognized. The swimming pool had turned out to be just right.\n\nShe knew where the good crayons were kept.\nShe knew that Sam always had an extra eraser.\nShe knew the teacher laughed at her own jokes before she finished them.\n\nThese things mattered more than they sounded.",
-      "[pt] On the walk out, Sam's mom was waiting next to Maya's mom, and the four of them walked to the corner together.\n\n— Good week? — Maya's mom asked.\n\nMaya thought about the pool, and the chair, and the paint on Sam's arm, and the clouds with opinions.\n\n— Yes — she said.\n\n— What was the best part?\n\nMaya looked at Sam. Sam looked at Maya.\n\n— The part where I found out where the good crayons were — Maya said, which was true, but not the whole truth.\n\nSam smiled. That was enough.",
-      "[pt] That night, Maya lay in her bed and thought about Monday morning — how the air had felt stretched tight, how she'd moved her cereal around the bowl, how the school had just been a building she didn't know yet.\n\nNow she knew it.\n\nNext Monday, the cereal would taste the same and the kitchen would smell the same. But the pool would already be the right temperature.\n\nShe closed her eyes.\n\nSomewhere across the neighborhood, in a house seven minutes away, a boy who had once fallen off his chair in math was probably doing the same thing.\n\nThat seemed right."
+      "Na tarde de sexta-feira, a sala de aula parecia diferente da manhã de segunda.\n\nNão de um jeito que Maya pudesse apontar exatamente. Mesmas carteiras, mesma janela, mesmo nome da professora no quadro. Mas a sala tinha se tornado familiar — tinha bordas que ela conhecia agora, um ritmo que reconhecia. A piscina tinha se revelado na temperatura certa.\n\nEla sabia onde os bons lápis de cor eram guardados.\nEla sabia que Sam sempre tinha uma borracha extra.\nEla sabia que a professora ria das próprias piadas antes de terminá-las.\n\nEssas coisas importavam mais do que pareciam.",
+      "Na saída, a mãe de Sam estava esperando ao lado da mãe de Maya, e os quatro caminharam juntos até a esquina.\n\n— Semana boa? — perguntou a mãe de Maya.\n\nMaya pensou na piscina, na cadeira, na tinta no braço de Sam e nas nuvens com opiniões.\n\n— Sim — ela disse.\n\n— Qual foi a melhor parte?\n\nMaya olhou para Sam. Sam olhou para Maya.\n\n— A parte em que descobri onde os bons lápis de cor estavam — disse Maya, o que era verdade, mas não toda a verdade.\n\nSam sorriu. Isso foi o suficiente.",
+      "Naquela noite, Maya deitou na cama e pensou na manhã de segunda-feira — como o ar parecia esticado, como ela mexeu o cereal no prato, como a escola era só um prédio que ela ainda não conhecia.\n\nAgora ela o conhecia.\n\nNa próxima segunda, o cereal teria o mesmo gosto e a cozinha cheiraria igual. Mas a piscina já estaria na temperatura certa.\n\nEla fechou os olhos.\n\nEm algum lugar do bairro, numa casa a sete minutos de distância, um menino que uma vez caiu da cadeira na aula de matemática provavelmente estava fazendo a mesma coisa.\n\nIsso parecia certo."
     ]
   }
 ];

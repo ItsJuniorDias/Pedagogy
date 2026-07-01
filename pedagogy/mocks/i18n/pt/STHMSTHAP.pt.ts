@@ -1,70 +1,70 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: STHMSTHAP · idioma: pt · modelo: mock · 2026-07-01
+// história: STHMSTHAP · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const STHMSTHAP: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Chapter 1",
-    "subtitle": "[pt] The Bottle at the Edge of the World",
+    "title": "Capítulo 1",
+    "subtitle": "A Garrafa na Borda do Mundo",
     "emoji": "🌊",
     "locked": false,
     "riddle": {
-      "question": "I have cities but no houses, mountains but no trees, and water but no fish. What am I?",
-      "answer": "A map"
+      "question": "Tenho cidades, mas não tenho casas; montanhas, mas não tenho árvores; e água, mas não tenho peixes. O que sou?",
+      "answer": "Um mapa"
     },
     "pages": [
-      "[pt] The sea had been whispering secrets all morning.\n\nNova stood barefoot on the black-sand shore, her hair whipping across her face, watching the horizon with the same focused look she always got before something extraordinary happened. And it always did — ever since her grandfather had given her the Starmap.",
-      "[pt] The Starmap was an old brass compass that didn't point north. It pointed toward whatever you needed most.\n\nRight now, the needle was spinning wildly — and then it stopped, aimed directly at something bobbing in the foam at her feet: a glass bottle sealed with blue wax, containing a rolled-up letter and a single silver key.",
-      "[pt] Nova cracked the wax and unrolled the paper with trembling fingers. The handwriting was jagged, urgent:\n\n\"If you're reading this, you found it in time. The Storm Clock has been stolen. When it stops ticking, the seasons will forget their order. You must reach the Hollow Isle before the last chime fades.\n\nTrust the Starmap. Trust no one else.\n\n— A friend you haven't met yet\""
+      "O mar estava sussurrando segredos a manhã toda.\n\nNova estava descalça na praia de areia preta, seus cabelos chicoteando seu rosto, observando o horizonte com a mesma expressão concentrada que ela sempre tinha antes de algo extraordinário acontecer. E sempre acontecia — desde que seu avô lhe dera o Starmap.",
+      "O Starmap era uma bússola antiga de latão que não apontava para o norte. Apontava para o que você mais precisava.\n\nNaquele momento, a agulha estava girando loucamente — e então parou, apontada diretamente para algo balançando na espuma a seus pés: uma garrafa de vidro selada com cera azul, contendo uma carta enrolada e uma única chave de prata.",
+      "Nova quebrou a cera e desenrolou o papel com dedos trêmulos. A caligrafia era irregular, urgente:\n\n\"Se você está lendo isso, encontrou a tempo. O Storm Clock foi roubado. Quando ele parar de soar, as estações esquecerão sua ordem. Você precisa chegar à Hollow Isle antes que o último toque se apague.\n\nConfie no Starmap. Não confie em mais ninguém.\n\n— Uma amiga que você ainda não conheceu\""
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Chapter 2",
-    "subtitle": "[pt] The Ship That Runs on Stories",
+    "title": "Capítulo 2",
+    "subtitle": "O Navio que Funciona com Histórias",
     "emoji": "⛵",
     "locked": true,
     "riddle": {
-      "question": "The more you take, the more you leave behind. What am I?",
-      "answer": "Footsteps"
+      "question": "Quanto mais você tira, mais você deixa para trás. O que sou?",
+      "answer": "Pegadas"
     },
     "pages": [
-      "[pt] The Starmap led Nova to a hidden harbor she had walked past a hundred times without ever seeing. Tucked between two jagged cliffs was a ship unlike any other — its sails were made of parchment covered in tiny handwriting, and its hull glowed faintly gold, like a lantern seen from far away.",
-      "[pt] — She only moves if you feed her a story — said a voice.\n\nNova spun around. Sitting on a coil of rope was a boy about her age, with oil-stained hands and mismatched boots. He had the calm expression of someone who had already seen most things twice.\n\n— I'm Cael — he said. — I've been waiting for whoever the Starmap sent.",
-      "[pt] Nova eyed him carefully. \"Trust no one else,\" the letter had said. But the Starmap needle was perfectly still now — calm, certain.\n\nShe cleared her throat and began:\n\n— Once, there was a girl who found a bottle at the edge of the world...\n\nThe ship groaned. The sails rustled. And slowly, magnificently, it began to move."
+      "O Starmap levou Nova a um porto escondido pelo qual ela tinha passado cem vezes sem nunca ver. Enfiado entre dois penhascos irregulares estava um navio diferente de qualquer outro — suas velas eram feitas de pergaminho coberto de letras miúdas, e seu casco brilhava fracamente em ouro, como uma lanterna vista de longe.",
+      "— Ela só se move se você a alimentar com uma história — disse uma voz.\n\nNova se virou. Sentado em uma bobina de corda estava um garoto da idade dela, com mãos manchadas de óleo e botas descombinadas. Ele tinha a expressão calma de alguém que já tinha visto a maioria das coisas duas vezes.\n\n— Sou Cael — ele disse. — Estava esperando por quem quer que o Starmap enviasse.",
+      "Nova o observou com cuidado. \"Não confie em mais ninguém,\" a carta havia dito. Mas a agulha do Starmap estava perfeitamente parada agora — calma, certa.\n\nEla limpou a garganta e começou:\n\n— Era uma vez uma garota que encontrou uma garrafa no fim do mundo...\n\nO navio gemeu. As velas farfalharam. E lentamente, magnificentemente, ele começou a se mover."
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Chapter 3",
-    "subtitle": "[pt] The Island That Breathes",
+    "title": "Capítulo 3",
+    "subtitle": "A Ilha que Respira",
     "emoji": "🏝️",
     "locked": true,
     "riddle": {
-      "question": "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
-      "answer": "An echo"
+      "question": "Falo sem boca e ouço sem ouvidos. Não tenho corpo, mas ganho vida com o vento. O que sou?",
+      "answer": "Um eco"
     },
     "pages": [
-      "[pt] The Hollow Isle appeared at dawn — a mass of dark rock rising from the sea like a sleeping giant. But as their ship drew closer, Nova realized the island was not still. It was breathing.\n\nIn and out. Slowly. Rhythmically. The cliffs expanded and contracted like a chest filling with air.",
-      "[pt] — It's alive — Nova breathed.\n\n— Everything here is — said Cael, gripping the railing. — That's why the Storm Clock matters. It keeps the island's heartbeat in sync with the rest of the world. Without it, the Isle will drift out of time entirely — and take a piece of every season with it.",
-      "[pt] They anchored in a cove that smelled of rain and pine. The Starmap needle pointed straight down.\n\n— Whatever we're looking for — Nova said — it's underneath us.\n\nShe looked at Cael. He looked at her. And without another word, they both took a breath and dove in."
+      "A Hollow Isle apareceu ao amanhecer — uma massa de rocha escura subindo do mar como um gigante adormecido. Mas conforme o navio se aproximava, Nova percebeu que a ilha não estava parada. Ela estava respirando.\n\nPara dentro e para fora. Lentamente. Ritmicamente. Os penhascos se expandiam e contraíam como um peito enchendo de ar.",
+      "— Está viva — Nova respirou.\n\n— Tudo aqui está — disse Cael, segurando o corrimão. — É por isso que o Storm Clock importa. Ele mantém o batimento cardíaco da ilha sincronizado com o resto do mundo. Sem ele, a Ilha vai se desviar completamente do tempo — e levar um pedaço de cada estação consigo.",
+      "Eles ancoraram em uma enseada que cheirava a chuva e pinheiro. A agulha do Starmap apontava direto para baixo.\n\n— O que quer que estejamos procurando — disse Nova — está debaixo de nós.\n\nEla olhou para Cael. Ele olhou para ela. E sem outra palavra, os dois respiraram fundo e mergulharam."
     ]
   },
   {
     "id": 4,
-    "title": "[pt] Chapter 4",
-    "subtitle": "[pt] Tick, Tock, Never Stop",
+    "title": "Capítulo 4",
+    "subtitle": "Tique-Taque, Nunca Pare",
     "emoji": "⏱️",
     "locked": true,
     "riddle": {
-      "question": "What can you catch but never throw?",
-      "answer": "A cold — or time"
+      "question": "O que você pode pegar, mas nunca jogar?",
+      "answer": "Um resfriado — ou o tempo"
     },
     "pages": [
-      "[pt] The cave beneath the Isle was lit by bioluminescent coral — pale blue and green, pulsing like a slow heartbeat. At the very center of the underwater cavern, mounted on a pedestal of living stone, was the Storm Clock.\n\nIt was enormous. Beautiful. And very nearly silent — one last chime trembling on the edge of sound.",
-      "[pt] Beside it stood a figure in a gray coat, turning the winding key with methodical precision.\n\n— Stop! — Nova shouted.\n\nThe figure turned. To her shock, it was not a villain — it was an old woman with kind eyes and an expression full of deep, tired sadness.\n\n— I'm not stealing it, child — she said gently. — I'm trying to wind it back up. But I've forgotten the sequence. And without the right order of turns, it will lock forever.",
-      "[pt] Nova reached into her pocket and felt the silver key from the bottle. She looked at the clock. She looked at the old woman. She looked at Cael, who gave her a single small nod.\n\nShe stepped forward.\n\n— I think — she said carefully — I might know the answer. But first, you have to tell me who you are.\n\nThe woman smiled, and for just a moment, she looked young again.\n\n— I wrote you the letter — she said."
+      "A caverna sob a Hollow Isle era iluminada por coral bioluminescente — azul pálido e verde, pulsando como um batimento cardíaco lento. Bem no centro da caverna submersa, montado em um pedestal de pedra viva, estava o Storm Clock.\n\nEra enorme. Lindo. E quase em silêncio — um último toque tremendo na beira do som.",
+      "Ao lado, estava uma figura em um casaco cinza, girando a chave de corda com precisão metódica.\n\n— Pare! — gritou Nova.\n\nA figura se virou. Para seu choque, não era um vilão — era uma senhora idosa com olhos bondosos e uma expressão cheia de tristeza profunda e cansada.\n\n— Não estou roubando, criança — ela disse gentilmente. — Estou tentando dar corda novamente. Mas esqueci a sequência. E sem a ordem certa das voltas, ele vai travar para sempre.",
+      "Nova enfiou a mão no bolso e sentiu a chave de prata da garrafa. Ela olhou para o relógio. Olhou para a senhora. Olhou para Cael, que lhe deu um único pequeno aceno.\n\nEla deu um passo à frente.\n\n— Acho — disse ela cuidadosamente — que posso saber a resposta. Mas primeiro, você precisa me dizer quem é.\n\nA mulher sorriu e, por um momento, pareceu jovem novamente.\n\n— Fui eu quem escreveu a carta — disse ela."
     ]
   }
 ];

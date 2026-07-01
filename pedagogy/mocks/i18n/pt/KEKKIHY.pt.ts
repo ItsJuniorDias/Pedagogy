@@ -1,74 +1,74 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: KEKKIHY · idioma: pt · modelo: mock · 2026-07-01
+// história: KEKKIHY · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const KEKKIHY: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Chapter 1",
-    "subtitle": "[pt] The Girl Who Drew Doors",
+    "title": "Capítulo 1",
+    "subtitle": "A Garota Que Desenhava Portas",
     "emoji": "🌀",
     "locked": false,
     "rune": {
       "symbol": "ᚱ",
       "name": "Raido",
-      "meaning": "Journey. Every door you draw is a door you must one day walk through."
+      "meaning": "Jornada. Toda porta que você desenha é uma porta que um dia você terá que atravessar."
     },
     "pages": [
-      "[pt] Kekkihy had a peculiar habit that nobody could explain: wherever she went, she drew doors.\n\nOn foggy windows. On the backs of napkins. In the condensation on cold glasses. Small arched doors, tall narrow ones, doors with round handles and doors with none at all. She never thought much about it — it was just something her hand did when her mind wandered.",
-      "[pt] Until the morning she drew a door on the wall of her bedroom and it opened.\n\nNot with a click or a creak. It simply became a door — frame, hinges, the faint smell of somewhere else — where before there had been only painted plaster.\n\nKekkihy stared at it for a very long time. Then she did what any sensible person would do.\n\nShe looked through the keyhole first.",
-      "[pt] On the other side was a forest that glowed faintly amber, as though it were lit from underneath the soil. Floating between the trees were symbols she almost recognized — like letters from an alphabet she had once known and forgotten.\n\nOne drifted close to the keyhole. She squinted at it.\n\nIt looked exactly like the little mark she always drew in the corner of every door.\n\nHer heart did something complicated.\n\n— Oh — she whispered. — I've been leaving them messages."
+      "Kekkihy tinha um hábito peculiar que ninguém conseguia explicar: onde quer que fosse, ela desenhava portas.\n\nEm janelas embaçadas. No verso de guardanapos. Na condensação de copos gelados. Portas pequenas e arqueadas, portas altas e estreitas, portas com maçanetas redondas e portas sem nenhuma. Ela nunca pensava muito sobre isso — era só algo que sua mão fazia quando sua mente vagava.",
+      "Até a manhã em que ela desenhou uma porta na parede do seu quarto e ela se abriu.\n\nNão com um clique ou um rangido. Simplesmente se tornou uma porta — moldura, dobradiças, o leve cheiro de algum outro lugar — onde antes havia apenas gesso pintado.\n\nKekkihy ficou olhando para ela por um longo tempo. Então fez o que qualquer pessoa sensata faria.\n\nEla olhou pelo buraco da fechadura primeiro.",
+      "Do outro lado havia uma floresta que brilhava levemente em âmbar, como se estivesse iluminada por baixo do solo. Flutuando entre as árvores estavam símbolos que ela quase reconhecia — como letras de um alfabeto que ela um dia conheceu e esqueceu.\n\nUm deles flutuou perto do buraco da fechadura. Ela apertou os olhos para vê-lo.\n\nParecia exatamente com a pequena marca que ela sempre desenhava no canto de cada porta.\n\nSeu coração fez algo complicado.\n\n— Ah — ela sussurrou. — Estive deixando mensagens para eles."
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Chapter 2",
-    "subtitle": "[pt] The Keeper of Unfinished Spells",
+    "title": "Capítulo 2",
+    "subtitle": "O Guardião dos Feitiços Inacabados",
     "emoji": "📜",
     "locked": false,
     "rune": {
       "symbol": "ᚨ",
       "name": "Ansuz",
-      "meaning": "Voice. A spell half-spoken is not half a spell — it is a question waiting for its answer."
+      "meaning": "Voz. Um feitiço dito pela metade não é meio feitiço — é uma pergunta esperando sua resposta."
     },
     "pages": [
-      "[pt] The forest on the other side smelled of pine resin and old paper — the particular smell of books that have been loved too hard for too long.\n\nKekkihy stepped through and immediately felt the door dissolve behind her. She spun around. Wall of trees. No door. No handle. No way back that she could see.\n\n— That's normal — said a voice from somewhere above her head.\n\nPerched on a branch, cross-legged and entirely unsurprised, was an old man no bigger than a crow. He had ink-stained fingers and the expression of someone who had been waiting a moderate amount of time and found it acceptable.",
-      "[pt] — I'm Finn — he said, dropping to the ground with surprising grace. — Keeper of Unfinished Spells. And you must be the door-drawer.\n\n— Kekkihy.\n\n— I know. We've been watching the runes you leave. — He produced a small notebook from somewhere in his coat and showed her a page covered in tiny copies of her corner marks. — Do you know what they say?\n\nShe shook her head.\n\n— They say: I am here. I am here. I am here. — He closed the notebook gently. — You've been calling to this place your whole life. It's very polite that you finally came in person.",
-      "[pt] He led her deeper into the amber forest, where the floating runes moved around them like curious fish.\n\n— Every rune you see here is a spell someone started but never finished — Finn explained. — A wish half-made. A story without its last sentence. They drift until someone completes them.\n\n— And who completes them? — Kekkihy asked.\n\nFinn looked at her the way people look at someone who has asked a question they already know the answer to.\n\n— Someone — he said patiently — who knows how to make doors."
+      "A floresta do outro lado cheirava a resina de pinho e papel velho — o cheiro particular de livros que foram amados com muita força por muito tempo.\n\nKekkihy atravessou e imediatamente sentiu a porta se dissolver atrás dela. Ela se virou. Parede de árvores. Nenhuma porta. Nenhuma maçaneta. Nenhum caminho de volta que ela pudesse ver.\n\n— Isso é normal — disse uma voz de algum lugar acima de sua cabeça.\n\nEmpoleirado em um galho, de pernas cruzadas e completamente surpreso, estava um velho não maior que um corvo. Ele tinha dedos manchados de tinta e a expressão de alguém que estava esperando um tempo moderado e achava aquilo aceitável.",
+      "— Sou Finn — ele disse, pulando no chão com uma graça surpreendente. — Guardião dos Feitiços Inacabados. E você deve ser a desenhadora de portas.\n\n— Kekkihy.\n\n— Eu sei. Estamos observando as runas que você deixa. — Ele tirou um pequeno caderno de algum lugar do seu casaco e mostrou a ela uma página coberta de minúsculas cópias de suas marcas de canto. — Você sabe o que elas dizem?\n\nEla balançou a cabeça.\n\n— Elas dizem: Estou aqui. Estou aqui. Estou aqui. — Ele fechou o caderno suavemente. — Você está chamando este lugar a vida toda. É muito educado da sua parte finalmente vir pessoalmente.",
+      "Ele a levou mais para dentro da floresta âmbar, onde as runas flutuantes se moviam ao redor deles como peixes curiosos.\n\n— Cada runa que você vê aqui é um feitiço que alguém começou, mas nunca terminou — explicou Finn. — Um desejo pela metade. Uma história sem sua última frase. Elas flutuam até que alguém as complete.\n\n— E quem as completa? — perguntou Kekkihy.\n\nFinn olhou para ela do jeito que as pessoas olham para alguém que fez uma pergunta cuja resposta já sabem.\n\n— Alguém — ele disse pacientemente — que sabe fazer portas."
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Chapter 3",
-    "subtitle": "[pt] What the Amber Knows",
+    "title": "Capítulo 3",
+    "subtitle": "O Que o Âmbar Sabe",
     "emoji": "🔮",
     "locked": true,
     "rune": {
       "symbol": "ᚷ",
       "name": "Gebo",
-      "meaning": "Gift. The thing you give and the thing you receive are always the same thing, seen from different sides."
+      "meaning": "Presente. A coisa que você dá e a coisa que você recebe são sempre a mesma coisa, vistas de lados diferentes."
     },
     "pages": [
-      "[pt] The oldest rune in the forest was enormous — the size of a house — and it sat at the very center of the amber wood, half-buried in luminous moss. It had not moved in three hundred years, Finn told her. Most runes drifted. This one had simply stopped.\n\n— It's waiting for something specific — he said. — Most unfinished spells are vague. This one knows exactly what it needs. It's just never found it.",
-      "[pt] Kekkihy walked around it slowly. The rune was shaped unlike any she had drawn — older, heavier, carved from something that predated ink and paper. But at its center, in a place so small you'd miss it if you weren't looking, was a mark she recognized immediately.\n\nHer corner mark. The one she'd been drawing her whole life.\n\n— It's not waiting for something — she said slowly. — It's waiting for someone.\n\nFinn said nothing. Which, she was learning, was how he said yes.",
-      "[pt] She pressed her palm flat against the center of the rune.\n\nThe amber forest held its breath.\n\nThen, very quietly, the enormous symbol began to glow — starting from her hand and spreading outward in branching lines, like frost on a window, until the whole rune was lit and every floating spell in the forest stopped drifting and hung perfectly still in the air.\n\nAnd in the silence, Kekkihy understood something she had no words for yet.\n\nShe would need to invent them."
+      "A runa mais antiga da floresta era enorme — do tamanho de uma casa — e ficava bem no centro da madeira âmbar, meio enterrada em musgo luminoso. Não se movia há trezentos anos, Finn lhe contou. A maioria das runas flutuava. Esta simplesmente tinha parado.\n\n— Está esperando por algo específico — ele disse. — A maioria dos feitiços inacabados é vaga. Esta sabe exatamente o que precisa. Só nunca encontrou.",
+      "Kekkihy andou ao redor dela lentamente. A runa tinha uma forma diferente de qualquer uma que ela tivesse desenhado — mais antiga, mais pesada, esculpida em algo que precedia tinta e papel. Mas em seu centro, num lugar tão pequeno que você perderia se não estivesse olhando, havia uma marca que ela reconheceu imediatamente.\n\nSua marca de canto. Aquela que ela desenhava a vida toda.\n\n— Não está esperando por algo — ela disse devagar. — Está esperando por alguém.\n\nFinn não disse nada. O que, ela estava aprendendo, era como ele dizia sim.",
+      "Ela pressionou a palma da mão contra o centro da runa.\n\nA floresta âmbar prendeu a respiração.\n\nEntão, bem baixinho, o enorme símbolo começou a brilhar — começando pela mão dela e se espalhando para fora em linhas ramificadas, como geada numa janela, até que toda a runa estava iluminada e cada feitiço flutuante na floresta parou de flutuar e ficou perfeitamente imóvel no ar.\n\nE no silêncio, Kekkihy entendeu algo para o qual ainda não tinha palavras.\n\nEla precisaria inventá-las."
     ]
   },
   {
     "id": 4,
-    "title": "[pt] Chapter 4",
-    "subtitle": "[pt] The Last Door",
+    "title": "Capítulo 4",
+    "subtitle": "A Última Porta",
     "emoji": "🚪",
     "locked": true,
     "rune": {
       "symbol": "ᛟ",
       "name": "Othala",
-      "meaning": "Home. Not the place you came from — the place that recognizes you."
+      "meaning": "Lar. Não o lugar de onde você veio — o lugar que te reconhece."
     },
     "pages": [
-      "[pt] With the great rune lit, the unfinished spells began to complete themselves — one by one, each one blooming into a brief, bright flash of light before dissolving into the air like breath on a cold morning.\n\nFinn watched them go with the expression of someone releasing birds he had kept for a very long time.\n\n— How long have you been here? — Kekkihy asked.\n\n— Since the last door-drawer — he said. — She finished what she could and left a door for the next one. That was — he considered — quite a while ago.",
-      "[pt] — Was she your friend?\n\n— She was my student. I was hers. — He smiled at the sky, where the last few runes still drifted. — That's usually how it goes.\n\nKekkihy looked at her hands. The mark from the great rune was still faintly visible on her palm — not ink, not a burn, just a kind of knowing pressed into the skin.\n\n— Am I your student now? — she asked.\n\n— You've been my student since the first door you drew — he said. — I've just been waiting for you to walk through one.",
-      "[pt] She drew the door home on the air itself — no wall, no paper — just her finger tracing the shape she had always known.\n\nAnd it opened.\n\nThe smell of her room came through: familiar, a little dusty, entirely hers. The same bedroom wall, now with a faint rectangular outline where the plaster had once briefly been something else.\n\nShe looked back at Finn, who was already blending back into the amber light the way a kept secret blends back into the person who kept it.\n\n— Will I find the way back? — she called.\n\n— You already know how — he said, somewhere in the glow. — You've always known.\n\nShe stepped through.\n\nBehind her, very faintly, the last rune winked out.\n\nAnd in its place: a small corner mark, glowing amber, then gone."
+      "Com a grande runa acesa, os feitiços inacabados começaram a se completar — um por um, cada um florescendo em um breve e brilhante clarão de luz antes de se dissolver no ar como hálito numa manhã fria.\n\nFinn os observou irem com a expressão de alguém soltando pássaros que guardara por muito tempo.\n\n— Há quanto tempo você está aqui? — perguntou Kekkihy.\n\n— Desde a última desenhadora de portas — ele disse. — Ela terminou o que pôde e deixou uma porta para a próxima. Isso foi — ele considerou — há bastante tempo.",
+      "— Ela era sua amiga?\n\n— Ela era minha aluna. Eu era dela. — Ele sorriu para o céu, onde as últimas runas ainda flutuavam. — Geralmente é assim que funciona.\n\nKekkihy olhou para suas mãos. A marca da grande runa ainda estava levemente visível em sua palma — não tinta, não queimadura, apenas um tipo de conhecimento pressionado na pele.\n\n— Sou sua aluna agora? — ela perguntou.\n\n— Você é minha aluna desde a primeira porta que desenhou — ele disse. — Só estava esperando você atravessar uma.",
+      "Ela desenhou a porta de casa no próprio ar — sem parede, sem papel — apenas seu dedo traçando a forma que sempre conheceu.\n\nE ela se abriu.\n\nO cheiro do seu quarto veio: familiar, um pouco empoeirado, inteiramente dela. A mesma parede do quarto, agora com um leve contorno retangular onde o gesso havia brevemente sido outra coisa.\n\nEla olhou para trás, para Finn, que já estava se misturando de volta à luz âmbar como um segredo guardado se mistura de volta à pessoa que o guardou.\n\n— Vou encontrar o caminho de volta? — ela chamou.\n\n— Você já sabe como — ele disse, em algum lugar no brilho. — Você sempre soube.\n\nEla atravessou.\n\nAtrás dela, muito fracamente, a última runa se apagou.\n\nE em seu lugar: uma pequena marca de canto, brilhando em âmbar, e então desapareceu."
     ]
   }
 ];

@@ -1,86 +1,86 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: ASTRONAUT · idioma: pt · modelo: mock · 2026-07-01
+// história: ASTRONAUT · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const ASTRONAUT: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Lesson 1",
-    "subtitle": "[pt] What Is Space, Exactly?",
+    "title": "Lição 1",
+    "subtitle": "O que é o espaço, exatamente?",
     "emoji": "🌌",
     "locked": false,
     "factFile": {
-      "topic": "The Universe",
+      "topic": "O Universo",
       "facts": [
-        "Space begins about 100 km above Earth's surface — roughly the distance you'd drive to visit a city two hours away.",
-        "The observable universe is about 93 billion light-years wide. A light-year is the distance light travels in one year: about 9.5 trillion kilometres.",
-        "Space is not completely empty — it contains gas, dust, radiation, and the occasional very surprised spacecraft."
+        "O espaço começa a cerca de 100 km acima da superfície da Terra — aproximadamente a distância que você dirigiria para visitar uma cidade a duas horas de distância.",
+        "O universo observável tem cerca de 93 bilhões de anos-luz de largura. Um ano-luz é a distância que a luz percorre em um ano: cerca de 9,5 trilhões de quilômetros.",
+        "O espaço não é completamente vazio — contém gás, poeira, radiação e, ocasionalmente, uma nave espacial muito surpresa."
       ]
     },
     "pages": [
-      "[pt] Here is the first thing to understand about space:\n\nIt is very, very big.\n\nNot big the way a football stadium is big, or big the way an ocean is big. Big in a way that numbers struggle to describe — a bigness that keeps going past every number you can think of, past the edge of what telescopes can see, into a dark we don't have instruments to measure yet.\n\nAnd yet: people have been there. People have floated in that dark with nothing between them and forever except a suit and a spacecraft and a great deal of training.",
-      "[pt] Space begins at the Kármán line — 100 kilometres above Earth's surface.\n\nBelow it: air, weather, birds, clouds, everything you know. Above it: nothing to breathe, no air pressure, temperatures that swing between boiling hot and freezing cold depending on whether you're in sunlight or shadow.\n\nThe moment you cross that line, you are an astronaut.\n\n100 kilometres sounds like a lot. But it's shorter than many road trips. The sky, as it turns out, is surprisingly close. What's past the sky is what gets complicated.",
-      "[pt] Our solar system sits inside the Milky Way galaxy.\nThe Milky Way contains between 100 and 400 billion stars.\nThere are estimated to be two trillion galaxies in the observable universe.\n\nEach of those galaxies contains billions of stars.\nMany of those stars have planets.\nSome of those planets might have the right conditions for life.\n\nSpace is not just big. It is full — full of possibility, full of questions, full of things we don't know yet.\n\nWhich is exactly why it's worth going."
+      "Aqui está a primeira coisa a entender sobre o espaço:\n\nEle é muito, muito grande.\n\nNão grande como um estádio de futebol é grande, ou grande como um oceano é grande. Grande de uma forma que os números têm dificuldade em descrever — uma imensidão que continua além de cada número que você pode imaginar, além do que os telescópios podem ver, em uma escuridão que ainda não temos instrumentos para medir.\n\nE ainda assim: pessoas estiveram lá. Pessoas flutuaram nessa escuridão com nada entre elas e o infinito exceto um traje, uma nave espacial e muito treinamento.",
+      "O espaço começa na linha de Kármán — 100 quilômetros acima da superfície da Terra.\n\nAbaixo dela: ar, clima, pássaros, nuvens, tudo que você conhece. Acima dela: nada para respirar, sem pressão atmosférica, temperaturas que variam entre escaldante e congelante dependendo se você está na luz do sol ou na sombra.\n\nNo momento em que você cruza essa linha, você é um astronauta.\n\n100 quilômetros parece muito. Mas é mais curto do que muitas viagens de carro. O céu, ao que parece, é surpreendentemente próximo. O que está além do céu é o que fica complicado.",
+      "Nosso sistema solar está dentro da galáxia Via Láctea.\nA Via Láctea contém entre 100 e 400 bilhões de estrelas.\nEstima-se que existam dois trilhões de galáxias no universo observável.\n\nCada uma dessas galáxias contém bilhões de estrelas.\nMuitas dessas estrelas têm planetas.\nAlguns desses planetas podem ter as condições certas para a vida.\n\nO espaço não é apenas grande. Ele está cheio — cheio de possibilidades, cheio de perguntas, cheio de coisas que ainda não conhecemos.\n\nQue é exatamente por isso que vale a pena ir."
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Lesson 2",
-    "subtitle": "[pt] How Do You Become an Astronaut?",
+    "title": "Lição 2",
+    "subtitle": "Como você se torna um astronauta?",
     "emoji": "👩‍🚀",
     "locked": false,
     "factFile": {
-      "topic": "Astronaut Training",
+      "topic": "Treinamento de Astronautas",
       "facts": [
-        "Most astronauts spend over two years in basic training before being assigned to a mission — learning everything from spacewalk techniques to Russian language.",
-        "Astronauts train underwater in a giant pool called the Neutral Buoyancy Lab to simulate the weightlessness of space.",
-        "The average age of a first-time astronaut is 34 years old — there's plenty of time."
+        "A maioria dos astronautas passa mais de dois anos em treinamento básico antes de ser designada para uma missão — aprendendo desde técnicas de caminhada espacial até a língua russa.",
+        "Os astronautas treinam debaixo d'água em uma piscina gigante chamada Laboratório de Flutuabilidade Neutra para simular a ausência de peso do espaço.",
+        "A idade média de um astronauta de primeira viagem é de 34 anos — há bastante tempo."
       ]
     },
     "pages": [
-      "[pt] Becoming an astronaut is one of the most competitive things a person can attempt.\n\nIn a recent NASA selection, over 18,000 people applied. Twelve were chosen.\n\nBut here is the encouraging part: the people who were chosen were not superheroes. They were engineers and scientists and pilots and doctors who were very good at their work, very curious about the universe, and very willing to keep learning — for years and years — before they ever left the ground.",
-      "[pt] Training takes a long time.\n\nAstronauts learn to fly jets. They learn to operate robotic arms. They learn how to fix things in a spacesuit with gloves so thick you can barely feel your own fingers. They train underwater for hours to practice spacewalks — the water creates the same floating, weightless feeling as space, except there's also a pool.\n\nThey learn Russian, because the International Space Station has Russian crew members and Russian equipment and some very important buttons labelled only in Russian.\n\nThey study medicine, because in space, the doctor is whoever is there.",
-      "[pt] What makes a good astronaut candidate?\n\nAccording to people who select them: curiosity, adaptability, teamwork, and the ability to stay calm when something goes wrong very far from home.\n\nNotice that none of those are things you're born with. They're things you practice — in school, in teams, in hard moments, in the decision to keep going when something is difficult.\n\nEvery astronaut started exactly where you are now:\n\nlearning things.\n\nThat's where it begins."
+      "Tornar-se astronauta é uma das coisas mais competitivas que uma pessoa pode tentar.\n\nEm uma seleção recente da NASA, mais de 18.000 pessoas se inscreveram. Doze foram escolhidas.\n\nMas aqui está a parte encorajadora: as pessoas que foram escolhidas não eram super-heróis. Eram engenheiros, cientistas, pilotos e médicos que eram muito bons em seu trabalho, muito curiosos sobre o universo e muito dispostos a continuar aprendendo — por anos e anos — antes de sair do chão.",
+      "O treinamento leva muito tempo.\n\nOs astronautas aprendem a pilotar jatos. Aprendem a operar braços robóticos. Aprendem a consertar coisas em um traje espacial com luvas tão grossas que você mal sente os próprios dedos. Treinam debaixo d'água por horas para praticar caminhadas espaciais — a água cria a mesma sensação de flutuação e ausência de peso do espaço, só que também tem uma piscina.\n\nEles aprendem russo, porque a Estação Espacial Internacional tem tripulantes russos, equipamentos russos e alguns botões muito importantes rotulados apenas em russo.\n\nEles estudam medicina, porque no espaço, o médico é quem estiver lá.",
+      "O que faz um bom candidato a astronauta?\n\nDe acordo com as pessoas que os selecionam: curiosidade, adaptabilidade, trabalho em equipe e a capacidade de manter a calma quando algo dá errado muito longe de casa.\n\nObserve que nenhuma dessas são coisas com as quais você nasce. São coisas que você pratica — na escola, em equipes, em momentos difíceis, na decisão de continuar quando algo é difícil.\n\nTodo astronauta começou exatamente onde você está agora:\n\naprendendo coisas.\n\nÉ aí que começa."
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Lesson 3",
-    "subtitle": "[pt] Life Aboard the ISS",
+    "title": "Lição 3",
+    "subtitle": "Vida a bordo da ISS",
     "emoji": "🛸",
     "locked": true,
     "factFile": {
-      "topic": "The International Space Station",
+      "topic": "A Estação Espacial Internacional",
       "facts": [
-        "The ISS orbits Earth at about 28,000 km/h — it completes a full orbit every 90 minutes, meaning astronauts see 16 sunrises every day.",
-        "Astronauts on the ISS must exercise for about two hours every day to prevent their muscles and bones from weakening in zero gravity.",
-        "Water on the ISS is recycled from everything — including the crew's sweat and urine — and is cleaner after recycling than most tap water on Earth."
+        "A ISS orbita a Terra a cerca de 28.000 km/h — completa uma órbita completa a cada 90 minutos, o que significa que os astronautas veem 16 amanheceres todos os dias.",
+        "Os astronautas na ISS devem se exercitar por cerca de duas horas todos os dias para evitar que seus músculos e ossos enfraqueçam na gravidade zero.",
+        "A água na ISS é reciclada de tudo — incluindo o suor e a urina da tripulação — e fica mais limpa após a reciclagem do que a maioria da água da torneira na Terra."
       ]
     },
     "pages": [
-      "[pt] The International Space Station is about the size of a football field.\n\nIt has been continuously inhabited since November 2000 — more than two decades of humans living in space without a break. At any given moment, six people are floating inside it, conducting experiments, maintaining systems, and trying to eat food that doesn't float away.\n\nEating in space is more complicated than it sounds. Liquids form floating spheres. Crumbs become navigation hazards. Salt and pepper come in liquid form because a stray grain could clog a vent or get in someone's eye.",
-      "[pt] Daily life on the ISS runs on a schedule.\n\nAstronauts wake up at 6am (Greenwich time), exercise for two hours, work for around eight hours on experiments and maintenance, eat meals at set times, and have some free time in the evenings — which many spend at the cupola, a dome of windows that looks directly down at Earth.\n\nFrom there, you can watch entire continents pass beneath you. You can see storms from above. You can watch the sun set sixteen times in a single day.\n\nMost astronauts say that looking at Earth from space changes something in how they think about it.",
-      "[pt] There is a specific word for what astronauts feel when they look at Earth from space: the Overview Effect.\n\nIt's the sudden, overwhelming sense that all the borders and differences that seem so important from the ground are invisible from up there. That what you're looking at is one thing — one planet, impossibly beautiful, impossibly fragile, floating in a dark that goes on forever.\n\nMany astronauts say it's the thing they were least prepared for.\n\nNot the weightlessness. Not the work. Not the distance from home.\n\nJust the looking."
+      "A Estação Espacial Internacional tem aproximadamente o tamanho de um campo de futebol.\n\nEla é continuamente habitada desde novembro de 2000 — mais de duas décadas de humanos vivendo no espaço sem interrupção. A qualquer momento, seis pessoas estão flutuando dentro dela, realizando experimentos, mantendo sistemas e tentando comer alimentos que não flutuem para longe.\n\nComer no espaço é mais complicado do que parece. Líquidos formam esferas flutuantes. Migalhas se tornam perigos de navegação. Sal e pimenta vêm em forma líquida porque um grão solto poderia entupir um respiradouro ou entrar no olho de alguém.",
+      "A vida diária na ISS segue uma programação.\n\nOs astronautas acordam às 6h (horário de Greenwich), se exercitam por duas horas, trabalham cerca de oito horas em experimentos e manutenção, fazem refeições em horários definidos e têm algum tempo livre à noite — que muitos passam na cúpula, uma cúpula de janelas que olha diretamente para a Terra.\n\nDe lá, você pode ver continentes inteiros passarem abaixo de você. Você pode ver tempestades de cima. Você pode ver o pôr do sol dezesseis vezes em um único dia.\n\nA maioria dos astronautas diz que olhar para a Terra do espaço muda algo na forma como pensam sobre ela.",
+      "Existe uma palavra específica para o que os astronautas sentem quando olham para a Terra do espaço: o Efeito de Visão Geral.\n\nÉ a sensação repentina e avassaladora de que todas as fronteiras e diferenças que parecem tão importantes do solo são invisíveis lá de cima. Que o que você está vendo é uma coisa só — um planeta, incrivelmente belo, incrivelmente frágil, flutuando em uma escuridão que continua para sempre.\n\nMuitos astronautas dizem que é a coisa para a qual estavam menos preparados.\n\nNão a ausência de peso. Não o trabalho. Não a distância de casa.\n\nApenas o olhar."
     ]
   },
   {
     "id": 4,
-    "title": "[pt] Lesson 4",
-    "subtitle": "[pt] The Future of Space Exploration",
+    "title": "Lição 4",
+    "subtitle": "O futuro da exploração espacial",
     "emoji": "🌙",
     "locked": true,
     "factFile": {
-      "topic": "Where We're Going Next",
+      "topic": "Para onde vamos a seguir",
       "facts": [
-        "NASA's Artemis program aims to land humans on the Moon again — including the first woman and first person of color to walk on the lunar surface.",
-        "A round trip to Mars would take roughly 18–21 months, including time on the surface. The first crewed mission is planned for the 2030s or 2040s.",
-        "Some scientists believe that if we find life on another planet, it will most likely first be found as microbes — tiny single-celled organisms — not intelligent beings."
+        "O programa Artemis da NASA tem como objetivo pousar humanos na Lua novamente — incluindo a primeira mulher e a primeira pessoa de cor a caminhar na superfície lunar.",
+        "Uma viagem de ida e volta a Marte levaria aproximadamente 18 a 21 meses, incluindo o tempo na superfície. A primeira missão tripulada está planejada para as décadas de 2030 ou 2040.",
+        "Alguns cientistas acreditam que, se encontrarmos vida em outro planeta, provavelmente será encontrada primeiro como micróbios — minúsculos organismos unicelulares — e não seres inteligentes."
       ]
     },
     "pages": [
-      "[pt] Humans have been to the Moon six times.\n\nThe last time was December 1972 — over fifty years ago. But we are going back.\n\nNASA's Artemis program is building the rockets and spacesuits and lunar landers to return astronauts to the Moon's surface — this time to stay longer, learn more, and prepare for what comes after. Because the Moon is not the destination. It's the practice ground for somewhere further.",
-      "[pt] Mars is the next step.\n\nIt's a six-to-nine month journey one way, depending on where the planets are in their orbits. It has a thin atmosphere, freezing nights, dust storms that last for months, and no breathable air. It is, by any measure, not welcoming.\n\nAnd yet:\n\nHumans will go. Probably within your lifetime. Possibly in your generation. The person who first sets foot on Mars is almost certainly alive right now — studying, training, eating breakfast, not knowing yet that they are that person.",
-      "[pt] The question of whether life exists elsewhere in the universe is one of the biggest questions humans have ever asked.\n\nWe don't know the answer yet. But we have better tools than ever for looking — telescopes that can analyse the atmospheres of planets thousands of light-years away, rovers that can drill into Martian rock, probes that have sailed past the edge of our solar system into interstellar space.\n\nEvery answer we find opens three new questions.\n\nThat's not a problem. That's the whole point.\n\nThe universe is not running out of things to discover. And as long as there are people who look up and wonder, we will not stop looking."
+      "Os humanos estiveram na Lua seis vezes.\n\nA última vez foi em dezembro de 1972 — há mais de cinquenta anos. Mas vamos voltar.\n\nO programa Artemis da NASA está construindo foguetes, trajes espaciais e módulos lunares para levar astronautas de volta à superfície da Lua — desta vez para ficar mais tempo, aprender mais e se preparar para o que vem depois. Porque a Lua não é o destino. É o campo de treinamento para algum lugar mais distante.",
+      "Marte é o próximo passo.\n\nÉ uma jornada de seis a nove meses só de ida, dependendo de onde os planetas estão em suas órbitas. Tem uma atmosfera fina, noites congelantes, tempestades de poeira que duram meses e nenhum ar respirável. É, por qualquer medida, nada acolhedor.\n\nE ainda assim:\n\nOs humanos irão. Provavelmente durante a sua vida. Possivelmente na sua geração. A pessoa que primeiro pisar em Marte está quase certamente viva agora — estudando, treinando, tomando café da manhã, sem saber ainda que é essa pessoa.",
+      "A questão de saber se a vida existe em outro lugar do universo é uma das maiores perguntas que os humanos já fizeram.\n\nAinda não sabemos a resposta. Mas temos ferramentas melhores do que nunca para procurar — telescópios que podem analisar as atmosferas de planetas a milhares de anos-luz de distância, rovers que podem perfurar rochas marcianas, sondas que navegaram além da borda do nosso sistema solar para o espaço interestelar.\n\nCada resposta que encontramos abre três novas perguntas.\n\nIsso não é um problema. Esse é o objetivo.\n\nO universo não está ficando sem coisas para descobrir. E enquanto houver pessoas que olhem para cima e se perguntem, não vamos parar de olhar."
     ]
   }
 ];

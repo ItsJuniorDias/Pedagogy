@@ -1,40 +1,40 @@
 // AUTO-GERADO por scripts/translateStories.ts — NÃO editar à mão.
-// história: TAIRBRTY · idioma: pt · modelo: mock · 2026-07-01
+// história: TAIRBRTY · idioma: pt · modelo: deepseek/deepseek-v4-flash · 2026-07-01
 import type { LocalizedChapter } from "../types";
 
 export const TAIRBRTY: LocalizedChapter[] = [
   {
     "id": 1,
-    "title": "[pt] Chapter 1",
-    "subtitle": "[pt] The Enchanted Forest",
+    "title": "Capítulo 1",
+    "subtitle": "A Floresta Encantada",
     "emoji": "🌲",
     "locked": false,
     "pages": [
-      "[pt] It was a golden morning when Pipo, the most curious little bear in the forest, woke up to the smell of wild honey coming through the window of his tree stump home.\n\nHe stretched his furry arms, yawned loudly — startling the birds outside — and smiled at the day dawning outside.",
-      "[pt] — Today is going to be a special day — he whispered to himself, not yet knowing how true that was.\n\nAs he left his home, Pipo encountered his friend Lila, the striped-tailed fox, who was standing in the middle of the path with the most serious expression he had ever seen on her face.",
-      "[pt] — Pipo! I'm so glad I found you — she said, ears perked up. — The Flower Fairy has disappeared, and without her, the forest's flowers will sleep forever. We need to find her before sunset!\n\nPipo felt his heart race. He had never done anything so important before. But then, he took a deep breath and lifted his chin.\n\n— Then let's go together — he said. — Courage is easier when we have a friend by our side."
+      "Era uma manhã dourada quando Pipo, o ursinho mais curioso da floresta, acordou com o cheiro de mel silvestre entrando pela janela de sua casa no tronco de árvore.\n\nEle esticou seus braços peludos, bocejou bem alto — assustando os pássaros lá fora — e sorriu para o dia que despontava.",
+      "— Hoje vai ser um dia especial — ele sussurrou para si mesmo, sem ainda saber o quanto isso era verdade.\n\nAo sair de casa, Pipo encontrou sua amiga Lila, a raposa de cauda listrada, que estava parada no meio do caminho com a expressão mais séria que ele já tinha visto em seu rosto.",
+      "— Pipo! Que bom que te encontrei — ela disse, com as orelhas em pé. — A Fada das Flores desapareceu, e sem ela, as flores da floresta vão dormir para sempre. Precisamos encontrá-la antes do pôr do sol!\n\nPipo sentiu o coração acelerar. Ele nunca tinha feito algo tão importante antes. Mas então, ele respirou fundo e ergueu o queixo.\n\n— Então vamos juntos — ele disse. — A coragem é mais fácil quando temos um amigo ao lado."
     ]
   },
   {
     "id": 2,
-    "title": "[pt] Chapter 2",
-    "subtitle": "[pt] The River of Singing Stones",
+    "title": "Capítulo 2",
+    "subtitle": "O Rio das Pedras Cantantes",
     "emoji": "🏞️",
     "locked": true,
     "pages": [
-      "[pt] The path to the River of Singing Stones was full of surprises. Pipo and Lila walked along the trail of colorful mushrooms, crossed the vine bridge, and finally heard the soft tinkling of the magical stones in the water.\n\nBut something was wrong. The river was silent.",
-      "[pt] — The stones have stopped singing — whispered Lila, her ears drooping. — This means the magic is fading faster than we thought.\n\nPipo approached the riverbank and looked at the gray stones at the bottom of the crystal-clear river. Suddenly, one of them flickered — a faint light, like a star about to go out."
+      "O caminho até o Rio das Pedras Cantantes estava cheio de surpresas. Pipo e Lila andaram pela trilha dos cogumelos coloridos, atravessaram a ponte de cipó e finalmente ouviram o suave tilintar das pedras mágicas na água.\n\nMas algo estava errado. O rio estava silencioso.",
+      "— As pedras pararam de cantar — sussurrou Lila, com as orelhas caídas. — Isso significa que a magia está sumindo mais rápido do que pensávamos.\n\nPipo se aproximou da margem e olhou para as pedras cinzentas no fundo do rio cristalino. De repente, uma delas brilhou — uma luz fraca, como uma estrela prestes a se apagar."
     ]
   },
   {
     "id": 3,
-    "title": "[pt] Chapter 3",
-    "subtitle": "[pt] Courage Comes from the Heart",
+    "title": "Capítulo 3",
+    "subtitle": "A Coragem Vem do Coração",
     "emoji": "💛",
     "locked": true,
     "pages": [
-      "[pt] At the top of Misty Mountain, where the clouds touched the ground and the wind sang ancient stories, Pipo finally found the Flower Fairy asleep inside a crystal bubble.\n\nHis heart raced. It was time.",
-      "[pt] — You can do this — said Lila in a low voice, holding her friend's paw.\n\nAnd Pipo understood, at that moment, what courage truly meant: it was not the absence of fear, but the decision to act despite it.\n\nHe touched the crystal bubble with both paws and whispered:\n\n— Wake up. The forest needs you."
+      "No topo da Montanha Nebulosa, onde as nuvens tocavam o chão e o vento cantava histórias antigas, Pipo finalmente encontrou a Fada das Flores dormindo dentro de uma bolha de cristal.\n\nSeu coração disparou. Era a hora.",
+      "— Você consegue — disse Lila em voz baixa, segurando a pata do amigo.\n\nE Pipo entendeu, naquele momento, o que a coragem realmente significava: não era a ausência de medo, mas a decisão de agir apesar dele.\n\nEle tocou a bolha de cristal com as duas patas e sussurrou:\n\n— Acorde. A floresta precisa de você."
     ]
   }
 ];
