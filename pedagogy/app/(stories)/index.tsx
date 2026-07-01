@@ -108,7 +108,9 @@ export default function StoriesScreen() {
               onPress={() => setActiveTag(i)}
             >
               <Text style={[s.tagText, activeTag === i && s.tagTextActive]}>
-                {i === 0 ? t("stories.tagsAll") : tag}
+                {i === 0
+                  ? t("stories.tagsAll")
+                  : t(`storyTags.${tag}` as any, { defaultValue: tag })}
               </Text>
             </PressBounce>
           ))}
@@ -131,14 +133,20 @@ export default function StoriesScreen() {
             >
               {story.badge && (
                 <View style={[s.badgeWrap, { backgroundColor: story.accent }]}>
-                  <Text style={s.badgeText}>{story.badge}</Text>
+                  <Text style={s.badgeText}>
+                    {t(`storyBadges.${story.badge}` as any, {
+                      defaultValue: story.badge,
+                    })}
+                  </Text>
                 </View>
               )}
               <Swing delay={i * 250} angle={5} duration={2600}>
                 <Text style={s.storyEmoji}>{story.emoji}</Text>
               </Swing>
               <Text style={[s.storyTitle, fredoka(15, "#2D2D2D")]}>
-                {story.title}
+                {t(`storyTitles.${story.id}` as any, {
+                  defaultValue: story.title,
+                })}
               </Text>
               <Text style={[s.storyMeta, { color: story.accent }]}>
                 📖{" "}

@@ -472,6 +472,15 @@ const PageDots = ({
   </View>
 );
 
+// "Chapter N" é rótulo estrutural → traduz via i18n; qualquer outro título passa direto.
+const chapterLabel = (
+  t: ReturnType<typeof useTranslation>["t"],
+  title: string,
+) => {
+  const m = /^Chapter (\d+)$/.exec(title);
+  return m ? t("details.chapter", { number: m[1] }) : title;
+};
+
 // ─── CHAPTER TAB ──────────────────────────────────────────────────────────────
 const ChapterTab = ({
   chapter,
@@ -485,9 +494,11 @@ const ChapterTab = ({
   read: boolean;
   theme: StoryTheme;
   onPress: () => void;
-}) => (
-  <TouchableOpacity
-    onPress={onPress}
+}) => {
+  const { t } = useTranslation();
+  return (
+    <TouchableOpacity
+      onPress={onPress}
     activeOpacity={0.8}
     style={[
       s.chapterTab,
@@ -505,7 +516,7 @@ const ChapterTab = ({
     <Text style={{ fontSize: 18 }}>{chapter.emoji}</Text>
     <View>
       <Text style={[fredoka(12, active ? "#fff" : "#AAA")]}>
-        {chapter.title}
+        {chapterLabel(t, chapter.title)}
       </Text>
       <Text
         style={{
@@ -532,8 +543,9 @@ const ChapterTab = ({
         </Text>
       </View>
     )}
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
+};
 
 // ─── HIGHLIGHTED TEXT ─────────────────────────────────────────────────────────
 
@@ -1347,7 +1359,7 @@ export default function ReadStoryScreen() {
 
         <View style={{ flex: 1, alignItems: "center" }}>
           <Text style={fredoka(16, theme.accent)}>
-            {chapter.emoji} {chapter.title}
+            {chapter.emoji} {chapterLabel(t, chapter.title)}
           </Text>
           <Text style={[s.headerSub, isDarkBg && { color: "#638596" }]}>
             {chapter.subtitle} · 📖 {readChapters.length}/{chapters.length}
