@@ -35,7 +35,9 @@
 //   --force           regenera mesmo se o overlay já existir.
 //   --limit <n>       processa no máx. n (história × idioma) nesta rodada.
 //   --retries <n>     passes completos sobre a cadeia em 429/5xx (default: 5).
-//   --delay <ms>      pausa entre chamadas (default: 1200ms; use 3000+ se o free 429).
+//   --delay <ms>      pausa por chamada (default: 0 com concorrência; 1200 sem).
+//   --concurrency <n> (ou -j) traduções em paralelo. Auto: paga→6, :free→2, mock→8.
+//                     No pago, -j 8/10 acelera bastante; no :free, mantenha baixo.
 //
 // Presets de modelos (--models <nome>):
 //   free     llama-3.3-70b:free → deepseek-v3-0324:free → openrouter/free   (padrão, $0)
@@ -254,8 +256,11 @@ function parseJsonArray(raw: string): unknown[] {
 
 interface Provider {
   name: string;
-  lastModel?: string; // preenchido após uma tradução bem-sucedida (p/ log/registro)
-  translate(chapters: Chapter[], lang: string): Promise<Chapter[]>;
+  // devolve os capítulos traduzidos + qual modelo os produziu (seguro sob concorrência)
+  translate(
+    chapters: Chapter[],
+    lang: string,
+  ): Promise<{ chapters: Chapter[]; model: string }>;
 }
 
 const SYSTEM_PROMPT = `You are a professional children's-book localizer. You translate story chapters for a kids' reading app.
@@ -306,7 +311,6 @@ function retryDelayMs(
 
 class OpenRouterProvider implements Provider {
   name: string;
-  lastModel?: string;
   constructor(
     private apiKey: string,
     private models: string[], // cadeia de fallback
@@ -349,7 +353,10 @@ class OpenRouterProvider implements Provider {
     };
   }
 
-  async translate(chapters: Chapter[], lang: string): Promise<Chapter[]> {
+  async translate(
+    chapters: Chapter[],
+    lang: string,
+  ): Promise<{ chapters: Chapter[]; model: string }> {
     const userPrompt = `Target language: ${LANG_NAMES[lang]}.
 
 CHAPTERS (JSON):
@@ -365,12 +372,7 @@ Return ONLY the translated JSON array.`;
 
       for (const model of this.models) {
         const r = await this.callOnce(model, userPrompt);
-        if (r.ok) {
-          this.lastModel = model;
-          if (this.models.length > 1 || pass > 0)
-            process.stdout.write(`✓${shortModel(model)} `);
-          return r.data;
-        }
+        if (r.ok) return { chapters: r.data, model };
         lastStatus = r.status;
         // auth → fatal: nem adianta trocar de modelo
         if (r.status === 401 || r.status === 403) {
@@ -387,16 +389,16 @@ Return ONLY the translated JSON array.`;
         } else if (r.status >= 500 && r.status < 600) {
           sawTransient = true;
         }
-        // 429 / 5xx / 4xx (modelo indisponível) → cai pro PRÓXIMO modelo já
-        process.stdout.write(`(${shortModel(model)}:${r.status}→próx) `);
+        // 429 / 5xx / 4xx (modelo indisponível) → cai pro PRÓXIMO modelo da cadeia
       }
 
       // esgotou a cadeia neste pass
       if (!sawTransient) break; // só erros não-recuperáveis (ex.: 404) → não repete
       if (pass < this.maxPasses - 1) {
         const waitMs = retryDelayMs(waitHeader, waitBody, pass);
-        process.stdout.write(
-          `(cadeia esgotada · espera ${(waitMs / 1000).toFixed(0)}s · pass ${pass + 2}/${this.maxPasses}) `,
+        // linha completa (não parcial) p/ não embaralhar sob concorrência
+        console.log(
+          `  ⏳ [${lang}] rate-limit — aguardando ${(waitMs / 1000).toFixed(0)}s (pass ${pass + 2}/${this.maxPasses})`,
         );
         await sleep(waitMs);
       }
@@ -408,15 +410,21 @@ Return ONLY the translated JSON array.`;
 /** Mock: não chama API — só prefixa os textos (útil para testar o encanamento). */
 class MockProvider implements Provider {
   name = "mock";
-  async translate(chapters: Chapter[], lang: string): Promise<Chapter[]> {
+  async translate(
+    chapters: Chapter[],
+    lang: string,
+  ): Promise<{ chapters: Chapter[]; model: string }> {
     const tag = `[${lang}] `;
     const tr = (s: string) => tag + s;
-    return chapters.map((ch) => ({
-      ...ch,
-      title: typeof ch.title === "string" ? tr(ch.title) : ch.title,
-      subtitle: typeof ch.subtitle === "string" ? tr(ch.subtitle) : ch.subtitle,
-      pages: ch.pages.map(tr),
-    }));
+    return {
+      model: "mock",
+      chapters: chapters.map((ch) => ({
+        ...ch,
+        title: typeof ch.title === "string" ? tr(ch.title) : ch.title,
+        subtitle: typeof ch.subtitle === "string" ? tr(ch.subtitle) : ch.subtitle,
+        pages: ch.pages.map(tr),
+      })),
+    };
   }
 }
 
@@ -524,6 +532,7 @@ function parseArgs(argv: string[]) {
   let limit = Infinity;
   let retries = 5;
   let delay = -1; // -1 = automático (resolvido no main conforme o provider)
+  let concurrency = 0; // 0 = automático (resolvido no main conforme a cadeia)
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--all") all = true;
@@ -537,9 +546,36 @@ function parseArgs(argv: string[]) {
     else if (a === "--limit") limit = parseInt(argv[++i], 10);
     else if (a === "--retries") retries = parseInt(argv[++i], 10);
     else if (a === "--delay") delay = parseInt(argv[++i], 10);
+    else if (a === "--concurrency" || a === "-j")
+      concurrency = parseInt(argv[++i], 10);
     else if (!a.startsWith("--")) ids.push(a.toUpperCase());
   }
-  return { ids, langs, all, force, clean, provider, model, models, limit, retries, delay };
+  return {
+    ids, langs, all, force, clean, provider, model, models,
+    limit, retries, delay, concurrency,
+  };
+}
+
+/**
+ * Executa `worker` sobre `items` com no máx. `concurrency` tarefas simultâneas.
+ * (Pool simples: N runners puxam da mesma fila até acabar.)
+ */
+async function runPool<T>(
+  items: T[],
+  concurrency: number,
+  worker: (item: T) => Promise<void>,
+): Promise<void> {
+  let next = 0;
+  const n = Math.max(1, Math.min(concurrency, items.length));
+  await Promise.all(
+    Array.from({ length: n }, async () => {
+      for (;;) {
+        const i = next++;
+        if (i >= items.length) return;
+        await worker(items[i]);
+      }
+    }),
+  );
 }
 
 async function main() {
@@ -590,9 +626,15 @@ async function main() {
     ? new MockProvider()
     : new OpenRouterProvider(key!, chain, opts.retries);
 
-  // Atraso entre requisições — reduz muito o rate-limit (429) do tier free.
-  // Default: 1200ms no openrouter, 0 no mock. Ajuste com --delay <ms> (ex.: 3000).
-  const interDelayMs = opts.delay >= 0 ? opts.delay : useMock ? 0 : 1200;
+  // Concorrência: quantas traduções em paralelo. Auto conforme a cadeia:
+  //   mock → 8 · cadeia paga → 6 · cadeia :free → 2 (o teto do free é compartilhado).
+  const isFreeChain = chain.every((m) => m.endsWith(":free"));
+  const concurrency =
+    opts.concurrency > 0 ? opts.concurrency : useMock ? 8 : isFreeChain ? 2 : 6;
+  // Atraso entre chamadas: com concorrência > 1, a própria concorrência dita o ritmo
+  // (default 0). Sem concorrência, mantém 1200ms no free p/ evitar 429.
+  const interDelayMs =
+    opts.delay >= 0 ? opts.delay : concurrency > 1 ? 0 : useMock ? 0 : 1200;
 
   if (useMock) {
     console.log(
@@ -603,15 +645,13 @@ async function main() {
   console.log(`\n🌍 Tradução de histórias · provider: ${provider.name}`);
   if (!useMock)
     console.log(
-      `   retries: ${opts.retries} · atraso entre chamadas: ${interDelayMs}ms`,
+      `   concorrência: ${concurrency} · retries: ${opts.retries} · atraso: ${interDelayMs}ms`,
     );
-  console.log(`   idiomas: ${targetLangs.join(", ")} · histórias: ${storyKeys.length}\n`);
 
-  let done = 0,
-    skipped = 0,
-    failed = 0,
-    processed = 0;
-
+  // Fila achatada (idioma × história) do que falta traduzir.
+  type Task = { lang: string; key: string };
+  const tasks: Task[] = [];
+  let skipped = 0;
   for (const lang of targetLangs) {
     // chaves que já existem NESTE idioma (seed manual + geradas antes)
     const existing = new Set<string>(
@@ -621,49 +661,63 @@ async function main() {
         ] as Record<string, unknown>,
       ),
     );
-
-    let touched = false;
-    for (const storyKey of storyKeys) {
-      if (processed >= opts.limit) break;
-      if (existing.has(storyKey) && !opts.force) {
+    for (const key of storyKeys) {
+      if (existing.has(key) && !opts.force) {
         skipped++;
         continue;
       }
-      processed++;
-      // pausa entre chamadas (não antes da 1ª, não depois da última)
-      if (interDelayMs > 0 && done + failed > 0) await sleep(interDelayMs);
-      const en = STORY_SOURCES[storyKey];
-      try {
-        process.stdout.write(`  • [${lang}] ${storyKey} … `);
-        const tr = await provider.translate(en, lang);
-        assertSameShape(en, tr, storyKey, lang);
-        // reimpõe campos estruturais (segurança extra além do resolver)
-        const safe = tr.map((t, i) => ({
-          ...t,
-          id: en[i].id,
-          emoji: (en[i] as any).emoji,
-          locked: (en[i] as any).locked,
-        }));
-        writeStoryFile(
-          lang,
-          storyKey,
-          useMock ? "mock" : (provider.lastModel ?? "openrouter"),
-          safe,
-        );
-        touched = true;
-        done++;
-        console.log("ok");
-      } catch (e: any) {
-        failed++;
-        console.log("FALHOU: " + e.message);
-        if (e.fatal) {
-          console.error("\n⛔ Erro fatal (auth). Abortando.");
-          process.exit(1);
-        }
+      tasks.push({ lang, key });
+    }
+  }
+  const queue = Number.isFinite(opts.limit) ? tasks.slice(0, opts.limit) : tasks;
+  const total = queue.length;
+  console.log(
+    `   idiomas: ${targetLangs.join(", ")} · a traduzir: ${total} · já existiam: ${skipped}\n`,
+  );
+
+  let done = 0,
+    failed = 0,
+    completed = 0;
+  const touchedLangs = new Set<string>();
+  let aborted = false;
+
+  await runPool(queue, concurrency, async (task) => {
+    if (aborted) return;
+    const en = STORY_SOURCES[task.key];
+    if (interDelayMs > 0) await sleep(interDelayMs); // pacing opcional por worker
+    try {
+      const { chapters: tr, model } = await provider.translate(en, task.lang);
+      assertSameShape(en, tr, task.key, task.lang);
+      // reimpõe campos estruturais (segurança extra além do resolver)
+      const safe = tr.map((t, i) => ({
+        ...t,
+        id: en[i].id,
+        emoji: (en[i] as any).emoji,
+        locked: (en[i] as any).locked,
+      }));
+      writeStoryFile(task.lang, task.key, model, safe);
+      touchedLangs.add(task.lang);
+      done++;
+      completed++;
+      console.log(
+        `  ✓ [${task.lang}] ${task.key} · ${shortModel(model)} (${completed}/${total})`,
+      );
+    } catch (e: any) {
+      failed++;
+      completed++;
+      console.log(
+        `  ✗ [${task.lang}] ${task.key}: ${e.message} (${completed}/${total})`,
+      );
+      if (e.fatal) {
+        console.error("\n⛔ Erro fatal (auth). Abortando.");
+        aborted = true;
       }
     }
-    if (touched) rebuildGeneratedBlock(lang);
-  }
+  });
+
+  // Reescreve o bloco GENERATED de cada idioma tocado (1x, após o pool drenar).
+  for (const lang of touchedLangs) rebuildGeneratedBlock(lang);
+  if (aborted) process.exit(1);
 
   console.log(
     `\n✅ Concluído. gerados: ${done} · pulados (já existiam): ${skipped} · falhas: ${failed}`,
