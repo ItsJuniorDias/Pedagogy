@@ -15,7 +15,7 @@
  */
 
 /** URL de produção (Render). wss:// e SEM porta — o Render roteia o 443. */
-const PROD_SERVER_URL = "wss://pedagogy-923f.onrender.com";
+const PROD_SERVER_URL = "wss://pedagogy-2qxx.onrender.com";
 
 export const SERVER_URL: string =
   process.env.EXPO_PUBLIC_PONG_SERVER?.trim() || PROD_SERVER_URL;
