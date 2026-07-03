@@ -28,7 +28,6 @@ const __DEV_LOG__ = typeof __DEV__ !== "undefined" && __DEV__;
 /** Loga no console apenas em dev, para acompanhar os eventos durante o dev. */
 function devLog(event: string, params?: Record<string, unknown>): void {
   if (__DEV_LOG__) {
-    // eslint-disable-next-line no-console
     console.log(`[analytics:noop] ${event}`, params ?? "");
   }
 }
@@ -45,7 +44,7 @@ function devLog(event: string, params?: Record<string, unknown>): void {
 //
 // ⚠️ Envie SOMENTE nome do evento + parâmetros não-pessoais (productId, preço,
 // moeda, source). Nunca inclua identificador de dispositivo/usuário nem IDFA.
-const ANALYTICS_ENDPOINT = ""; // ex.: "https://seu-backend.exemplo.com/events"
+const ANALYTICS_ENDPOINT = "https://pedagogy-analytics.onrender.com/events"; // ex.: "https://seu-backend.exemplo.com/events"
 
 /** Best-effort: dispara o evento pro backend first-party quando configurado.
  *  Nunca lança, nunca bloqueia a UI. */
@@ -184,7 +183,9 @@ export function trackChapterCompleted(args: {
     story_id: args.storyId,
     chapter_id: String(args.chapterId),
     ...(args.chapterIndex != null ? { chapter_index: args.chapterIndex } : {}),
-    ...(args.totalChapters != null ? { total_chapters: args.totalChapters } : {}),
+    ...(args.totalChapters != null
+      ? { total_chapters: args.totalChapters }
+      : {}),
   });
 }
 
@@ -196,7 +197,9 @@ export function trackStoryCompleted(args: {
   trackEvent(AnalyticsEvent.STORY_COMPLETED, {
     story_id: args.storyId,
     story_name: args.storyName ?? args.storyId,
-    ...(args.totalChapters != null ? { total_chapters: args.totalChapters } : {}),
+    ...(args.totalChapters != null
+      ? { total_chapters: args.totalChapters }
+      : {}),
   });
   trackEvent(AnalyticsEvent.ACHIEVED_LEVEL, {
     content_id: args.storyId,
@@ -204,7 +207,10 @@ export function trackStoryCompleted(args: {
   });
 }
 
-export function trackGameOpen(args: { gameId: string; gameName?: string }): void {
+export function trackGameOpen(args: {
+  gameId: string;
+  gameName?: string;
+}): void {
   trackEvent(AnalyticsEvent.GAME_OPEN, {
     game_id: args.gameId,
     game_name: args.gameName ?? args.gameId,
@@ -236,7 +242,9 @@ export function trackSubscriptionStarted(args: {
   isTrial?: boolean;
   period?: string;
 }): void {
-  const eventName = args.isTrial ? AnalyticsEvent.START_TRIAL : AnalyticsEvent.SUBSCRIBE;
+  const eventName = args.isTrial
+    ? AnalyticsEvent.START_TRIAL
+    : AnalyticsEvent.SUBSCRIBE;
   trackEvent(
     eventName,
     {
@@ -261,14 +269,19 @@ export function trackOnboardingCompleted(): void {
   trackEvent(AnalyticsEvent.COMPLETED_TUTORIAL, { success: true });
 }
 
-export function trackSearch(args: { query: string; resultCount?: number }): void {
+export function trackSearch(args: {
+  query: string;
+  resultCount?: number;
+}): void {
   trackEvent(AnalyticsEvent.SEARCHED, {
     search_string: args.query,
     ...(args.resultCount != null ? { num_items: args.resultCount } : {}),
   });
 }
 
-export function trackAchievementUnlocked(args: { achievementId: string }): void {
+export function trackAchievementUnlocked(args: {
+  achievementId: string;
+}): void {
   trackEvent(AnalyticsEvent.UNLOCKED_ACHIEVEMENT, {
     content_id: args.achievementId,
     achievement: args.achievementId,
