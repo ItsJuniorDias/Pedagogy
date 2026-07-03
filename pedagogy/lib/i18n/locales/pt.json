@@ -66,7 +66,7 @@
       },
       "library": {
         "badge": "Biblioteca infinita",
-        "title": "Centenas de histórias\npara explorar",
+        "title": "Mais de 50 histórias\npara explorar",
         "description": "Fábulas, aventuras, ciência e muito mais. Conteúdo novo todo mês, com narração em áudio e ilustrações coloridas."
       },
       "learning": {
@@ -105,8 +105,12 @@
       "subtitle": "Mais de 50 aventuras esperando pelo seu pequeno leitor"
     },
     "features": {
-      "stories": "Acesso a mais de 50 histórias",
-      "activities": "Atividades educativas e minijogos"
+      "stories": "Mais de 50 histórias ilustradas",
+      "narration": "Narração em áudio em todas as histórias",
+      "activities": "Quizzes e atividades educativas",
+      "progress": "Relatórios de progresso e conquistas",
+      "games": "Minijogos educativos",
+      "noAds": "Sem anúncios — 100% seguro para crianças"
     },
     "choosePlan": "Escolha seu plano",
     "loadingPlans": "Carregando planos...",
@@ -139,7 +143,10 @@
       "restoreFailedTitle": "Falha ao restaurar",
       "noSubTitle": "Nenhuma assinatura ativa",
       "noSubBody": "Não encontramos uma compra anterior vinculada a esta conta."
-    }
+    },
+    "perMonth": "≈ {{price}}/mês",
+    "billedAnnually": "cobrado anualmente",
+    "save": "Economize {{percent}}%"
   },
   "home": {
     "greetingHi": "Oi,",

@@ -102,9 +102,61 @@ function isHighlightedPackage(pkg: Package): boolean {
   return pkg.packageType === PACKAGE_TYPE.ANNUAL;
 }
 
+// ── PREÇO/MÊS + DESCONTO (âncora de conversão do plano anual) ─────────────────
+// Reenquadra "R$99,90/ano" como "≈ R$8,33/mês", que converte muito melhor, e
+// mostra o quanto o anual economiza vs. o mensal — sem NUNCA inventar número.
+
+/** Formata um valor na moeda do produto. Intl existe no Hermes do SDK 54; há
+ *  fallback simples caso alguma engine antiga falhe. */
+function formatMoney(value: number, currencyCode: string): string {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: currencyCode,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return `${value.toFixed(2)} ${currencyCode}`;
+  }
+}
+
+/** Preço mensal equivalente de um pacote ANUAL. Prefere o valor já formatado
+ *  pelo RevenueCat (pricePerMonthString); se não vier, divide o preço por 12.
+ *  Retorna null para pacotes que não sejam anuais. */
+function getAnnualPerMonth(pkg: Package): string | null {
+  if (pkg.packageType !== PACKAGE_TYPE.ANNUAL) return null;
+  const rcPerMonth = (pkg.product as { pricePerMonthString?: string | null })
+    .pricePerMonthString;
+  if (rcPerMonth) return rcPerMonth;
+  if (typeof pkg.product.price === "number" && pkg.product.price > 0) {
+    return formatMoney(pkg.product.price / 12, pkg.product.currencyCode);
+  }
+  return null;
+}
+
+/** % de economia do anual vs. o plano mensal. Só retorna um número se AMBOS os
+ *  pacotes existirem e o anual for de fato mais barato por mês — caso contrário
+ *  null (aí o selo de desconto simplesmente não aparece). */
+function getAnnualSavingsPct(packages: Package[]): number | null {
+  const annual = packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL);
+  const monthly = packages.find((p) => p.packageType === PACKAGE_TYPE.MONTHLY);
+  if (!annual || !monthly) return null;
+  const perMonth = annual.product.price / 12;
+  const monthlyPrice = monthly.product.price;
+  if (!(monthlyPrice > 0) || perMonth >= monthlyPrice) return null;
+  return Math.round((1 - perMonth / monthlyPrice) * 100);
+}
+
+// Empilha TODO o valor que o app entrega (antes só listava 2 itens). Cada linha
+// reforça uma promessa feita no onboarding: histórias, narração, quizzes,
+// relatórios de progresso, minijogos e ausência de anúncios.
 const FEATURES = [
   { emoji: "📚", key: "paywall.features.stories" },
+  { emoji: "🔊", key: "paywall.features.narration" },
   { emoji: "🧩", key: "paywall.features.activities" },
+  { emoji: "📊", key: "paywall.features.progress" },
+  { emoji: "🎮", key: "paywall.features.games" },
+  { emoji: "🚫", key: "paywall.features.noAds" },
 ] as const;
 
 // ⚠️ Não use depoimentos inventados — a Apple rejeita conteúdo enganoso
@@ -170,9 +222,19 @@ interface PlanCardProps {
   pkg: Package;
   selected: boolean;
   onSelect: () => void;
+  /** Preço mensal equivalente (só preenchido no plano anual). */
+  perMonth?: string | null;
+  /** % de economia vs. mensal (só preenchido no plano anual). */
+  savingsPct?: number | null;
 }
 
-const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
+const PlanCard = ({
+  pkg,
+  selected,
+  onSelect,
+  perMonth,
+  savingsPct,
+}: PlanCardProps) => {
   const { t } = useTranslation();
   const highlight = isHighlightedPackage(pkg);
   const label = getPackageLabel(pkg, t);
@@ -225,6 +287,13 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
           <Text style={fredoka(11, "#fff")}>{t("paywall.mostPopular")}</Text>
         </View>
       )}
+      {savingsPct != null && savingsPct > 0 && (
+        <View style={s.saveTag}>
+          <Text style={fredoka(11, "#fff")}>
+            {t("paywall.save", { percent: savingsPct })}
+          </Text>
+        </View>
+      )}
       <View style={s.planRow}>
         <View style={[s.planRadio, selected && { borderColor: "#FF5B8D" }]}>
           {selected && (
@@ -233,6 +302,12 @@ const PlanCard = ({ pkg, selected, onSelect }: PlanCardProps) => {
         </View>
         <View style={{ flex: 1 }}>
           <Text style={fredoka(16, "#2D2D2D")}>{label}</Text>
+          {perMonth && (
+            <Text style={s.planPerMonth}>
+              {t("paywall.perMonth", { price: perMonth })} ·{" "}
+              {t("paywall.billedAnnually")}
+            </Text>
+          )}
           {introText && <Text style={s.planSub}>{introText}</Text>}
         </View>
         <View style={s.planPriceBox}>
@@ -301,8 +376,6 @@ export default function PaywallScreen() {
     const checkSubscription = async () => {
       const status = await AsyncStorage.getItem("@subscription_status");
 
-      console.log(status, "STATUSSSSS");
-
       if (status === "active") {
         router.back();
       }
@@ -316,6 +389,9 @@ export default function PaywallScreen() {
 
   const isProcessing = state === "purchasing" || state === "restoring";
 
+  // Desconto do anual vs. mensal — calculado 1× a partir dos pacotes carregados.
+  const annualSavingsPct = getAnnualSavingsPct(packages);
+
   const handleSubscribe = async () => {
     if (!selectedPkg) return;
 
@@ -327,8 +403,6 @@ export default function PaywallScreen() {
     });
 
     const success = await purchase(selectedPkg);
-
-    console.log(success, "SUCCESSSS");
 
     if (success) {
       // ✅ FIX: só marca como ativo SE a compra realmente deu certo
@@ -454,6 +528,12 @@ export default function PaywallScreen() {
                   pkg={pkg}
                   selected={selectedPkg?.identifier === pkg.identifier}
                   onSelect={() => !isProcessing && setSelectedPkg(pkg)}
+                  perMonth={getAnnualPerMonth(pkg)}
+                  savingsPct={
+                    pkg.packageType === PACKAGE_TYPE.ANNUAL
+                      ? annualSavingsPct
+                      : null
+                  }
                 />
               </Animated.View>
             ))}
@@ -666,6 +746,21 @@ const s = StyleSheet.create({
   },
   planRadioFill: { width: 12, height: 12, borderRadius: 6 },
   planSub: { fontSize: 11, color: "#AAA", fontWeight: "600", marginTop: 2 },
+  planPerMonth: {
+    fontSize: 12,
+    color: "#5A6B78",
+    fontWeight: "700",
+    marginTop: 3,
+  },
+  saveTag: {
+    position: "absolute",
+    top: -10,
+    right: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+    backgroundColor: "#2BB673",
+  },
   planPriceBox: { alignItems: "flex-end" },
   planPeriod: { fontSize: 11, color: "#AAA", fontWeight: "700" },
   urgency: {

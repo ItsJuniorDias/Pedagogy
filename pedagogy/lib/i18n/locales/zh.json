@@ -66,7 +66,7 @@
       },
       "library": {
         "badge": "无限故事库",
-        "title": "数百个故事\n等你探索",
+        "title": "50 多个故事\n等你探索",
         "description": "寓言、冒险、科学等等。每月更新内容，配有语音朗读和多彩插图。"
       },
       "learning": {
@@ -105,8 +105,12 @@
       "subtitle": "50 多个冒险故事，等待你的小读者"
     },
     "features": {
-      "stories": "畅读 50 多个故事",
-      "activities": "教育活动和小游戏"
+      "stories": "50 多个精美插图故事",
+      "narration": "每个故事都有语音朗读",
+      "activities": "测验和教育活动",
+      "progress": "进度报告和成就",
+      "games": "教育小游戏",
+      "noAds": "无广告 — 100% 儿童安全"
     },
     "choosePlan": "选择你的方案",
     "loadingPlans": "正在加载方案...",
@@ -139,7 +143,10 @@
       "restoreFailedTitle": "恢复失败",
       "noSubTitle": "没有有效订阅",
       "noSubBody": "我们未找到与此账户关联的过往购买记录。"
-    }
+    },
+    "perMonth": "≈ {{price}}/月",
+    "billedAnnually": "按年计费",
+    "save": "省 {{percent}}%"
   },
   "home": {
     "greetingHi": "你好，",

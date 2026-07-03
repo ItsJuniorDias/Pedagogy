@@ -33,6 +33,38 @@ function devLog(event: string, params?: Record<string, unknown>): void {
   }
 }
 
+// ─── FUNIL FIRST-PARTY (OPT-IN, DESLIGADO POR PADRÃO) ─────────────────────────
+// O RevenueCat já registra o funil de ASSINATURA (trial → pago → renovação →
+// churn) no dashboard dele, SEM código. O que o RevenueCat NÃO enxerga é o
+// trecho PRÉ-compra: quantos VIRAM o paywall e quantos INICIARAM o checkout.
+//
+// Para medir isso de forma compatível com a categoria Kids, envie os eventos
+// para o SEU PRÓPRIO backend (first-party) — sem SDK de terceiros, sem IDFA, sem
+// dado pessoal. Basta apontar ANALYTICS_ENDPOINT para uma rota sua. Enquanto
+// estiver vazio (padrão), este bloco é 100% no-op e o app não muda em nada.
+//
+// ⚠️ Envie SOMENTE nome do evento + parâmetros não-pessoais (productId, preço,
+// moeda, source). Nunca inclua identificador de dispositivo/usuário nem IDFA.
+const ANALYTICS_ENDPOINT = ""; // ex.: "https://seu-backend.exemplo.com/events"
+
+/** Best-effort: dispara o evento pro backend first-party quando configurado.
+ *  Nunca lança, nunca bloqueia a UI. */
+function sendFirstParty(event: string, params?: Record<string, unknown>): void {
+  if (!ANALYTICS_ENDPOINT) return; // opt-in — desligado por padrão
+  try {
+    void fetch(ANALYTICS_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event, params: params ?? {}, ts: Date.now() }),
+      keepalive: true,
+    }).catch(() => {
+      /* rede é best-effort: nunca deixa o tracking quebrar a experiência */
+    });
+  } catch {
+    /* idem */
+  }
+}
+
 /**
  * Nenhum analytics de terceiros está ativo (exigência da categoria Kids).
  * Mantida por compatibilidade — sempre retorna false.
@@ -72,10 +104,12 @@ export function trackEvent(
   params?: Record<string, ParamValue | boolean | null | undefined>,
   valueToSum?: number,
 ): void {
-  devLog(eventName, {
+  const payload = {
     ...(params ?? {}),
     ...(valueToSum != null ? { _value: valueToSum } : {}),
-  });
+  };
+  devLog(eventName, payload);
+  sendFirstParty(eventName, payload);
 }
 
 /** Compra. No-op: apenas loga em dev. */
@@ -84,7 +118,9 @@ export function trackPurchase(
   currencyCode: string,
   params?: Record<string, ParamValue | boolean | null | undefined>,
 ): void {
-  devLog("purchase", { amount, currencyCode, ...(params ?? {}) });
+  const payload = { amount, currencyCode, ...(params ?? {}) };
+  devLog("purchase", payload);
+  sendFirstParty("purchase", payload);
 }
 
 // ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────────
