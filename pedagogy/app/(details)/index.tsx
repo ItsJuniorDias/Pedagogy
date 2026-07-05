@@ -1,6 +1,10 @@
 import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import {
+  setAudioModeAsync,
+  useAudioPlayer,
+  useAudioPlayerStatus,
+} from "expo-audio";
 import { useFonts } from "expo-font";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Speech from "expo-speech";
@@ -1210,6 +1214,17 @@ export default function ReadStoryScreen() {
     stopAll();
   }, [currentPage, activeChapter]);
 
+  // ─── Sessão de áudio (iOS) ───────────────────────────────────────────────
+  // Configura UMA sessão de playback que toca mesmo com o botão de silêncio
+  // ligado e coexiste com outros apps. Fala (expo-speech) e música (expo-audio)
+  // dividem ESTA sessão — por isso a narração não interrompe a música de fundo.
+  useEffect(() => {
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      interruptionMode: "mixWithOthers",
+    }).catch(() => {});
+  }, []);
+
   // ─── Cleanup ao sair da tela ─────────────────────────────────────────────
   useEffect(() => {
     return () => {
@@ -1274,10 +1289,6 @@ export default function ReadStoryScreen() {
 
     Speech.speak(cleanedText, {
       ...speech,
-
-      // iOS: dá à fala uma sessão de áudio DEDICADA. Sem isto, a narração
-      // divide a sessão com a música de fundo (expo-audio) e pode sair muda.
-      useApplicationAudioSession: false,
 
       // Diagnóstico: confirma no console se a fala realmente começou / falhou.
       onStart: () => {
