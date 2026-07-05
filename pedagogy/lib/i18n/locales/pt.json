@@ -53,8 +53,7 @@
         "hours": "{{count}}h de leitura",
         "hoursMinutes": "{{count}}h {{minutes}}m de leitura"
       }
-    },
-    "yearsOld": "{{age}} anos"
+    }
   },
   "onboarding": {
     "next": "Próximo",
@@ -75,17 +74,6 @@
         "title": "Acompanhe o progresso do seu filho",
         "description": "Quizzes, conquistas e relatórios de leitura para os pais. Ensinar nunca foi tão divertido e fácil de acompanhar."
       }
-    },
-    "continue": "Continuar",
-    "name": {
-      "title": "Como vamos chamar o seu pequeno?",
-      "subtitle": "Vamos personalizar a experiência de leitura.",
-      "placeholder": "Nome da criança"
-    },
-    "age": {
-      "title": "Quantos aninhos ele(a) tem?",
-      "subtitle": "Assim escolhemos histórias na medida certa.",
-      "subtitleNamed": "Assim escolhemos histórias na medida certa para {{name}}."
     }
   },
   "paywall": {
@@ -114,9 +102,7 @@
     "mostPopular": "🏆 Mais popular",
     "hero": {
       "title": "Abra um mundo de histórias para o seu filho",
-      "subtitle": "Mais de 50 aventuras esperando pelo seu pequeno leitor",
-      "titleNamed": "Um mundo de histórias para {{name}} 🌟",
-      "subtitleNamed": "Mais de 50 aventuras esperando por {{name}}"
+      "subtitle": "Mais de 50 aventuras esperando pelo seu pequeno leitor"
     },
     "features": {
       "stories": "Mais de 50 histórias ilustradas",

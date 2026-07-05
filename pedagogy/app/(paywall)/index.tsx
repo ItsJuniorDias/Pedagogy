@@ -41,7 +41,6 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePurchases } from "../../hooks/usePurchases";
 import { trackCheckoutInitiated, trackPaywallView } from "../../lib/analytics";
-import { useKidProfile } from "../../lib/kidProfile";
 
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
@@ -328,10 +327,6 @@ export default function PaywallScreen() {
   const { packages, state, error, isSubscribed, purchase, restore } =
     usePurchases();
 
-  // Nome da criança (coletado no onboarding) para personalizar o hero.
-  const { profile: kid } = useKidProfile();
-  const kidName = kid?.name?.trim() || null;
-
   const defaultPkg =
     packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL) ??
     packages[0] ??
@@ -481,14 +476,10 @@ export default function PaywallScreen() {
               { textAlign: "center", lineHeight: 36 },
             ]}
           >
-            {kidName
-              ? t("paywall.hero.titleNamed", { name: kidName })
-              : t("paywall.hero.title")}
+            {t("paywall.hero.title")}
           </Animated.Text>
           <Animated.Text entering={enterUp(280)} style={s.heroSub}>
-            {kidName
-              ? t("paywall.hero.subtitleNamed", { name: kidName })
-              : t("paywall.hero.subtitle")}
+            {t("paywall.hero.subtitle")}
           </Animated.Text>
         </View>
 

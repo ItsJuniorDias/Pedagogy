@@ -54,9 +54,6 @@ import { ASTRONAUT, LETTERS, SCHOLL, SPACE } from "../../mocks/learningMocks";
 
 import { trackGameOpen, trackContentOpen } from "../../lib/analytics";
 
-// Nome da criança (onboarding) para personalizar a saudação.
-import { useKidProfile } from "../../lib/kidProfile";
-
 const { width } = Dimensions.get("window");
 
 // ─── ANIMATION HELPERS ───────────────────────────────────────────────────────
@@ -667,7 +664,6 @@ const Chip = ({
 
 export default function HomeScreen() {
   const { t } = useTranslation();
-  const { profile: kid } = useKidProfile();
   const [activeChip, setActiveChip] = useState(0);
   // Mapa id_da_trilha -> nº de capítulos lidos (vindo do storage).
   const [progressMap, setProgressMap] = useState<Record<number, number>>({});
@@ -790,7 +786,7 @@ export default function HomeScreen() {
               <Text style={fredoka(26, "#2D2D2D")}>
                 {t("home.greetingHi")}{" "}
                 <Text style={fredoka(26, "#FF5B8D")}>
-                  {kid?.name || t("home.greetingName")}
+                  {t("home.greetingName")}
                 </Text>
               </Text>
               <WaveHand />

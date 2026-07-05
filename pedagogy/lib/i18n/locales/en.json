@@ -53,8 +53,7 @@
         "hours": "{{count}}h read",
         "hoursMinutes": "{{count}}h {{minutes}}m read"
       }
-    },
-    "yearsOld": "{{age}} yrs"
+    }
   },
   "onboarding": {
     "next": "Next",
@@ -75,17 +74,6 @@
         "title": "Track your child's\nprogress",
         "description": "Quizzes, achievements and reading reports for parents. Teaching has never been this fun and easy to follow."
       }
-    },
-    "continue": "Continue",
-    "name": {
-      "title": "What should we call your little one?",
-      "subtitle": "We'll personalize the reading experience.",
-      "placeholder": "Child's name"
-    },
-    "age": {
-      "title": "How old are they?",
-      "subtitle": "So we can pick stories at just the right level.",
-      "subtitleNamed": "So we can pick stories at just the right level for {{name}}."
     }
   },
   "paywall": {
@@ -114,9 +102,7 @@
     "mostPopular": "🏆 Most popular",
     "hero": {
       "title": "Unlock a world of stories for your child",
-      "subtitle": "Over 50 adventures waiting for your little reader",
-      "titleNamed": "A whole world of stories for {{name}} 🌟",
-      "subtitleNamed": "50+ adventures waiting for {{name}}"
+      "subtitle": "Over 50 adventures waiting for your little reader"
     },
     "features": {
       "stories": "Over 50 illustrated stories",

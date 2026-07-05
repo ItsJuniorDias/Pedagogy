@@ -30,9 +30,6 @@ import WeeklyReadingCard from "../../components/WeeklyReadingCard";
 import LanguageSheet from "../../components/LanguageSheet";
 import { getCurrentLanguage, getLanguageOrDefault } from "../../lib/i18n";
 
-// ─── Perfil da criança (nome + idade coletados no onboarding) ────────────────
-import { useKidProfile } from "../../lib/kidProfile";
-
 // Ids de badge conhecidos (espelham computeBadges em lib/readingProgress e as
 // chaves em profile.badges.* dos locales). O cast para este tipo permite montar
 // a chave i18n dinamicamente mantendo a validação de chaves do TypeScript.
@@ -62,9 +59,6 @@ export default function ProfileScreen() {
   // useTranslation() já re-renderiza esta tela quando o idioma muda, então a
   // bandeira/nome abaixo se atualizam sozinhos.
   const currentLang = getLanguageOrDefault(getCurrentLanguage());
-
-  // Nome/idade da criança — reativo (atualiza sozinho se editado em outro lugar).
-  const { profile: kid } = useKidProfile();
 
   const [progress, setProgress] = useState<ReadingProgress | null>(null);
 
@@ -135,14 +129,8 @@ export default function ProfileScreen() {
               <Text style={{ fontSize: 48 }}>🐻</Text>
             </Swing>
           </Animated.View>
-          <Text style={fredoka(22, "#2D2D2D")}>
-            {kid?.name || t("profile.displayName")}
-          </Text>
-          <Text style={s.avatarSub}>
-            {kid?.age != null
-              ? `${t("profile.yearsOld", { age: kid.age })} · ${t("profile.level", { level })}`
-              : t("profile.level", { level })}
-          </Text>
+          <Text style={fredoka(22, "#2D2D2D")}>{t("profile.displayName")}</Text>
+          <Text style={s.avatarSub}>{t("profile.level", { level })}</Text>
         </Animated.View>
 
         {/* Seletor de idioma — abre o bottom-sheet de tradução do app.
