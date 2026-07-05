@@ -2,14 +2,19 @@ import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
+  TouchableWithoutFeedback,
   View,
   ViewToken,
 } from "react-native";
@@ -29,6 +34,7 @@ import { useTranslation } from "react-i18next";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { trackOnboardingCompleted } from "../../lib/analytics";
+import { MAX_AGE, MIN_AGE, saveKidProfile } from "../../lib/kidProfile";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -59,6 +65,11 @@ const SLIDES: Slide[] = [
     image: require("../../assets/images/background-onboarding.png"),
   },
 ];
+
+// Fases do fluxo: carrossel informativo → nome → idade → (paywall/tabs)
+type Phase = "slides" | "name" | "age";
+
+const AGES = Array.from({ length: MAX_AGE - MIN_AGE + 1 }, (_, i) => MIN_AGE + i);
 
 // ─── Dot indicator ────────────────────────────────────────────────────────────
 
@@ -200,6 +211,22 @@ function SlideItem({
   );
 }
 
+// ─── Step indicator (fases nome/idade) ───────────────────────────────────────
+// Dois pontos indicando "nome" (1) e "idade" (2). Espelha o mesmo vocabulário
+// visual dos dots do carrossel para o fluxo parecer contínuo.
+function StepDots({ active }: { active: 0 | 1 }) {
+  return (
+    <View style={styles.dots}>
+      {[0, 1].map((i) => (
+        <View
+          key={i}
+          style={[styles.dot, i === active && styles.stepDotActive]}
+        />
+      ))}
+    </View>
+  );
+}
+
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function AppScreen() {
@@ -207,8 +234,16 @@ export default function AppScreen() {
   const { t } = useTranslation();
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
+  const [phase, setPhase] = useState<Phase>("slides");
+
+  // Dados coletados
+  const [name, setName] = useState("");
+  const [age, setAge] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList<Slide>>(null);
+  const nameInputRef = useRef<TextInput>(null);
 
   // Posição do scroll compartilhada com a UI thread (parallax + dots)
   const scrollX = useSharedValue(0);
@@ -228,22 +263,26 @@ export default function AppScreen() {
     viewAreaCoveragePercentThreshold: 50,
   }).current;
 
+  // Foca o campo de nome ao entrar na fase (autoFocus é instável junto da
+  // transição de fase; focamos manualmente após um tick).
+  useEffect(() => {
+    if (phase === "name") {
+      const id = setTimeout(() => nameInputRef.current?.focus(), 350);
+      return () => clearTimeout(id);
+    }
+  }, [phase]);
+
   if (!fontsLoaded) return <AppLoading />;
 
   const isLastSlide = activeIndex === SLIDES.length - 1;
+  const trimmedName = name.trim();
+  const canContinueName = trimmedName.length > 0;
+  const canFinish = canContinueName && age != null && !saving;
 
-  const handleButtonPress = async () => {
+  // Botão do carrossel: avança slide ou entra na coleta de dados.
+  const handleSlidesButton = () => {
     if (isLastSlide) {
-      // ── TRACKING: onboarding concluído ──
-      trackOnboardingCompleted();
-
-      const status = await AsyncStorage.getItem("@subscription_status");
-
-      if (status === "active") {
-        router.push("/(tabs)");
-      } else {
-        router.replace("/(paywall)");
-      }
+      setPhase("name");
     } else {
       flatListRef.current?.scrollToIndex({
         index: activeIndex + 1,
@@ -252,51 +291,203 @@ export default function AppScreen() {
     }
   };
 
+  const finishOnboarding = async () => {
+    if (!canFinish) return;
+    setSaving(true);
+    Keyboard.dismiss();
+
+    // Persiste o perfil ANTES de navegar — Paywall/Profile já leem daqui.
+    await saveKidProfile({ name: trimmedName, age });
+
+    // ── TRACKING: onboarding concluído ──
+    trackOnboardingCompleted();
+
+    const status = await AsyncStorage.getItem("@subscription_status");
+
+    // replace (não push): não queremos o onboarding no histórico de volta.
+    if (status === "active") {
+      router.replace("/(tabs)");
+    } else {
+      router.replace("/(paywall)");
+    }
+  };
+
+  // ── FASE: carrossel informativo ──────────────────────────────────────────
+  if (phase === "slides") {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.blob, styles.blob1]} />
+        <View style={[styles.blob, styles.blob2]} />
+
+        <Animated.FlatList
+          ref={flatListRef as any}
+          data={SLIDES}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => (
+            <SlideItem item={item} index={index} scrollX={scrollX} />
+          )}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          style={styles.flatList}
+        />
+
+        <Animated.View entering={enterUp(300)} style={styles.bottomArea}>
+          <Dots total={SLIDES.length} scrollX={scrollX} />
+
+          <Breathe scaleTo={1.03} duration={1400} style={styles.btnArea}>
+            <View style={styles.btnShadow} />
+            <PressBounce
+              onPress={handleSlidesButton}
+              style={styles.btn}
+              scaleTo={0.95}
+            >
+              <Animated.Text
+                key={isLastSlide ? "go" : "next"}
+                entering={enterPop(0)}
+                style={fredoka(20, "#fff")}
+              >
+                {isLastSlide ? t("onboarding.continue") : t("onboarding.next")}
+              </Animated.Text>
+            </PressBounce>
+          </Breathe>
+        </Animated.View>
+      </SafeAreaView>
+    );
+  }
+
+  // ── FASES: coleta de nome / idade ────────────────────────────────────────
+  const onFormBack = () => {
+    if (phase === "age") setPhase("name");
+    else setPhase("slides");
+  };
+
+  const primaryAction = phase === "name" ? () => setPhase("age") : finishOnboarding;
+  const primaryEnabled = phase === "name" ? canContinueName : canFinish;
+  const primaryLabel =
+    phase === "name" ? t("onboarding.continue") : t("onboarding.start");
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Decorative blobs */}
       <View style={[styles.blob, styles.blob1]} />
       <View style={[styles.blob, styles.blob2]} />
 
-      {/* Carousel com parallax */}
-      <Animated.FlatList
-        ref={flatListRef as any}
-        data={SLIDES}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => (
-          <SlideItem item={item} index={index} scrollX={scrollX} />
-        )}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={viewabilityConfig}
-        style={styles.flatList}
-      />
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View style={styles.formRoot}>
+            {/* Topo: voltar + indicador de passo */}
+            <View style={styles.formHeader}>
+              <PressBounce style={styles.backBtn} onPress={onFormBack}>
+                <Text style={{ fontSize: 20 }}>←</Text>
+              </PressBounce>
+              <StepDots active={phase === "name" ? 0 : 1} />
+              <View style={{ width: 44 }} />
+            </View>
 
-      {/* Dots + Button pinned at bottom */}
-      <Animated.View entering={enterUp(300)} style={styles.bottomArea}>
-        <Dots total={SLIDES.length} scrollX={scrollX} />
+            {/* Conteúdo central da fase */}
+            {phase === "name" ? (
+              <Animated.View
+                key="name"
+                entering={enterUp(0)}
+                style={styles.formBody}
+              >
+                <Breathe scaleTo={1.06} duration={2600}>
+                  <Text style={styles.formEmoji}>🧒</Text>
+                </Breathe>
+                <Text style={[fredoka(26, "#2D2D2D"), styles.formTitle]}>
+                  {t("onboarding.name.title")}
+                </Text>
+                <Text style={styles.formSubtitle}>
+                  {t("onboarding.name.subtitle")}
+                </Text>
 
-        <Breathe scaleTo={1.03} duration={1400} style={styles.btnArea}>
-          <View style={styles.btnShadow} />
-          <PressBounce
-            onPress={handleButtonPress}
-            style={styles.btn}
-            scaleTo={0.95}
-          >
-            <Animated.Text
-              key={isLastSlide ? "go" : "next"}
-              entering={enterPop(0)}
-              style={fredoka(20, "#fff")}
-            >
-              {isLastSlide ? t("onboarding.start") : t("onboarding.next")}
-            </Animated.Text>
-          </PressBounce>
-        </Breathe>
-      </Animated.View>
+                <TextInput
+                  ref={nameInputRef}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder={t("onboarding.name.placeholder")}
+                  placeholderTextColor="#C7C7CF"
+                  style={styles.input}
+                  maxLength={24}
+                  returnKeyType="next"
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                  onSubmitEditing={() => canContinueName && setPhase("age")}
+                />
+              </Animated.View>
+            ) : (
+              <Animated.View
+                key="age"
+                entering={enterUp(0)}
+                style={styles.formBody}
+              >
+                <Breathe scaleTo={1.06} duration={2600}>
+                  <Text style={styles.formEmoji}>🎂</Text>
+                </Breathe>
+                <Text style={[fredoka(26, "#2D2D2D"), styles.formTitle]}>
+                  {t("onboarding.age.title")}
+                </Text>
+                <Text style={styles.formSubtitle}>
+                  {trimmedName
+                    ? t("onboarding.age.subtitleNamed", { name: trimmedName })
+                    : t("onboarding.age.subtitle")}
+                </Text>
+
+                <View style={styles.ageGrid}>
+                  {AGES.map((n) => {
+                    const selected = age === n;
+                    return (
+                      <PressBounce
+                        key={n}
+                        scaleTo={0.9}
+                        onPress={() => setAge(n)}
+                        style={[
+                          styles.ageChip,
+                          selected && styles.ageChipSelected,
+                        ]}
+                      >
+                        <Text
+                          style={fredoka(22, selected ? "#fff" : "#2D2D2D")}
+                        >
+                          {n}
+                        </Text>
+                      </PressBounce>
+                    );
+                  })}
+                </View>
+              </Animated.View>
+            )}
+
+            {/* Botão principal da fase */}
+            <View style={styles.bottomArea}>
+              <Breathe
+                scaleTo={primaryEnabled ? 1.03 : 1}
+                duration={1400}
+                style={styles.btnArea}
+              >
+                <View
+                  style={[styles.btnShadow, !primaryEnabled && styles.btnShadowOff]}
+                />
+                <PressBounce
+                  onPress={primaryAction}
+                  disabled={!primaryEnabled}
+                  style={[styles.btn, !primaryEnabled && styles.btnDisabled]}
+                  scaleTo={0.95}
+                >
+                  <Text style={fredoka(20, "#fff")}>{primaryLabel}</Text>
+                </PressBounce>
+              </Breathe>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -304,6 +495,7 @@ export default function AppScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  flex: { flex: 1, width: "100%" },
   container: {
     flex: 1,
     backgroundColor: "#FFF9F0",
@@ -380,6 +572,87 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
+  // ─── Form (nome / idade) ───
+  formRoot: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "space-between",
+  },
+  formHeader: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+  },
+  formBody: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 32,
+    gap: 14,
+  },
+  formEmoji: { fontSize: 68, marginBottom: 4 },
+  formTitle: { textAlign: "center", lineHeight: 32 },
+  formSubtitle: {
+    fontSize: 15,
+    color: "#AAA",
+    textAlign: "center",
+    lineHeight: 22,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+
+  // Campo de nome
+  input: {
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "#FFE1EC",
+    paddingHorizontal: 20,
+    paddingVertical: Platform.OS === "ios" ? 18 : 12,
+    fontSize: 20,
+    fontFamily: "FredokaOne_400Regular",
+    color: "#2D2D2D",
+    textAlign: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+
+  // Chips de idade
+  ageGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 12,
+    marginTop: 4,
+  },
+  ageChip: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#EFEFF4",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  ageChipSelected: {
+    backgroundColor: "#FF7A2F",
+    borderColor: "#FF7A2F",
+    shadowColor: "#FF7A2F",
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+
   // Bottom area
   bottomArea: {
     width: "100%",
@@ -390,6 +663,21 @@ const styles = StyleSheet.create({
   dots: { flexDirection: "row", gap: 8 },
   dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E0E0E0" },
   dotActive: { width: 24, backgroundColor: "#FF5B8D" },
+  stepDotActive: { width: 24, backgroundColor: "#FF5B8D" },
+
+  // Back button (form)
+  backBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 16,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+  },
 
   // Button
   btnArea: {
@@ -405,6 +693,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#C0540A",
     borderRadius: 40,
   },
+  btnShadowOff: { backgroundColor: "#E3D9CF" },
   btn: {
     width: "100%",
     height: 60,
@@ -417,5 +706,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 16,
     elevation: 6,
+  },
+  btnDisabled: {
+    backgroundColor: "#F0C9AE",
+    shadowOpacity: 0,
+    elevation: 0,
   },
 });

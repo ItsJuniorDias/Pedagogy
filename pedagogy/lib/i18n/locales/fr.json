@@ -53,7 +53,8 @@
         "hours": "{{count}} h de lecture",
         "hoursMinutes": "{{count}} h {{minutes}} min de lecture"
       }
-    }
+    },
+    "yearsOld": "{{age}} ans"
   },
   "onboarding": {
     "next": "Suivant",
@@ -74,6 +75,17 @@
         "title": "Suivez les progrès\nde votre enfant",
         "description": "Quiz, récompenses et rapports de lecture pour les parents. Enseigner n'a jamais été aussi amusant et facile à suivre."
       }
+    },
+    "continue": "Continuer",
+    "name": {
+      "title": "Comment s'appelle votre petit ?",
+      "subtitle": "Nous personnaliserons l'expérience de lecture.",
+      "placeholder": "Prénom de l'enfant"
+    },
+    "age": {
+      "title": "Quel âge a-t-il/elle ?",
+      "subtitle": "Pour choisir des histoires au bon niveau.",
+      "subtitleNamed": "Pour choisir des histoires au bon niveau pour {{name}}."
     }
   },
   "paywall": {
@@ -102,7 +114,9 @@
     "mostPopular": "🏆 Le plus populaire",
     "hero": {
       "title": "Ouvrez un monde d'histoires à votre enfant",
-      "subtitle": "Plus de 50 aventures attendent votre petit lecteur"
+      "subtitle": "Plus de 50 aventures attendent votre petit lecteur",
+      "titleNamed": "Tout un monde d'histoires pour {{name}} 🌟",
+      "subtitleNamed": "Plus de 50 aventures attendent {{name}}"
     },
     "features": {
       "stories": "Plus de 50 histoires illustrées",

@@ -53,7 +53,8 @@
         "hours": "阅读 {{count}} 小时",
         "hoursMinutes": "阅读 {{count}} 小时 {{minutes}} 分钟"
       }
-    }
+    },
+    "yearsOld": "{{age}} 岁"
   },
   "onboarding": {
     "next": "下一步",
@@ -74,6 +75,17 @@
         "title": "追踪孩子的\n学习进度",
         "description": "为家长提供测验、成就和阅读报告。教学从未如此有趣、如此易于跟进。"
       }
+    },
+    "continue": "继续",
+    "name": {
+      "title": "我们该怎么称呼您的孩子？",
+      "subtitle": "我们会为其定制阅读体验。",
+      "placeholder": "孩子的名字"
+    },
+    "age": {
+      "title": "孩子几岁了？",
+      "subtitle": "以便挑选合适难度的故事。",
+      "subtitleNamed": "以便为 {{name}} 挑选合适难度的故事。"
     }
   },
   "paywall": {
@@ -102,7 +114,9 @@
     "mostPopular": "🏆 最受欢迎",
     "hero": {
       "title": "为孩子开启一个故事的世界",
-      "subtitle": "50 多个冒险故事，等待你的小读者"
+      "subtitle": "50 多个冒险故事，等待你的小读者",
+      "titleNamed": "为 {{name}} 打开一个故事世界 🌟",
+      "subtitleNamed": "超过 50 个冒险正等待着 {{name}}"
     },
     "features": {
       "stories": "50 多个精美插图故事",
