@@ -44,6 +44,7 @@ import {
   trackStoryCompleted,
 } from "../../lib/analytics";
 import { getProgress, markChapterCompleted } from "../../lib/readingProgress";
+import { preloadVoices, resolveSpeech } from "../../lib/tts";
 
 // ─── INTEGRAÇÃO EXERCÍCIOS ────────────────────────────────────────────────────
 import ExerciseSession from "../../features/exercises/components/ExerciseSession";
@@ -1211,6 +1212,8 @@ export default function ReadStoryScreen() {
 
   // ─── Cleanup ao sair da tela ─────────────────────────────────────────────
   useEffect(() => {
+    // Aquece a lista de vozes do aparelho para a 1ª narração sair sem latência.
+    preloadVoices();
     return () => {
       stopAll();
     };
@@ -1266,10 +1269,13 @@ export default function ReadStoryScreen() {
     setSpeechCharLength(0);
     setIsSpeaking(true);
 
+    // Narração no idioma ATIVO (não mais fixo em en-US): mapeia i18n.language
+    // → locale BCP-47 + melhor voz instalada + rate por idioma. Best-effort:
+    // se não houver voz específica, o `language` já garante a pronúncia certa.
+    const speech = await resolveSpeech(i18n.language);
+
     Speech.speak(cleanedText, {
-      language: "en-US",
-      rate: 0.85,
-      pitch: 1.0,
+      ...speech,
 
       // ── WORD BOUNDARY CALLBACK ──
       // Chamado em cada palavra pelo engine TTS (iOS e Android)
