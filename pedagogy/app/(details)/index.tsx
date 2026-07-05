@@ -44,7 +44,7 @@ import {
   trackStoryCompleted,
 } from "../../lib/analytics";
 import { getProgress, markChapterCompleted } from "../../lib/readingProgress";
-import { preloadVoices, resolveSpeech } from "../../lib/tts";
+import { resolveSpeech } from "../../lib/tts";
 
 // ─── INTEGRAÇÃO EXERCÍCIOS ────────────────────────────────────────────────────
 import ExerciseSession from "../../features/exercises/components/ExerciseSession";
@@ -127,7 +127,7 @@ const { width } = Dimensions.get("window");
 
 // ─── MÚSICA DE FUNDO ──────────────────────────────────────────────────────────
 const BG_MUSIC_URL =
-  "https://www.bensound.com/bensound-music/bensound-tenderness.mp3";
+  "https://res.cloudinary.com/dqvujibkn/video/upload/v1783289190/leberch-calm-lo-fi-524696_eap7rg.mp3";
 
 // ─── TYPES ────────────────────────────────────────────────────────────────────
 
@@ -504,50 +504,50 @@ const ChapterTab = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-    activeOpacity={0.8}
-    style={[
-      s.chapterTab,
-      active && {
-        backgroundColor: theme.tabActive,
-        borderColor: theme.tabActive,
-        shadowColor: theme.tabShadow,
-        elevation: 5,
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      !active && { backgroundColor: theme.cardBg, borderColor: theme.cardBg },
-    ]}
-  >
-    <Text style={{ fontSize: 18 }}>{chapter.emoji}</Text>
-    <View>
-      <Text style={[fredoka(12, active ? "#fff" : "#AAA")]}>
-        {chapterLabel(t, chapter.title)}
-      </Text>
-      <Text
-        style={{
-          fontSize: 10,
-          color: active ? "rgba(255,255,255,0.7)" : "#CCC",
-          fontWeight: "600",
-          marginTop: 1,
-        }}
-        numberOfLines={1}
-      >
-        {chapter.subtitle}
-      </Text>
-    </View>
-    {chapter.locked && (
-      <View style={s.lockBadge}>
-        <Text style={{ fontSize: 10 }}>🔒</Text>
-      </View>
-    )}
-    {/* ── INTEGRAÇÃO PROGRESSO: check de capítulo lido ── */}
-    {!chapter.locked && read && (
-      <View style={[s.readBadge, { backgroundColor: theme.accent }]}>
-        <Text style={{ fontSize: 10, color: "#fff", fontWeight: "800" }}>
-          ✓
+      activeOpacity={0.8}
+      style={[
+        s.chapterTab,
+        active && {
+          backgroundColor: theme.tabActive,
+          borderColor: theme.tabActive,
+          shadowColor: theme.tabShadow,
+          elevation: 5,
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+        },
+        !active && { backgroundColor: theme.cardBg, borderColor: theme.cardBg },
+      ]}
+    >
+      <Text style={{ fontSize: 18 }}>{chapter.emoji}</Text>
+      <View>
+        <Text style={[fredoka(12, active ? "#fff" : "#AAA")]}>
+          {chapterLabel(t, chapter.title)}
+        </Text>
+        <Text
+          style={{
+            fontSize: 10,
+            color: active ? "rgba(255,255,255,0.7)" : "#CCC",
+            fontWeight: "600",
+            marginTop: 1,
+          }}
+          numberOfLines={1}
+        >
+          {chapter.subtitle}
         </Text>
       </View>
-    )}
+      {chapter.locked && (
+        <View style={s.lockBadge}>
+          <Text style={{ fontSize: 10 }}>🔒</Text>
+        </View>
+      )}
+      {/* ── INTEGRAÇÃO PROGRESSO: check de capítulo lido ── */}
+      {!chapter.locked && read && (
+        <View style={[s.readBadge, { backgroundColor: theme.accent }]}>
+          <Text style={{ fontSize: 10, color: "#fff", fontWeight: "800" }}>
+            ✓
+          </Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
@@ -1212,8 +1212,6 @@ export default function ReadStoryScreen() {
 
   // ─── Cleanup ao sair da tela ─────────────────────────────────────────────
   useEffect(() => {
-    // Aquece a lista de vozes do aparelho para a 1ª narração sair sem latência.
-    preloadVoices();
     return () => {
       stopAll();
     };
@@ -1270,12 +1268,23 @@ export default function ReadStoryScreen() {
     setIsSpeaking(true);
 
     // Narração no idioma ATIVO (não mais fixo em en-US): mapeia i18n.language
-    // → locale BCP-47 + melhor voz instalada + rate por idioma. Best-effort:
-    // se não houver voz específica, o `language` já garante a pronúncia certa.
-    const speech = await resolveSpeech(i18n.language);
+    // → locale BCP-47 + rate por idioma. Síncrono e por `language` (sem voice
+    // explícito) — caminho confiável que não emudece nem atrasa o speak.
+    const speech = resolveSpeech(i18n.language);
 
     Speech.speak(cleanedText, {
       ...speech,
+
+      // iOS: dá à fala uma sessão de áudio DEDICADA. Sem isto, a narração
+      // divide a sessão com a música de fundo (expo-audio) e pode sair muda.
+      useApplicationAudioSession: false,
+
+      // Diagnóstico: confirma no console se a fala realmente começou / falhou.
+      onStart: () => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.log("[tts] start", speech.language, speech.rate);
+        }
+      },
 
       // ── WORD BOUNDARY CALLBACK ──
       // Chamado em cada palavra pelo engine TTS (iOS e Android)
@@ -1297,7 +1306,12 @@ export default function ReadStoryScreen() {
 
       onDone: () => stopAll(),
       onStopped: () => stopAll(),
-      onError: () => stopAll(),
+      onError: (e) => {
+        if (typeof __DEV__ !== "undefined" && __DEV__) {
+          console.warn("[tts] error:", (e as Error)?.message ?? e);
+        }
+        stopAll();
+      },
     });
   };
 

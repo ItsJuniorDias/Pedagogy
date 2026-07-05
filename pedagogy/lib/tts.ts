@@ -108,8 +108,14 @@ function scoreVoice(v: Speech.Voice, locale: string): number {
 }
 
 /**
- * Melhor identifier de voz para o idioma, ou `undefined` (aí o SO escolhe pelo
- * `language`). Best-effort: se a enumeração falhou/veio vazia, retorna undefined.
+ * OPCIONAL / AVANÇADO — melhor identifier de voz para o idioma, ou `undefined`.
+ *
+ * ⚠️ Não use no caminho crítico da fala. Passar um `voice` explícito para
+ * Speech.speak pode deixar a narração MUDA no iOS (voz Enhanced listada mas não
+ * baixada, ou identifier incompatível), e o `await` na enumeração pode atrasar/
+ * travar o speak. Por isso `resolveSpeech` usa só `language` (que sozinho já dá
+ * a pronúncia certa). Ligue isto só depois de confirmar que o som básico sai —
+ * e sempre com fallback para language-only se `onStart` não disparar.
  */
 export async function bestVoiceFor(
   code: string | null | undefined,
@@ -137,19 +143,18 @@ export interface SpeechConfig {
 }
 
 /**
- * Resolve tudo para narrar no idioma ativo. A voz é best-effort; o `language`
- * garante a pronúncia correta mesmo sem match de identifier.
+ * Config síncrona para narrar no idioma ativo — só `language` + `rate` + `pitch`.
+ * Sem `voice` explícito e sem await de propósito: o `language` (BCP-47) já faz o
+ * SO escolher uma voz da língua certa, e é o caminho confiável (não emudece nem
+ * atrasa o speak). É o que você espalha direto no Speech.speak.
  *
  * @example
- *   const cfg = await resolveSpeech(i18n.language);
+ *   const cfg = resolveSpeech(i18n.language);
  *   Speech.speak(text, { ...cfg, onDone, onBoundary });
  */
-export async function resolveSpeech(
-  code: string | null | undefined,
-): Promise<SpeechConfig> {
+export function resolveSpeech(code: string | null | undefined): SpeechConfig {
   return {
     language: localeFor(code),
-    voice: await bestVoiceFor(code),
     rate: rateFor(code),
     pitch: PITCH,
   };
