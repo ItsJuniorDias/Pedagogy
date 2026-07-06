@@ -42,8 +42,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePurchases } from "../../hooks/usePurchases";
 import { trackCheckoutInitiated, trackPaywallView } from "../../lib/analytics";
 
-import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 
 const { width } = Dimensions.get("window");
 
@@ -429,7 +429,12 @@ export default function PaywallScreen() {
       Alert.alert(
         t("paywall.alerts.restoredTitle"),
         t("paywall.alerts.restoredBody"),
-        [{ text: t("paywall.alerts.restoredCta"), onPress: () => router.back() }],
+        [
+          {
+            text: t("paywall.alerts.restoredCta"),
+            onPress: () => router.back(),
+          },
+        ],
       );
     } else if (state === "error" && error) {
       Alert.alert(t("paywall.alerts.restoreFailedTitle"), error);
@@ -450,13 +455,19 @@ export default function PaywallScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={s.closeBtn}
-          disabled={isProcessing}
-        >
-          <Text style={{ fontSize: 18, color: "#AAA" }}>✕</Text>
-        </TouchableOpacity>
+        {/* Header: seta "voltar" à esquerda + "fechar" (✕) à direita.
+            Ambos chamam router.back() e ficam desabilitados durante compra/restore. */}
+        <View style={s.header}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={s.backBtn}
+            disabled={isProcessing}
+            accessibilityRole="button"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text style={{ fontSize: 20, color: "#333" }}>←</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={s.hero}>
           <View style={s.heroBlob1} />
@@ -636,9 +647,27 @@ export default function PaywallScreen() {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#FFF9F0" },
   scroll: { paddingBottom: 60 },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingTop: 64,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+  },
   closeBtn: {
-    alignSelf: "flex-end",
-    margin: 16,
     width: 36,
     height: 36,
     borderRadius: 18,
