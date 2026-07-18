@@ -22,7 +22,7 @@ import icon from "../../assets/images/pedagogy_owl_full.png";
 const { width, height } = Dimensions.get("window");
 
 /* ---------- ajustes rápidos ---------- */
-const BG = "#4B3FE4"; // cor de fundo
+const BG = "#6C5CE7"; // Theme.colors.accent — mesmo roxo do splash nativo (app.json)
 const TITLE = "Pedagogy"; // texto do título
 const TAGLINE = "Learning through play"; // subtítulo
 const TOTAL_MS = 3200; // tempo total antes de chamar onFinish

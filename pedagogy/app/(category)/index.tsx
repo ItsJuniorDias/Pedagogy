@@ -1,33 +1,12 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 
-import {
-  DealIn,
-  enterPop,
-  enterUp,
-  PressBounce,
-  Swing,
-  Twinkle,
-} from "../../shared/motion";
-
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
+import ScreenHeader from "@/components/ui/ScreenHeader";
+import { fredoka, Shadow, Theme } from "@/constants/theme";
+import { DealIn, enterPop, PressBounce, Swing, Twinkle } from "../../shared/motion";
 
 // ─── TYPES ────────────────────────────────────────────────────────────────────
 type CategoryItem = {
@@ -216,9 +195,6 @@ export default function CategoryScreen() {
   // Título vindo da navegação (já traduzido pela tela de origem). Sem param → padrão.
   const heading = label ?? t("category.defaultLabel");
 
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
-
   const items = CATEGORY_CONTENT[type] ?? CATEGORY_CONTENT["all"];
   const colors = CATEGORY_COLORS[type] ?? CATEGORY_COLORS["all"];
 
@@ -230,17 +206,14 @@ export default function CategoryScreen() {
   };
 
   return (
-    <View style={[s.container, { backgroundColor: "#FFF9F0" }]}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
+    <View style={s.container}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={Theme.colors.bg}
+      />
 
-      {/* Header — desce com mola */}
-      <Animated.View entering={enterUp(0)} style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
-          <Text style={{ fontSize: 20 }}>←</Text>
-        </TouchableOpacity>
-        <Text style={fredoka(22, "#2D2D2D")}>{heading}</Text>
-        <View style={{ width: 40 }} />
-      </Animated.View>
+      {/* Header compartilhado — safe-area aware, botão voltar acessível */}
+      <ScreenHeader title={heading} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -270,13 +243,15 @@ export default function CategoryScreen() {
               <PressBounce
                 style={[s.card, { borderColor: colors.accent + "40" }]}
                 onPress={() => handleCardPress(item)}
+                accessibilityRole="button"
+                accessibilityLabel={item.title}
               >
                 <View style={[s.cardImg, { backgroundColor: colors.bg }]}>
                   <Swing delay={i * 300} angle={6} duration={2400}>
                     <Text style={{ fontSize: 44 }}>{item.emoji}</Text>
                   </Swing>
                 </View>
-                <Text style={[s.cardTitle, fredoka(15, "#2D2D2D")]}>
+                <Text style={[s.cardTitle, fredoka(15, Theme.colors.ink)]}>
                   {item.title}
                 </Text>
                 <Text style={s.cardSub}>{item.sub}</Text>
@@ -290,34 +265,20 @@ export default function CategoryScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, paddingTop: StatusBar.currentHeight ?? 44 },
-  scroll: { paddingHorizontal: 20, paddingBottom: 100 },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
-  },
+  container: { flex: 1, backgroundColor: Theme.colors.bg },
+  scroll: { paddingHorizontal: Theme.space.xl, paddingBottom: 100 },
   hero: {
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 24,
+    borderRadius: Theme.radius.xl,
+    padding: Theme.space.xxl,
+    marginBottom: Theme.space.xxl,
     alignItems: "flex-start",
   },
-  heroSub: { fontSize: 14, color: "#888", fontWeight: "600", marginTop: 6 },
+  heroSub: {
+    fontSize: 14,
+    color: Theme.colors.textMuted,
+    fontWeight: "600",
+    marginTop: 6,
+  },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -326,29 +287,24 @@ const s = StyleSheet.create({
   cardWrap: { width: "48%" },
   card: {
     width: "100%",
-    backgroundColor: "#fff",
-    borderRadius: 20,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.lg,
     borderWidth: 2,
-    marginBottom: 14,
+    marginBottom: Theme.space.md,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
+    ...Shadow.card,
   },
   cardImg: { height: 90, alignItems: "center", justifyContent: "center" },
   cardTitle: {
-    marginHorizontal: 12,
+    marginHorizontal: Theme.space.md,
     marginTop: 10,
-    fontSize: 15,
-    fontWeight: "800",
   },
   cardSub: {
-    marginHorizontal: 12,
-    marginBottom: 12,
+    marginHorizontal: Theme.space.md,
+    marginBottom: Theme.space.md,
     marginTop: 3,
     fontSize: 11,
     fontWeight: "700",
-    color: "#AAA",
+    color: Theme.colors.textFaint,
   },
 });

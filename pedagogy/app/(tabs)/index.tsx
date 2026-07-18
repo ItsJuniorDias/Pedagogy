@@ -1,22 +1,15 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
-  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   View,
-  ViewStyle,
 } from "react-native";
 import Animated, {
   Easing,
-  FadeInDown,
-  FadeInRight,
   FadeOut,
   LinearTransition,
   ReduceMotion,
@@ -29,14 +22,33 @@ import Animated, {
   withTiming,
   ZoomIn,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+
+// ─── DESIGN SYSTEM ────────────────────────────────────────────────────────────
+// Todas as cores/raios/sombras vêm dos tokens. As cores POR CARD (borda da
+// trilha, fundo do ícone do jogo…) são conteúdo, não chrome — ficam nos dados.
+import {
+  fredoka,
+  HIT_SLOP,
+  MIN_TOUCH,
+  Palette,
+  Shadow,
+  Theme,
+} from "@/constants/theme";
+import {
+  enterRight,
+  enterUp,
+  FloatY,
+  PressBounce,
+} from "../../shared/motion";
 
 // ─── CHAVES i18n DE EXIBIÇÃO ──────────────────────────────────────────────────
 // Só rótulos visíveis passam por aqui. As chaves de rota/categoria/storage
 // (category, title p/ slug e resolveStoryId, id/gameName p/ analytics) continuam
 // ESTÁVEIS em inglês no objeto de dados — nunca traduzidas.
 type NavKey = "space" | "art" | "toys" | "dinos";
-type ChipKey = "all" | "drawing" | "space" | "animals" | "magic" | "music";
+type ChipKey = "all" | "drawing" | "space" | "science" | "sports" | "farming";
 type InterestKey = "explore" | "pets" | "space" | "science";
 type PathKey = "letters" | "school" | "astronaut" | "space";
 type GameKey = "farmGame" | "pingPong" | "pixelRun" | "gravity";
@@ -49,7 +61,6 @@ import { getProgress } from "../../lib/readingProgress";
 
 // Total REAL de capítulos por trilha (mesmo array usado em
 // markChapterCompleted(id, ch.id, chapters.length) no leitor).
-// ⚠️ Se o caminho dos mocks for diferente nesta pasta, ajuste o "../../".
 import { ASTRONAUT, LETTERS, SCHOLL, SPACE } from "../../mocks/learningMocks";
 
 import { trackGameOpen, trackContentOpen } from "../../lib/analytics";
@@ -58,125 +69,12 @@ const { width } = Dimensions.get("window");
 
 // ─── ANIMATION HELPERS ───────────────────────────────────────────────────────
 
-// Spring "fofo" padrão do app — bounce sutil, ideal para app infantil
-const SPRING = { damping: 14, stiffness: 180, mass: 0.6 };
-
-// Entrada padrão de seções/cards: desliza de baixo com spring + stagger
-const enterUp = (delay = 0) =>
-  FadeInDown.delay(delay)
-    .springify()
-    .damping(16)
-    .stiffness(160)
-    .reduceMotion(ReduceMotion.System);
-
-// Entrada lateral (listas horizontais)
-const enterRight = (delay = 0) =>
-  FadeInRight.delay(delay)
-    .springify()
-    .damping(16)
-    .stiffness(160)
-    .reduceMotion(ReduceMotion.System);
-
 // Transição de layout compartilhada (reordenação suave ao filtrar)
 const layoutSpring = LinearTransition.springify()
   .damping(18)
   .stiffness(180)
   .reduceMotion(ReduceMotion.System);
 
-/**
- * Bouncy — wrapper de toque reutilizável.
- * Padrão: scale-down no pressIn + spring de volta no pressOut.
- * Substitui activeOpacity por feedback tátil mais "vivo".
- */
-const Bouncy = ({
-  children,
-  onPress,
-  style,
-  wrapperStyle,
-  scaleTo = 0.93,
-  entering,
-  layout,
-}: {
-  children: React.ReactNode;
-  onPress?: () => void;
-  style?: ViewStyle | ViewStyle[];
-  wrapperStyle?: ViewStyle | ViewStyle[];
-  scaleTo?: number;
-  entering?: any;
-  layout?: any;
-}) => {
-  const scale = useSharedValue(1);
-
-  const aStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  return (
-    <Animated.View
-      entering={entering}
-      layout={layout}
-      style={[wrapperStyle, aStyle]}
-    >
-      <Pressable
-        style={style}
-        onPressIn={() => {
-          scale.value = withSpring(scaleTo, SPRING);
-        }}
-        onPressOut={() => {
-          scale.value = withSpring(1, SPRING);
-        }}
-        onPress={onPress}
-      >
-        {children}
-      </Pressable>
-    </Animated.View>
-  );
-};
-
-/** Blob de fundo flutuando em loop infinito (movimento ambiente sutil). */
-const FloatingBlob = ({
-  style,
-  range = 14,
-  duration = 4200,
-  delay = 0,
-}: {
-  style: ViewStyle | ViewStyle[];
-  range?: number;
-  duration?: number;
-  delay?: number;
-}) => {
-  const ty = useSharedValue(0);
-
-  useEffect(() => {
-    ty.value = withDelay(
-      delay,
-      withRepeat(
-        withSequence(
-          withTiming(-range, {
-            duration,
-            easing: Easing.inOut(Easing.sin),
-            reduceMotion: ReduceMotion.System,
-          }),
-          withTiming(range, {
-            duration,
-            easing: Easing.inOut(Easing.sin),
-            reduceMotion: ReduceMotion.System,
-          }),
-        ),
-        -1,
-        true,
-      ),
-    );
-  }, []);
-
-  const aStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: ty.value }],
-  }));
-
-  return <Animated.View style={[style, aStyle]} pointerEvents="none" />;
-};
-
-// ─── FONT HELPER ─────────────────────────────────────────────────────────────
 // ─── WAVE HAND ───────────────────────────────────────────────────────────────
 // A mãozinha do "Hi" acena de verdade: gira a partir da base da mão,
 // faz tchau duas vezes, descansa e repete.
@@ -213,12 +111,6 @@ const WaveHand = () => {
   );
 };
 
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
-
 // Resolve o título da trilha para a MESMA chave que o leitor usa no storage.
 const resolveStoryId = (raw: string) =>
   raw
@@ -240,42 +132,46 @@ const NAV_ICONS = [
   {
     emoji: "🚀",
     label: "Space",
-    bg: "#FFF0F5",
-    color: "#FF5B8D",
+    bg: Palette.pinkFaint,
+    color: Palette.pink,
     category: "space",
   },
   {
     emoji: "🎨",
     label: "Art",
     bg: "#FFF7E0",
-    color: "#F5A623",
+    color: "#B45309",
     category: "art",
   },
   {
     emoji: "🧸",
     label: "Toys",
-    bg: "#E8F8F0",
-    color: "#27AE60",
+    bg: Palette.greenTint,
+    color: "#15803D",
     category: "toys",
   },
   {
     emoji: "🦖",
     label: "Dinos",
-    bg: "#EBF4FF",
-    color: "#3B82F6",
+    bg: Palette.blueTint,
+    color: "#1D4ED8",
     category: "dinos",
   },
 ];
 
 // `cat` é a chave ESTÁVEL de filtro (comparada com path.category / game.category)
 // e também a chave i18n do rótulo. O texto exibido vem de t(`home.chips.${cat}`).
+//
+// ⚠️ INVARIANTE: toda chip (exceto "all") precisa bater com ≥1 item em
+// LEARNING_PATHS ou GAMES. As antigas "animals"/"magic"/"music" filtravam
+// para o vazio nas DUAS seções — a criança tocava e a tela inteira sumia.
 const CHIPS: { cat: ChipKey }[] = [
   { cat: "all" },
-  { cat: "drawing" },
   { cat: "space" },
-  { cat: "animals" },
-  { cat: "magic" },
-  { cat: "music" },
+  { cat: "drawing" },
+  { cat: "science" },
+  { cat: "sports" },
+  { cat: "farming" },
 ];
 
 const INTERESTS = [
@@ -299,7 +195,7 @@ const INTERESTS = [
     emoji: "🌍",
     label: "Space",
     i18nKey: "space" as InterestKey,
-    bg: "#EBF4FF",
+    bg: Palette.blueTint,
     color: "#1D4ED8",
     category: "space",
   },
@@ -307,7 +203,7 @@ const INTERESTS = [
     emoji: "🔬",
     label: "Science",
     i18nKey: "science" as InterestKey,
-    bg: "#E8F8F0",
+    bg: Palette.greenTint,
     color: "#15803D",
     category: "science",
   },
@@ -325,7 +221,7 @@ const LEARNING_PATHS = [
     total: 6,
     cardBorder: "#FFD93D",
     imgBg: "#FFFBEB",
-    barColor: "#FFD93D",
+    barColor: "#FFB13D",
     category: "drawing",
   },
   {
@@ -435,14 +331,12 @@ const SectionHeader = ({
   title,
   badge,
   linkLabel,
-  linkColor = "#6C5CE7",
   onLinkPress,
   delay = 0,
 }: {
   title: string;
   badge?: string;
   linkLabel?: string;
-  linkColor?: string;
   onLinkPress?: () => void;
   delay?: number;
 }) => {
@@ -450,7 +344,7 @@ const SectionHeader = ({
   return (
     <Animated.View entering={enterUp(delay)} style={s.secHdr}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Text style={[s.secTitle, fredoka(20, "#2D2D2D")]}>{title}</Text>
+        <Text style={fredoka(20, Theme.colors.ink)}>{title}</Text>
         {badge && (
           <Animated.View
             entering={ZoomIn.delay(delay + 250)
@@ -463,11 +357,17 @@ const SectionHeader = ({
           </Animated.View>
         )}
       </View>
-      <Bouncy onPress={onLinkPress} scaleTo={0.9}>
-        <Text style={[s.secLink, { color: linkColor }]}>
-          {linkLabel ?? t("common.seeAll")}
-        </Text>
-      </Bouncy>
+      {/* Link "ver tudo": mesma cor primária em TODAS as seções (antes
+          alternava roxo/rosa sem critério) + alvo de toque ≥44pt. */}
+      <PressBounce
+        onPress={onLinkPress}
+        scaleTo={0.9}
+        hitSlop={HIT_SLOP}
+        style={s.secLinkBtn}
+        accessibilityRole="button"
+      >
+        <Text style={s.secLink}>{linkLabel ?? t("common.seeAll")}</Text>
+      </PressBounce>
     </Animated.View>
   );
 };
@@ -525,12 +425,13 @@ const LearningCard = ({
   const router = useRouter();
 
   return (
-    <Bouncy
+    <PressBounce
       entering={enterUp(80 * index)}
       layout={layoutSpring}
       scaleTo={0.95}
-      wrapperStyle={s.learnCardWrap}
       style={[s.learnCard, { borderColor: cardBorder }]}
+      accessibilityRole="button"
+      accessibilityLabel={t(`paths.${i18nKey}`)}
       onPress={() => {
         const slug = title.toLowerCase().replace(/\s/g, "");
         // ── TRACKING: história aberta a partir da home ──
@@ -550,7 +451,7 @@ const LearningCard = ({
         <Text style={s.learnEmoji}>{emoji}</Text>
       </View>
       <View style={s.learnBody}>
-        <Text style={[s.learnTitle, fredoka(16, "#2D2D2D")]}>
+        <Text style={fredoka(16, Theme.colors.ink)} numberOfLines={1}>
           {t(`paths.${i18nKey}`)}
         </Text>
         <AnimatedProgressBar
@@ -562,7 +463,7 @@ const LearningCard = ({
           {progress} / {total} {t("home.pathDone")} {done ? "🎉" : "⭐"}
         </Text>
       </View>
-    </Bouncy>
+    </PressBounce>
   );
 };
 
@@ -590,33 +491,39 @@ const PopularCard = ({
   };
 
   return (
-    <Bouncy
+    <PressBounce
       entering={enterUp(70 * index)}
       layout={layoutSpring}
       scaleTo={0.96}
-      wrapperStyle={{ marginBottom: 12 }}
-      style={s.popCard}
+      style={[s.popCard, { marginBottom: Theme.space.md }]}
       onPress={redirectGameScreen}
+      accessibilityRole="button"
+      accessibilityLabel={t(`games.${i18nKey}.title`)}
     >
       <View style={[s.popIcon, { backgroundColor: iconBg }]}>
         <Text style={s.popIconEmoji}>{emoji}</Text>
       </View>
       <View style={s.popBody}>
-        <Text style={[s.popTitle, fredoka(16, "#2D2D2D")]}>
+        <Text style={fredoka(16, Theme.colors.ink)}>
           {t(`games.${i18nKey}.title`)}
         </Text>
-        <Text style={s.popSub}>{t(`games.${i18nKey}.sub`)}</Text>
+        <Text style={s.popSub} numberOfLines={1}>
+          {t(`games.${i18nKey}.sub`)}
+        </Text>
       </View>
       <View style={[s.popTag, { backgroundColor: tagBg }]}>
         <Text style={[s.popTagText, { color: tagColor }]}>
           {t(`games.tags.${tagKey}`)}
         </Text>
       </View>
-    </Bouncy>
+    </PressBounce>
   );
 };
 
-/** Chip com pulso de escala ao selecionar. */
+/** Chip com pulso de escala ao selecionar.
+ *  Antes era um <Text onPress> — alvo minúsculo e invisível para leitores de
+ *  tela. Agora é Pressable de verdade, com ≥44pt de altura efetiva, role de
+ *  botão e estado "selecionado" exposto. */
 const Chip = ({
   label,
   active,
@@ -634,7 +541,7 @@ const Chip = ({
     // Pulso rápido: cresce e volta com spring
     scale.value = withSequence(
       withTiming(1.12, { duration: 90, reduceMotion: ReduceMotion.System }),
-      withSpring(1, SPRING),
+      withSpring(1, { damping: 14, stiffness: 180, mass: 0.6 }),
     );
     onPress();
   };
@@ -645,17 +552,17 @@ const Chip = ({
 
   return (
     <Animated.View entering={enterRight(60 * index)} style={aStyle}>
-      <Text
+      <PressBounce
         onPress={handlePress}
-        style={[
-          s.chip,
-          s.chipText,
-          active && s.chipActive,
-          active && s.chipTextActive,
-        ]}
+        scaleTo={0.92}
+        hitSlop={HIT_SLOP}
+        style={[s.chip, active && s.chipActive]}
+        accessibilityRole="button"
+        accessibilityState={{ selected: active }}
+        accessibilityLabel={label}
       >
-        {label}
-      </Text>
+        <Text style={[s.chipText, active && s.chipTextActive]}>{label}</Text>
+      </PressBounce>
     </Animated.View>
   );
 };
@@ -664,12 +571,11 @@ const Chip = ({
 
 export default function HomeScreen() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [activeChip, setActiveChip] = useState(0);
   // Mapa id_da_trilha -> nº de capítulos lidos (vindo do storage).
   const [progressMap, setProgressMap] = useState<Record<number, number>>({});
   const router = useRouter();
-
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
   // Recarrega o progresso sempre que a Home ganha foco (ex.: ao voltar do
   // leitor). Assim as barras da section Learning Path ficam sempre atuais.
@@ -691,7 +597,7 @@ export default function HomeScreen() {
     }, []),
   );
 
-  // Loops ambientes do banner (sempre chamar hooks antes do early return)
+  // Loops ambientes do banner
   const planetRotate = useSharedValue(-10);
   const starsOpacity = useSharedValue(0.25);
 
@@ -731,8 +637,6 @@ export default function HomeScreen() {
     opacity: starsOpacity.value,
   }));
 
-  if (!fontsLoaded) return <AppLoading />;
-
   const selectedCategory = CHIPS[activeChip].cat;
 
   // Enriquecemos cada trilha com progresso REAL (storage) + total REAL (mocks),
@@ -755,23 +659,19 @@ export default function HomeScreen() {
       : GAMES.filter((g) => g.category === selectedCategory);
 
   return (
-    <View style={s.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
+    <View style={[s.container, { paddingTop: insets.top + Theme.space.xs }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={Theme.colors.bg} />
 
       {/* Background blobs flutuando em loop */}
-      <FloatingBlob style={[s.blob, s.blob1]} range={16} duration={4600} />
-      <FloatingBlob
-        style={[s.blob, s.blob2]}
-        range={12}
-        duration={5200}
-        delay={400}
-      />
-      <FloatingBlob
-        style={[s.blob, s.blob3]}
-        range={10}
-        duration={4000}
-        delay={800}
-      />
+      <FloatY style={[s.blob, s.blob1]} distance={16} duration={4600}>
+        <View />
+      </FloatY>
+      <FloatY style={[s.blob, s.blob2]} distance={12} duration={5200} delay={400}>
+        <View />
+      </FloatY>
+      <FloatY style={[s.blob, s.blob3]} distance={10} duration={4000} delay={800}>
+        <View />
+      </FloatY>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -783,9 +683,9 @@ export default function HomeScreen() {
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
             >
-              <Text style={fredoka(26, "#2D2D2D")}>
+              <Text style={fredoka(26, Theme.colors.ink)}>
                 {t("home.greetingHi")}{" "}
-                <Text style={fredoka(26, "#FF5B8D")}>
+                <Text style={fredoka(26, Theme.colors.primary)}>
                   {t("home.greetingName")}
                 </Text>
               </Text>
@@ -793,7 +693,7 @@ export default function HomeScreen() {
             </View>
             <Text style={s.greetSub}>{t("home.greetingSub")}</Text>
           </View>
-          <Bouncy
+          <PressBounce
             entering={ZoomIn.delay(200)
               .springify()
               .damping(11)
@@ -801,19 +701,24 @@ export default function HomeScreen() {
             scaleTo={0.88}
             style={s.avatar}
             onPress={() => router.push("/(profile)")}
+            hitSlop={HIT_SLOP}
+            accessibilityRole="button"
+            accessibilityLabel={t("profile.title")}
           >
             <Text style={{ fontSize: 30 }}>🐻</Text>
-          </Bouncy>
+          </PressBounce>
         </Animated.View>
 
         {/* ── NAV ICON ROW ── entrada escalonada */}
         <View style={s.navRow}>
           {NAV_ICONS.map((item, i) => (
-            <Bouncy
+            <PressBounce
               key={item.category}
               entering={enterUp(100 + i * 70)}
               scaleTo={0.9}
               style={[s.navBtn, { backgroundColor: item.bg }]}
+              accessibilityRole="button"
+              accessibilityLabel={t(`home.nav.${item.category as NavKey}`)}
               onPress={() =>
                 router.push({
                   pathname: "/(category)",
@@ -825,10 +730,10 @@ export default function HomeScreen() {
               }
             >
               <Text style={s.navEmoji}>{item.emoji}</Text>
-              <Text style={[fredoka(11, item.color)]}>
+              <Text style={fredoka(11, item.color)}>
                 {t(`home.nav.${item.category as NavKey}`)}
               </Text>
-            </Bouncy>
+            </PressBounce>
           ))}
         </View>
 
@@ -837,21 +742,23 @@ export default function HomeScreen() {
           <View style={s.bannerContent}>
             <Text
               style={[
-                fredoka(24, "#fff"),
+                fredoka(24, Theme.colors.onAccent),
                 { lineHeight: 30, marginBottom: 14 },
               ]}
             >
               {t("home.banner.title")}
             </Text>
-            <Bouncy
+            <PressBounce
               scaleTo={0.92}
               style={s.bannerCta}
               onPress={() => router.push("/(stories)")}
+              accessibilityRole="button"
+              accessibilityLabel={t("home.banner.cta")}
             >
-              <Text style={[fredoka(15, "#5A3E00")]}>
+              <Text style={fredoka(15, "#5A3E00")}>
                 {t("home.banner.cta")}
               </Text>
-            </Bouncy>
+            </PressBounce>
           </View>
           <Animated.Text style={[s.bannerPlanet, planetStyle]}>
             🪐
@@ -895,11 +802,13 @@ export default function HomeScreen() {
           contentContainerStyle={s.interestsRow}
         >
           {INTERESTS.map((item, i) => (
-            <Bouncy
+            <PressBounce
               key={item.label}
               entering={enterRight(400 + i * 80)}
               scaleTo={0.9}
               style={[s.intCard, { backgroundColor: item.bg }]}
+              accessibilityRole="button"
+              accessibilityLabel={t(`home.interests.${item.i18nKey}`)}
               onPress={() =>
                 router.push({
                   pathname: "/(category)",
@@ -911,10 +820,10 @@ export default function HomeScreen() {
               }
             >
               <Text style={s.intEmoji}>{item.emoji}</Text>
-              <Text style={[fredoka(13, item.color)]}>
+              <Text style={fredoka(13, item.color)}>
                 {t(`home.interests.${item.i18nKey}`)}
               </Text>
-            </Bouncy>
+            </PressBounce>
           ))}
         </ScrollView>
 
@@ -923,7 +832,6 @@ export default function HomeScreen() {
           title={t("home.learningPathTitle")}
           badge={t("common.new")}
           linkLabel={t("common.viewAll")}
-          linkColor="#FF5B8D"
           delay={450}
           onLinkPress={() => router.push("/(learning-all)")}
         />
@@ -938,11 +846,9 @@ export default function HomeScreen() {
             </Animated.Text>
           ) : (
             filteredPaths.map((item, i) => (
-              <LearningCard
-                key={`${selectedCategory}-${item.id}`}
-                {...item}
-                index={i}
-              />
+              <View key={`${selectedCategory}-${item.id}`} style={s.learnCardWrap}>
+                <LearningCard {...item} index={i} />
+              </View>
             ))
           )}
         </Animated.View>
@@ -958,7 +864,7 @@ export default function HomeScreen() {
             <Animated.Text
               entering={enterUp()}
               exiting={FadeOut.duration(150)}
-              style={[s.emptyMsg, { marginBottom: 16 }]}
+              style={[s.emptyMsg, { marginBottom: Theme.space.lg }]}
             >
               {t("home.emptyGames")}
             </Animated.Text>
@@ -982,16 +888,19 @@ export default function HomeScreen() {
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F0",
-    paddingTop: StatusBar.currentHeight ?? 44,
+    backgroundColor: Theme.colors.bg,
   },
-  scroll: { paddingHorizontal: 20, paddingBottom: 120 },
+  scroll: { paddingHorizontal: Theme.space.xl, paddingBottom: 120 },
 
-  blob: { position: "absolute", borderRadius: 999 },
+  blob: {
+    position: "absolute",
+    borderRadius: Theme.radius.pill,
+    pointerEvents: "none",
+  },
   blob1: {
     width: 200,
     height: 200,
-    backgroundColor: "#FFE8F0",
+    backgroundColor: Theme.colors.primaryTint,
     top: -60,
     right: -50,
   },
@@ -1014,34 +923,36 @@ const s = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
-    marginTop: 8,
+    marginBottom: Theme.space.xxl,
+    marginTop: Theme.space.sm,
   },
-  greetSub: { fontSize: 14, color: "#888", fontWeight: "600", marginTop: 4 },
+  greetSub: {
+    fontSize: 14,
+    color: Theme.colors.textMuted,
+    fontWeight: "600",
+    marginTop: 4,
+  },
   avatar: {
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: "#FFD93D",
+    backgroundColor: Theme.colors.highlight,
     borderWidth: 4,
-    borderColor: "#fff",
+    borderColor: Theme.colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#FF9500",
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 6,
+    ...Shadow.glowHighlight,
   },
 
   navRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 24,
+    marginBottom: Theme.space.xxl,
   },
   navBtn: {
     width: (width - 56) / 4,
     height: 64,
-    borderRadius: 20,
+    borderRadius: Theme.radius.lg,
     alignItems: "center",
     justifyContent: "center",
     gap: 4,
@@ -1050,20 +961,22 @@ const s = StyleSheet.create({
 
   banner: {
     height: 165,
-    borderRadius: 28,
-    backgroundColor: "#6C5CE7",
-    marginBottom: 24,
+    borderRadius: Theme.radius.xxl,
+    backgroundColor: Theme.colors.accent,
+    marginBottom: Theme.space.xxl,
     overflow: "hidden",
     justifyContent: "center",
   },
   bannerContent: { padding: 22, zIndex: 1 },
   bannerCta: {
     alignSelf: "flex-start",
-    backgroundColor: "#FFD93D",
+    backgroundColor: Theme.colors.highlight,
     paddingVertical: 10,
     paddingHorizontal: 22,
-    borderRadius: 50,
-    shadowColor: "#FFD93D",
+    borderRadius: Theme.radius.pill,
+    minHeight: MIN_TOUCH,
+    justifyContent: "center",
+    shadowColor: Palette.yellow,
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 4,
@@ -1082,42 +995,62 @@ const s = StyleSheet.create({
     fontSize: 28,
   },
 
-  chipsRow: { paddingBottom: 24, gap: 10 },
+  chipsRow: { paddingBottom: Theme.space.xxl, gap: 10 },
   chip: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 50,
-    backgroundColor: "#fff",
+    minHeight: MIN_TOUCH,
+    paddingHorizontal: Theme.space.xl,
+    borderRadius: Theme.radius.pill,
+    backgroundColor: Theme.colors.surface,
     borderWidth: 2,
-    borderColor: "#EDEDED",
-    overflow: "hidden",
+    borderColor: Theme.colors.border,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  chipActive: { backgroundColor: "#FF5B8D", borderColor: "#FF5B8D" },
-  chipText: { fontSize: 14, fontWeight: "800", color: "#999" },
-  chipTextActive: { color: "#fff" },
+  chipActive: {
+    backgroundColor: Theme.colors.primary,
+    borderColor: Theme.colors.primary,
+  },
+  chipText: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: Theme.colors.textMuted,
+  },
+  chipTextActive: { color: Theme.colors.onAccent },
 
   secHdr: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 14,
-    marginTop: 4,
+    marginBottom: Theme.space.md,
+    marginTop: Theme.space.xs,
   },
-  secTitle: { fontSize: 20, fontWeight: "900", color: "#2D2D2D" },
-  secLink: { fontSize: 13, fontWeight: "800" },
+  secLinkBtn: {
+    minHeight: MIN_TOUCH,
+    justifyContent: "center",
+    paddingHorizontal: Theme.space.xs,
+  },
+  secLink: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: Theme.colors.primary,
+  },
   newBadge: {
-    backgroundColor: "#FF5B8D",
-    borderRadius: 8,
+    backgroundColor: Theme.colors.primary,
+    borderRadius: Theme.radius.xs,
     paddingHorizontal: 8,
     paddingVertical: 2,
     marginLeft: 8,
   },
-  newBadgeText: { color: "#fff", fontSize: 10, fontWeight: "900" },
+  newBadgeText: {
+    color: Theme.colors.onAccent,
+    fontSize: 10,
+    fontWeight: "900",
+  },
 
   interestsRow: { paddingBottom: 28, gap: 12 },
   intCard: {
     width: 110,
-    borderRadius: 24,
+    borderRadius: Theme.radius.xl,
     paddingVertical: 14,
     paddingHorizontal: 10,
     alignItems: "center",
@@ -1128,30 +1061,29 @@ const s = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: Theme.space.sm,
   },
   learnCardWrap: {
     width: "48%",
-    marginBottom: 14,
+    marginBottom: Theme.space.md,
   },
   learnCard: {
     width: "100%",
-    backgroundColor: "#fff",
-    borderRadius: 24,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.xl,
     borderWidth: 2.5,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.07,
-    shadowRadius: 8,
-    elevation: 3,
+    ...Shadow.card,
   },
   learnImgBox: { height: 100, alignItems: "center", justifyContent: "center" },
   learnEmoji: { fontSize: 52 },
-  learnBody: { paddingHorizontal: 14, paddingVertical: 12 },
-  learnTitle: { fontSize: 16, fontWeight: "900", color: "#2D2D2D" },
+  learnBody: {
+    paddingHorizontal: Theme.space.md,
+    paddingVertical: Theme.space.md,
+  },
   progressWrap: {
     height: 7,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: Theme.colors.track,
     borderRadius: 10,
     marginTop: 8,
     overflow: "hidden",
@@ -1160,42 +1092,47 @@ const s = StyleSheet.create({
   progressLabel: {
     fontSize: 11,
     fontWeight: "800",
-    color: "#AAA",
+    color: Theme.colors.textFaint,
     marginTop: 4,
   },
 
   popCard: {
-    backgroundColor: "#fff",
-    borderRadius: 22,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.xl,
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 14,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 3,
+    ...Shadow.card,
   },
   popIcon: {
     width: 64,
     height: 64,
-    borderRadius: 18,
+    borderRadius: Theme.radius.md,
     alignItems: "center",
     justifyContent: "center",
   },
   popIconEmoji: { fontSize: 34 },
   popBody: { flex: 1 },
-  popTitle: { fontSize: 16, fontWeight: "900", color: "#2D2D2D" },
-  popSub: { fontSize: 12, fontWeight: "700", color: "#AAA", marginTop: 2 },
-  popTag: { paddingHorizontal: 11, paddingVertical: 5, borderRadius: 12 },
+  popSub: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: Theme.colors.textFaint,
+    marginTop: 2,
+  },
+  popTag: {
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: Theme.radius.sm,
+  },
   popTagText: { fontSize: 11, fontWeight: "900" },
 
   emptyMsg: {
     width: "100%",
     textAlign: "center",
     fontSize: 14,
-    color: "#BBB",
+    color: Theme.colors.textFaint,
     fontWeight: "700",
-    marginVertical: 12,
+    marginVertical: Theme.space.md,
   },
 });

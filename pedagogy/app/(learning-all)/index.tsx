@@ -1,6 +1,3 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
@@ -17,11 +14,12 @@ import Animated, {
 
 import { useTranslation } from "react-i18next";
 
+import ScreenHeader from "@/components/ui/ScreenHeader";
+import { fredoka, HIT_SLOP, MIN_TOUCH, Shadow, Theme } from "@/constants/theme";
 import {
   Breathe,
   enterPop,
   enterRise,
-  enterUp,
   GrowBar,
   PressBounce,
 } from "../../shared/motion";
@@ -57,12 +55,6 @@ import {
   SCIENCE_LAB,
   SPACE,
 } from "../../mocks/learningMocks";
-
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
 
 // ─── EMOJI ANIMADO ────────────────────────────────────────────────────────────
 // Balança de leve (rotação vai-e-volta) + sobe-e-desce sutil, em loop infinito.
@@ -250,9 +242,6 @@ export default function LearningAllScreen() {
     }, []),
   );
 
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
-
   // Monta as trilhas já com progresso REAL (storage) + total REAL (mocks).
   // Clampamos o progress no total pra nunca passar de 100% caso haja
   // capítulos antigos registrados que não existam mais.
@@ -273,22 +262,17 @@ export default function LearningAllScreen() {
 
   return (
     <View style={s.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
+      <StatusBar barStyle="dark-content" backgroundColor={Theme.colors.bg} />
 
-      {/* Header */}
-      <Animated.View entering={enterUp(0)} style={s.header}>
-        <PressBounce style={s.backBtn} onPress={() => router.back()}>
-          <Text style={{ fontSize: 20 }}>←</Text>
-        </PressBounce>
-
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <Text style={fredoka(20, "#2D2D2D")}>{t("learningAll.header")}</Text>
+      {/* Header compartilhado — safe-area aware, botão voltar acessível */}
+      <ScreenHeader
+        title={t("learningAll.header")}
+        emoji={
           <Breathe scaleTo={1.18} duration={1800}>
             <Text style={{ fontSize: 20 }}>🌱</Text>
           </Breathe>
-        </View>
-        <View style={{ width: 40 }} />
-      </Animated.View>
+        }
+      />
 
       {/* Filter chips — agora ligados ao estado activeFilter (botões funcionam).
           O wrapper externo reserva o espaço corretamente (a margem NÃO pode
@@ -306,7 +290,10 @@ export default function LearningAllScreen() {
               <PressBounce
                 key={f}
                 onPress={() => setActiveFilter(i)}
+                hitSlop={HIT_SLOP}
                 style={[s.chip, active && s.chipActive]}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
               >
                 <Text
                   numberOfLines={1}
@@ -344,6 +331,8 @@ export default function LearningAllScreen() {
                     key={item.id}
                     entering={enterRise(i * 90)}
                     style={[s.card, { borderColor: item.cardBorder }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(`paths.${item.i18nKey}`)}
                     onPress={() =>
                       router.push({
                         pathname: "/(details)",
@@ -363,7 +352,7 @@ export default function LearningAllScreen() {
                       />
                     </View>
                     <View style={s.body}>
-                      <Text style={fredoka(15, "#2D2D2D")}>
+                      <Text style={fredoka(15, Theme.colors.ink)}>
                         {t(`paths.${item.i18nKey}`)}
                       </Text>
                       <View style={s.progressWrap}>
@@ -414,63 +403,43 @@ export default function LearningAllScreen() {
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F0",
-    paddingTop: StatusBar.currentHeight ?? 44,
+    backgroundColor: Theme.colors.bg,
   },
-  scroll: { paddingHorizontal: 20, paddingBottom: 100 },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
-  },
+  scroll: { paddingHorizontal: Theme.space.xl, paddingBottom: 100 },
 
   // ── FIX DOS CHIPS ──
   // A margem vai aqui (wrapper externo), não no contentContainerStyle.
   filtersWrap: {
-    marginBottom: 16,
+    marginBottom: Theme.space.lg,
   },
   filtersRow: {
-    paddingHorizontal: 20,
+    paddingHorizontal: Theme.space.xl,
     paddingVertical: 6,
     gap: 10,
     alignItems: "center",
   },
   chip: {
-    height: 40, // altura fixa: o texto não tem como ser cortado
+    height: MIN_TOUCH, // alvo mínimo de toque: o texto não tem como ser cortado
     paddingHorizontal: 18,
-    borderRadius: 50,
-    backgroundColor: "#fff",
+    borderRadius: Theme.radius.pill,
+    backgroundColor: Theme.colors.surface,
     borderWidth: 2,
-    borderColor: "#EDEDED",
+    borderColor: Theme.colors.border,
     alignItems: "center",
     justifyContent: "center",
   },
   chipActive: {
-    backgroundColor: "#FF5B8D",
-    borderColor: "#FF5B8D",
+    backgroundColor: Theme.colors.primary,
+    borderColor: Theme.colors.primary,
   },
   chipText: {
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "800",
-    color: "#999",
+    color: Theme.colors.textMuted,
     textAlign: "center",
   },
-  chipTextActive: { color: "#fff" },
+  chipTextActive: { color: Theme.colors.onAccent },
 
   grid: {
     flexDirection: "row",
@@ -479,22 +448,19 @@ const s = StyleSheet.create({
   },
   card: {
     width: "48%",
-    backgroundColor: "#fff",
-    borderRadius: 24,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.xl,
     borderWidth: 2.5,
-    marginBottom: 14,
+    marginBottom: Theme.space.md,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.07,
-    shadowRadius: 8,
-    elevation: 3,
+    ...Shadow.card,
   },
   imgBox: { height: 90, alignItems: "center", justifyContent: "center" },
   emoji: { fontSize: 44 },
   body: { paddingHorizontal: 12, paddingVertical: 10 },
   progressWrap: {
     height: 6,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: Theme.colors.track,
     borderRadius: 10,
     marginTop: 6,
     overflow: "hidden",
@@ -504,13 +470,13 @@ const s = StyleSheet.create({
   progressLabel: {
     fontSize: 10,
     fontWeight: "800",
-    color: "#AAA",
+    color: Theme.colors.textFaint,
     marginTop: 3,
   },
   empty: {
     textAlign: "center",
     fontSize: 14,
-    color: "#BBB",
+    color: Theme.colors.textFaint,
     fontWeight: "700",
     marginTop: 40,
   },

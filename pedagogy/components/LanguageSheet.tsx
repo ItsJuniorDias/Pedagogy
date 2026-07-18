@@ -30,11 +30,7 @@ import {
   type SupportedLanguage,
 } from "@/lib/i18n";
 
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
+import { fredoka, Theme } from "@/constants/theme";
 
 export interface LanguageSheetProps {
   visible: boolean;
@@ -104,7 +100,7 @@ export default function LanguageSheet({ visible, onClose }: LanguageSheetProps) 
         >
           <View style={s.grabber} />
 
-          <Text style={[fredoka(20, "#2D2D2D"), s.title]}>
+          <Text style={[fredoka(20, Theme.colors.ink), s.title]}>
             {t("language.sheetTitle")}
           </Text>
           <Text style={s.subtitle}>{t("language.subtitle")}</Text>
@@ -131,7 +127,12 @@ export default function LanguageSheet({ visible, onClose }: LanguageSheetProps) 
                   </View>
 
                   <View style={s.rowText}>
-                    <Text style={fredoka(16, active ? "#FF5B8D" : "#2D2D2D")}>
+                    <Text
+                      style={fredoka(
+                        16,
+                        active ? Theme.colors.primary : Theme.colors.ink,
+                      )}
+                    >
                       {lang.nativeName}
                     </Text>
                     <Text style={s.rowSub}>{lang.name}</Text>
@@ -153,7 +154,7 @@ export default function LanguageSheet({ visible, onClose }: LanguageSheetProps) 
 const s = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(20, 18, 40, 0.45)",
+    backgroundColor: Theme.colors.overlay,
   },
   sheetWrap: {
     flex: 1,
@@ -185,7 +186,7 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     fontWeight: "600",
-    color: "#A7A7B4",
+    color: Theme.colors.textMuted,
     marginTop: 4,
     marginBottom: 12,
   },
@@ -202,8 +203,8 @@ const s = StyleSheet.create({
     borderColor: "#F1EEE8",
   },
   rowActive: {
-    backgroundColor: "#FFF0F5",
-    borderColor: "#FF5B8D",
+    backgroundColor: Theme.colors.primaryFaint,
+    borderColor: Theme.colors.primary,
   },
   rowPressed: { opacity: 0.75 },
   flagTile: {
@@ -220,7 +221,7 @@ const s = StyleSheet.create({
   rowSub: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#B4B4C0",
+    color: Theme.colors.textFaint,
     marginTop: 2,
   },
   radio: {
@@ -233,8 +234,8 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   radioActive: {
-    backgroundColor: "#FF5B8D",
-    borderColor: "#FF5B8D",
+    backgroundColor: Theme.colors.primary,
+    borderColor: Theme.colors.primary,
   },
   check: { color: "#fff", fontSize: 15, fontWeight: "900", lineHeight: 18 },
 });

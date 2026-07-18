@@ -7,12 +7,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
+import { fredoka, MIN_TOUCH, Shadow, Theme } from "@/constants/theme";
 
 interface ParentalGateProps {
   visible: boolean;
@@ -35,6 +32,9 @@ interface ParentalGateProps {
  * Usa uma multiplicação de dois dígitos baixos: trivial para um adulto,
  * mas fora do alcance típico de uma criança de 6-8 anos. A conta é
  * regenerada a cada erro para impedir acerto por tentativa e erro.
+ *
+ * O portão aparece justamente na frente de pais/responsáveis — por isso todo
+ * o texto vem do i18n (antes era inglês fixo, num app traduzido em 7 idiomas).
  */
 export function ParentalGate({
   visible,
@@ -42,6 +42,7 @@ export function ParentalGate({
   onCancel,
   embedded = false,
 }: ParentalGateProps) {
+  const { t } = useTranslation();
   const [a, setA] = useState(0);
   const [b, setB] = useState(0);
   const [answer, setAnswer] = useState("");
@@ -71,43 +72,49 @@ export function ParentalGate({
     <View style={s.card}>
       <Text style={{ fontSize: 44, marginBottom: 4 }}>🔒</Text>
 
-      <Text style={[fredoka(22, "#2D2D2D"), { textAlign: "center" }]}>
-        Ask a grown-up
+      <Text style={[fredoka(22, Theme.colors.ink), { textAlign: "center" }]}>
+        {t("parentalGate.title")}
       </Text>
 
-      <Text style={s.subtitle}>
-        To continue, please solve this so we know an adult is here:
-      </Text>
+      <Text style={s.subtitle}>{t("parentalGate.subtitle")}</Text>
 
-      <Text style={[fredoka(34, "#FF5B8D"), { marginVertical: 8 }]}>
+      <Text style={[fredoka(34, Theme.colors.primary), { marginVertical: 8 }]}>
         {a} × {b} = ?
       </Text>
 
       <TextInput
         value={answer}
-        onChangeText={(t) => setAnswer(t.replace(/[^0-9]/g, ""))}
+        onChangeText={(txt) => setAnswer(txt.replace(/[^0-9]/g, ""))}
         keyboardType="number-pad"
-        placeholder="Type the answer"
-        placeholderTextColor="#CCC"
-        style={[s.input, wrong && { borderColor: "#FF5B8D" }]}
+        placeholder={t("parentalGate.placeholder")}
+        placeholderTextColor={Theme.colors.textFaint}
+        style={[s.input, wrong && { borderColor: Theme.colors.primary }]}
         maxLength={4}
         autoFocus
+        accessibilityLabel={t("parentalGate.placeholder")}
       />
 
-      {wrong && (
-        <Text style={s.error}>That's not right — try the new one.</Text>
-      )}
+      {wrong && <Text style={s.error}>{t("parentalGate.wrong")}</Text>}
 
       <TouchableOpacity
         onPress={handleCheck}
         disabled={answer.length === 0}
         style={[s.primaryBtn, { opacity: answer.length === 0 ? 0.5 : 1 }]}
+        accessibilityRole="button"
+        accessibilityLabel={t("parentalGate.continue")}
       >
-        <Text style={fredoka(18, "#fff")}>Continue</Text>
+        <Text style={fredoka(18, Theme.colors.onAccent)}>
+          {t("parentalGate.continue")}
+        </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onCancel} style={s.cancelBtn}>
-        <Text style={s.cancelText}>Cancel</Text>
+      <TouchableOpacity
+        onPress={onCancel}
+        style={s.cancelBtn}
+        accessibilityRole="button"
+        accessibilityLabel={t("parentalGate.cancel")}
+      >
+        <Text style={s.cancelText}>{t("parentalGate.cancel")}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -134,7 +141,7 @@ export function ParentalGate({
 const s = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: Theme.colors.overlay,
     alignItems: "center",
     justifyContent: "center",
     padding: 28,
@@ -142,19 +149,15 @@ const s = StyleSheet.create({
   card: {
     width: "100%",
     maxWidth: 360,
-    backgroundColor: "#FFF9F0",
-    borderRadius: 28,
+    backgroundColor: Theme.colors.bg,
+    borderRadius: Theme.radius.xxl,
     padding: 26,
     alignItems: "center",
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
+    ...Shadow.raised,
   },
   subtitle: {
     fontSize: 14,
-    color: "#888",
+    color: Theme.colors.textMuted,
     fontWeight: "600",
     textAlign: "center",
     marginTop: 8,
@@ -163,18 +166,18 @@ const s = StyleSheet.create({
   input: {
     width: "100%",
     height: 54,
-    borderRadius: 16,
+    borderRadius: Theme.radius.md,
     borderWidth: 2,
-    borderColor: "#E8E8E8",
-    backgroundColor: "#fff",
+    borderColor: Theme.colors.border,
+    backgroundColor: Theme.colors.surface,
     textAlign: "center",
     fontSize: 22,
     fontWeight: "700",
-    color: "#2D2D2D",
+    color: Theme.colors.ink,
     marginTop: 4,
   },
   error: {
-    color: "#FF5B8D",
+    color: Theme.colors.primary,
     fontSize: 13,
     fontWeight: "700",
     marginTop: 10,
@@ -183,15 +186,16 @@ const s = StyleSheet.create({
     width: "100%",
     height: 54,
     borderRadius: 27,
-    backgroundColor: "#FF5B8D",
+    backgroundColor: Theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 18,
+    minHeight: MIN_TOUCH,
   },
-  cancelBtn: { paddingVertical: 14, marginTop: 2 },
+  cancelBtn: { paddingVertical: 14, marginTop: 2, minHeight: MIN_TOUCH },
   cancelText: {
     fontSize: 14,
-    color: "#AAA",
+    color: Theme.colors.textMuted,
     fontWeight: "700",
     textDecorationLine: "underline",
   },

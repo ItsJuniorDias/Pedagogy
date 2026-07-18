@@ -1,18 +1,11 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { fredoka, Shadow, Theme } from "@/constants/theme";
 
 import Svg, {
   Circle,
@@ -35,21 +28,9 @@ import {
   Swing,
 } from "../../shared/motion";
 
-const { width } = Dimensions.get("window");
-
 // Chaves i18n das categorias de navegação (batem com library.categories.* nos locales).
 // O `type` da CATEGORIES é reaproveitado como chave — a rota usa o mesmo valor estável.
 type CatKey = "nature" | "fantasy" | "science" | "fruit";
-
-// Mantém a splash visível enquanto a fonte carrega (substitui o expo-app-loading, descontinuado)
-SplashScreen.preventAutoHideAsync();
-
-// ─── FONT HELPER ─────────────────────────────────────────────────────────────
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
 
 // ─── SVG PRIMITIVES (reutilizáveis) ──────────────────────────────────────────
 
@@ -854,7 +835,7 @@ const POPULAR_BOOKS = [
   {
     title: "Tairbrty",
     author: "Burl",
-    rating: "5.4",
+    rating: "4.8",
     bg: "#FFF5B1",
     dotColor: "#FFD32A",
     Illustration: BookIllustration1,
@@ -862,7 +843,7 @@ const POPULAR_BOOKS = [
   {
     title: "Sthm sthap",
     author: "Sray Bhar",
-    rating: "5.4",
+    rating: "4.6",
     bg: "#C8F7F5",
     dotColor: "#00CEC9",
     Illustration: BookIllustration2,
@@ -870,7 +851,7 @@ const POPULAR_BOOKS = [
   {
     title: "Katuion",
     author: "Statoam",
-    rating: "5.4",
+    rating: "4.9",
     bg: "#D8D8FF",
     dotColor: "#6C5CE7",
     Illustration: BookIllustration3,
@@ -878,7 +859,7 @@ const POPULAR_BOOKS = [
   {
     title: "Struck ball",
     author: "Sray Bhar",
-    rating: "5.4",
+    rating: "4.7",
     bg: "#C8FFD4",
     dotColor: "#00B894",
     Illustration: BookIllustration4,
@@ -889,7 +870,7 @@ const READING_LIST = [
   {
     title: "Kekkihy",
     subtitle: "Long established fact that a reader.",
-    rating: "5.4",
+    rating: "4.8",
     progress: "68%",
     Illustration: ReadingIllustration1,
   },
@@ -903,37 +884,24 @@ const READING_LIST = [
 ];
 
 // ─── BOUNCY CARD ─────────────────────────────────────────────────────────────
-// Agora baseado no PressBounce (Reanimated): mola na UI thread + entering
-const BouncyCard = ({
-  children,
-  onPress,
-  style,
-  entering,
-}: {
-  children: React.ReactNode;
-  onPress?: () => void;
-  style?: any;
-  entering?: any;
-}) => (
-  <PressBounce onPress={onPress} style={style} entering={entering}>
-    {children}
-  </PressBounce>
+// Alias fino do PressBounce (mola na UI thread) que repassa as props extras
+// (accessibilityRole/Label etc.).
+const BouncyCard = (props: React.ComponentProps<typeof PressBounce>) => (
+  <PressBounce {...props} />
 );
 
 // ─── SECTION HEADER ──────────────────────────────────────────────────────────
 const SectionHeader = ({
   title,
   emoji,
-  linkColor = "#FF5B8D",
   delay = 0,
 }: {
   title: string;
   emoji: string;
-  linkColor?: string;
   delay?: number;
 }) => (
   <Animated.View entering={enterUp(delay)} style={s.secHdr}>
-    <Text style={fredoka(20, "#2D2D2D")}>
+    <Text style={fredoka(20, Theme.colors.ink)} accessibilityRole="header">
       {emoji} {title}
     </Text>
   </Animated.View>
@@ -955,6 +923,8 @@ const CategoryItem = ({
     <BouncyCard
       entering={enterPop(100 + delay / 2)}
       style={s.catWrap}
+      accessibilityRole="button"
+      accessibilityLabel={label}
       onPress={() =>
         router.push({
           pathname: "/(category)",
@@ -972,7 +942,7 @@ const CategoryItem = ({
           <Text style={{ fontSize: 14 }}>{emoji}</Text>
         </View>
       </View>
-      <Text style={[fredoka(13, "#2D2D2D"), { marginTop: 6 }]}>{label}</Text>
+      <Text style={[fredoka(13, Theme.colors.ink), { marginTop: 6 }]}>{label}</Text>
     </BouncyCard>
   );
 };
@@ -992,6 +962,8 @@ const PopularCard = ({
   return (
     <BouncyCard
       entering={enterRight(150 + delay / 3)}
+      accessibilityRole="button"
+      accessibilityLabel={title}
       onPress={() =>
         router.push({
           pathname: "/(details)",
@@ -1000,9 +972,6 @@ const PopularCard = ({
       }
       style={[s.popCard, { backgroundColor: bg }]}
     >
-      <View style={s.heartBtn}>
-        <Text style={{ fontSize: 16, color: "#CCC" }}>♡</Text>
-      </View>
       <View style={s.popImgWrap}>
         {/* Capa flutuando, com delay escalonado entre os cards */}
         <FloatY delay={delay} distance={5} duration={2600}>
@@ -1010,13 +979,13 @@ const PopularCard = ({
         </FloatY>
         <View style={s.starBadge}>
           <Text style={{ fontSize: 11 }}>⭐</Text>
-          <Text style={[fredoka(11, "#2D2D2D"), { marginLeft: 2 }]}>
+          <Text style={[fredoka(11, Theme.colors.ink), { marginLeft: 2 }]}>
             {rating}
           </Text>
         </View>
       </View>
       <Text
-        style={[fredoka(15, "#2D2D2D"), { textAlign: "center", marginTop: 14 }]}
+        style={[fredoka(15, Theme.colors.ink), { textAlign: "center", marginTop: 14 }]}
       >
         {title}
       </Text>
@@ -1043,6 +1012,8 @@ const ReadingCard = ({
   return (
     <BouncyCard
       entering={enterUp(200 + delay / 3)}
+      accessibilityRole="button"
+      accessibilityLabel={title}
       onPress={() =>
         router.push({
           pathname: "/(details)",
@@ -1061,7 +1032,7 @@ const ReadingCard = ({
         </View>
       </View>
       <View style={s.readBody}>
-        <Text style={fredoka(16, "#2D2D2D")}>{title}</Text>
+        <Text style={fredoka(16, Theme.colors.ink)}>{title}</Text>
         <Text style={s.readSub}>{subtitle}</Text>
         <View style={s.progBarWrap}>
           <View
@@ -1069,7 +1040,9 @@ const ReadingCard = ({
               s.progBarFill,
               {
                 width: `${pct}%` as any,
-                backgroundColor: done ? "#FFD93D" : "#FF5B8D",
+                backgroundColor: done
+                  ? Theme.colors.highlight
+                  : Theme.colors.primary,
               },
             ]}
           />
@@ -1079,7 +1052,7 @@ const ReadingCard = ({
         <Text
           style={{
             fontSize: done ? 22 : 13,
-            ...(done ? {} : fredoka(13, "#2D2D2D")),
+            ...(done ? {} : fredoka(13, Theme.colors.ink)),
           }}
         >
           {done ? "🏆" : progress}
@@ -1093,17 +1066,10 @@ const ReadingCard = ({
 export default function LibraryScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-
-  const onLayoutRootView = useCallback(() => {
-    if (fontsLoaded) SplashScreen.hideAsync();
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) return null;
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={s.container} onLayout={onLayoutRootView}>
+    <View style={[s.container, { paddingTop: insets.top + 4 }]}>
       <View style={[s.blob, s.blob1]} />
       <View style={[s.blob, s.blob2]} />
 
@@ -1113,9 +1079,9 @@ export default function LibraryScreen() {
       >
         {/* ── HEADER ── */}
         <Animated.View entering={enterUp(0)} style={s.header}>
-          <Text style={fredoka(26, "#2D2D2D")}>
+          <Text style={fredoka(26, Theme.colors.ink)}>
             {t("library.greetingHi")}{" "}
-            <Text style={fredoka(26, "#FF5B8D")}>
+            <Text style={fredoka(26, Theme.colors.primary)}>
               {t("library.greetingName")}
             </Text>{" "}
             👋
@@ -1133,15 +1099,19 @@ export default function LibraryScreen() {
           </Breathe>
           <View style={s.bannerBody}>
             {/* Nomes fictícios do livro em destaque = conteúdo, não traduzir */}
-            <Text style={fredoka(22, "#fff")}>Noyse Roise</Text>
+            <Text style={fredoka(22, Theme.colors.onAccent)}>Noyse Roise</Text>
             <Text style={s.bannerSub}>Burt Cross</Text>
-            <TouchableOpacity
+            <PressBounce
               style={s.bannerBtn}
-              activeOpacity={0.8}
+              scaleTo={0.94}
               onPress={() => router.push("/(stories)")}
+              accessibilityRole="button"
+              accessibilityLabel={t("library.bannerCta")}
             >
-              <Text style={fredoka(14, "#fff")}>{t("library.bannerCta")}</Text>
-            </TouchableOpacity>
+              <Text style={fredoka(14, Theme.colors.onAccent)}>
+                {t("library.bannerCta")}
+              </Text>
+            </PressBounce>
           </View>
           <View style={s.bannerImg}>
             {/* Cachorrinho boiando para cima e para baixo */}
@@ -1202,14 +1172,14 @@ export default function LibraryScreen() {
 
 // ─── STYLES ──────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF9F0", paddingTop: 45 },
-  scroll: { padding: 20, paddingBottom: 90 },
+  container: { flex: 1, backgroundColor: Theme.colors.bg },
+  scroll: { padding: Theme.space.xl, paddingBottom: 90 },
 
   blob: { position: "absolute", borderRadius: 999 },
   blob1: {
     width: 200,
     height: 200,
-    backgroundColor: "#FFE8F0",
+    backgroundColor: Theme.colors.primaryTint,
     top: -60,
     right: -50,
   },
@@ -1221,8 +1191,13 @@ const s = StyleSheet.create({
     left: -60,
   },
 
-  header: { marginBottom: 24 },
-  headerSub: { fontSize: 15, color: "#AAA", fontWeight: "600", marginTop: 4 },
+  header: { marginBottom: Theme.space.xxl },
+  headerSub: {
+    fontSize: 15,
+    color: Theme.colors.textMuted,
+    fontWeight: "600",
+    marginTop: 4,
+  },
 
   banner: {
     backgroundColor: "#3E2723",
@@ -1257,16 +1232,15 @@ const s = StyleSheet.create({
     marginVertical: 4,
   },
   bannerBtn: {
-    backgroundColor: "#FF5B8D",
+    backgroundColor: Theme.colors.primary,
     alignSelf: "flex-start",
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 25,
     marginTop: 6,
-    shadowColor: "#FF5B8D",
-    shadowOpacity: 0.45,
-    shadowRadius: 8,
-    elevation: 4,
+    minHeight: 44,
+    justifyContent: "center",
+    ...Shadow.glowPrimary,
   },
   bannerImg: {
     width: 140,
@@ -1329,18 +1303,6 @@ const s = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
-  heartBtn: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 2,
-    backgroundColor: "rgba(255,255,255,0.65)",
-    borderRadius: 14,
-    width: 28,
-    height: 28,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   popImgWrap: { position: "relative", marginTop: 12 },
   starBadge: {
     position: "absolute",
@@ -1357,7 +1319,12 @@ const s = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },
-  popAuthor: { fontSize: 12, color: "#AAA", fontWeight: "600", marginTop: 4 },
+  popAuthor: {
+    fontSize: 12,
+    color: Theme.colors.textFaint,
+    fontWeight: "700",
+    marginTop: 4,
+  },
   dot: {
     position: "absolute",
     bottom: 14,
@@ -1394,10 +1361,15 @@ const s = StyleSheet.create({
     borderColor: "#F0F0F0",
   },
   readBody: { flex: 1, gap: 6 },
-  readSub: { fontSize: 12, color: "#AAA", fontWeight: "600", lineHeight: 17 },
+  readSub: {
+    fontSize: 12,
+    color: Theme.colors.textMuted,
+    fontWeight: "600",
+    lineHeight: 17,
+  },
   progBarWrap: {
     height: 6,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: Theme.colors.track,
     borderRadius: 10,
     overflow: "hidden",
   },

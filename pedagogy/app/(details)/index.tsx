@@ -1,11 +1,8 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
 import {
   setAudioModeAsync,
   useAudioPlayer,
   useAudioPlayerStatus,
 } from "expo-audio";
-import { useFonts } from "expo-font";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Speech from "expo-speech";
 import React, {
@@ -36,6 +33,7 @@ import Reanimated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Breathe, enterPop, enterRise, enterUp } from "../../shared/motion";
 
@@ -163,23 +161,41 @@ type ChapterMock = {
     prompt: string;
     affirmation: string;
   };
+  // Duas gerações de mocks convivem: {character, word} e {name, origin,
+  // funFact}. O widget normaliza — ver LetterFriendWidget.
   letterFriend?: {
     letter: string;
-    character: string;
-    word: string;
+    character?: string;
+    word?: string;
     sound: string;
+    name?: string;
+    origin?: string;
+    funFact?: string;
   };
   diaryDate?: string;
   rune?: { symbol: string; name: string; meaning: string };
   verse?: { lines: string[]; author: string };
-  recipe?: { name: string; ingredients: string[]; instructions: string };
+  // Shapes: {name, instructions} e {title, method, note}. Normalizado no widget.
+  recipe?: {
+    name?: string;
+    title?: string;
+    ingredients: string[];
+    instructions?: string;
+    method?: string;
+    note?: string;
+  };
+  // Shapes: {classification, diet, notes} e {species, abilities, rarity}.
+  // Normalizado no widget.
   creatureCard?: {
     name: string;
-    classification: string;
+    classification?: string;
+    species?: string;
     size: string;
     habitat: string;
-    diet: string;
-    notes: string;
+    diet?: string;
+    abilities?: string[];
+    rarity?: string;
+    notes?: string;
   };
   [key: string]: unknown;
 };
@@ -826,19 +842,29 @@ const LetterFriendWidget = ({
   accent: string;
 }) => {
   const { t } = useTranslation();
+  // Normaliza os dois shapes de mock — antes, histórias no formato novo
+  // ({name, origin, funFact}) renderizavam "undefined" nos campos do card.
+  const character = friend.character ?? friend.name ?? "";
+  const word = friend.word;
+  const extra = friend.funFact ?? friend.origin;
   return (
     <View style={[sw.letterCard, { borderColor: accent }]}>
       <View style={[sw.letterBig, { backgroundColor: accent }]}>
         <Text style={sw.letterBigText}>{friend.letter}</Text>
       </View>
       <View style={sw.letterInfo}>
-        <Text style={[sw.letterCharacter, { color: accent }]}>
-          {friend.character}
-        </Text>
-        <Text style={sw.letterWord}>
-          {t("details.word")}:{" "}
-          <Text style={{ fontWeight: "700" }}>{friend.word}</Text>
-        </Text>
+        {character ? (
+          <Text style={[sw.letterCharacter, { color: accent }]}>
+            {character}
+          </Text>
+        ) : null}
+        {word ? (
+          <Text style={sw.letterWord}>
+            {t("details.word")}:{" "}
+            <Text style={{ fontWeight: "700" }}>{word}</Text>
+          </Text>
+        ) : null}
+        {extra ? <Text style={sw.letterWord}>{extra}</Text> : null}
         <Text style={sw.letterSound}>🔊 {friend.sound}</Text>
       </View>
     </View>
@@ -896,17 +922,29 @@ const RecipeWidget = ({
   accent: string;
 }) => {
   const { t } = useTranslation();
+  // Normaliza os dois shapes de mock ({name, instructions} × {title, method,
+  // note}) — antes, receitas no formato novo saíam com título e modo de
+  // preparo em branco.
+  const name = recipe.name ?? recipe.title ?? "";
+  const instructions = recipe.instructions ?? recipe.method ?? "";
   return (
     <View style={[sw.recipeCard, { borderColor: accent + "55" }]}>
-      <Text style={[sw.recipeName, { color: accent }]}>🍽 {recipe.name}</Text>
+      <Text style={[sw.recipeName, { color: accent }]}>🍽 {name}</Text>
       <Text style={sw.recipeSection}>{t("details.ingredients")}:</Text>
       {recipe.ingredients.map((ing, i) => (
         <Text key={i} style={sw.recipeIngredient}>
           • {ing}
         </Text>
       ))}
-      <Text style={sw.recipeSection}>{t("details.instructions")}:</Text>
-      <Text style={sw.recipeInstructions}>{recipe.instructions}</Text>
+      {instructions ? (
+        <>
+          <Text style={sw.recipeSection}>{t("details.instructions")}:</Text>
+          <Text style={sw.recipeInstructions}>{instructions}</Text>
+        </>
+      ) : null}
+      {recipe.note ? (
+        <Text style={sw.recipeInstructions}>💡 {recipe.note}</Text>
+      ) : null}
     </View>
   );
 };
@@ -919,13 +957,27 @@ const CreatureCardWidget = ({
   accent: string;
 }) => {
   const { t } = useTranslation();
+  // Normaliza os dois shapes de mock ({classification, diet, notes} ×
+  // {species, abilities, rarity}) e só renderiza linhas com valor — antes,
+  // criaturas no formato novo mostravam linhas vazias.
+  const classification = creature.classification ?? creature.species;
+  const notes =
+    creature.notes ??
+    [
+      creature.abilities?.length ? creature.abilities.join(" · ") : null,
+      creature.rarity ? `★ ${creature.rarity}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
   return (
     <View style={[sw.creatureCard, { borderColor: accent }]}>
       <Text style={[sw.creatureName, { color: accent }]}>{creature.name}</Text>
-      <View style={sw.creatureRows}>
-        <Text style={sw.creatureLabel}>{t("details.classification")}:</Text>
-        <Text style={sw.creatureValue}>{creature.classification}</Text>
-      </View>
+      {classification ? (
+        <View style={sw.creatureRows}>
+          <Text style={sw.creatureLabel}>{t("details.classification")}:</Text>
+          <Text style={sw.creatureValue}>{classification}</Text>
+        </View>
+      ) : null}
       <View style={sw.creatureRows}>
         <Text style={sw.creatureLabel}>{t("details.size")}:</Text>
         <Text style={sw.creatureValue}>{creature.size}</Text>
@@ -934,16 +986,20 @@ const CreatureCardWidget = ({
         <Text style={sw.creatureLabel}>{t("details.habitat")}:</Text>
         <Text style={sw.creatureValue}>{creature.habitat}</Text>
       </View>
-      <View style={sw.creatureRows}>
-        <Text style={sw.creatureLabel}>{t("details.diet")}:</Text>
-        <Text style={sw.creatureValue}>{creature.diet}</Text>
-      </View>
-      <View style={[sw.creatureNotes, { backgroundColor: accent + "11" }]}>
-        <Text style={[sw.creatureNotesLabel, { color: accent }]}>
-          📋 {t("details.notes")}
-        </Text>
-        <Text style={sw.creatureNotesText}>{creature.notes}</Text>
-      </View>
+      {creature.diet ? (
+        <View style={sw.creatureRows}>
+          <Text style={sw.creatureLabel}>{t("details.diet")}:</Text>
+          <Text style={sw.creatureValue}>{creature.diet}</Text>
+        </View>
+      ) : null}
+      {notes ? (
+        <View style={[sw.creatureNotes, { backgroundColor: accent + "11" }]}>
+          <Text style={[sw.creatureNotesLabel, { color: accent }]}>
+            📋 {t("details.notes")}
+          </Text>
+          <Text style={sw.creatureNotesText}>{notes}</Text>
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -1070,6 +1126,7 @@ const PageView = ({
 // ─── MAIN SCREEN ──────────────────────────────────────────────────────────────
 export default function ReadStoryScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { storyId } = useLocalSearchParams<{ storyId: string }>();
   const { t, i18n } = useTranslation();
 
@@ -1133,7 +1190,6 @@ export default function ReadStoryScreen() {
   const player = useAudioPlayer({ uri: BG_MUSIC_URL });
   const playerStatus = useAudioPlayerStatus(player);
 
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
   // ─── INTEGRAÇÃO PROGRESSO: carrega capítulos já lidos ao abrir ────────────
   useEffect(() => {
@@ -1376,8 +1432,6 @@ export default function ReadStoryScreen() {
     }
   };
 
-  if (!fontsLoaded) return <AppLoading />;
-
   const chapter = chapters[activeChapter];
   const pages = chapter.pages;
   const isLastPage = currentPage === pages.length - 1;
@@ -1388,7 +1442,9 @@ export default function ReadStoryScreen() {
     readChapters.some((c) => String(c) === String(chId));
 
   return (
-    <View style={[s.root, { backgroundColor: theme.bg }]}>
+    <View
+      style={[s.root, { backgroundColor: theme.bg, paddingTop: insets.top + 8 }]}
+    >
       {/* ── HEADER ── */}
       <Reanimated.View entering={enterUp(0)} style={s.header}>
         <TouchableOpacity
@@ -1560,7 +1616,7 @@ export default function ReadStoryScreen() {
 
 // ─── MAIN STYLES ──────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
-  root: { flex: 1, paddingTop: 52 },
+  root: { flex: 1 },
   header: {
     flexDirection: "row",
     alignItems: "center",

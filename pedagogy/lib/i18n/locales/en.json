@@ -4,7 +4,8 @@
     "viewAll": "View all",
     "cancel": "Cancel",
     "done": "Done",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "back": "Go back"
   },
   "language": {
     "title": "Language",
@@ -74,7 +75,8 @@
         "title": "Track your child's\nprogress",
         "description": "Quizzes, achievements and reading reports for parents. Teaching has never been this fun and easy to follow."
       }
-    }
+    },
+    "skip": "Skip"
   },
   "paywall": {
     "period": {
@@ -168,7 +170,10 @@
       "space": "Space",
       "animals": "Animals",
       "magic": "Magic",
-      "music": "Music"
+      "music": "Music",
+      "science": "Science",
+      "sports": "Sports",
+      "farming": "Farm"
     },
     "interests": {
       "explore": "Explore",
@@ -399,5 +404,13 @@
   "storyBadges": {
     "New": "New",
     "Hot": "Hot"
+  },
+  "parentalGate": {
+    "title": "Ask a grown-up",
+    "subtitle": "To continue, solve this so we know an adult is here:",
+    "placeholder": "Type the answer",
+    "wrong": "That's not right — try the new one.",
+    "continue": "Continue",
+    "cancel": "Cancel"
   }
 }

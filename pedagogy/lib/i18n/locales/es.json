@@ -4,7 +4,8 @@
     "viewAll": "Ver todo",
     "cancel": "Cancelar",
     "done": "Listo",
-    "seeAll": "Ver todo"
+    "seeAll": "Ver todo",
+    "back": "Volver"
   },
   "language": {
     "title": "Idioma",
@@ -74,7 +75,8 @@
         "title": "Sigue el progreso\nde tu hijo",
         "description": "Cuestionarios, logros e informes de lectura para los padres. Enseñar nunca fue tan divertido y fácil de seguir."
       }
-    }
+    },
+    "skip": "Omitir"
   },
   "paywall": {
     "period": {
@@ -168,7 +170,10 @@
       "space": "Espacio",
       "animals": "Animales",
       "magic": "Magia",
-      "music": "Música"
+      "music": "Música",
+      "science": "Ciencia",
+      "sports": "Deportes",
+      "farming": "Granja"
     },
     "interests": {
       "explore": "Explorar",
@@ -399,5 +404,13 @@
   "storyBadges": {
     "New": "Nuevo",
     "Hot": "Popular"
+  },
+  "parentalGate": {
+    "title": "Pide ayuda a un adulto",
+    "subtitle": "Para continuar, resuelve esta cuenta para confirmar que hay un adulto aquí:",
+    "placeholder": "Escribe la respuesta",
+    "wrong": "No es correcto: inténtalo con la nueva cuenta.",
+    "continue": "Continuar",
+    "cancel": "Cancelar"
   }
 }

@@ -1,38 +1,16 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Animated from "react-native-reanimated";
+import React from "react";
+import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import {
-  Breathe,
-  enterPop,
-  enterRight,
-  enterUp,
-  PressBounce,
-  Wiggle,
-} from "../../shared/motion";
+import ScreenHeader from "@/components/ui/ScreenHeader";
+import { fredoka, Shadow, Theme } from "@/constants/theme";
+import { Breathe, enterRight, PressBounce, Wiggle } from "../../shared/motion";
 
 // Chaves i18n de exibição (título/sub e selo). Não substituem `title`/`tagLabel`,
 // que seguem estáveis (analytics e lógica de filtro por índice).
 type GameKey = "farmGame" | "pingPong" | "pixelRun" | "gravity";
 type TagKey = "new" | "top" | "hot";
-
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
 
 const ALL_GAMES = [
   {
@@ -97,42 +75,29 @@ const ALL_GAMES = [
   },
 ];
 
-const GAME_FILTERS = ["All", "Hot 🔥", "New ✨", "Top ⭐"];
-
 export default function GamesAllScreen() {
   const { t } = useTranslation();
-  const [activeFilter, setActiveFilter] = useState(0);
   const router = useRouter();
 
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
-
-  const filtered =
-    activeFilter === 0
-      ? ALL_GAMES
-      : ALL_GAMES.filter((g) =>
-          g.tagLabel.startsWith(GAME_FILTERS[activeFilter].split(" ")[0]),
-        );
+  // Com 4 jogos, filtro não agrega — e o código de filtro anterior era morto:
+  // os chips nunca eram renderizados, então o estado ficava travado em "All".
+  const filtered = ALL_GAMES;
 
   return (
     <View style={s.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
+      <StatusBar barStyle="dark-content" backgroundColor={Theme.colors.bg} />
 
       <View style={[s.blob, s.blob1]} />
 
-      {/* Header */}
-      <Animated.View entering={enterUp(0)} style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
-          <Text style={{ fontSize: 20 }}>←</Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <Text style={fredoka(20, "#2D2D2D")}>{t("games.header")}</Text>
+      {/* Header compartilhado — safe-area aware, botão voltar acessível */}
+      <ScreenHeader
+        title={t("games.header")}
+        emoji={
           <Wiggle angle={12} pause={1800}>
             <Text style={{ fontSize: 20 }}>🎮</Text>
           </Wiggle>
-        </View>
-        <View style={{ width: 40 }} />
-      </Animated.View>
+        }
+      />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -145,6 +110,8 @@ export default function GamesAllScreen() {
             key={game.id}
             entering={enterRight(i * 110)}
             style={s.card}
+            accessibilityRole="button"
+            accessibilityLabel={t(`games.${game.i18nKey}.title`)}
             onPress={() => router.push(game.route as any)}
           >
             <View style={[s.icon, { backgroundColor: game.iconBg }]}>
@@ -153,7 +120,7 @@ export default function GamesAllScreen() {
               </Wiggle>
             </View>
             <View style={s.body}>
-              <Text style={fredoka(16, "#2D2D2D")}>
+              <Text style={fredoka(16, Theme.colors.ink)}>
                 {t(`games.${game.i18nKey}.title`)}
               </Text>
               <Text style={s.sub}>{t(`games.${game.i18nKey}.sub`)}</Text>
@@ -168,11 +135,6 @@ export default function GamesAllScreen() {
           </PressBounce>
         ))}
 
-        {filtered.length === 0 && (
-          <Animated.Text entering={enterPop(100)} style={s.empty}>
-            {t("games.empty")}
-          </Animated.Text>
-        )}
       </ScrollView>
     </View>
   );
@@ -181,85 +143,50 @@ export default function GamesAllScreen() {
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F0",
-    paddingTop: StatusBar.currentHeight ?? 44,
+    backgroundColor: Theme.colors.bg,
   },
   scroll: {
-    paddingHorizontal: 20,
+    paddingHorizontal: Theme.space.xl,
     paddingBottom: 100,
   },
-  blob: { position: "absolute", borderRadius: 999 },
+  blob: { position: "absolute", borderRadius: Theme.radius.pill },
   blob1: {
     width: 180,
     height: 180,
-    backgroundColor: "#FFE8F0",
+    backgroundColor: Theme.colors.primaryTint,
     top: -50,
     right: -40,
   },
 
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-
-  filtersRow: { paddingHorizontal: 20, paddingBottom: 16, gap: 10 },
-  chip: {
-    paddingHorizontal: 18,
-    paddingVertical: 9,
-    borderRadius: 50,
-    backgroundColor: "#fff",
-    borderWidth: 2,
-    borderColor: "#EDEDED",
-  },
-  chipActive: { backgroundColor: "#6C5CE7", borderColor: "#6C5CE7" },
-  chipText: { fontSize: 13, fontWeight: "800", color: "#999" },
-  chipTextActive: { color: "#fff" },
-
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 22,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.xl,
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 14,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 3,
+    marginBottom: Theme.space.md,
+    ...Shadow.card,
   },
   icon: {
     width: 64,
     height: 64,
-    borderRadius: 18,
+    borderRadius: Theme.radius.md,
     alignItems: "center",
     justifyContent: "center",
   },
   iconEmoji: { fontSize: 34 },
   body: { flex: 1 },
-  sub: { fontSize: 12, fontWeight: "700", color: "#AAA", marginTop: 2 },
-  tag: { paddingHorizontal: 11, paddingVertical: 5, borderRadius: 12 },
-  tagText: { fontSize: 11, fontWeight: "900" },
-  empty: {
-    textAlign: "center",
-    fontSize: 14,
-    color: "#BBB",
+  sub: {
+    fontSize: 12,
     fontWeight: "700",
-    marginTop: 40,
+    color: Theme.colors.textFaint,
+    marginTop: 2,
   },
+  tag: {
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: Theme.radius.sm,
+  },
+  tagText: { fontSize: 11, fontWeight: "900" },
 });

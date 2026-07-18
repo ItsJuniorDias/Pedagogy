@@ -4,7 +4,8 @@
     "viewAll": "查看全部",
     "cancel": "取消",
     "done": "完成",
-    "seeAll": "查看全部"
+    "seeAll": "查看全部",
+    "back": "返回"
   },
   "language": {
     "title": "语言",
@@ -74,7 +75,8 @@
         "title": "追踪孩子的\n学习进度",
         "description": "为家长提供测验、成就和阅读报告。教学从未如此有趣、如此易于跟进。"
       }
-    }
+    },
+    "skip": "跳过"
   },
   "paywall": {
     "period": {
@@ -168,7 +170,10 @@
       "space": "太空",
       "animals": "动物",
       "magic": "魔法",
-      "music": "音乐"
+      "music": "音乐",
+      "science": "科学",
+      "sports": "运动",
+      "farming": "农场"
     },
     "interests": {
       "explore": "探索",
@@ -399,5 +404,13 @@
   "storyBadges": {
     "New": "新",
     "Hot": "热门"
+  },
+  "parentalGate": {
+    "title": "请找大人帮忙",
+    "subtitle": "请解答下面的算式，以确认有大人在场：",
+    "placeholder": "输入答案",
+    "wrong": "答案不对——试试新的算式。",
+    "continue": "继续",
+    "cancel": "取消"
   }
 }

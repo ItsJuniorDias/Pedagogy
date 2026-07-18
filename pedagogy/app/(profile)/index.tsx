@@ -1,20 +1,13 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import Animated, { FlipInEasyX } from "react-native-reanimated";
 
 import { useTranslation } from "react-i18next";
 
-import {
-  Breathe,
-  enterPop,
-  enterUp,
-  PressBounce,
-  Swing,
-} from "../../shared/motion";
+import ScreenHeader from "@/components/ui/ScreenHeader";
+import { fredoka, Shadow, Theme } from "@/constants/theme";
+import { Breathe, enterPop, enterUp, PressBounce, Swing } from "../../shared/motion";
 
 // ─── PROGRESSO REAL (substitui os mocks) ─────────────────────────────────────
 import {
@@ -41,14 +34,7 @@ type BadgeId =
   | "dinofan"
   | "nightowl";
 
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
-
 export default function ProfileScreen() {
-  const router = useRouter();
   const { t } = useTranslation();
 
   // Controla a abertura do bottom-sheet de idiomas.
@@ -74,9 +60,6 @@ export default function ProfileScreen() {
       };
     }, []),
   );
-
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
 
   // ── Stats derivados do progresso real ──
   const badges = progress ? computeBadges(progress) : [];
@@ -104,18 +87,12 @@ export default function ProfileScreen() {
 
   return (
     <View style={s.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
+      <StatusBar barStyle="dark-content" backgroundColor={Theme.colors.bg} />
 
       <View style={[s.blob, s.blob1]} />
 
-      {/* Header */}
-      <Animated.View entering={enterUp(0)} style={s.header}>
-        <PressBounce style={s.backBtn} onPress={() => router.back()}>
-          <Text style={{ fontSize: 20 }}>←</Text>
-        </PressBounce>
-        <Text style={fredoka(20, "#2D2D2D")}>{t("profile.title")}</Text>
-        <View style={{ width: 40 }} />
-      </Animated.View>
+      {/* Header compartilhado — safe-area aware, botão voltar acessível */}
+      <ScreenHeader title={t("profile.title")} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -129,7 +106,7 @@ export default function ProfileScreen() {
               <Text style={{ fontSize: 48 }}>🐻</Text>
             </Swing>
           </Animated.View>
-          <Text style={fredoka(22, "#2D2D2D")}>{t("profile.displayName")}</Text>
+          <Text style={fredoka(22, Theme.colors.ink)}>{t("profile.displayName")}</Text>
           <Text style={s.avatarSub}>{t("profile.level", { level })}</Text>
         </Animated.View>
 
@@ -139,12 +116,14 @@ export default function ProfileScreen() {
           <PressBounce
             style={s.langRow}
             onPress={() => setLangSheetOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t("profile.languageRow")}
           >
             <View style={s.langFlag}>
               <Text style={{ fontSize: 22 }}>{currentLang.flag}</Text>
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={fredoka(15, "#2D2D2D")}>
+              <Text style={fredoka(15, Theme.colors.ink)}>
                 {t("profile.languageRow")}
               </Text>
               <Text style={s.langValue}>{currentLang.nativeName}</Text>
@@ -164,7 +143,7 @@ export default function ProfileScreen() {
               style={s.statCard}
             >
               <Text style={{ fontSize: 22 }}>{stat.emoji}</Text>
-              <Text style={fredoka(18, "#2D2D2D")}>{stat.value}</Text>
+              <Text style={fredoka(18, Theme.colors.ink)}>{stat.value}</Text>
               <Text style={s.statLabel}>{stat.label}</Text>
             </Animated.View>
           ))}
@@ -175,7 +154,7 @@ export default function ProfileScreen() {
 
         {/* Badges */}
         <Text
-          style={[fredoka(18, "#2D2D2D"), { marginBottom: 12, marginTop: 4 }]}
+          style={[fredoka(18, Theme.colors.ink), { marginBottom: 12, marginTop: 4 }]}
         >
           {t("profile.badgesTitle")}
         </Text>
@@ -219,68 +198,41 @@ export default function ProfileScreen() {
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F0",
-    paddingTop: StatusBar.currentHeight ?? 44,
+    backgroundColor: Theme.colors.bg,
   },
-  scroll: { paddingHorizontal: 20, paddingBottom: 100 },
-  blob: { position: "absolute", borderRadius: 999 },
+  scroll: { paddingHorizontal: Theme.space.xl, paddingBottom: 100 },
+  blob: { position: "absolute", borderRadius: Theme.radius.pill },
   blob1: {
     width: 200,
     height: 200,
-    backgroundColor: "#FFE8F0",
+    backgroundColor: Theme.colors.primaryTint,
     top: -60,
     right: -50,
   },
 
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-
   avatarCard: {
-    backgroundColor: "#fff",
-    borderRadius: 28,
-    padding: 24,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.xxl,
+    padding: Theme.space.xxl,
     alignItems: "center",
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 3,
+    marginBottom: Theme.space.xl,
+    ...Shadow.card,
   },
   avatar: {
     width: 90,
     height: 90,
     borderRadius: 45,
-    backgroundColor: "#FFD93D",
+    backgroundColor: Theme.colors.highlight,
     borderWidth: 4,
-    borderColor: "#fff",
+    borderColor: Theme.colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#FF9500",
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 6,
-    marginBottom: 12,
+    marginBottom: Theme.space.md,
+    ...Shadow.glowHighlight,
   },
   avatarSub: {
     fontSize: 13,
-    color: "#888",
+    color: Theme.colors.textMuted,
     fontWeight: "600",
     marginTop: 4,
   },
@@ -289,33 +241,30 @@ const s = StyleSheet.create({
   langRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 20,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.lg,
     padding: 14,
-    marginBottom: 20,
+    marginBottom: Theme.space.xl,
     gap: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
+    ...Shadow.card,
   },
   langFlag: {
     width: 44,
     height: 44,
-    borderRadius: 14,
-    backgroundColor: "#FFF3F8",
+    borderRadius: Theme.radius.md,
+    backgroundColor: Theme.colors.primaryFaint,
     alignItems: "center",
     justifyContent: "center",
   },
   langValue: {
     fontSize: 12,
-    color: "#9A9AA6",
+    color: Theme.colors.textMuted,
     fontWeight: "700",
     marginTop: 2,
   },
   langChevron: {
     fontSize: 26,
-    color: "#C9C9D2",
+    color: Theme.colors.textFaint,
     fontWeight: "800",
     marginRight: 4,
   },
@@ -327,45 +276,39 @@ const s = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: "#fff",
-    borderRadius: 20,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.lg,
     marginHorizontal: 4,
-    padding: 12,
+    padding: Theme.space.md,
     alignItems: "center",
     gap: 4,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
+    ...Shadow.card,
   },
   statLabel: {
     fontSize: 10,
     fontWeight: "800",
-    color: "#AAA",
+    color: Theme.colors.textFaint,
     textAlign: "center",
   },
 
   badgesGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   badgeCard: {
     width: "30%",
-    backgroundColor: "#fff",
-    borderRadius: 20,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.lg,
     padding: 14,
     alignItems: "center",
     gap: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
+    ...Shadow.card,
   },
   badgeCardLocked: { backgroundColor: "#F8F8F8", opacity: 0.7 },
   badgeLabel: {
     fontSize: 11,
     fontWeight: "800",
-    color: "#555",
+    color: Theme.colors.textMuted,
     textAlign: "center",
   },
-  badgeLabelLocked: { color: "#BBB" },
+  badgeLabelLocked: { color: Theme.colors.textFaint },
   emojiLocked: { opacity: 0.35 },
   lockIcon: { position: "absolute", top: 8, right: 8, fontSize: 12 },
 });

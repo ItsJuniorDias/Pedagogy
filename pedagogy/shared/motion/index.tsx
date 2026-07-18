@@ -312,22 +312,32 @@ export const GrowBar = ({
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-/** 🫳 PressBounce — Pressable com mola no toque (substitui o BouncyCard) */
+/** 🫳 PressBounce — Pressable com mola no toque (substitui o BouncyCard).
+ *  Repassa as demais props de Pressable (hitSlop, accessibilityRole,
+ *  accessibilityLabel, accessibilityState…) para que todo alvo de toque do
+ *  app possa ser acessível sem abandonar o feedback de mola. */
 export const PressBounce = ({
   children,
   onPress,
   scaleTo = 0.94,
   style,
   entering,
+  layout,
   disabled,
+  ...rest
 }: {
   children: React.ReactNode;
   onPress?: () => void;
   scaleTo?: number;
   style?: StyleProp<ViewStyle>;
   entering?: any;
+  /** Layout transition do Reanimated (ex.: LinearTransition.springify()) */
+  layout?: any;
   disabled?: boolean;
-}) => {
+} & Omit<
+  React.ComponentProps<typeof Pressable>,
+  "children" | "onPress" | "style" | "disabled"
+>) => {
   const scale = useSharedValue(1);
   const a = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -343,7 +353,9 @@ export const PressBounce = ({
       }}
       onPress={onPress}
       entering={entering}
+      layout={layout}
       style={[style, a]}
+      {...rest}
     >
       {children}
     </AnimatedPressable>

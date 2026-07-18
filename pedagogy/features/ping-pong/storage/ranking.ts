@@ -362,7 +362,7 @@ function hydrate(raw: Partial<RankingProfile> | null | undefined): RankingProfil
   const top: MatchRecord[] = Array.isArray(raw.top)
     ? raw.top
         .slice(0, MAX_RANKING)
-        .map((r) => ({ mode: "solo" as MatchMode, ...r }))
+        .map((r) => ({ ...r, mode: (r.mode ?? "solo") as MatchMode }))
     : [];
   return {
     ...base,

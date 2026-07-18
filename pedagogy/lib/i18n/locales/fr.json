@@ -4,7 +4,8 @@
     "viewAll": "Voir tout",
     "cancel": "Annuler",
     "done": "Terminé",
-    "seeAll": "Voir tout"
+    "seeAll": "Voir tout",
+    "back": "Retour"
   },
   "language": {
     "title": "Langue",
@@ -74,7 +75,8 @@
         "title": "Suivez les progrès\nde votre enfant",
         "description": "Quiz, récompenses et rapports de lecture pour les parents. Enseigner n'a jamais été aussi amusant et facile à suivre."
       }
-    }
+    },
+    "skip": "Passer"
   },
   "paywall": {
     "period": {
@@ -168,7 +170,10 @@
       "space": "Espace",
       "animals": "Animaux",
       "magic": "Magie",
-      "music": "Musique"
+      "music": "Musique",
+      "science": "Science",
+      "sports": "Sports",
+      "farming": "Ferme"
     },
     "interests": {
       "explore": "Explorer",
@@ -399,5 +404,13 @@
   "storyBadges": {
     "New": "Nouveau",
     "Hot": "Tendance"
+  },
+  "parentalGate": {
+    "title": "Demande à un adulte",
+    "subtitle": "Pour continuer, résous ce calcul pour confirmer qu'un adulte est présent :",
+    "placeholder": "Écris la réponse",
+    "wrong": "Ce n'est pas ça — essaie avec le nouveau calcul.",
+    "continue": "Continuer",
+    "cancel": "Annuler"
   }
 }

@@ -1,12 +1,10 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
   Image,
+  ImageSourcePropType,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -22,9 +20,11 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Breathe, enterPop, enterUp, PressBounce } from "../../shared/motion";
 
+import { fredoka, HIT_SLOP, MIN_TOUCH, Theme } from "@/constants/theme";
 import { useTranslation } from "react-i18next";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -39,7 +39,7 @@ type SlideSlug = "welcome" | "library" | "learning";
 type Slide = {
   id: string;
   slug: SlideSlug; // resolve os textos via i18n (onboarding.slides.<slug>.*)
-  image: ReturnType<typeof require>;
+  image: ImageSourcePropType;
 };
 
 const SLIDES: Slide[] = [
@@ -62,12 +62,9 @@ const SLIDES: Slide[] = [
 
 // ─── Dot indicator ────────────────────────────────────────────────────────────
 
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  textAlign: "center",
-  ...(color ? { color } : {}),
-});
+// Variante centralizada do helper de fonte do design system
+const fredokaCenter = (size: number, color?: string) =>
+  ({ ...fredoka(size, color), textAlign: "center" }) as const;
 
 // Cada dot estica e muda de cor conforme o dedo arrasta o carrossel —
 // a transição acompanha o gesto em tempo real, não o "snap" da página.
@@ -82,7 +79,7 @@ function Dot({ i, scrollX }: { i: number; scrollX: SharedValue<number> }) {
       width: interpolate(scrollX.value, range, [8, 24, 8], Extrapolation.CLAMP),
       backgroundColor: interpolateColor(scrollX.value, range, [
         "#E0E0E0",
-        "#FF5B8D",
+        Theme.colors.primary,
         "#E0E0E0",
       ]),
     };
@@ -188,7 +185,7 @@ function SlideItem({
           </Text>
         </View>
 
-        <Text style={fredoka(30, "#2D2D2D")}>
+        <Text style={fredokaCenter(30, Theme.colors.ink)}>
           {t(`onboarding.slides.${item.slug}.title`)}
         </Text>
 
@@ -205,7 +202,7 @@ function SlideItem({
 export default function AppScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
+  const insets = useSafeAreaInsets();
 
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList<Slide>>(null);
@@ -228,22 +225,25 @@ export default function AppScreen() {
     viewAreaCoveragePercentThreshold: 50,
   }).current;
 
-  if (!fontsLoaded) return <AppLoading />;
-
   const isLastSlide = activeIndex === SLIDES.length - 1;
+
+  // Conclui o onboarding: marca no analytics e segue pro app ou pra paywall.
+  const finishOnboarding = async () => {
+    // ── TRACKING: onboarding concluído ──
+    trackOnboardingCompleted();
+
+    const status = await AsyncStorage.getItem("@subscription_status");
+
+    if (status === "active") {
+      router.push("/(tabs)");
+    } else {
+      router.replace("/(paywall)");
+    }
+  };
 
   const handleButtonPress = async () => {
     if (isLastSlide) {
-      // ── TRACKING: onboarding concluído ──
-      trackOnboardingCompleted();
-
-      const status = await AsyncStorage.getItem("@subscription_status");
-
-      if (status === "active") {
-        router.push("/(tabs)");
-      } else {
-        router.replace("/(paywall)");
-      }
+      await finishOnboarding();
     } else {
       flatListRef.current?.scrollToIndex({
         index: activeIndex + 1,
@@ -257,6 +257,20 @@ export default function AppScreen() {
       {/* Decorative blobs */}
       <View style={[styles.blob, styles.blob1]} />
       <View style={[styles.blob, styles.blob2]} />
+
+      {/* Skip — pais com pressa não precisam ver os 3 slides. Some no último,
+          onde o CTA principal já assume o papel. */}
+      {!isLastSlide && (
+        <PressBounce
+          style={[styles.skipBtn, { top: insets.top + 12 }]}
+          onPress={finishOnboarding}
+          hitSlop={HIT_SLOP}
+          accessibilityRole="button"
+          accessibilityLabel={t("onboarding.skip")}
+        >
+          <Text style={styles.skipText}>{t("onboarding.skip")}</Text>
+        </PressBounce>
+      )}
 
       {/* Carousel com parallax */}
       <Animated.FlatList
@@ -286,11 +300,15 @@ export default function AppScreen() {
             onPress={handleButtonPress}
             style={styles.btn}
             scaleTo={0.95}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isLastSlide ? t("onboarding.start") : t("onboarding.next")
+            }
           >
             <Animated.Text
               key={isLastSlide ? "go" : "next"}
               entering={enterPop(0)}
-              style={fredoka(20, "#fff")}
+              style={fredokaCenter(20, Theme.colors.onAccent)}
             >
               {isLastSlide ? t("onboarding.start") : t("onboarding.next")}
             </Animated.Text>
@@ -306,7 +324,7 @@ export default function AppScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F0",
+    backgroundColor: Theme.colors.bg,
     alignItems: "center",
     justifyContent: "space-between",
     paddingVertical: 40,
@@ -317,7 +335,7 @@ const styles = StyleSheet.create({
   blob1: {
     width: 220,
     height: 220,
-    backgroundColor: "#FFE8F0",
+    backgroundColor: Theme.colors.primaryTint,
     top: -60,
     right: -60,
   },
@@ -362,7 +380,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   badge: {
-    backgroundColor: "#FFE8F0",
+    backgroundColor: Theme.colors.primaryTint,
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 5,
@@ -370,11 +388,11 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#FF5B8D",
+    color: Theme.colors.primary,
   },
   description: {
     fontSize: 15,
-    color: "#AAA",
+    color: Theme.colors.textMuted,
     textAlign: "center",
     lineHeight: 24,
     fontWeight: "600",
@@ -389,9 +407,24 @@ const styles = StyleSheet.create({
   },
   dots: { flexDirection: "row", gap: 8 },
   dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E0E0E0" },
-  dotActive: { width: 24, backgroundColor: "#FF5B8D" },
 
-  // Button
+  // Skip
+  skipBtn: {
+    position: "absolute",
+    right: 20,
+    zIndex: 10,
+    minHeight: MIN_TOUCH,
+    justifyContent: "center",
+    paddingHorizontal: 12,
+  },
+  skipText: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: Theme.colors.textMuted,
+  },
+
+  // Button — rosa da marca (o laranja anterior não existia em nenhuma outra
+  // tela) mantendo a sombra 3D deslocada que dá o ar de botão de brinquedo.
   btnArea: {
     width: "85%",
     position: "relative",
@@ -402,17 +435,17 @@ const styles = StyleSheet.create({
     left: 4,
     right: -4,
     height: 60,
-    backgroundColor: "#C0540A",
+    backgroundColor: Theme.colors.primaryDeep,
     borderRadius: 40,
   },
   btn: {
     width: "100%",
     height: 60,
-    backgroundColor: "#FF7A2F",
+    backgroundColor: Theme.colors.primary,
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#FF7A2F",
+    shadowColor: Theme.colors.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.35,
     shadowRadius: 16,

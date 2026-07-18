@@ -21,6 +21,7 @@ import Animated, {
 
 import { useTranslation } from "react-i18next";
 
+import { fredoka, Palette, Shadow, Theme } from "@/constants/theme";
 import { enterUp } from "../shared/motion";
 import { formatReadTimeI18n } from "../lib/i18n";
 import {
@@ -36,22 +37,18 @@ const MAX_BAR = 150; // barra cheia (dia mais lido da semana)
 const MIN_ACTIVE_BAR = 30; // barra mínima visível pra um dia COM leitura
 const EMPTY_PILL = 6; // pílula da base pra um dia SEM leitura
 
+// Cores derivadas do design system — antes o card usava um rosa (#FB456E) e
+// um roxo (#7C5CFC) que não existiam em nenhuma outra tela.
 const C = {
-  card: "#FFFFFF",
-  title: "#2D2A45",
-  subtitle: "#A7A7B4",
-  today: "#FB456E", // rosa vivo (barra de hoje)
-  past: "#FFB3C7", // rosa claro (outros dias com leitura)
-  emptyPill: "#FCE3EC", // trilho rosa clarinho (dia sem leitura)
-  labelToday: "#7C5CFC", // roxo (rótulo de hoje)
-  labelDefault: "#B7B7C2",
+  card: Theme.colors.surface,
+  title: Theme.colors.ink,
+  subtitle: Theme.colors.textMuted,
+  today: Theme.colors.primary, // rosa vivo (barra de hoje)
+  past: Theme.colors.primarySoft, // rosa claro (outros dias com leitura)
+  emptyPill: Theme.colors.primaryTint, // trilho rosa clarinho (dia sem leitura)
+  labelToday: Palette.purple, // roxo (rótulo de hoje)
+  labelDefault: Theme.colors.textFaint,
 };
-
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
 
 // ─── BARRA INDIVIDUAL ────────────────────────────────────────────────────────
 function Bar({
@@ -174,14 +171,10 @@ export default function WeeklyReadingCard({
 const s = StyleSheet.create({
   card: {
     backgroundColor: C.card,
-    borderRadius: 28,
+    borderRadius: Theme.radius.xxl,
     padding: 22,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
+    marginBottom: Theme.space.xl,
+    ...Shadow.card,
   },
   header: {
     flexDirection: "row",

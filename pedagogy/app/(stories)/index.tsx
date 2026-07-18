@@ -1,38 +1,21 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-  Dimensions,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 
+import ScreenHeader from "@/components/ui/ScreenHeader";
+import { fredoka, HIT_SLOP, MIN_TOUCH, Shadow, Theme } from "@/constants/theme";
 import {
   enterPop,
   enterUp,
   FloatY,
   PressBounce,
-  Swing,
   Twinkle,
+  Swing,
 } from "../../shared/motion";
 
 import { STORIES_GRID } from "../../mocks/historyMock";
-
-const { width } = Dimensions.get("window");
-
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
 
 // Coleta todas as tags únicas do grid e adiciona "All" no início
 const ALL_TAGS = [
@@ -45,9 +28,6 @@ export default function StoriesScreen() {
   const [activeTag, setActiveTag] = useState(0);
   const router = useRouter();
 
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
-
   const filtered =
     activeTag === 0
       ? STORIES_GRID
@@ -55,19 +35,13 @@ export default function StoriesScreen() {
 
   return (
     <View style={s.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF9F0" />
+      <StatusBar barStyle="dark-content" backgroundColor={Theme.colors.bg} />
 
       <View style={[s.blob, s.blob1]} />
       <View style={[s.blob, s.blob2]} />
 
-      {/* Header */}
-      <Animated.View entering={enterUp(0)} style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
-          <Text style={{ fontSize: 20 }}>←</Text>
-        </TouchableOpacity>
-        <Text style={fredoka(22, "#2D2D2D")}>{t("stories.header")}</Text>
-        <View style={{ width: 40 }} />
-      </Animated.View>
+      {/* Header compartilhado — safe-area aware, botão voltar acessível */}
+      <ScreenHeader title={t("stories.header")} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -82,7 +56,7 @@ export default function StoriesScreen() {
             <Text style={{ fontSize: 14 }}>⭐</Text>
           </Twinkle>
           <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
-            <Text style={fredoka(26, "#fff")}>{t("stories.heroTitle")}</Text>
+            <Text style={fredoka(26, Theme.colors.onAccent)}>{t("stories.heroTitle")}</Text>
             <FloatY distance={5} duration={2200}>
               <Text style={{ fontSize: 26 }}>🌍</Text>
             </FloatY>
@@ -104,8 +78,11 @@ export default function StoriesScreen() {
               key={tag}
               entering={enterPop(120 + i * 60)}
               scaleTo={0.88}
+              hitSlop={HIT_SLOP}
               style={[s.tag, activeTag === i && s.tagActive]}
               onPress={() => setActiveTag(i)}
+              accessibilityRole="button"
+              accessibilityState={{ selected: activeTag === i }}
             >
               <Text style={[s.tagText, activeTag === i && s.tagTextActive]}>
                 {i === 0
@@ -124,6 +101,10 @@ export default function StoriesScreen() {
               key={`${activeTag}-${story.id}`}
               entering={enterPop(i * 70)}
               style={[s.card, { backgroundColor: story.bg }]}
+              accessibilityRole="button"
+              accessibilityLabel={t(`storyTitles.${story.id}` as any, {
+                defaultValue: story.title,
+              })}
               onPress={() =>
                 router.push({
                   pathname: "/(details)",
@@ -143,7 +124,7 @@ export default function StoriesScreen() {
               <Swing delay={i * 250} angle={5} duration={2600}>
                 <Text style={s.storyEmoji}>{story.emoji}</Text>
               </Swing>
-              <Text style={[s.storyTitle, fredoka(15, "#2D2D2D")]}>
+              <Text style={[s.storyTitle, fredoka(15, Theme.colors.ink)]}>
                 {t(`storyTitles.${story.id}` as any, {
                   defaultValue: story.title,
                 })}
@@ -170,16 +151,15 @@ export default function StoriesScreen() {
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F0",
-    paddingTop: StatusBar.currentHeight ?? 44,
+    backgroundColor: Theme.colors.bg,
   },
-  scroll: { paddingHorizontal: 20, paddingBottom: 100 },
+  scroll: { paddingHorizontal: Theme.space.xl, paddingBottom: 100 },
 
-  blob: { position: "absolute", borderRadius: 999 },
+  blob: { position: "absolute", borderRadius: Theme.radius.pill },
   blob1: {
     width: 200,
     height: 200,
-    backgroundColor: "#FFE8F0",
+    backgroundColor: Theme.colors.primaryTint,
     top: -60,
     right: -50,
   },
@@ -191,31 +171,11 @@ const s = StyleSheet.create({
     left: -60,
   },
 
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-
   hero: {
-    backgroundColor: "#6C5CE7",
-    borderRadius: 28,
-    padding: 24,
-    marginBottom: 20,
+    backgroundColor: Theme.colors.accent,
+    borderRadius: Theme.radius.xxl,
+    padding: Theme.space.xxl,
+    marginBottom: Theme.space.xl,
     overflow: "hidden",
   },
   heroSub: {
@@ -233,18 +193,23 @@ const s = StyleSheet.create({
   heroStar1: { position: "absolute", top: 14, right: 18 },
   heroStar2: { position: "absolute", bottom: 16, right: 44 },
 
-  tagsRow: { paddingBottom: 20, gap: 10 },
+  tagsRow: { paddingBottom: Theme.space.xl, gap: 10 },
   tag: {
+    minHeight: MIN_TOUCH,
     paddingHorizontal: 18,
-    paddingVertical: 9,
-    borderRadius: 50,
-    backgroundColor: "#fff",
+    borderRadius: Theme.radius.pill,
+    backgroundColor: Theme.colors.surface,
     borderWidth: 2,
-    borderColor: "#EDEDED",
+    borderColor: Theme.colors.border,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  tagActive: { backgroundColor: "#FF5B8D", borderColor: "#FF5B8D" },
-  tagText: { fontSize: 13, fontWeight: "800", color: "#999" },
-  tagTextActive: { color: "#fff" },
+  tagActive: {
+    backgroundColor: Theme.colors.primary,
+    borderColor: Theme.colors.primary,
+  },
+  tagText: { fontSize: 13, fontWeight: "800", color: Theme.colors.textMuted },
+  tagTextActive: { color: Theme.colors.onAccent },
 
   grid: {
     flexDirection: "row",
@@ -253,14 +218,11 @@ const s = StyleSheet.create({
   },
   card: {
     width: "48%",
-    borderRadius: 24,
-    padding: 16,
-    marginBottom: 14,
+    borderRadius: Theme.radius.xl,
+    padding: Theme.space.lg,
+    marginBottom: Theme.space.md,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
+    ...Shadow.card,
   },
   badgeWrap: {
     position: "absolute",
@@ -270,7 +232,11 @@ const s = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  badgeText: { color: "#fff", fontSize: 10, fontWeight: "900" },
+  badgeText: {
+    color: Theme.colors.onAccent,
+    fontSize: 10,
+    fontWeight: "900",
+  },
   storyEmoji: { fontSize: 52, marginBottom: 10 },
   storyTitle: { textAlign: "center", marginBottom: 6 },
   storyMeta: { fontSize: 12, fontWeight: "700" },

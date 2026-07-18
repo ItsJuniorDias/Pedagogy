@@ -1,7 +1,4 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import AppLoading from "expo-app-loading";
 import { Audio } from "expo-av";
-import { useFonts } from "expo-font";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -361,12 +358,8 @@ export default function GravityFlip() {
   const [, forceUpdate] = useState(0);
   const [musicEnabled, setMusicEnabled] = useState(true);
 
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-
   const { playFlip, playScore, playDeath, startBgMusic, stopBgMusic } =
     useSounds();
-
-  if (!fontsLoaded) return <AppLoading />;
 
   const playerY = useRef(SH / 2);
   const playerVY = useRef(0);

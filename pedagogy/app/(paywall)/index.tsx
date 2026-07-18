@@ -1,5 +1,3 @@
-import { FredokaOne_400Regular } from "@expo-google-fonts/fredoka-one";
-import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -18,6 +16,9 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { fredoka, HIT_SLOP, Shadow, Theme } from "@/constants/theme";
 
 import {
   Breathe,
@@ -55,12 +56,6 @@ const TERMS_URL =
   "https://app.notion.com/p/Terms-of-Use-EULA-Pedagogy-3790df0a2e798017b3d2d9d60a5d8308";
 const PRIVACY_URL =
   "https://app.notion.com/p/Pol-tica-de-Privacidade-Pedagogy-3750df0a2e798004a8fcd6029d729866?source=copy_link";
-
-const fredoka = (size: number, color?: string) => ({
-  fontFamily: "FredokaOne_400Regular" as const,
-  fontSize: size,
-  ...(color ? { color } : {}),
-});
 
 function getPackageLabel(pkg: Package, t: TFunction): string {
   switch (pkg.packageType) {
@@ -197,7 +192,7 @@ const BouncyButton = ({
         <ActivityIndicator color="#fff" />
       ) : (
         <>
-          <Text style={fredoka(20, "#fff")}>{label}</Text>
+          <Text style={fredoka(20, Theme.colors.onAccent)}>{label}</Text>
           {subLabel && (
             <Text
               style={{
@@ -276,32 +271,44 @@ const PlanCard = ({
         selStyle,
         s.planCard,
         {
-          backgroundColor: highlight ? "#FFF0F5" : "#fff",
-          borderColor: selected ? "#FF5B8D" : "#E8E8E8",
+          backgroundColor: highlight
+            ? Theme.colors.primaryFaint
+            : Theme.colors.surface,
+          borderColor: selected ? Theme.colors.primary : Theme.colors.border,
         },
         selected && s.planCardSelected,
       ]}
     >
       {highlight && (
-        <View style={[s.planTag, { backgroundColor: "#FF5B8D" }]}>
-          <Text style={fredoka(11, "#fff")}>{t("paywall.mostPopular")}</Text>
+        <View style={[s.planTag, { backgroundColor: Theme.colors.primary }]}>
+          <Text style={fredoka(11, Theme.colors.onAccent)}>{t("paywall.mostPopular")}</Text>
         </View>
       )}
       {savingsPct != null && savingsPct > 0 && (
         <View style={s.saveTag}>
-          <Text style={fredoka(11, "#fff")}>
+          <Text style={fredoka(11, Theme.colors.onAccent)}>
             {t("paywall.save", { percent: savingsPct })}
           </Text>
         </View>
       )}
       <View style={s.planRow}>
-        <View style={[s.planRadio, selected && { borderColor: "#FF5B8D" }]}>
+        <View
+          style={[
+            s.planRadio,
+            selected && { borderColor: Theme.colors.primary },
+          ]}
+        >
           {selected && (
-            <View style={[s.planRadioFill, { backgroundColor: "#FF5B8D" }]} />
+            <View
+              style={[
+                s.planRadioFill,
+                { backgroundColor: Theme.colors.primary },
+              ]}
+            />
           )}
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={fredoka(16, "#2D2D2D")}>{label}</Text>
+          <Text style={fredoka(16, Theme.colors.ink)}>{label}</Text>
           {perMonth && (
             <Text style={s.planPerMonth}>
               {t("paywall.perMonth", { price: perMonth })} ·{" "}
@@ -311,7 +318,7 @@ const PlanCard = ({
           {introText && <Text style={s.planSub}>{introText}</Text>}
         </View>
         <View style={s.planPriceBox}>
-          <Text style={fredoka(20, highlight ? "#FF5B8D" : "#2D2D2D")}>
+          <Text style={fredoka(20, highlight ? Theme.colors.primary : Theme.colors.ink)}>
             {price}
           </Text>
           <Text style={s.planPeriod}>{period}</Text>
@@ -324,6 +331,7 @@ const PlanCard = ({
 export default function PaywallScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const { packages, state, error, isSubscribed, purchase, restore } =
     usePurchases();
 
@@ -383,9 +391,6 @@ export default function PaywallScreen() {
 
     checkSubscription();
   }, [isSubscribed, router]);
-
-  const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
-  if (!fontsLoaded) return null;
 
   const isProcessing = state === "purchasing" || state === "restoring";
 
@@ -457,15 +462,16 @@ export default function PaywallScreen() {
       >
         {/* Header: seta "voltar" à esquerda + "fechar" (✕) à direita.
             Ambos chamam router.back() e ficam desabilitados durante compra/restore. */}
-        <View style={s.header}>
+        <View style={[s.header, { paddingTop: insets.top + 8 }]}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={s.backBtn}
             disabled={isProcessing}
             accessibilityRole="button"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityLabel={t("common.back")}
+            hitSlop={HIT_SLOP}
           >
-            <Text style={{ fontSize: 20, color: "#333" }}>←</Text>
+            <Text style={{ fontSize: 20, color: Theme.colors.ink }}>←</Text>
           </TouchableOpacity>
         </View>
 
@@ -483,7 +489,7 @@ export default function PaywallScreen() {
           <Animated.Text
             entering={enterUp(150)}
             style={[
-              fredoka(30, "#2D2D2D"),
+              fredoka(30, Theme.colors.ink),
               { textAlign: "center", lineHeight: 36 },
             ]}
           >
@@ -505,7 +511,7 @@ export default function PaywallScreen() {
                 <Text style={{ fontSize: 14 }}>✅</Text>
               </View>
               <Text
-                style={[fredoka(15, "#3D3D3D"), { fontWeight: "600", flex: 1 }]}
+                style={[fredoka(15, Theme.colors.ink), { fontWeight: "600", flex: 1 }]}
               >
                 <Text style={{ fontSize: 16 }}>{f.emoji} </Text>
                 {t(f.key)}
@@ -515,19 +521,19 @@ export default function PaywallScreen() {
         </Animated.View>
 
         <View style={s.sectionHdr}>
-          <Text style={fredoka(20, "#2D2D2D")}>{t("paywall.choosePlan")}</Text>
+          <Text style={fredoka(20, Theme.colors.ink)}>{t("paywall.choosePlan")}</Text>
         </View>
 
         {state === "loading" ? (
           <View style={s.loadingPlans}>
-            <ActivityIndicator color="#FF5B8D" size="large" />
+            <ActivityIndicator color={Theme.colors.primary} size="large" />
             <Text style={[s.heroSub, { marginTop: 12 }]}>
               {t("paywall.loadingPlans")}
             </Text>
           </View>
         ) : state === "error" && packages.length === 0 ? (
           <View style={s.loadingPlans}>
-            <Text style={{ color: "#FF5B8D", textAlign: "center" }}>
+            <Text style={{ color: Theme.colors.primary, textAlign: "center" }}>
               {error ?? t("paywall.loadError")}
             </Text>
           </View>
@@ -555,7 +561,7 @@ export default function PaywallScreen() {
           <Wiggle angle={14} pause={1200}>
             <Text style={{ fontSize: 18 }}>🔒</Text>
           </Wiggle>
-          <Text style={[fredoka(13, "#C0305A"), { flex: 1 }]}>
+          <Text style={[fredoka(13, Theme.colors.primaryDeep), { flex: 1 }]}>
             {t("paywall.gateNotice")}
           </Text>
         </View>
@@ -571,8 +577,8 @@ export default function PaywallScreen() {
                     })
                   : undefined
               }
-              bg="#FF5B8D"
-              shadowBg="#C0305A"
+              bg={Theme.colors.primary}
+              shadowBg={Theme.colors.primaryDeep}
               isLoading={state === "purchasing"}
               onPress={() => runBehindGate(handleSubscribe)}
             />
@@ -592,7 +598,7 @@ export default function PaywallScreen() {
         </View>
 
         <View style={s.sectionHdr}>
-          <Text style={fredoka(20, "#2D2D2D")}>{t("paywall.whyTitle")}</Text>
+          <Text style={fredoka(20, Theme.colors.ink)}>{t("paywall.whyTitle")}</Text>
         </View>
         <ScrollView
           horizontal
@@ -608,7 +614,7 @@ export default function PaywallScreen() {
               <View style={s.reviewAvatar}>
                 <Text style={{ fontSize: 20 }}>{item.icon}</Text>
               </View>
-              <Text style={fredoka(15, "#2D2D2D")}>{t(item.titleKey)}</Text>
+              <Text style={fredoka(15, Theme.colors.ink)}>{t(item.titleKey)}</Text>
               <Text style={s.reviewText}>{t(item.textKey)}</Text>
             </Animated.View>
           ))}
@@ -645,27 +651,23 @@ export default function PaywallScreen() {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#FFF9F0" },
+  root: { flex: 1, backgroundColor: Theme.colors.bg },
   scroll: { paddingBottom: 60 },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingTop: 64,
+    paddingBottom: 16,
   },
   backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 50,
-    backgroundColor: "#FFFFFF",
+    width: 44,
+    height: 44,
+    borderRadius: Theme.radius.pill,
+    backgroundColor: Theme.colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
+    ...Shadow.card,
   },
   closeBtn: {
     width: 36,
@@ -686,12 +688,13 @@ const s = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100,
-    backgroundColor: "#FFE8F0",
+    backgroundColor: Theme.colors.primaryTint,
     top: -40,
     right: -60,
   },
   link: {
-    color: "#FF5B8D",
+    color: Theme.colors.primary,
+    fontWeight: "700",
     textDecorationLine: "underline",
   },
   heroBlob2: {
@@ -705,23 +708,20 @@ const s = StyleSheet.create({
   },
   heroSub: {
     fontSize: 15,
-    color: "#AAA",
+    color: Theme.colors.textMuted,
     fontWeight: "600",
     textAlign: "center",
     marginTop: 8,
     lineHeight: 22,
   },
   featuresCard: {
-    backgroundColor: "#fff",
-    marginHorizontal: 20,
-    borderRadius: 24,
-    padding: 20,
+    backgroundColor: Theme.colors.surface,
+    marginHorizontal: Theme.space.xl,
+    borderRadius: Theme.radius.xl,
+    padding: Theme.space.xl,
     gap: 14,
     marginBottom: 28,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
+    ...Shadow.card,
   },
   featureRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   featureCheck: {
@@ -774,10 +774,15 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   planRadioFill: { width: 12, height: 12, borderRadius: 6 },
-  planSub: { fontSize: 11, color: "#AAA", fontWeight: "600", marginTop: 2 },
+  planSub: {
+    fontSize: 11,
+    color: Theme.colors.textMuted,
+    fontWeight: "600",
+    marginTop: 2,
+  },
   planPerMonth: {
     fontSize: 12,
-    color: "#5A6B78",
+    color: Theme.colors.textMuted,
     fontWeight: "700",
     marginTop: 3,
   },
@@ -791,18 +796,22 @@ const s = StyleSheet.create({
     backgroundColor: "#2BB673",
   },
   planPriceBox: { alignItems: "flex-end" },
-  planPeriod: { fontSize: 11, color: "#AAA", fontWeight: "700" },
+  planPeriod: {
+    fontSize: 11,
+    color: Theme.colors.textMuted,
+    fontWeight: "700",
+  },
   urgency: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    backgroundColor: "#FFF0F5",
-    marginHorizontal: 20,
-    borderRadius: 16,
+    backgroundColor: Theme.colors.primaryFaint,
+    marginHorizontal: Theme.space.xl,
+    borderRadius: Theme.radius.md,
     padding: 14,
-    marginBottom: 20,
+    marginBottom: Theme.space.xl,
     borderWidth: 1.5,
-    borderColor: "#FFB8D0",
+    borderColor: Theme.colors.primarySoft,
   },
   ctaWrap: { paddingHorizontal: 20, marginBottom: 28 },
   cta3dShadow: {
@@ -825,43 +834,40 @@ const s = StyleSheet.create({
   },
   restoreText: {
     fontSize: 13,
-    color: "#AAA",
+    color: Theme.colors.textMuted,
     fontWeight: "700",
     textDecorationLine: "underline",
   },
   reviewsRow: { gap: 14, paddingHorizontal: 20, paddingBottom: 8 },
   reviewCard: {
     width: width * 0.68,
-    backgroundColor: "#fff",
-    borderRadius: 22,
+    backgroundColor: Theme.colors.surface,
+    borderRadius: Theme.radius.xl,
     padding: 18,
     gap: 6,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
+    ...Shadow.card,
   },
   reviewAvatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#FFF0F5",
+    backgroundColor: Theme.colors.primaryFaint,
     alignItems: "center",
     justifyContent: "center",
   },
   reviewStars: { fontSize: 14 },
   reviewText: {
     fontSize: 13,
-    color: "#888",
+    color: Theme.colors.textMuted,
     fontWeight: "600",
     lineHeight: 18,
   },
   finePrint: {
     fontSize: 12,
-    color: "#CCC",
+    color: Theme.colors.textMuted,
     textAlign: "center",
     paddingHorizontal: 28,
-    marginTop: 20,
+    marginTop: Theme.space.xl,
     lineHeight: 17,
     fontWeight: "600",
   },

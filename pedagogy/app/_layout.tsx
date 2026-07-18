@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
@@ -15,7 +11,7 @@ import {
 } from "@expo-google-fonts/fredoka-one";
 import * as SplashScreen from "expo-splash-screen";
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { Theme } from "@/constants/theme";
 
 import { initAnalytics } from "@/lib/analytics";
 
@@ -30,8 +26,23 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
+// O app é desenhado 100% em modo claro (fundos creme fixos em todas as telas).
+// Fixamos o tema de navegação no claro com o fundo da marca — antes, com o
+// aparelho em dark mode, o chrome de navegação ficava escuro atrás de telas
+// claras, causando flashes escuros nas transições.
+const NavTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: Theme.colors.bg,
+    primary: Theme.colors.primary,
+    card: Theme.colors.bg,
+    text: Theme.colors.ink,
+    border: Theme.colors.border,
+  },
+};
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
 
   // Aplica o idioma salvo pelo usuário (ou o do aparelho) antes de mostrar a UI,
@@ -65,7 +76,7 @@ export default function RootLayout() {
   if (!fontsLoaded || !i18nReady) return null;
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={NavTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
@@ -116,7 +127,7 @@ export default function RootLayout() {
           options={{ headerShown: false }}
         />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
     </ThemeProvider>
   );
 }
