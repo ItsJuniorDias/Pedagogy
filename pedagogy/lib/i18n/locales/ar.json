@@ -148,7 +148,26 @@
     },
     "perMonth": "≈ {{price}}/شهر",
     "billedAnnually": "تُدفع سنويًا",
-    "save": "وفّر {{percent}}%"
+    "save": "وفّر {{percent}}%",
+    "trialDurationOne": "يوم واحد",
+    "trialDurationMany": "{{days}} أيام",
+    "trialPill": "{{duration}} مجانًا",
+    "ctaTrial": "ابدأ التجربة المجانية لمدة {{duration}}",
+    "ctaNoTrial": "اشترك الآن",
+    "ctaFootnoteTrial": "ثم {{price}} · يمكنك الإلغاء في أي وقت",
+    "ctaFootnote": "{{price}} · يمكنك الإلغاء في أي وقت",
+    "anchorA11y": "12× الخطة الشهرية: {{price}}",
+    "retry": "أعد المحاولة",
+    "rating": "{{rating}} في App Store · {{count}} تقييم",
+    "timeline": {
+      "title": "كيف تعمل التجربة المجانية لمدة {{duration}}",
+      "todayLabel": "اليوم",
+      "todayText": "تم فتح الوصول الكامل. لا يوجد أي خصم الآن.",
+      "midLabel": "حتى اليوم {{day}}",
+      "midText": "ألغِ في أي وقت من الإعدادات، دون أي تكلفة.",
+      "endLabel": "اليوم {{day}}",
+      "endText": "يبدأ اشتراكك بسعر {{price}}. ألغِ قبل ذلك ولن تدفع شيئًا."
+    }
   },
   "home": {
     "greetingHi": "مرحبًا",

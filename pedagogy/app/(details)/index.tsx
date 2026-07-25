@@ -1314,7 +1314,9 @@ export default function ReadStoryScreen() {
   const handleSpeech = async () => {
     const status = await AsyncStorage.getItem("@subscription_status");
     if (status !== "active") {
-      router.push("/(paywall)");
+      // `source` separa no funil quem bate no paywall pela narração de quem
+      // bate por capítulo bloqueado ou pelo onboarding — intenções bem diferentes.
+      router.push({ pathname: "/(paywall)", params: { source: "narration" } });
       return;
     }
 
@@ -1386,7 +1388,10 @@ export default function ReadStoryScreen() {
   const switchChapter = async (idx: number) => {
     const status = await AsyncStorage.getItem("@subscription_status");
     if (chapters[idx].locked && status !== "active") {
-      router.push("/(paywall)");
+      router.push({
+        pathname: "/(paywall)",
+        params: { source: "locked_chapter" },
+      });
       return;
     }
     stopAll();

@@ -89,6 +89,8 @@ export const AnalyticsEvent = {
   STORY_COMPLETED: "story_completed",
   GAME_OPEN: "game_open",
   PAYWALL_VIEW: "paywall_view",
+  PAYWALL_PLAN_SELECTED: "paywall_plan_selected",
+  PAYWALL_DISMISSED: "paywall_dismissed",
   CONTENT_DOWNLOAD: "content_download",
   READING_SESSION: "reading_session",
 } as const;
@@ -220,6 +222,39 @@ export function trackGameOpen(args: {
 export function trackPaywallView(args?: { source?: string }): void {
   trackEvent(AnalyticsEvent.PAYWALL_VIEW, {
     ...(args?.source ? { source: args.source } : {}),
+  });
+}
+
+/**
+ * Plano escolhido no paywall (antes de tocar no CTA).
+ *
+ * Fecha o buraco central do funil: hoje dá para saber quantos VIRAM e quantos
+ * COMPRARAM, mas não quantos chegaram a ESCOLHER um plano. Quem seleciona e não
+ * conclui está travando no preço; quem nem seleciona está travando antes disso —
+ * são dois problemas diferentes, com correções diferentes.
+ */
+export function trackPaywallPlanSelected(args: {
+  productId: string;
+  period?: string;
+  source?: string;
+}): void {
+  trackEvent(AnalyticsEvent.PAYWALL_PLAN_SELECTED, {
+    content_id: args.productId,
+    ...(args.period ? { period: args.period } : {}),
+    ...(args.source ? { source: args.source } : {}),
+  });
+}
+
+/** Paywall fechado sem compra. Com `source`, mostra qual entrada só gasta
+ *  impressão (ex.: onboarding) e qual chega com intenção real (ex.: capítulo
+ *  bloqueado no meio da história). */
+export function trackPaywallDismissed(args?: {
+  source?: string;
+  productId?: string;
+}): void {
+  trackEvent(AnalyticsEvent.PAYWALL_DISMISSED, {
+    ...(args?.source ? { source: args.source } : {}),
+    ...(args?.productId ? { content_id: args.productId } : {}),
   });
 }
 

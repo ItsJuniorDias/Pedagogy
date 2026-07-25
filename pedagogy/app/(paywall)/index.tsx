@@ -1,9 +1,56 @@
-import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+/**
+ * ─── PAYWALL ─────────────────────────────────────────────────────────────────
+ * Tela de assinatura do Pedagogy. Refatorada com foco em conversão.
+ *
+ * O QUE MUDOU E POR QUÊ
+ *
+ *  1. CTA FIXO NO RODAPÉ (`StickyCta`). Antes o botão ficava depois de seis
+ *     features, dos planos e do aviso do portão parental — a primeira dobra não
+ *     tinha nenhuma ação. Agora existe ação desde o primeiro pixel.
+ *
+ *  2. O BOTÃO VENDE O TESTE, NÃO O PREÇO. "Começar 7 dias grátis" no botão;
+ *     "Depois R$ X · Cancele quando quiser" em cinza, menor, FORA dele. Antes o
+ *     preço cheio era estampado em branco dentro do botão, no exato momento do
+ *     toque.
+ *
+ *  3. ÂNCORA DE PREÇO no plano anual: 12× o mensal, riscado, ao lado do preço.
+ *     O desconto vira conta conferível em vez de afirmação ("Economize 44%").
+ *
+ *  4. LINHA DO TEMPO DO TESTE — o medo real não é o preço, é esquecer e ser
+ *     cobrado. Só aparece quando existe teste grátis de verdade.
+ *
+ *  5. PROVA SOCIAL pronta, desligada por padrão (`features/paywall/socialProof`).
+ *     Ligue preenchendo a nota REAL da App Store.
+ *
+ *  6. AVISO DO PORTÃO PARENTAL saiu de cima do CTA. Sinalizar fricção no
+ *     instante da decisão custa conversão; a informação continua na tela, junto
+ *     das letras miúdas.
+ *
+ *  7. HIERARQUIA MAIS CURTA: herói compacto, lista de features com um glifo por
+ *     linha (o ✅ era redundante com o emoji temático) e planos ordenados com o
+ *     anual primeiro — coerente com a pré-seleção.
+ *
+ * CORREÇÕES DE COMPORTAMENTO
+ *
+ *  • FONTE DA VERDADE DA ASSINATURA. A versão anterior fechava a tela sempre que
+ *    `@subscription_status === "active"` no AsyncStorage. Como esse flag nunca
+ *    era limpo, um assinante que cancelava (ou cujo teste expirava) ficava com o
+ *    paywall se fechando sozinho — sem NENHUMA forma de assinar de novo. Perda
+ *    direta de receita em reativação. Agora quem manda é o RevenueCat: o flag é
+ *    espelho, e é apagado quando o entitlement não está mais ativo.
+ *  • TESTE GRÁTIS SÓ QUANDO É GRÁTIS: qualquer `introPrice` era rotulado como
+ *    grátis, inclusive preço promocional de entrada — cobrança inesperada.
+ *  • BOTÃO DE TENTAR DE NOVO quando os planos falham ao carregar. Antes a tela
+ *    virava um beco sem saída: mensagem de erro e nada mais.
+ *  • `source` de origem no evento de paywall (onboarding, leitor, capítulo
+ *    bloqueado) — sem isso é impossível saber qual entrada converte.
+ */
+
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Dimensions,
   Linking,
   ScrollView,
   StyleSheet,
@@ -11,42 +58,58 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  PACKAGE_TYPE,
+  PurchasesPackage as Package,
+} from "react-native-purchases";
 
 import { fredoka, HIT_SLOP, Shadow, Theme } from "@/constants/theme";
 
 import {
-  Breathe,
   enterPop,
-  enterRight,
   enterUp,
   FloatY,
   PressBounce,
   Swing,
-  Wiggle,
 } from "../../shared/motion";
 
 // 🔒 Portão parental (Kids Category — Guideline 1.3)
 import { ParentalGate } from "../../shared/ParentalGate";
 
-import {
-  PurchasesPackage as Package,
-  PACKAGE_TYPE,
-} from "react-native-purchases";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePurchases } from "../../hooks/usePurchases";
-import { trackCheckoutInitiated, trackPaywallView } from "../../lib/analytics";
+import {
+  trackCheckoutInitiated,
+  trackPaywallDismissed,
+  trackPaywallPlanSelected,
+  trackPaywallView,
+} from "../../lib/analytics";
 
-import type { TFunction } from "i18next";
-import { useTranslation } from "react-i18next";
-
-const { width } = Dimensions.get("window");
+import {
+  getPackagePeriod,
+  PlanCard,
+} from "../../features/paywall/components/PlanCard";
+import { SocialProof } from "../../features/paywall/components/SocialProof";
+import { StickyCta } from "../../features/paywall/components/StickyCta";
+import { TrialTimeline } from "../../features/paywall/components/TrialTimeline";
+import {
+  FeatureList,
+  TrustRow,
+} from "../../features/paywall/components/ValueProps";
+import { tapSelection, tapSuccess } from "../../features/paywall/haptics";
+import { formatTrialDuration } from "../../features/paywall/trialCopy";
+import {
+  findAnnual,
+  getAnnualAnchorPrice,
+  getAnnualPerMonth,
+  getAnnualSavingsPct,
+  getTrialInfo,
+  sortPackagesForDisplay,
+} from "../../features/paywall/pricing";
 
 // ⚠️ ATENÇÃO: estes são links do EDITOR do Notion (app.notion.com) e podem
 // exigir login — o revisor da Apple provavelmente NÃO conseguirá abrir.
@@ -57,293 +120,54 @@ const TERMS_URL =
 const PRIVACY_URL =
   "https://app.notion.com/p/Pol-tica-de-Privacidade-Pedagogy-3750df0a2e798004a8fcd6029d729866?source=copy_link";
 
-function getPackageLabel(pkg: Package, t: TFunction): string {
-  switch (pkg.packageType) {
-    case PACKAGE_TYPE.ANNUAL:
-      return t("paywall.period.annual");
-    case PACKAGE_TYPE.SIX_MONTH:
-      return t("paywall.period.sixMonth");
-    case PACKAGE_TYPE.THREE_MONTH:
-      return t("paywall.period.threeMonth");
-    case PACKAGE_TYPE.TWO_MONTH:
-      return t("paywall.period.twoMonth");
-    case PACKAGE_TYPE.MONTHLY:
-      return t("paywall.period.monthly");
-    case PACKAGE_TYPE.WEEKLY:
-      return t("paywall.period.weekly");
-    default:
-      return pkg.identifier;
-  }
-}
-
-function getPackagePeriod(pkg: Package, t: TFunction): string {
-  switch (pkg.packageType) {
-    case PACKAGE_TYPE.ANNUAL:
-      return t("paywall.periodShort.year");
-    case PACKAGE_TYPE.SIX_MONTH:
-      return t("paywall.periodShort.sixMo");
-    case PACKAGE_TYPE.THREE_MONTH:
-      return t("paywall.periodShort.threeMo");
-    case PACKAGE_TYPE.MONTHLY:
-      return t("paywall.periodShort.month");
-    case PACKAGE_TYPE.WEEKLY:
-      return t("paywall.periodShort.week");
-    default:
-      return "";
-  }
-}
-
-function isHighlightedPackage(pkg: Package): boolean {
-  return pkg.packageType === PACKAGE_TYPE.ANNUAL;
-}
-
-// ── PREÇO/MÊS + DESCONTO (âncora de conversão do plano anual) ─────────────────
-// Reenquadra "R$99,90/ano" como "≈ R$8,33/mês", que converte muito melhor, e
-// mostra o quanto o anual economiza vs. o mensal — sem NUNCA inventar número.
-
-/** Formata um valor na moeda do produto. Intl existe no Hermes do SDK 54; há
- *  fallback simples caso alguma engine antiga falhe. */
-function formatMoney(value: number, currencyCode: string): string {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 2,
-    }).format(value);
-  } catch {
-    return `${value.toFixed(2)} ${currencyCode}`;
-  }
-}
-
-/** Preço mensal equivalente de um pacote ANUAL. Prefere o valor já formatado
- *  pelo RevenueCat (pricePerMonthString); se não vier, divide o preço por 12.
- *  Retorna null para pacotes que não sejam anuais. */
-function getAnnualPerMonth(pkg: Package): string | null {
-  if (pkg.packageType !== PACKAGE_TYPE.ANNUAL) return null;
-  const rcPerMonth = (pkg.product as { pricePerMonthString?: string | null })
-    .pricePerMonthString;
-  if (rcPerMonth) return rcPerMonth;
-  if (typeof pkg.product.price === "number" && pkg.product.price > 0) {
-    return formatMoney(pkg.product.price / 12, pkg.product.currencyCode);
-  }
-  return null;
-}
-
-/** % de economia do anual vs. o plano mensal. Só retorna um número se AMBOS os
- *  pacotes existirem e o anual for de fato mais barato por mês — caso contrário
- *  null (aí o selo de desconto simplesmente não aparece). */
-function getAnnualSavingsPct(packages: Package[]): number | null {
-  const annual = packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL);
-  const monthly = packages.find((p) => p.packageType === PACKAGE_TYPE.MONTHLY);
-  if (!annual || !monthly) return null;
-  const perMonth = annual.product.price / 12;
-  const monthlyPrice = monthly.product.price;
-  if (!(monthlyPrice > 0) || perMonth >= monthlyPrice) return null;
-  return Math.round((1 - perMonth / monthlyPrice) * 100);
-}
-
-// Empilha TODO o valor que o app entrega (antes só listava 2 itens). Cada linha
-// reforça uma promessa feita no onboarding: histórias, narração, quizzes,
-// relatórios de progresso, minijogos e ausência de anúncios.
-const FEATURES = [
-  { emoji: "📚", key: "paywall.features.stories" },
-  { emoji: "🔊", key: "paywall.features.narration" },
-  { emoji: "🧩", key: "paywall.features.activities" },
-  { emoji: "📊", key: "paywall.features.progress" },
-  { emoji: "🎮", key: "paywall.features.games" },
-  { emoji: "🚫", key: "paywall.features.noAds" },
-] as const;
-
-// ⚠️ Não use depoimentos inventados — a Apple rejeita conteúdo enganoso
-// (Guideline 2.3). Estes são selos de confiança factuais. Se quiser exibir
-// avaliações, use SOMENTE reviews reais da App Store.
-const TRUST = [
-  {
-    icon: "🔒",
-    titleKey: "paywall.trust.safeTitle",
-    textKey: "paywall.trust.safeText",
-  },
-  {
-    icon: "🚫",
-    titleKey: "paywall.trust.noAdsTitle",
-    textKey: "paywall.trust.noAdsText",
-  },
-  {
-    icon: "↩️",
-    titleKey: "paywall.trust.cancelTitle",
-    textKey: "paywall.trust.cancelText",
-  },
-] as const;
-
-const BouncyButton = ({
-  label,
-  subLabel,
-  bg,
-  shadowBg,
-  onPress,
-  isLoading,
-}: any) => (
-  <PressBounce onPress={onPress} disabled={isLoading} scaleTo={0.96}>
-    <View style={[s.cta3dShadow, { backgroundColor: shadowBg }]} />
-    <View
-      style={[s.ctaBtn, { backgroundColor: bg, opacity: isLoading ? 0.7 : 1 }]}
-    >
-      {isLoading ? (
-        <ActivityIndicator color="#fff" />
-      ) : (
-        <>
-          <Text style={fredoka(20, Theme.colors.onAccent)}>{label}</Text>
-          {subLabel && (
-            <Text
-              style={{
-                color: "rgba(255,255,255,0.8)",
-                fontSize: 13,
-                fontWeight: "700",
-                marginTop: 2,
-              }}
-            >
-              {subLabel}
-            </Text>
-          )}
-        </>
-      )}
-    </View>
-  </PressBounce>
-);
-
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
-
-interface PlanCardProps {
-  pkg: Package;
-  selected: boolean;
-  onSelect: () => void;
-  /** Preço mensal equivalente (só preenchido no plano anual). */
-  perMonth?: string | null;
-  /** % de economia vs. mensal (só preenchido no plano anual). */
-  savingsPct?: number | null;
-}
-
-const PlanCard = ({
-  pkg,
-  selected,
-  onSelect,
-  perMonth,
-  savingsPct,
-}: PlanCardProps) => {
-  const { t } = useTranslation();
-  const highlight = isHighlightedPackage(pkg);
-  const label = getPackageLabel(pkg, t);
-  const period = getPackagePeriod(pkg, t);
-  const price = pkg.product.priceString;
-
-  // Rótulo de teste grátis (só aparece se houver introPrice). A unidade vem do
-  // SDK em inglês (DAY/WEEK/MONTH/YEAR) → mapeamos para uma chave traduzida.
-  let introText: string | null = null;
-  const intro = pkg.product.introPrice;
-  if (intro?.priceString) {
-    const raw = intro.periodUnit.toLowerCase();
-    const unitKey = (
-      ["day", "week", "month", "year"].includes(raw) ? raw : "day"
-    ) as "day" | "week" | "month" | "year";
-    introText = t("paywall.tryFree", {
-      count: intro.periodNumberOfUnits,
-      unit: t(`paywall.units.${unitKey}`),
-    });
-  }
-
-  // O card selecionado "incha" levemente com mola, como se fosse abraçado
-  const scale = useSharedValue(1);
-  useEffect(() => {
-    scale.value = withSpring(selected ? 1.03 : 1, {
-      damping: 11,
-      stiffness: 180,
-    });
-  }, [selected, scale]);
-  const selStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  return (
-    <AnimatedTouchable
-      onPress={onSelect}
-      activeOpacity={0.85}
-      style={[
-        selStyle,
-        s.planCard,
-        {
-          backgroundColor: highlight
-            ? Theme.colors.primaryFaint
-            : Theme.colors.surface,
-          borderColor: selected ? Theme.colors.primary : Theme.colors.border,
-        },
-        selected && s.planCardSelected,
-      ]}
-    >
-      {highlight && (
-        <View style={[s.planTag, { backgroundColor: Theme.colors.primary }]}>
-          <Text style={fredoka(11, Theme.colors.onAccent)}>{t("paywall.mostPopular")}</Text>
-        </View>
-      )}
-      {savingsPct != null && savingsPct > 0 && (
-        <View style={s.saveTag}>
-          <Text style={fredoka(11, Theme.colors.onAccent)}>
-            {t("paywall.save", { percent: savingsPct })}
-          </Text>
-        </View>
-      )}
-      <View style={s.planRow}>
-        <View
-          style={[
-            s.planRadio,
-            selected && { borderColor: Theme.colors.primary },
-          ]}
-        >
-          {selected && (
-            <View
-              style={[
-                s.planRadioFill,
-                { backgroundColor: Theme.colors.primary },
-              ]}
-            />
-          )}
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={fredoka(16, Theme.colors.ink)}>{label}</Text>
-          {perMonth && (
-            <Text style={s.planPerMonth}>
-              {t("paywall.perMonth", { price: perMonth })} ·{" "}
-              {t("paywall.billedAnnually")}
-            </Text>
-          )}
-          {introText && <Text style={s.planSub}>{introText}</Text>}
-        </View>
-        <View style={s.planPriceBox}>
-          <Text style={fredoka(20, highlight ? Theme.colors.primary : Theme.colors.ink)}>
-            {price}
-          </Text>
-          <Text style={s.planPeriod}>{period}</Text>
-        </View>
-      </View>
-    </AnimatedTouchable>
-  );
-};
+/** Espelho local do entitlement. Continua existindo porque outras telas leem
+ *  este flag de forma síncrona; a VERDADE, porém, é sempre o RevenueCat. */
+const SUBSCRIPTION_FLAG = "@subscription_status";
 
 export default function PaywallScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { packages, state, error, isSubscribed, purchase, restore } =
-    usePurchases();
 
-  const defaultPkg =
-    packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL) ??
-    packages[0] ??
-    null;
-  const [selectedPkg, setSelectedPkg] = useState<Package | null>(defaultPkg);
+  // De onde o usuário chegou: "onboarding", "reader", "locked_chapter"…
+  // Permite separar no funil qual entrada converte (e qual só gasta impressão).
+  const params = useLocalSearchParams<{ source?: string }>();
+  const source = typeof params.source === "string" ? params.source : "unknown";
 
-  // 🔒 Estado do portão parental.
-  // Toda ação sensível (compra, restore e links externos) passa por aqui:
-  // guardamos a ação pendente e só a executamos quando um adulto acerta a conta.
+  const {
+    packages,
+    state,
+    error,
+    isSubscribed,
+    customerInfo,
+    purchase,
+    restore,
+    refresh,
+  } = usePurchases();
+
+  const orderedPackages = useMemo(
+    () => sortPackagesForDisplay(packages),
+    [packages],
+  );
+
+  const [selectedPkg, setSelectedPkg] = useState<Package | null>(null);
+  const [ctaHeight, setCtaHeight] = useState(150);
+
+  /**
+   * Sai do paywall com segurança.
+   *
+   * `router.back()` sozinho não bastava: o onboarding entra aqui com
+   * `router.replace`, então o paywall é a ÚNICA tela da pilha e o back vira
+   * no-op — o usuário ficava preso na tela mesmo depois de assinar. Quando não
+   * há para onde voltar, seguimos para as abas.
+   */
+  const dismiss = useCallback(() => {
+    if (router.canGoBack()) router.back();
+    else router.replace("/(tabs)");
+  }, [router]);
+
+  // 🔒 Estado do portão parental. Toda ação sensível (compra, restore e links
+  // externos) guarda a ação pendente e só executa quando um adulto acerta a conta.
   const [gateVisible, setGateVisible] = useState(false);
   const pendingAction = useRef<(() => void) | null>(null);
 
@@ -351,11 +175,6 @@ export default function PaywallScreen() {
     pendingAction.current = action;
     setGateVisible(true);
   };
-
-  // ── TRACKING: paywall exibido (1× ao abrir a tela) ──
-  useEffect(() => {
-    trackPaywallView({ source: "reader" });
-  }, []);
 
   const handleGateSuccess = () => {
     const action = pendingAction.current;
@@ -369,38 +188,97 @@ export default function PaywallScreen() {
     setGateVisible(false);
   };
 
+  // ── TRACKING: paywall exibido (1× por abertura, com a origem real) ──
   useEffect(() => {
-    if (!selectedPkg && packages.length > 0) {
-      setSelectedPkg(
-        packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL) ??
-          packages[0],
-      );
+    trackPaywallView({ source });
+  }, [source]);
+
+  // ── Pré-seleção: anual por padrão (melhor LTV e é o plano destacado) ──
+  useEffect(() => {
+    if (selectedPkg || orderedPackages.length === 0) return;
+    setSelectedPkg(findAnnual(orderedPackages) ?? orderedPackages[0]);
+  }, [orderedPackages, selectedPkg]);
+
+  /**
+   * Sincroniza o flag local com o RevenueCat.
+   *
+   * Só age depois que o `customerInfo` chegou — antes disso `isSubscribed` é
+   * `false` só porque ainda está carregando, e fechar/limpar aqui seria decidir
+   * no escuro.
+   */
+  useEffect(() => {
+    if (!customerInfo) return;
+
+    if (isSubscribed) {
+      void AsyncStorage.setItem(SUBSCRIPTION_FLAG, "active");
+      dismiss();
+      return;
     }
-  }, [packages, selectedPkg]);
 
-  // ✅ FIX: router.back() devolve o usuário à história de onde veio
-  // em vez de router.replace("/home") que quebrava o fluxo de navegação
-  useEffect(() => {
-    const checkSubscription = async () => {
-      const status = await AsyncStorage.getItem("@subscription_status");
-
-      if (status === "active") {
-        router.back();
-      }
-    };
-
-    checkSubscription();
-  }, [isSubscribed, router]);
+    // Entitlement inativo: apaga flag velho para que o paywall volte a abrir
+    // normalmente (reativação de quem cancelou ou teve o teste expirado).
+    void AsyncStorage.removeItem(SUBSCRIPTION_FLAG);
+  }, [customerInfo, isSubscribed, dismiss]);
 
   const isProcessing = state === "purchasing" || state === "restoring";
 
-  // Desconto do anual vs. mensal — calculado 1× a partir dos pacotes carregados.
-  const annualSavingsPct = getAnnualSavingsPct(packages);
+  const annualSavingsPct = useMemo(
+    () => getAnnualSavingsPct(packages),
+    [packages],
+  );
+  const annualAnchor = useMemo(() => getAnnualAnchorPrice(packages), [packages]);
+
+  const trial = useMemo(() => getTrialInfo(selectedPkg), [selectedPkg]);
+
+  // Uma única fonte de texto para a duração: selo do card, botão e linha do
+  // tempo dizem exatamente a mesma coisa.
+  const trialDuration = useMemo(
+    () => (trial ? formatTrialDuration(trial.days, t) : null),
+    [trial, t],
+  );
+
+  const priceString = selectedPkg?.product.priceString ?? "";
+  const periodString = selectedPkg ? getPackagePeriod(selectedPkg, t) : "";
+
+  // ── Texto do CTA: o teste grátis é o produto aqui, não o preço ──
+  const ctaLabel = useMemo(() => {
+    if (!selectedPkg || !trialDuration) return t("paywall.ctaNoTrial");
+    return t("paywall.ctaTrial", { duration: trialDuration });
+  }, [selectedPkg, trialDuration, t]);
+
+  const ctaFootnote = useMemo(() => {
+    if (!selectedPkg) return null;
+    const price = `${priceString}${periodString}`;
+    return trial
+      ? t("paywall.ctaFootnoteTrial", { price })
+      : t("paywall.ctaFootnote", { price });
+  }, [selectedPkg, trial, priceString, periodString, t]);
+
+  const handleSelect = useCallback(
+    (pkg: Package) => {
+      if (isProcessing) return;
+      tapSelection();
+      setSelectedPkg(pkg);
+      trackPaywallPlanSelected({
+        productId: pkg.product.identifier,
+        period: pkg.packageType,
+        source,
+      });
+    },
+    [isProcessing, source],
+  );
+
+  const handleClose = useCallback(() => {
+    trackPaywallDismissed({
+      source,
+      productId: selectedPkg?.product.identifier,
+    });
+    dismiss();
+  }, [dismiss, selectedPkg, source]);
 
   const handleSubscribe = async () => {
     if (!selectedPkg) return;
 
-    // ── TRACKING: checkout iniciado (usuário tocou em "assinar") ──
     trackCheckoutInitiated({
       productId: selectedPkg.product.identifier,
       price: selectedPkg.product.price,
@@ -410,61 +288,57 @@ export default function PaywallScreen() {
     const success = await purchase(selectedPkg);
 
     if (success) {
-      // ✅ FIX: só marca como ativo SE a compra realmente deu certo
-      await AsyncStorage.setItem("@subscription_status", "active");
+      // Espelha o entitlement; a verdade continua sendo o RevenueCat.
+      await AsyncStorage.setItem(SUBSCRIPTION_FLAG, "active");
+      tapSuccess();
 
       Alert.alert(
         t("paywall.alerts.activeTitle"),
         t("paywall.alerts.activeBody"),
-        [{ text: t("paywall.alerts.activeCta"), onPress: () => router.back() }],
+        [{ text: t("paywall.alerts.activeCta"), onPress: dismiss }],
       );
     } else if (state === "error" && error) {
-      // ✅ FIX: erro só exibe alerta — não navega automaticamente,
-      // permitindo o usuário tentar novamente
+      // Erro só exibe alerta — não navega, permitindo tentar de novo.
       Alert.alert(t("paywall.alerts.errorTitle"), error);
     }
-    // state === 'cancelled': nenhuma mensagem — usuário cancelou voluntariamente
+    // state === "cancelled": usuário desistiu por conta própria, sem mensagem.
   };
 
   const handleRestore = async () => {
     const found = await restore();
 
     if (found) {
-      // ✅ FIX: restaurou com sucesso → volta para a história
       Alert.alert(
         t("paywall.alerts.restoredTitle"),
         t("paywall.alerts.restoredBody"),
         [
           {
             text: t("paywall.alerts.restoredCta"),
-            onPress: () => router.back(),
+            onPress: dismiss,
           },
         ],
       );
     } else if (state === "error" && error) {
       Alert.alert(t("paywall.alerts.restoreFailedTitle"), error);
     } else {
-      // ✅ FIX: sem assinatura encontrada → apenas avisa, não navega para fora
-      Alert.alert(
-        t("paywall.alerts.noSubTitle"),
-        t("paywall.alerts.noSubBody"),
-      );
+      Alert.alert(t("paywall.alerts.noSubTitle"), t("paywall.alerts.noSubBody"));
     }
   };
 
-  const currentPkg = selectedPkg;
+  const plansUnavailable = state === "error" && packages.length === 0;
 
   return (
     <View style={s.root}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={s.scroll}
+        contentContainerStyle={[
+          s.scroll,
+          { paddingBottom: ctaHeight + Theme.space.xxl },
+        ]}
       >
-        {/* Header: seta "voltar" à esquerda + "fechar" (✕) à direita.
-            Ambos chamam router.back() e ficam desabilitados durante compra/restore. */}
-        <View style={[s.header, { paddingTop: insets.top + 8 }]}>
+        <View style={[s.header, { paddingTop: insets.top + Theme.space.sm }]}>
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={handleClose}
             style={s.backBtn}
             disabled={isProcessing}
             accessibilityRole="button"
@@ -475,80 +349,83 @@ export default function PaywallScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* ── HERÓI (compacto: o objetivo é chegar aos planos rápido) ── */}
         <View style={s.hero}>
           <View style={s.heroBlob1} />
           <View style={s.heroBlob2} />
-          {/* O livrão flutua e balança como num sonho */}
           <Animated.View entering={enterPop(0)}>
-            <FloatY distance={8} duration={2400}>
+            <FloatY distance={7} duration={2400}>
               <Swing angle={4} duration={3200}>
-                <Text style={{ fontSize: 72, marginBottom: 8 }}>📚</Text>
+                <Text style={{ fontSize: 56, marginBottom: 4 }}>📚</Text>
               </Swing>
             </FloatY>
           </Animated.View>
           <Animated.Text
-            entering={enterUp(150)}
+            entering={enterUp(120)}
             style={[
-              fredoka(30, Theme.colors.ink),
-              { textAlign: "center", lineHeight: 36 },
+              fredoka(26, Theme.colors.ink),
+              { textAlign: "center", lineHeight: 32 },
             ]}
           >
             {t("paywall.hero.title")}
           </Animated.Text>
-          <Animated.Text entering={enterUp(280)} style={s.heroSub}>
+          <Animated.Text entering={enterUp(200)} style={s.heroSub}>
             {t("paywall.hero.subtitle")}
           </Animated.Text>
         </View>
 
-        <Animated.View entering={enterUp(350)} style={s.featuresCard}>
-          {FEATURES.map((f, i) => (
-            <Animated.View
-              key={f.key}
-              entering={enterRight(450 + i * 120)}
-              style={s.featureRow}
-            >
-              <View style={s.featureCheck}>
-                <Text style={{ fontSize: 14 }}>✅</Text>
-              </View>
-              <Text
-                style={[fredoka(15, Theme.colors.ink), { fontWeight: "600", flex: 1 }]}
-              >
-                <Text style={{ fontSize: 16 }}>{f.emoji} </Text>
-                {t(f.key)}
-              </Text>
-            </Animated.View>
-          ))}
-        </Animated.View>
+        {/* Nota real da App Store — não renderiza nada enquanto não houver dado. */}
+        <SocialProof />
 
+        <FeatureList />
+
+        {/* ── PLANOS ── */}
         <View style={s.sectionHdr}>
-          <Text style={fredoka(20, Theme.colors.ink)}>{t("paywall.choosePlan")}</Text>
+          <Text style={fredoka(20, Theme.colors.ink)}>
+            {t("paywall.choosePlan")}
+          </Text>
         </View>
 
-        {state === "loading" ? (
-          <View style={s.loadingPlans}>
+        {state === "loading" && packages.length === 0 ? (
+          <View style={s.plansFallback}>
             <ActivityIndicator color={Theme.colors.primary} size="large" />
-            <Text style={[s.heroSub, { marginTop: 12 }]}>
+            <Text style={[s.heroSub, { marginTop: Theme.space.md }]}>
               {t("paywall.loadingPlans")}
             </Text>
           </View>
-        ) : state === "error" && packages.length === 0 ? (
-          <View style={s.loadingPlans}>
-            <Text style={{ color: Theme.colors.primary, textAlign: "center" }}>
-              {error ?? t("paywall.loadError")}
-            </Text>
+        ) : plansUnavailable ? (
+          // Antes isto era um beco sem saída: erro na tela e nenhuma saída.
+          <View style={s.plansFallback}>
+            <Text style={s.errorText}>{error ?? t("paywall.loadError")}</Text>
+            <PressBounce
+              onPress={() => void refresh()}
+              scaleTo={0.96}
+              accessibilityRole="button"
+              accessibilityLabel={t("paywall.retry")}
+              style={s.retryBtn}
+            >
+              <Text style={fredoka(15, Theme.colors.onAccent)}>
+                {t("paywall.retry")}
+              </Text>
+            </PressBounce>
           </View>
         ) : (
           <View style={s.plansCol}>
-            {packages.map((pkg, i) => (
-              <Animated.View key={pkg.identifier} entering={enterPop(i * 130)}>
+            {orderedPackages.map((pkg, i) => (
+              <Animated.View key={pkg.identifier} entering={enterPop(i * 110)}>
                 <PlanCard
                   pkg={pkg}
                   selected={selectedPkg?.identifier === pkg.identifier}
-                  onSelect={() => !isProcessing && setSelectedPkg(pkg)}
+                  onSelect={() => handleSelect(pkg)}
                   perMonth={getAnnualPerMonth(pkg)}
                   savingsPct={
                     pkg.packageType === PACKAGE_TYPE.ANNUAL
                       ? annualSavingsPct
+                      : null
+                  }
+                  anchorPrice={
+                    pkg.packageType === PACKAGE_TYPE.ANNUAL
+                      ? annualAnchor
                       : null
                   }
                 />
@@ -557,68 +434,29 @@ export default function PaywallScreen() {
           </View>
         )}
 
-        <View style={s.urgency}>
-          <Wiggle angle={14} pause={1200}>
-            <Text style={{ fontSize: 18 }}>🔒</Text>
-          </Wiggle>
-          <Text style={[fredoka(13, Theme.colors.primaryDeep), { flex: 1 }]}>
-            {t("paywall.gateNotice")}
-          </Text>
-        </View>
-
-        <View style={s.ctaWrap}>
-          <Breathe scaleTo={1.03} duration={900}>
-            <BouncyButton
-              label={t("paywall.cta")}
-              subLabel={
-                currentPkg
-                  ? t("paywall.ctaSub", {
-                      price: `${currentPkg.product.priceString}${getPackagePeriod(currentPkg, t)}`,
-                    })
-                  : undefined
-              }
-              bg={Theme.colors.primary}
-              shadowBg={Theme.colors.primaryDeep}
-              isLoading={state === "purchasing"}
-              onPress={() => runBehindGate(handleSubscribe)}
-            />
-          </Breathe>
-
-          <TouchableOpacity
-            onPress={() => runBehindGate(handleRestore)}
-            disabled={isProcessing}
-            style={s.restoreBtn}
-          >
-            {state === "restoring" ? (
-              <ActivityIndicator color="#AAA" size="small" />
-            ) : (
-              <Text style={s.restoreText}>{t("paywall.restore")}</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+        {/* ── LINHA DO TEMPO (só quando existe teste grátis de verdade) ── */}
+        {trial && trialDuration && (
+          <TrialTimeline
+            days={trial.days}
+            durationLabel={trialDuration}
+            price={priceString}
+            period={periodString}
+          />
+        )}
 
         <View style={s.sectionHdr}>
-          <Text style={fredoka(20, Theme.colors.ink)}>{t("paywall.whyTitle")}</Text>
+          <Text style={fredoka(20, Theme.colors.ink)}>
+            {t("paywall.whyTitle")}
+          </Text>
         </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={s.reviewsRow}
-        >
-          {TRUST.map((item, i) => (
-            <Animated.View
-              key={item.titleKey}
-              entering={enterRight(200 + i * 140)}
-              style={s.reviewCard}
-            >
-              <View style={s.reviewAvatar}>
-                <Text style={{ fontSize: 20 }}>{item.icon}</Text>
-              </View>
-              <Text style={fredoka(15, Theme.colors.ink)}>{t(item.titleKey)}</Text>
-              <Text style={s.reviewText}>{t(item.textKey)}</Text>
-            </Animated.View>
-          ))}
-        </ScrollView>
+        <TrustRow />
+
+        {/* Aviso do portão parental: informação de rodapé, não obstáculo
+            plantado logo antes do botão. */}
+        <View style={s.gateNotice}>
+          <Text style={{ fontSize: 14 }}>🔒</Text>
+          <Text style={s.gateNoticeText}>{t("paywall.gateNotice")}</Text>
+        </View>
 
         <Text style={s.finePrint}>
           {t("paywall.finePrint")}{" "}
@@ -640,6 +478,18 @@ export default function PaywallScreen() {
         </Text>
       </ScrollView>
 
+      {/* ── CTA FIXO: visível desde o primeiro pixel ── */}
+      <StickyCta
+        label={ctaLabel}
+        footnote={ctaFootnote}
+        loading={state === "purchasing"}
+        restoring={state === "restoring"}
+        disabled={!selectedPkg || isProcessing}
+        onPress={() => runBehindGate(handleSubscribe)}
+        onRestore={() => runBehindGate(handleRestore)}
+        onHeight={setCtaHeight}
+      />
+
       {/* 🔒 Modal do portão parental — sobrepõe a tela inteira */}
       <ParentalGate
         visible={gateVisible}
@@ -652,13 +502,12 @@ export default function PaywallScreen() {
 
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: Theme.colors.bg },
-  scroll: { paddingBottom: 60 },
+  scroll: { paddingBottom: Theme.space.xxxl },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingHorizontal: Theme.space.lg,
+    paddingBottom: Theme.space.sm,
   },
   backBtn: {
     width: 44,
@@ -669,205 +518,92 @@ const s = StyleSheet.create({
     justifyContent: "center",
     ...Shadow.card,
   },
-  closeBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#F0F0F0",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   hero: {
     alignItems: "center",
-    paddingHorizontal: 24,
-    paddingBottom: 28,
+    paddingHorizontal: Theme.space.xxl,
+    paddingBottom: Theme.space.xl,
     position: "relative",
   },
   heroBlob1: {
     position: "absolute",
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
     backgroundColor: Theme.colors.primaryTint,
     top: -40,
     right: -60,
+  },
+  heroBlob2: {
+    position: "absolute",
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: Theme.colors.accentTint,
+    top: 50,
+    left: -60,
+  },
+  heroSub: {
+    fontSize: 14,
+    color: Theme.colors.textMuted,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: Theme.space.sm,
+    lineHeight: 20,
+  },
+  sectionHdr: {
+    paddingHorizontal: Theme.space.xl,
+    marginBottom: Theme.space.md,
+  },
+  plansCol: {
+    paddingHorizontal: Theme.space.xl,
+    gap: Theme.space.md,
+    marginBottom: Theme.space.xxl,
+  },
+  plansFallback: {
+    paddingVertical: Theme.space.xxxl,
+    paddingHorizontal: Theme.space.xxl,
+    alignItems: "center",
+    marginBottom: Theme.space.lg,
+    gap: Theme.space.lg,
+  },
+  errorText: {
+    color: Theme.colors.textMuted,
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  retryBtn: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: Theme.space.xxl,
+    borderRadius: Theme.radius.pill,
+    backgroundColor: Theme.colors.primary,
+  },
+  gateNotice: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Theme.space.sm,
+    marginTop: Theme.space.xxl,
+    paddingHorizontal: Theme.space.xxl,
+  },
+  gateNoticeText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: Theme.colors.textMuted,
   },
   link: {
     color: Theme.colors.primary,
     fontWeight: "700",
     textDecorationLine: "underline",
   },
-  heroBlob2: {
-    position: "absolute",
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "#E8F4FF",
-    top: 60,
-    left: -60,
-  },
-  heroSub: {
-    fontSize: 15,
-    color: Theme.colors.textMuted,
-    fontWeight: "600",
-    textAlign: "center",
-    marginTop: 8,
-    lineHeight: 22,
-  },
-  featuresCard: {
-    backgroundColor: Theme.colors.surface,
-    marginHorizontal: Theme.space.xl,
-    borderRadius: Theme.radius.xl,
-    padding: Theme.space.xl,
-    gap: 14,
-    marginBottom: 28,
-    ...Shadow.card,
-  },
-  featureRow: { flexDirection: "row", alignItems: "center", gap: 12 },
-  featureCheck: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "#E8FFE8",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  sectionHdr: { paddingHorizontal: 20, marginBottom: 14 },
-  plansCol: { paddingHorizontal: 20, gap: 10, marginBottom: 16 },
-  loadingPlans: {
-    paddingVertical: 40,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  planCard: {
-    borderRadius: 20,
-    borderWidth: 2,
-    padding: 16,
-    position: "relative",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-  },
-  planCardSelected: { elevation: 5 },
-  planTag: {
-    position: "absolute",
-    top: -10,
-    left: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 10,
-  },
-  planRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    marginTop: 4,
-  },
-  planRadio: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    borderColor: "#DDD",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  planRadioFill: { width: 12, height: 12, borderRadius: 6 },
-  planSub: {
-    fontSize: 11,
-    color: Theme.colors.textMuted,
-    fontWeight: "600",
-    marginTop: 2,
-  },
-  planPerMonth: {
-    fontSize: 12,
-    color: Theme.colors.textMuted,
-    fontWeight: "700",
-    marginTop: 3,
-  },
-  saveTag: {
-    position: "absolute",
-    top: -10,
-    right: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
-    backgroundColor: "#2BB673",
-  },
-  planPriceBox: { alignItems: "flex-end" },
-  planPeriod: {
-    fontSize: 11,
-    color: Theme.colors.textMuted,
-    fontWeight: "700",
-  },
-  urgency: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    backgroundColor: Theme.colors.primaryFaint,
-    marginHorizontal: Theme.space.xl,
-    borderRadius: Theme.radius.md,
-    padding: 14,
-    marginBottom: Theme.space.xl,
-    borderWidth: 1.5,
-    borderColor: Theme.colors.primarySoft,
-  },
-  ctaWrap: { paddingHorizontal: 20, marginBottom: 28 },
-  cta3dShadow: {
-    position: "absolute",
-    bottom: -7,
-    left: 5,
-    right: -5,
-    height: 62,
-    borderRadius: 32,
-  },
-  ctaBtn: {
-    height: 62,
-    borderRadius: 32,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  restoreBtn: {
-    alignItems: "center",
-    paddingVertical: 14,
-  },
-  restoreText: {
-    fontSize: 13,
-    color: Theme.colors.textMuted,
-    fontWeight: "700",
-    textDecorationLine: "underline",
-  },
-  reviewsRow: { gap: 14, paddingHorizontal: 20, paddingBottom: 8 },
-  reviewCard: {
-    width: width * 0.68,
-    backgroundColor: Theme.colors.surface,
-    borderRadius: Theme.radius.xl,
-    padding: 18,
-    gap: 6,
-    ...Shadow.card,
-  },
-  reviewAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Theme.colors.primaryFaint,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  reviewStars: { fontSize: 14 },
-  reviewText: {
-    fontSize: 13,
-    color: Theme.colors.textMuted,
-    fontWeight: "600",
-    lineHeight: 18,
-  },
   finePrint: {
     fontSize: 12,
     color: Theme.colors.textMuted,
     textAlign: "center",
-    paddingHorizontal: 28,
-    marginTop: Theme.space.xl,
+    paddingHorizontal: Theme.space.xxl + 4,
+    marginTop: Theme.space.md,
     lineHeight: 17,
     fontWeight: "600",
   },

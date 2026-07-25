@@ -237,7 +237,10 @@ export default function AppScreen() {
     if (status === "active") {
       router.push("/(tabs)");
     } else {
-      router.replace("/(paywall)");
+      router.replace({
+        pathname: "/(paywall)",
+        params: { source: "onboarding" },
+      });
     }
   };
 

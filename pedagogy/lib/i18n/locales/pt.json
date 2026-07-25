@@ -148,7 +148,26 @@
     },
     "perMonth": "≈ {{price}}/mês",
     "billedAnnually": "cobrado anualmente",
-    "save": "Economize {{percent}}%"
+    "save": "Economize {{percent}}%",
+    "trialDurationOne": "1 dia",
+    "trialDurationMany": "{{days}} dias",
+    "trialPill": "{{duration}} grátis",
+    "ctaTrial": "Começar teste grátis de {{duration}}",
+    "ctaNoTrial": "Assinar agora",
+    "ctaFootnoteTrial": "Depois {{price}} · Cancele quando quiser",
+    "ctaFootnote": "{{price}} · Cancele quando quiser",
+    "anchorA11y": "12× o plano mensal: {{price}}",
+    "retry": "Tentar de novo",
+    "rating": "{{rating}} na App Store · {{count}} avaliações",
+    "timeline": {
+      "title": "Como funciona o teste de {{duration}}",
+      "todayLabel": "Hoje",
+      "todayText": "Acesso completo liberado. Nada é cobrado agora.",
+      "midLabel": "Até o dia {{day}}",
+      "midText": "Cancele quando quiser nas Configurações, sem custo.",
+      "endLabel": "Dia {{day}}",
+      "endText": "Sua assinatura começa em {{price}}. Cancele antes e não paga nada."
+    }
   },
   "home": {
     "greetingHi": "Oi,",

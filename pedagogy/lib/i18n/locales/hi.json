@@ -148,7 +148,26 @@
     },
     "perMonth": "≈ {{price}}/माह",
     "billedAnnually": "सालाना बिलिंग",
-    "save": "{{percent}}% बचाएँ"
+    "save": "{{percent}}% बचाएँ",
+    "trialDurationOne": "1 दिन",
+    "trialDurationMany": "{{days}} दिन",
+    "trialPill": "{{duration}} मुफ़्त",
+    "ctaTrial": "{{duration}} का मुफ़्त ट्रायल शुरू करें",
+    "ctaNoTrial": "अभी सब्सक्राइब करें",
+    "ctaFootnoteTrial": "फिर {{price}} · कभी भी रद्द करें",
+    "ctaFootnote": "{{price}} · कभी भी रद्द करें",
+    "anchorA11y": "मासिक प्लान का 12×: {{price}}",
+    "retry": "फिर कोशिश करें",
+    "rating": "App Store पर {{rating}} · {{count}} रेटिंग",
+    "timeline": {
+      "title": "{{duration}} का ट्रायल कैसे काम करता है",
+      "todayLabel": "आज",
+      "todayText": "पूरा एक्सेस अनलॉक। अभी कोई शुल्क नहीं।",
+      "midLabel": "दिन {{day}} तक",
+      "midText": "सेटिंग्स में कभी भी, बिना किसी शुल्क के रद्द करें।",
+      "endLabel": "दिन {{day}}",
+      "endText": "आपकी सदस्यता {{price}} से शुरू होगी। उससे पहले रद्द करें और कुछ भी न दें।"
+    }
   },
   "home": {
     "greetingHi": "नमस्ते,",

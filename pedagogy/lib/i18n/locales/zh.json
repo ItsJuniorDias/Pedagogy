@@ -148,7 +148,26 @@
     },
     "perMonth": "≈ {{price}}/月",
     "billedAnnually": "按年计费",
-    "save": "省 {{percent}}%"
+    "save": "省 {{percent}}%",
+    "trialDurationOne": "1 天",
+    "trialDurationMany": "{{days}} 天",
+    "trialPill": "{{duration}}免费试用",
+    "ctaTrial": "开始 {{duration}} 免费试用",
+    "ctaNoTrial": "立即订阅",
+    "ctaFootnoteTrial": "之后 {{price}} · 随时可取消",
+    "ctaFootnote": "{{price}} · 随时可取消",
+    "anchorA11y": "月付方案的 12 倍：{{price}}",
+    "retry": "重试",
+    "rating": "App Store {{rating}} 分 · {{count}} 条评价",
+    "timeline": {
+      "title": "{{duration}} 免费试用怎么用",
+      "todayLabel": "今天",
+      "todayText": "完整权限已解锁，现在不收取任何费用。",
+      "midLabel": "第 {{day}} 天之前",
+      "midText": "随时可在“设置”中取消，不产生费用。",
+      "endLabel": "第 {{day}} 天",
+      "endText": "订阅将以 {{price}} 开始。在此之前取消则不收取任何费用。"
+    }
   },
   "home": {
     "greetingHi": "你好，",

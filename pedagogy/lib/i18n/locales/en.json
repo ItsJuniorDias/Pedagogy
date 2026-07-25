@@ -148,7 +148,26 @@
     },
     "perMonth": "≈ {{price}}/mo",
     "billedAnnually": "billed annually",
-    "save": "Save {{percent}}%"
+    "save": "Save {{percent}}%",
+    "trialDurationOne": "1-day",
+    "trialDurationMany": "{{days}}-day",
+    "trialPill": "{{duration}} free trial",
+    "ctaTrial": "Start your {{duration}} free trial",
+    "ctaNoTrial": "Subscribe now",
+    "ctaFootnoteTrial": "Then {{price}} · Cancel anytime",
+    "ctaFootnote": "{{price}} · Cancel anytime",
+    "anchorA11y": "12× the monthly plan: {{price}}",
+    "retry": "Try again",
+    "rating": "{{rating}} on the App Store · {{count}} ratings",
+    "timeline": {
+      "title": "How your {{duration}} free trial works",
+      "todayLabel": "Today",
+      "todayText": "Full access unlocked. Nothing is charged now.",
+      "midLabel": "Until day {{day}}",
+      "midText": "Cancel anytime in Settings, at no cost.",
+      "endLabel": "Day {{day}}",
+      "endText": "Your subscription starts at {{price}}. Cancel before then and you pay nothing."
+    }
   },
   "home": {
     "greetingHi": "Hi,",

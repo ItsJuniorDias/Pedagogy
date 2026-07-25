@@ -148,7 +148,26 @@
     },
     "perMonth": "≈ {{price}}/mois",
     "billedAnnually": "facturé annuellement",
-    "save": "Économisez {{percent}}%"
+    "save": "Économisez {{percent}}%",
+    "trialDurationOne": "1 jour",
+    "trialDurationMany": "{{days}} jours",
+    "trialPill": "{{duration}} d'essai gratuit",
+    "ctaTrial": "Commencer l'essai gratuit de {{duration}}",
+    "ctaNoTrial": "S'abonner maintenant",
+    "ctaFootnoteTrial": "Puis {{price}} · Annulez quand vous voulez",
+    "ctaFootnote": "{{price}} · Annulez quand vous voulez",
+    "anchorA11y": "12× l'abonnement mensuel : {{price}}",
+    "retry": "Réessayer",
+    "rating": "{{rating}} sur l'App Store · {{count}} avis",
+    "timeline": {
+      "title": "Comment fonctionne l'essai de {{duration}}",
+      "todayLabel": "Aujourd'hui",
+      "todayText": "Accès complet débloqué. Rien n'est facturé maintenant.",
+      "midLabel": "Jusqu'au jour {{day}}",
+      "midText": "Annulez à tout moment dans les Réglages, sans frais.",
+      "endLabel": "Jour {{day}}",
+      "endText": "Votre abonnement démarre à {{price}}. Annulez avant et vous ne payez rien."
+    }
   },
   "home": {
     "greetingHi": "Salut,",
