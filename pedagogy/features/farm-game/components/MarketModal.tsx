@@ -31,6 +31,10 @@ export const MarketModal: React.FC<{
   storeError: string | null;
   onBuy: (sku: string) => void;
   onClose: () => void;
+  /** true = a busca de produtos na loja já terminou (com ou sem sucesso) */
+  fetchDone?: boolean;
+  /** força uma nova busca de produtos (botão "tentar de novo") */
+  onReload?: () => void;
 }> = ({
   visible,
   gold,
@@ -40,6 +44,8 @@ export const MarketModal: React.FC<{
   storeError,
   onBuy,
   onClose,
+  fetchDone = true,
+  onReload,
 }) => {
   const slide = useRef(new Animated.Value(600)).current;
 
@@ -60,7 +66,14 @@ export const MarketModal: React.FC<{
   }, [visible]);
 
   const anySimulated = packs.some((p) => p.simulated && p.available);
-  const loading = !connected && !anySimulated;
+  const loading = (!connected || !fetchDone) && !anySimulated;
+
+  // Conectou, terminou de buscar e NENHUM pacote veio da loja. Antes isso
+  // aparecia como quatro linhas com preço "—" e sem explicação nenhuma — foi
+  // exatamente assim que o bug de SKU errado passou desapercebido. Agora
+  // mostra o estado de verdade + um jeito de tentar de novo.
+  const storeUnavailable =
+    connected && fetchDone && !packs.some((p) => p.available);
 
   return (
     <Modal
@@ -89,7 +102,27 @@ export const MarketModal: React.FC<{
 
             {!!storeError && <Text style={s.storeError}>⚠️ {storeError}</Text>}
 
-            {packs.map((pack) => {
+            {storeUnavailable && (
+              <>
+                <Text style={s.storeStatus}>
+                  Coin packs are unavailable right now 😕
+                </Text>
+                {!!onReload && (
+                  <TouchableOpacity
+                    style={[s.getCoinsBtn, { alignSelf: "center" }]}
+                    onPress={onReload}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={s.getCoinsTxt}>Try again</Text>
+                  </TouchableOpacity>
+                )}
+              </>
+            )}
+
+            {/* Se a loja não devolveu nada, não faz sentido listar quatro
+                linhas com preço "—" e botão morto. */}
+            {!storeUnavailable &&
+              packs.map((pack) => {
               const total = pack.coins + pack.bonus;
               const busy = purchasingSku === pack.sku;
               const disabled = !pack.available || !!purchasingSku;

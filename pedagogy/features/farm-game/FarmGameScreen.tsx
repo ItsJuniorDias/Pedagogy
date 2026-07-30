@@ -532,6 +532,8 @@ function FarmGameInner() {
         connected={coinStore.connected}
         purchasingSku={coinStore.purchasingSku}
         storeError={coinStore.storeError}
+        fetchDone={coinStore.fetchDone}
+        onReload={coinStore.reload}
         onBuy={coinStore.buy}
         onClose={() => {
           coinStore.clearError();

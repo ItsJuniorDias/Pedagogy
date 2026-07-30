@@ -25,6 +25,24 @@
  * sandbox. Quando a loja não retorna os produtos, o hook cai num modo
  * simulado (apenas em __DEV__) usando devPrice, pra você continuar
  * desenvolvendo.
+ *
+ * ─────────────────────────────────────────────────────────────────────
+ * 🐛 HISTÓRICO DE BUG (30/07/2026)
+ * Os SKUs locais estavam no PLURAL (`coins_small`, `coins_medium`,
+ * `coins_large`, `coins_mega`) mas os produtos aprovados no App Store
+ * Connect estão no SINGULAR (`coin_small`, `coin_medium`, `coin_large`,
+ * `coin_mega`). Resultado: fetchProducts() voltava vazio, TODOS os packs
+ * caíam em `available: false` / displayPrice "—" em produção, e buy()
+ * retornava cedo sem abrir a sheet. A loja de moedas estava 100% morta
+ * em prod — sem nenhum erro visível na tela.
+ *
+ * O Product ID no App Store Connect é IMUTÁVEL depois de criado, então a
+ * correção é aqui no client. Pra esse bug nunca mais passar silencioso,
+ * o hook agora:
+ *   • loga em DEV quais SKUs a loja NÃO reconheceu (assertSkusResolved)
+ *   • mostra erro real na UI quando conecta mas resolve 0 produtos
+ *   • tenta de novo (backoff) se o fetchProducts falhar
+ * ─────────────────────────────────────────────────────────────────────
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -36,6 +54,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // (App Store Connect → seu app → In-App Purchases → tipo Consumable).
 // O que vem da loja: preço, moeda, título localizado.
 // O que fica no client: quantas moedas cada SKU vale.
+//
+// ⚠️ NÃO renomeie as chaves abaixo sem mudar no App Store Connect também.
+//    Product ID no ASC é imutável — se divergir, a loja volta vazia.
 
 export interface CoinPackMeta {
   coins: number;
@@ -45,29 +66,116 @@ export interface CoinPackMeta {
   /** Preço exibido APENAS no modo simulado de dev. Em produção o preço
    *  real vem da loja (displayPrice). */
   devPrice: string;
+  /** Preço de referência em USD — usado só pela trava de dev que garante
+   *  que pacote maior = melhor valor por dólar. Não é cobrado nada com
+   *  base nisso; o valor real vem sempre da loja. */
+  refUsd: number;
 }
 
-export const COIN_PRODUCTS: Record<string, CoinPackMeta> = {
-  coins_small: { coins: 400, bonus: 0, emoji: "🪙", devPrice: "$ 4,99" },
-  coins_medium: { coins: 1200, bonus: 120, emoji: "💰", devPrice: "$ 12,90" },
-  coins_large: {
-    coins: 3500,
-    bonus: 700,
+/**
+ * Ordem de exibição no Coin Market (menor → maior).
+ * É a fonte da verdade dos SKUs: precisa ser idêntica ao Product ID
+ * aprovado no App Store Connect.
+ */
+export const COIN_SKUS = [
+  "coin_small",
+  "coin_medium",
+  "coin_large",
+  "coin_mega",
+] as const;
+
+export type CoinSku = (typeof COIN_SKUS)[number];
+
+// ─── Economia ─────────────────────────────────────────────────────────────────
+// Os pacotes são calibrados contra a CURVA DE SEMENTES (data/crops.ts).
+// O campo é 5×5 = 25 tiles, então "encher a fazenda" custa:
+//   lvl 10 → 25 × 370   =   9 250 moedas
+//   lvl 12 → 25 × 1 050 =  26 250 moedas
+//   lvl 13 → 25 × 1 750 =  43 750 moedas
+//   lvl 15 → 25 × 4 800 = 120 000 moedas
+//
+// Os valores ANTIGOS (400 / 1 320 / 4 200 / 12 000) foram desenhados pro
+// early game e ficavam absurdos no late game: o pacote de US$ 4,99 não
+// comprava NEM UMA semente de nível 14 (2 900) e o mega de US$ 64,90 dava
+// só 2,5 sementes de nível 15. Ninguém paga US$ 64,90 por 2 sementes.
+//
+// Agora cada pacote tem uma âncora narrativa clara:
+//   small  → um top-up (≈ 1 semente lendária)
+//   medium → enche a fazenda no nível 10
+//   large  → enche a fazenda no nível 12, com folga
+//   mega   → enche a fazenda no nível 15 (o teto do jogo)
+
+export const COIN_PRODUCTS: Record<CoinSku, CoinPackMeta> = {
+  coin_small: {
+    coins: 3_000,
+    bonus: 0,
+    emoji: "🪙",
+    devPrice: "$ 4,99",
+    refUsd: 4.99,
+  },
+  coin_medium: {
+    coins: 9_000,
+    bonus: 1_000,
+    emoji: "💰",
+    devPrice: "$ 12,90",
+    refUsd: 12.9,
+  },
+  coin_large: {
+    coins: 28_000,
+    bonus: 7_000,
     emoji: "🧰",
     tag: "MOST POPULAR",
     devPrice: "$ 29,90",
+    refUsd: 29.9,
   },
-  coins_mega: {
-    coins: 9000,
-    bonus: 3000,
+  coin_mega: {
+    coins: 85_000,
+    bonus: 35_000,
     emoji: "🏆",
     tag: "BEST VALUE",
     devPrice: "$ 64,90",
+    refUsd: 64.9,
   },
 };
 
-const SKUS = Object.keys(COIN_PRODUCTS);
+const SKUS: string[] = [...COIN_SKUS];
 const PROCESSED_KEY = "@happyfarm/iap/processed";
+
+/** Quantas vezes tentar o fetchProducts antes de desistir. */
+const FETCH_MAX_ATTEMPTS = 3;
+/** Backoff entre tentativas (ms). */
+const FETCH_BACKOFF_MS = [600, 1_800];
+
+// ─── Invariante da escada de preço (validado em dev) ──────────────────────────
+// Mesma ideia do assertLevelCurve() em data/crops.ts: se alguém rebalancear e
+// quebrar a regra "pacote maior = mais moedas por dólar", estoura cedo em dev
+// em vez de virar uma loja com valor invertido em produção.
+
+export function assertCoinLadder(): void {
+  let prevTotal = -1;
+  let prevPerUsd = -1;
+  for (const sku of COIN_SKUS) {
+    const p = COIN_PRODUCTS[sku];
+    const total = p.coins + p.bonus;
+    const perUsd = total / p.refUsd;
+    if (total <= prevTotal) {
+      throw new Error(
+        `[coins] "${sku}" não cresce em moedas (${total} <= ${prevTotal})`,
+      );
+    }
+    if (perUsd <= prevPerUsd) {
+      throw new Error(
+        `[coins] "${sku}" tem valor por dólar pior que o pacote anterior ` +
+          `(${perUsd.toFixed(0)} <= ${prevPerUsd.toFixed(0)} moedas/US$). ` +
+          `Pacote maior tem que ser sempre o melhor negócio.`,
+      );
+    }
+    prevTotal = total;
+    prevPerUsd = perUsd;
+  }
+}
+
+if (typeof __DEV__ !== "undefined" && __DEV__) assertCoinLadder();
 
 // ─── Tipos expostos pra UI ────────────────────────────────────────────────────
 
@@ -86,11 +194,52 @@ interface UseCoinStoreOptions {
   onCoinsGranted: (coins: number, sku: string) => void;
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Id estável da transação. O expo-iap v4 expõe `id`, mas versões/plataformas
+ * variam entre `id` e `transactionId` — cair pra undefined aqui significaria
+ * dedupe quebrado (crédito duplo ou nenhum), então tentamos os dois.
+ */
+function txIdOf(purchase: Purchase): string | null {
+  const p = purchase as unknown as Record<string, unknown>;
+  const id = p.id ?? p.transactionId ?? p.originalTransactionIdentifierIOS;
+  return typeof id === "string" && id.length > 0 ? id : null;
+}
+
+/**
+ * Grita em DEV quando a loja não reconhece algum SKU. É exatamente o cenário
+ * que deixou a loja morta em produção sem nenhum sintoma na tela.
+ */
+function assertSkusResolved(products: Product[]): void {
+  if (typeof __DEV__ === "undefined" || !__DEV__) return;
+  if (products.length === 0) return; // ainda carregando / sem loja (Expo Go)
+
+  const returned = new Set(products.map((p) => p.id));
+  const missing = SKUS.filter((sku) => !returned.has(sku));
+  if (missing.length > 0) {
+    console.error(
+      "[IAP] ⚠️ A loja NÃO reconheceu estes SKUs: " +
+        missing.join(", ") +
+        "\n     A loja devolveu: " +
+        [...returned].join(", ") +
+        "\n     Confira o Product ID exato em App Store Connect → " +
+        "In-App Purchases. Product ID é case-sensitive e imutável.",
+    );
+  }
+}
+
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useCoinStore({ onCoinsGranted }: UseCoinStoreOptions) {
   const [purchasingSku, setPurchasingSku] = useState<string | null>(null);
   const [storeError, setStoreError] = useState<string | null>(null);
+  /** true depois que a busca de produtos terminou (com ou sem sucesso). */
+  const [fetchDone, setFetchDone] = useState(false);
+  /** incrementa pra forçar um novo fetch (botão "tentar de novo"). */
+  const [reloadKey, setReloadKey] = useState(0);
 
   // Ref pro callback → listeners do useIAP nunca ficam stale
   const grantedRef = useRef(onCoinsGranted);
@@ -107,14 +256,16 @@ export function useCoinStore({ onCoinsGranted }: UseCoinStoreOptions) {
       .catch(() => {});
   }, []);
 
-  const markProcessed = useCallback(async (txId: string) => {
-    processedRef.current.add(txId);
+  const persistProcessed = useCallback(async () => {
     // mantém só os últimos 50 ids pra não crescer pra sempre
     const arr = [...processedRef.current].slice(-50);
     processedRef.current = new Set(arr);
-    await AsyncStorage.setItem(PROCESSED_KEY, JSON.stringify(arr)).catch(
-      () => {},
-    );
+    try {
+      await AsyncStorage.setItem(PROCESSED_KEY, JSON.stringify(arr));
+    } catch {
+      // se não persistir, o pior caso é re-creditar numa reinstalação —
+      // preferimos isso a perder a entrega do que o cliente pagou.
+    }
   }, []);
 
   // ── Conexão + listeners (expo-iap) ──────────────────────────────────────────
@@ -138,21 +289,34 @@ export function useCoinStore({ onCoinsGranted }: UseCoinStoreOptions) {
           return;
         }
 
-        const meta = COIN_PRODUCTS[purchase.productId];
-        const isNew = !processedRef.current.has(purchase.id);
+        const meta = COIN_PRODUCTS[purchase.productId as CoinSku];
+        const txId = txIdOf(purchase);
 
-        // ════════════════════════════════════════════════════════════
-        // 🔒 PRODUÇÃO: valide o recibo no seu backend ANTES de creditar.
-        //   - Envie purchase.purchaseToken (JWS do StoreKit 2) pro seu
-        //     servidor → valide via App Store Server API.
-        // Só siga adiante se o backend confirmar a compra.
-        // ════════════════════════════════════════════════════════════
+        if (!meta) {
+          // Chegou uma compra de um SKU que o client não conhece. Não credita
+          // (não sabe quanto), mas FINALIZA — senão a loja re-entrega pra
+          // sempre e no Android viraria reembolso automático.
+          console.warn(
+            `[IAP] SKU desconhecido no catálogo local: "${purchase.productId}"`,
+          );
+        } else if (txId && !processedRef.current.has(txId)) {
+          // ════════════════════════════════════════════════════════════
+          // 🔒 PRODUÇÃO: valide o recibo no seu backend ANTES de creditar.
+          //   - Envie purchase.purchaseToken (JWS do StoreKit 2) pro seu
+          //     servidor → valide via App Store Server API.
+          // Só siga adiante se o backend confirmar a compra.
+          // ════════════════════════════════════════════════════════════
 
-        if (meta && isNew) {
-          // Credita ANTES de finalizar: se o app morrer entre os dois,
-          // a loja re-entrega a compra e o dedupe evita crédito duplo.
-          await markProcessed(purchase.id);
-          grantedRef.current(meta.coins + meta.bonus, purchase.productId);
+          // Marca ANTES de creditar pra fechar a janela de crédito duplo;
+          // se o grant estourar, desmarca e deixa a loja re-entregar.
+          processedRef.current.add(txId);
+          try {
+            grantedRef.current(meta.coins + meta.bonus, purchase.productId);
+            await persistProcessed();
+          } catch (e) {
+            processedRef.current.delete(txId);
+            throw e;
+          }
         }
 
         // Consumível: finishTransaction "consome" e libera nova compra
@@ -171,22 +335,67 @@ export function useCoinStore({ onCoinsGranted }: UseCoinStoreOptions) {
     },
   });
 
-  // ── Busca os produtos quando conecta ────────────────────────────────────────
+  // ── Busca os produtos quando conecta (com retry) ─────────────────────────────
+  // Antes: uma tentativa só. Um soluço de rede na hora de abrir o app deixava
+  // a loja vazia pelo resto da sessão, sem nenhuma mensagem pro usuário.
 
   useEffect(() => {
     if (!connected) return;
 
-    fetchProducts({ skus: SKUS, type: "in-app" }).catch((e) => {
-      console.warn("[IAP] fetchProducts falhou:", e);
-      setStoreError("Não foi possível carregar a loja.");
-    });
-  }, [connected, fetchProducts]);
+    let cancelled = false;
+
+    (async () => {
+      setFetchDone(false);
+      for (let attempt = 0; attempt < FETCH_MAX_ATTEMPTS; attempt++) {
+        if (cancelled) return;
+        try {
+          await fetchProducts({ skus: SKUS, type: "in-app" });
+          if (cancelled) return;
+          setStoreError(null);
+          setFetchDone(true);
+          return;
+        } catch (e) {
+          console.warn(
+            `[IAP] fetchProducts falhou (tentativa ${attempt + 1}/${FETCH_MAX_ATTEMPTS}):`,
+            e,
+          );
+          const backoff = FETCH_BACKOFF_MS[attempt];
+          if (backoff != null) await sleep(backoff);
+        }
+      }
+      if (cancelled) return;
+      setFetchDone(true);
+      setStoreError("Não foi possível carregar a loja. Tente de novo.");
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [connected, fetchProducts, reloadKey]);
+
+  // ── Diagnóstico: SKU que a loja não reconheceu (dev) ────────────────────────
+
+  useEffect(() => {
+    assertSkusResolved(products);
+  }, [products]);
+
+  // ── Erro real quando conecta mas resolve 0 produtos ─────────────────────────
+  // Este é o sintoma que faltava: antes ficava só "—" no preço, sem explicação.
+
+  useEffect(() => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) return; // dev cai no simulado
+    if (!connected || !fetchDone) return;
+    if (products.length > 0) return;
+    setStoreError(
+      "A loja está indisponível agora. Nenhum pacote pôde ser carregado.",
+    );
+  }, [connected, fetchDone, products.length]);
 
   // ── Merge: meta local + dados da loja ───────────────────────────────────────
 
   const packs: StorePack[] = useMemo(
     () =>
-      SKUS.map((sku) => {
+      COIN_SKUS.map((sku) => {
         const meta = COIN_PRODUCTS[sku];
         const product = products.find((p: Product) => p.id === sku);
         if (product) {
@@ -246,6 +455,12 @@ export function useCoinStore({ onCoinsGranted }: UseCoinStoreOptions) {
     [purchasingSku, packs, requestPurchase],
   );
 
+  /** Tenta buscar os produtos de novo (botão "tentar de novo" no mercado). */
+  const reload = useCallback(() => {
+    setStoreError(null);
+    setReloadKey((k) => k + 1);
+  }, []);
+
   return {
     /** true quando o billing nativo está pronto */
     connected,
@@ -259,5 +474,9 @@ export function useCoinStore({ onCoinsGranted }: UseCoinStoreOptions) {
     storeError,
     /** limpa o erro exibido */
     clearError: () => setStoreError(null),
+    /** true = a busca de produtos já terminou (com ou sem sucesso) */
+    fetchDone,
+    /** força uma nova busca de produtos */
+    reload,
   };
 }
