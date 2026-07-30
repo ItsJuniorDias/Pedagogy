@@ -9,7 +9,12 @@ export interface HarvestResult {
   doubled: boolean;
 }
 
-const WATER_BONUS_DEFAULT = 0.2; // +20% de moedas ao colher algo que foi regado
+// +10% de moedas ao colher algo regado. Antes era +20% — era um multiplicador
+// oculto que ninguém via na UI mas somava muito em campos cheios. Aperto de
+// 30/07/2026: regar continua ACELERANDO growth (reducer.ts, +30% de velocidade),
+// que é o motivo real pra regar. As peculiaridades "water" (full_ear, juicy)
+// mantêm o bônus alto porque são o incentivo dessas plantas específicas.
+const WATER_BONUS_DEFAULT = 0.1;
 
 /**
  * Recompensa pura de uma colheita, já aplicando a peculiaridade da semente.

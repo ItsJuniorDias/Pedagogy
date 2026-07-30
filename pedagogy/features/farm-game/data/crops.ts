@@ -30,7 +30,13 @@ const PRICE_BASE = 12;
 const PRICE_RATE = 1.664; // ~10 → ~15 000 moedas
 const XP_BASE = 8;
 const XP_RATE = 1.446;
-const SEED_RATIO = 0.32; // semente ≈ 1/3 do preço de venda → margem saudável
+// Semente = 40% do preço → margem por colheita ~60%.
+// Antes era 32% (margem ~68%). Aperto de 30/07/2026: economia mais escassa,
+// player precisa reinvestir mais pra manter caixa girando. Alvo: criar
+// pressão real na loja de moedas sem tornar o loop punitivo (proibido
+// deixar margem < 40% — jogar tem que continuar dando lucro).
+const SEED_RATIO = 0.4;
+const MIN_MARGIN = 0.4; // trava: margem por colheita nunca abaixo disso
 
 /** Arredonda pra valores "redondos" e legíveis na loja. */
 function niceRound(n: number): number {
@@ -137,6 +143,14 @@ export function assertLevelCurve(): void {
     if (c.price <= c.seedCost) {
       throw new Error(
         `[crops] "${c.id}" sem margem de lucro (price ${c.price} <= seed ${c.seedCost})`,
+      );
+    }
+    const margin = (c.price - c.seedCost) / c.price;
+    if (margin < MIN_MARGIN) {
+      throw new Error(
+        `[crops] "${c.id}" com margem ${(margin * 100).toFixed(0)}% abaixo do piso ` +
+          `de ${(MIN_MARGIN * 100).toFixed(0)}%. Aperto demais quebra o loop — ` +
+          `player precisa de lucro pra continuar plantando.`,
       );
     }
     pt = c.growTime;

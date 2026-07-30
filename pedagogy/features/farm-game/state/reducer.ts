@@ -32,7 +32,11 @@ const noStructures = (): Record<StructureId, boolean> => ({
 
 export const INITIAL_STATE: GameState = {
   tiles: initialTiles(),
-  gold: 50, // ↓ de 100 — economia mais apertada
+  // 35 = 5 sementes de wheat (6 cada com o SEED_RATIO novo) + folga de 5.
+  // Cabe a primeira leva pra chegar no nível 2 sem travar, sem ser afluente.
+  // ↓ de 50 no aperto de 30/07/2026 (que já tinha baixado de 100 pro fix
+  // anterior). Isso só afeta player NOVO — save existente preserva o gold.
+  gold: 35,
   xp: 0,
   level: 1,
   selectedTool: "till",

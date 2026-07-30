@@ -292,7 +292,7 @@ function FarmGameInner() {
   const HINT: Record<ToolId, string> = {
     till: "Tap empty tiles to till the soil",
     seed: `Planting ${CROPS[state.selectedCrop].name} — tap tilled tiles`,
-    water: "Tap crops to water · faster + 20% bonus",
+    water: "Tap crops to water · grows faster + coin bonus",
     harvest: "Tap glowing crops to harvest",
   };
 

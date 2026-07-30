@@ -52,7 +52,7 @@ export type PeculiarityId =
  *  - sell   → multiplicador de moedas na venda (>1)
  *  - xp     → multiplicador de XP (>1)
  *  - yield  → probabilidade (0-1) de colheita dupla
- *  - water  → fração de bônus ao regar (substitui o padrão de 0.20)
+ *  - water  → fração de bônus ao regar (substitui o padrão de 0.10)
  *  - coin   → moedas fixas somadas a cada colheita
  */
 export type PeculiarityEffectKind =
