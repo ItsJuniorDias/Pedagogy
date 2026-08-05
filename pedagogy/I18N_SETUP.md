@@ -10,15 +10,17 @@ Tradução do app para os **6 idiomas mais falados do mundo** + **português**.
 | `en` | Inglês | English | LTR |
 | `es` | Espanhol | Español | LTR |
 | `fr` | Francês | Français | LTR |
-| `zh` | Mandarim | 中文 | LTR |
+| `de` | Alemão | Deutsch | LTR |
 | `hi` | Hindi | हिन्दी | LTR |
 | `ar` | Árabe | العربية | **RTL** |
 
-> **Por que 7 e não 6?** As 6 línguas mais faladas do mundo (por total de falantes)
-> são inglês, mandarim, hindi, espanhol, francês e árabe. Adicionei **português**
-> porque o app é BR e roda campanhas de Meta Ads no mercado brasileiro — sem ele,
-> o público principal ficaria de fora. Se quiser só as 6, é só remover o bloco `pt`
-> de `lib/i18n/languages.ts` e apagar `lib/i18n/locales/pt.json`.
+> **Por que 7 e não 6?** O set original mirava as 6 línguas mais faladas do mundo (inglês,
+> mandarim, hindi, espanhol, francês, árabe) + português. O **mandarim saiu e o alemão
+> entrou** — mesmo tendo menos falantes totais, alemão tem ARPU maior no perfil "kids
+> books" e o mercado DACH (Alemanha/Áustria/Suíça) é um dos alvos das campanhas ASA.
+> Mandarim exigiria canal separado (App Store CN tem regras próprias) e não estava dando
+> retorno. Para remover o `pt` e ficar só com os 6 internacionais, apague o bloco `pt` de
+> `lib/i18n/languages.ts` e o arquivo `lib/i18n/locales/pt.json`.
 
 ---
 
@@ -158,7 +160,7 @@ Use `en.json` como referência (é a fonte canônica). Exemplo, adicionando uma 
   "continueReading": "Continue reading"
 }
 ```
-(repita a mesma chave, traduzida, em pt/es/fr/zh/hi/ar)
+(repita a mesma chave, traduzida, em pt/es/fr/de/hi/ar)
 
 **Passo 2** — na tela, importe o hook e troque as strings:
 
@@ -231,7 +233,7 @@ lib/i18n/
 ├── i18next.d.ts          # tipagem das chaves (autocomplete + validação)
 └── locales/
     ├── en.json  (canônico / fallback)
-    ├── pt.json  es.json  fr.json  zh.json  hi.json  ar.json
+    ├── pt.json  es.json  fr.json  de.json  hi.json  ar.json
 components/LanguageSheet.tsx   # bottom-sheet de seleção de idioma
 ```
 

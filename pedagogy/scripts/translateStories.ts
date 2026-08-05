@@ -24,7 +24,7 @@
 // silenciosamente). O mock só roda com --provider mock explícito.
 //
 // Flags:
-//   --lang <code>     idioma alvo (repetível). Sem nenhum → todos (pt es fr zh hi ar).
+//   --lang <code>     idioma alvo (repetível). Sem nenhum → todos (pt es fr de hi ar).
 //   --all             traduz TODAS as histórias de STORY_SOURCES.
 //   --clean           remove overlays gerados + zera blocos GENERATED (mantém seeds).
 //   --provider m|o    mock (dry-run) | openrouter. Default: openrouter (exige a key).
@@ -186,7 +186,7 @@ const LANG_NAMES: Record<string, string> = {
   pt: "Brazilian Portuguese",
   es: "Spanish (neutral Latin American)",
   fr: "French",
-  zh: "Simplified Chinese",
+  de: "German",
   hi: "Hindi",
   ar: "Modern Standard Arabic",
 };

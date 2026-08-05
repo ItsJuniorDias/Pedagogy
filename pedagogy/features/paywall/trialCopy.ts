@@ -15,7 +15,7 @@
 
 import type { TFunction } from "i18next";
 
-/** Ex.: "7 dias" (pt) · "7-day" (en) · "7 天" (zh). */
+/** Ex.: "7 dias" (pt) · "7-day" (en) · "7 Tage" (de). */
 export function formatTrialDuration(days: number, t: TFunction): string {
   return days === 1
     ? t("paywall.trialDurationOne")

@@ -28,14 +28,14 @@ import { STORY_CHAPTERS_ES } from "./es";
 import { STORY_CHAPTERS_FR } from "./fr";
 import { STORY_CHAPTERS_HI } from "./hi";
 import { STORY_CHAPTERS_PT } from "./pt";
-import { STORY_CHAPTERS_ZH } from "./zh";
+import { STORY_CHAPTERS_DE } from "./de";
 
 // Registro de overlays por idioma. O inglês NÃO tem overlay — ele é a base.
 const OVERLAYS: Record<string, LocalizedStoryMap> = {
   pt: STORY_CHAPTERS_PT,
   es: STORY_CHAPTERS_ES,
   fr: STORY_CHAPTERS_FR,
-  zh: STORY_CHAPTERS_ZH,
+  de: STORY_CHAPTERS_DE,
   hi: STORY_CHAPTERS_HI,
   ar: STORY_CHAPTERS_AR,
 };

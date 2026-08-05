@@ -21,9 +21,9 @@
 import * as Speech from "expo-speech";
 
 /** Idiomas suportados pelo app (mesmos códigos do i18next / languages.ts). */
-export type TTSLang = "pt" | "en" | "es" | "fr" | "zh" | "hi" | "ar";
+export type TTSLang = "pt" | "en" | "es" | "fr" | "de" | "hi" | "ar";
 
-const SUPPORTED: readonly TTSLang[] = ["pt", "en", "es", "fr", "zh", "hi", "ar"];
+const SUPPORTED: readonly TTSLang[] = ["pt", "en", "es", "fr", "de", "hi", "ar"];
 
 /** ISO 639-1 → locale BCP-47 preferido para a síntese de voz. */
 const LOCALE_BY_LANG: Record<TTSLang, string> = {
@@ -31,20 +31,21 @@ const LOCALE_BY_LANG: Record<TTSLang, string> = {
   en: "en-US",
   es: "es-ES",
   fr: "fr-FR",
-  zh: "zh-CN",
+  de: "de-DE",
   hi: "hi-IN",
   ar: "ar-SA",
 };
 
 // Velocidade por idioma. Leitura infantil pede fala pausada (o highlight
-// palavra-a-palavra acompanha melhor). Línguas tonais / de silabário mais denso
-// ficam um pouco mais lentas para inteligibilidade. Ajuste fino é só aqui.
+// palavra-a-palavra acompanha melhor). Línguas com palavras compostas longas
+// (alemão), silabário denso (hindi) ou fonemas guturais (árabe) ficam um pouco
+// mais lentas para inteligibilidade. Ajuste fino é só aqui.
 const RATE_BY_LANG: Record<TTSLang, number> = {
   pt: 0.9,
   en: 0.9,
   es: 0.9,
   fr: 0.88,
-  zh: 0.82,
+  de: 0.88, // alemão tem palavras longas — um pouco mais lento ajuda o highlight
   hi: 0.85,
   ar: 0.85,
 };

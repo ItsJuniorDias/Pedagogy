@@ -2,9 +2,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Registro central de idiomas suportados pelo app.
 //
-// Contém as 6 línguas mais faladas do mundo (por total de falantes, nativos +
-// não-nativos) — inglês, mandarim, hindi, espanhol, francês e árabe — MAIS o
-// português, que é a língua base do app (mercado BR / campanhas de Meta Ads).
+// Set atual: inglês, hindi, espanhol, francês, árabe, alemão + português.
+// O alemão substituiu o mandarim: mesmo com menos falantes totais, é o idioma
+// com maior ARPU dentre os que faziam sentido pro perfil "kids books" (tier-1
+// europeu, forte adoção paga, público-alvo pais DACH). O mandarim exigiria
+// canal separado (App Store CN tem regras próprias) e não estava dando retorno.
 //
 // Cada idioma é exibido no seletor no próprio idioma (nativeName), que é a
 // convenção correta: o usuário reconhece a própria língua na escrita dela.
@@ -30,7 +32,7 @@ export const LANGUAGES: Language[] = [
   { code: "en", name: "English", nativeName: "English", flag: "🇺🇸", dir: "ltr" },
   { code: "es", name: "Spanish", nativeName: "Español", flag: "🇪🇸", dir: "ltr" },
   { code: "fr", name: "French", nativeName: "Français", flag: "🇫🇷", dir: "ltr" },
-  { code: "zh", name: "Chinese (Mandarin)", nativeName: "中文", flag: "🇨🇳", dir: "ltr" },
+  { code: "de", name: "German", nativeName: "Deutsch", flag: "🇩🇪", dir: "ltr" },
   { code: "hi", name: "Hindi", nativeName: "हिन्दी", flag: "🇮🇳", dir: "ltr" },
   { code: "ar", name: "Arabic", nativeName: "العربية", flag: "🇸🇦", dir: "rtl" },
 ];
@@ -39,7 +41,7 @@ export const LANGUAGES: Language[] = [
 export const SUPPORTED_CODES = LANGUAGES.map((l) => l.code) as SupportedLanguage[];
 
 /** União literal dos códigos, para type-safety no resto do app. */
-export type SupportedLanguage = "pt" | "en" | "es" | "fr" | "zh" | "hi" | "ar";
+export type SupportedLanguage = "pt" | "en" | "es" | "fr" | "de" | "hi" | "ar";
 
 /**
  * Idioma padrão quando não há preferência salva e a detecção do device falha.

@@ -1,0 +1,435 @@
+{
+  "common": {
+    "new": "Neu",
+    "viewAll": "Alle anzeigen",
+    "cancel": "Abbrechen",
+    "done": "Fertig",
+    "seeAll": "Alle ansehen",
+    "back": "Zurück"
+  },
+  "language": {
+    "title": "Sprache",
+    "subtitle": "Wähle die App-Sprache",
+    "sheetTitle": "Wähle deine Sprache 🌍"
+  },
+  "tabs": {
+    "home": "Start",
+    "library": "Bibliothek"
+  },
+  "profile": {
+    "title": "Mein Profil",
+    "displayName": "Kleiner Entdecker",
+    "level": "Stufe {{level}} ⭐",
+    "languageRow": "Sprache",
+    "stats": {
+      "stars": "Sterne",
+      "stories": "Geschichten",
+      "badges": "Abzeichen",
+      "dayStreak": "Tages-Serie"
+    },
+    "badgesTitle": "Meine Abzeichen 🏆",
+    "badges": {
+      "explorer": "Entdecker",
+      "artist": "Künstler",
+      "scientist": "Forscher",
+      "bookworm": "Leseratte",
+      "dinofan": "Dino-Fan",
+      "nightowl": "Nachteule"
+    },
+    "week": {
+      "title": "Diese Woche",
+      "days": {
+        "mon": "M",
+        "tue": "D",
+        "wed": "M",
+        "thu": "D",
+        "fri": "F",
+        "sat": "S",
+        "sun": "S"
+      },
+      "read": {
+        "zero": "0 Min. gelesen",
+        "seconds": "{{count}} Sek. gelesen",
+        "minutes": "{{count}} Min. gelesen",
+        "hours": "{{count}} Std. gelesen",
+        "hoursMinutes": "{{count}} Std. {{minutes}} Min. gelesen"
+      }
+    }
+  },
+  "onboarding": {
+    "next": "Weiter",
+    "start": "Los geht's 👍",
+    "slides": {
+      "welcome": {
+        "badge": "Willkommen bei Pedagogy",
+        "title": "Geschichten, die\nlehren und begeistern",
+        "description": "Pedagogy ist eine App mit lehrreichen Kindergeschichten, die Kinder von 2 bis 10 Jahren spielerisch und liebevoll fördert."
+      },
+      "library": {
+        "badge": "Unendliche Bibliothek",
+        "title": "Über 50 Geschichten\nzum Entdecken",
+        "description": "Fabeln, Abenteuer, Wissenschaft und mehr. Jeden Monat neue Inhalte, mit Vertonung und bunten Illustrationen."
+      },
+      "learning": {
+        "badge": "Echtes Lernen",
+        "title": "Verfolge den\nLernfortschritt deines Kindes",
+        "description": "Quiz, Erfolge und Leseberichte für Eltern. Lernen war noch nie so spaßig und leicht nachzuvollziehen."
+      }
+    },
+    "skip": "Überspringen"
+  },
+  "paywall": {
+    "period": {
+      "annual": "Jährlich",
+      "sixMonth": "6 Monate",
+      "threeMonth": "3 Monate",
+      "twoMonth": "2 Monate",
+      "monthly": "Monatlich",
+      "weekly": "Wöchentlich"
+    },
+    "periodShort": {
+      "year": "/Jahr",
+      "sixMo": "/6 Mon.",
+      "threeMo": "/3 Mon.",
+      "month": "/Monat",
+      "week": "/Woche"
+    },
+    "units": {
+      "day": "Tag",
+      "week": "Woche",
+      "month": "Monat",
+      "year": "Jahr"
+    },
+    "tryFree": "{{count}} {{unit}} gratis testen",
+    "mostPopular": "🏆 Am beliebtesten",
+    "hero": {
+      "title": "Eröffne deinem Kind eine Welt voller Geschichten",
+      "subtitle": "Über 50 Abenteuer warten auf deinen kleinen Leser"
+    },
+    "features": {
+      "stories": "Über 50 illustrierte Geschichten",
+      "narration": "Vertonung in jeder Geschichte",
+      "activities": "Quiz und Lernaktivitäten",
+      "progress": "Fortschrittsberichte und Erfolge",
+      "games": "Lehrreiche Mini-Spiele",
+      "noAds": "Keine Werbung — 100 % kindersicher"
+    },
+    "choosePlan": "Wähle deinen Plan",
+    "loadingPlans": "Pläne werden geladen ...",
+    "loadError": "Pläne konnten nicht geladen werden. Bitte erneut versuchen.",
+    "gateNotice": "Jeder Kauf ist durch eine Elternprüfung geschützt.",
+    "cta": "🎉 Jetzt starten!",
+    "ctaSub": "Danach {{price}} · jederzeit kündbar",
+    "restore": "Käufe wiederherstellen",
+    "whyTitle": "Warum Familien Pedagogy wählen",
+    "trust": {
+      "safeTitle": "Sicher für Kinder",
+      "safeText": "Käufe und Links sind durch eine Elternprüfung geschützt.",
+      "noAdsTitle": "Keine Fremdwerbung",
+      "noAdsText": "Ein ruhiger, ablenkungsfreier Raum zum Lesen und Lernen.",
+      "cancelTitle": "Jederzeit kündbar",
+      "cancelText": "Verwalte deinen Plan jederzeit in den Kontoeinstellungen."
+    },
+    "finePrint": "Die Abrechnung erfolgt automatisch. Du kannst jederzeit in den Kontoeinstellungen kündigen. Mit dem Abo stimmst du unseren",
+    "finePrintAnd": "und den",
+    "terms": "Nutzungsbedingungen (EULA)",
+    "privacy": "Datenschutzrichtlinien",
+    "alerts": {
+      "activeTitle": "🎉 Abo aktiv!",
+      "activeBody": "Deine Geschichten sind freigeschaltet. Viel Spaß beim Lesen!",
+      "activeCta": "Los geht's!",
+      "errorTitle": "Etwas ist schiefgelaufen",
+      "restoredTitle": "✅ Kauf wiederhergestellt",
+      "restoredBody": "Dein Abo wurde wiederhergestellt.",
+      "restoredCta": "Weiter",
+      "restoreFailedTitle": "Wiederherstellung fehlgeschlagen",
+      "noSubTitle": "Kein aktives Abo",
+      "noSubBody": "Wir konnten keinen früheren Kauf für dieses Konto finden."
+    },
+    "perMonth": "≈ {{price}}/Monat",
+    "billedAnnually": "jährlich abgerechnet",
+    "save": "{{percent}} % sparen",
+    "trialDurationOne": "1 Tag",
+    "trialDurationMany": "{{days}} Tage",
+    "trialPill": "{{duration}} gratis testen",
+    "ctaTrial": "Starte deine {{duration}} Gratis-Testphase",
+    "ctaNoTrial": "Jetzt abonnieren",
+    "ctaFootnoteTrial": "Danach {{price}} · jederzeit kündbar",
+    "ctaFootnote": "{{price}} · jederzeit kündbar",
+    "anchorA11y": "12× der Monatsplan: {{price}}",
+    "retry": "Erneut versuchen",
+    "rating": "{{rating}} im App Store · {{count}} Bewertungen",
+    "timeline": {
+      "title": "So funktioniert deine {{duration}} Gratis-Testphase",
+      "todayLabel": "Heute",
+      "todayText": "Voller Zugang freigeschaltet. Jetzt wird nichts berechnet.",
+      "midLabel": "Bis Tag {{day}}",
+      "midText": "Jederzeit in den Einstellungen kündbar, ohne Kosten.",
+      "endLabel": "Tag {{day}}",
+      "endText": "Dein Abo beginnt mit {{price}}. Kündige vorher und du zahlst nichts."
+    }
+  },
+  "home": {
+    "greetingHi": "Hallo,",
+    "greetingName": "zusammen",
+    "greetingSub": "Lass uns heute etwas Cooles lernen ✨",
+    "nav": {
+      "space": "Weltall",
+      "art": "Kunst",
+      "toys": "Spielzeug",
+      "dinos": "Dinos"
+    },
+    "banner": {
+      "title": "Zauberhafte Welt\nder Geschichten",
+      "cta": "🔍 Jetzt entdecken!"
+    },
+    "chips": {
+      "all": "Alle",
+      "drawing": "Malen",
+      "space": "Weltall",
+      "animals": "Tiere",
+      "magic": "Zauber",
+      "music": "Musik",
+      "science": "Wissenschaft",
+      "sports": "Sport",
+      "farming": "Bauernhof"
+    },
+    "interests": {
+      "explore": "Entdecken",
+      "pets": "Haustiere",
+      "space": "Weltall",
+      "science": "Wissenschaft"
+    },
+    "favoritesTitle": "Deine Favoriten 🌟",
+    "favoritesLabel": "Favoriten",
+    "learningPathTitle": "Lernpfad",
+    "gamesTitle": "Spiele 🎮",
+    "emptyPaths": "Für diese Kategorie gibt es noch keine Lernpfade 🌱",
+    "emptyGames": "Für diese Kategorie gibt es noch keine Spiele 🎯",
+    "pathDone": "geschafft"
+  },
+  "games": {
+    "header": "Spiele",
+    "empty": "Hier gibt es noch keine Spiele 🎯",
+    "farmGame": {
+      "title": "Bauernhof-Spiel",
+      "sub": "Verwalte deinen Bauernhof und ernte die Ernte!"
+    },
+    "pingPong": {
+      "title": "Tischtennis",
+      "sub": "Klassisches Tischtennis-Spiel!"
+    },
+    "pixelRun": {
+      "title": "Pixel-Lauf",
+      "sub": "Endloser Lauf im Weltall!"
+    },
+    "gravity": {
+      "title": "Schwerkraft-Spiel",
+      "sub": "Klassisches Schwerkraft-Spiel!"
+    },
+    "tags": {
+      "new": "Neu ✨",
+      "top": "Top ⭐",
+      "hot": "Beliebt 🔥"
+    }
+  },
+  "paths": {
+    "letters": "Buchstaben",
+    "school": "Schule",
+    "astronaut": "Astronaut",
+    "space": "Weltall",
+    "dinosaurs": "Dinosaurier",
+    "oceanLife": "Meereswelt",
+    "colorsArt": "Farben & Kunst",
+    "scienceLab": "Forschungslabor"
+  },
+  "learningAll": {
+    "header": "Lernpfad",
+    "loading": "Dein Garten wird geladen … 🌱",
+    "empty": "Hier ist noch nichts 🌱",
+    "filters": {
+      "all": "Alle",
+      "inProgress": "Läuft",
+      "notStarted": "Nicht begonnen",
+      "completed": "Abgeschlossen"
+    }
+  },
+  "stories": {
+    "header": "Zauberhafte Geschichten ✨",
+    "heroTitle": "Eine Welt voller\nAbenteuer ",
+    "heroSub": "Wähle eine Geschichte und leg los!",
+    "heroCount": "{{count}} Geschichten verfügbar",
+    "tagsAll": "Alle",
+    "chapters": "{{count}} Kapitel",
+    "ages": "{{range}} Jahre"
+  },
+  "category": {
+    "defaultLabel": "Entdecken",
+    "activities": "{{count}} Aktivitäten für dich"
+  },
+  "library": {
+    "greetingHi": "Hallo,",
+    "greetingName": "zusammen",
+    "greetingSub": "Lass uns heute etwas Neues lernen!",
+    "bannerBubble": "Hallo\nFreund!",
+    "bannerCta": "Jetzt entdecken",
+    "secCategory": "Kategorie",
+    "secPopular": "Gerade beliebt",
+    "secContinue": "Weiterlesen",
+    "categories": {
+      "nature": "Natur",
+      "fantasy": "Fantasie",
+      "science": "Wissenschaft",
+      "fruit": "Obst"
+    }
+  },
+  "details": {
+    "back": "Zurück",
+    "next": "Weiter",
+    "nextChapter": "Nächstes Kap.",
+    "riddle": "Rätsel",
+    "revealAnswer": "Antwort zeigen",
+    "matchReport": "Spielbericht",
+    "word": "Wort",
+    "ingredients": "Zutaten",
+    "instructions": "Anleitung",
+    "classification": "Einordnung",
+    "size": "Größe",
+    "habitat": "Lebensraum",
+    "diet": "Ernährung",
+    "notes": "Notizen",
+    "chapter": "Kapitel {{number}}"
+  },
+  "exercises": {
+    "resultAmazing": "Fantastisch!",
+    "resultGreat": "Super gemacht!",
+    "resultNice": "Guter Versuch!",
+    "resultPractice": "Lass uns üben!",
+    "score": "{{correct}} / {{total}} richtig",
+    "playAgain": "Nochmal spielen",
+    "done": "Fertig",
+    "tfTrue": "Wahr",
+    "tfFalse": "Falsch",
+    "correct": "Richtig! 🎉",
+    "incorrect": "Nicht ganz — schau dir die Antwort oben an",
+    "check": "Prüfen",
+    "next": "Weiter",
+    "seeStars": "Deine Sterne ansehen",
+    "skillSounds": "LAUTE",
+    "skillWords": "WÖRTER",
+    "skillOrder": "REIHENFOLGE",
+    "skillThink": "DENKEN",
+    "skillReading": "LESEN"
+  },
+  "gameHud": {
+    "musicOn": "MUSIK AN",
+    "musicOff": "MUSIK AUS",
+    "gameOver": "SPIEL VORBEI",
+    "score": "PUNKTE",
+    "best": "BESTE",
+    "newRecord": "NEUER REKORD!",
+    "tryAgain": "NOCHMAL",
+    "menu": "MENÜ",
+    "play": "SPIELEN",
+    "bestScore": "Beste: {{score}}",
+    "pressStart": "tippen zum Starten",
+    "pressPlayAgain": "tippen für neue Runde",
+    "points": "{{score}} Pkt."
+  },
+  "gravity": {
+    "tapToFlip": "TIPPEN, UM DIE SCHWERKRAFT ZU DREHEN",
+    "rowFlip": "Tippen, um die Schwerkraft zu drehen",
+    "rowDodge": "Ausweichen vor prozeduralen Hindernissen",
+    "rowChain": "Hindernisse verketten für Combo-Punkte",
+    "rowSpeed": "Das Tempo steigt mit deiner Punktzahl"
+  },
+  "storyTitles": {
+    "thevowelvillage": "Das Dorf der Vokale",
+    "theclockworkdetective": "Der Uhrwerk-Detektiv",
+    "theunderwaterexplorers": "Die Unterwasser-Entdecker",
+    "thefeelingsGarden": "Der Garten der Gefühle",
+    "therobotsjournal": "Das Tagebuch des Roboters",
+    "themapmakersdaughter": "Die Tochter der Kartografin",
+    "thewordcollector": "Der Wörtersammler",
+    "thelighthousekeepersson": "Der Sohn des Leuchtturmwärters",
+    "thegrandmothersrecipebox": "Omas Rezeptkasten",
+    "thefieldguide": "Feldführer: Unmögliche Kreaturen",
+    "thescienceofsmallwonders": "Die Wissenschaft der kleinen Wunder",
+    "thecloudreader": "Die Wolkenleserin",
+    "TAIRBRTY": "Pipo und die Blumenfee",
+    "STHM_STHAP": "Sturm und Sternenkarte",
+    "KATUION": "Katuion: Das Wörterbuch der Träumer",
+    "SPACEADVENTURE": "Weltraumabenteuer: Mission Sternfall",
+    "ROCKET_ADVENTURE": "Raketenabenteuer",
+    "MAGIC_FOREST": "Der Zauberwald",
+    "OCEAN_FRIENDS": "Freunde des Ozeans",
+    "TINY_SCIENTIST": "Die kleine Forscherin",
+    "DRAGON_DIARY": "Das Drachentagebuch",
+    "DINO_WORLD": "Dinowelt",
+    "thetimelibrary": "Die Bibliothek der Zeit",
+    "thegiantwhowept": "Der Riese, der Berge weinte",
+    "theartofbeing": "Die Kunst, sich zu irren",
+    "theinsectorchestra": "Das Insektenorchester",
+    "thesandcastlearchitect": "Der Sandburg-Architekt",
+    "thecolourthief": "Der Farbendieb",
+    "theslowtrainexpresses": "Der langsame Schnellzug",
+    "thespellchecker": "Die Zauberprüferin",
+    "thevolcanologist": "Die junge Vulkanologin",
+    "thenightgarden": "Der Nachtgarten",
+    "theforgottenalphabet": "Das vergessene Alphabet",
+    "thebeekeeper": "Der letzte Imker",
+    "theislandofmists": "Die Insel der Nebel",
+    "thecityofclocks": "Die Stadt der Uhren",
+    "thecoralqueen": "Die Korallenkönigin",
+    "theglasscomposer": "Die Glaskomponistin",
+    "thewindmapper": "Der Windkartograf",
+    "theanimalwhisperer": "Die Tierflüsterin",
+    "thedreamarchitect": "Die Traumarchitektin",
+    "thechrononauts": "Die Chrononauten",
+    "thepapergarden": "Der Papiergarten",
+    "thespacefarmer": "Der Weltraumbauer",
+    "themuseumguard": "Das Geheimnis des Museumswächters",
+    "thelostlanguage": "Die verlorene Sprache",
+    "thesnowarchitect": "Die Schnee-Architektin",
+    "thetreetelephone": "Das Baumtelefon",
+    "thelastlighthouse": "Der letzte Leuchtturm",
+    "thegravityinventor": "Die Erfinderin der Schwerkraft",
+    "thewhaledreamer": "Die Walträumerin"
+  },
+  "storyTags": {
+    "Adventure": "Abenteuer",
+    "Animals": "Tiere",
+    "Art": "Kunst",
+    "Bedtime": "Gutenacht",
+    "Emotional": "Gefühle",
+    "Family": "Familie",
+    "Fantasy": "Fantasie",
+    "Friendship": "Freundschaft",
+    "Growth": "Wachstum",
+    "Journey": "Reise",
+    "Language": "Sprache",
+    "Letters": "Buchstaben",
+    "Magic": "Zauber",
+    "Music": "Musik",
+    "Mystery": "Rätsel",
+    "Nature": "Natur",
+    "Ocean": "Ozean",
+    "Sci-Fi": "Sci-Fi",
+    "Science": "Wissenschaft",
+    "Steampunk": "Steampunk",
+    "Surreal": "Surreal",
+    "Winter": "Winter"
+  },
+  "storyBadges": {
+    "New": "Neu",
+    "Hot": "Beliebt"
+  },
+  "parentalGate": {
+    "title": "Frag einen Erwachsenen",
+    "subtitle": "Löse diese Aufgabe, damit wir wissen, dass ein Erwachsener hier ist:",
+    "placeholder": "Antwort eingeben",
+    "wrong": "Das ist nicht richtig — probier die neue Aufgabe.",
+    "continue": "Weiter",
+    "cancel": "Abbrechen"
+  }
+}

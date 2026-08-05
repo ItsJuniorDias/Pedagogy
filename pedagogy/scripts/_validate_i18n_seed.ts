@@ -4,7 +4,7 @@ import { STORY_CHAPTERS_ES } from "../mocks/i18n/es";
 import { STORY_CHAPTERS_FR } from "../mocks/i18n/fr";
 import { STORY_CHAPTERS_HI } from "../mocks/i18n/hi";
 import { STORY_CHAPTERS_PT } from "../mocks/i18n/pt";
-import { STORY_CHAPTERS_ZH } from "../mocks/i18n/zh";
+import { STORY_CHAPTERS_DE } from "../mocks/i18n/de";
 
 const EN_BY_KEY: Record<string, any[]> = {
   ROCKETADVENTURE: EN.ROCKET_ADVENTURE, MAGICFOREST: EN.MAGIC_FOREST,
@@ -13,7 +13,7 @@ const EN_BY_KEY: Record<string, any[]> = {
 };
 const OVERLAYS: Record<string, Record<string, any[]>> = {
   pt: STORY_CHAPTERS_PT, es: STORY_CHAPTERS_ES, fr: STORY_CHAPTERS_FR,
-  zh: STORY_CHAPTERS_ZH, hi: STORY_CHAPTERS_HI, ar: STORY_CHAPTERS_AR,
+  de: STORY_CHAPTERS_DE, hi: STORY_CHAPTERS_HI, ar: STORY_CHAPTERS_AR,
 };
 let errors = 0;
 const fail = (m: string) => { errors++; console.error("  x " + m); };

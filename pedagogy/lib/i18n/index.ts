@@ -33,7 +33,7 @@ import es from "./locales/es.json";
 import fr from "./locales/fr.json";
 import hi from "./locales/hi.json";
 import pt from "./locales/pt.json";
-import zh from "./locales/zh.json";
+import de from "./locales/de.json";
 
 /** Chave usada no AsyncStorage para guardar o idioma escolhido pelo usuário. */
 export const LANGUAGE_STORAGE_KEY = "@pedagogy/language";
@@ -43,7 +43,7 @@ const resources = {
   en: { translation: en },
   es: { translation: es },
   fr: { translation: fr },
-  zh: { translation: zh },
+  de: { translation: de },
   hi: { translation: hi },
   ar: { translation: ar },
 } as const;

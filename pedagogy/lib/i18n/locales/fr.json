@@ -67,7 +67,7 @@
       },
       "library": {
         "badge": "Bibliothèque infinie",
-        "title": "Plus de 50 histoires\nà explorer",
+        "title": "Des centaines d'histoires\nà explorer",
         "description": "Fables, aventures, sciences et plus encore. Du nouveau contenu chaque mois, avec narration audio et illustrations colorées."
       },
       "learning": {
@@ -107,9 +107,9 @@
       "subtitle": "Plus de 50 aventures attendent votre petit lecteur"
     },
     "features": {
-      "stories": "Plus de 50 histoires illustrées",
+      "stories": "Accès à plus de 50 histoires",
       "narration": "Narration audio dans chaque histoire",
-      "activities": "Quiz et activités éducatives",
+      "activities": "Activités éducatives et mini-jeux",
       "progress": "Rapports de progression et récompenses",
       "games": "Mini-jeux éducatifs",
       "noAds": "Sans publicité — 100% sûr pour les enfants"
