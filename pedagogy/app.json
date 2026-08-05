@@ -10,8 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.alexandre-junior.pedagogy",
-      "appleTeamId": "9337P26ZJ6"
+      "bundleIdentifier": "com.alexandre-junior.pedagogy"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,11 +21,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.alexandrejunior.pedagogy",
-      "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
-      ]
+      "package": "com.alexandrejunior.pedagogy"
     },
     "web": {
       "output": "static",
